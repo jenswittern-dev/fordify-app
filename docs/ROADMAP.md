@@ -66,6 +66,7 @@
 | 2.9 | Undo-Stack (bis 20 Schritte, Strg+Z) | ✅ | 2026-03 |
 | 2.10 | Navbar-Redesign (Mobile + Desktop) | ✅ | 2026-03 |
 | 2.11 | Accessibility-Fixes (ARIA, Skip-Nav) | ✅ | 2026-03 |
+| 2.12 | Theme-System: Professionell / Dark / Clean (CSS Custom Properties, localStorage) | ✅ | 2026-04-01 |
 
 ---
 

@@ -23,7 +23,7 @@ Browser
         └── js/app.js            (State, UI, Event-Handling – ~2100 Zeilen)
 ```
 
-**Service Worker** (`sw.js`, aktuell `fordify-v7`) cached alle Assets für Offline-Nutzung.
+**Service Worker** (`sw.js`, aktuell `fordify-v8`) cached alle Assets für Offline-Nutzung.
 Bei Frontend-Änderungen: Cache-Name inkrementieren.
 
 ---
@@ -37,6 +37,7 @@ Bei Frontend-Änderungen: Cache-Name inkrementieren.
 | `fordify_cases` | Registry aller Fälle (JSON) |
 | `fordify_settings` | Kanzlei-Einstellungen + Impressum (JSON) |
 | `fordify_last_export` | ISO-Timestamp des letzten Exports |
+| `fordify_theme` | Aktives Theme: `"brand"` (default) / `"dark"` / `"clean"` |
 | `fordify_onboarded` | `"1"` wenn Onboarding-Modal bestätigt |
 | `forderungsaufstellung_state` | Legacy-Key (Migration auf fordify_cases) |
 
@@ -232,7 +233,25 @@ positionHinzufuegen(typ) / positionBearbeiten(id)
 - `undo()` stellt letzten State wieder her
 - Tastatur: Strg+Z (außerhalb von Eingabefeldern)
 
-### 5.4 Print-Popup
+### 5.4 Theme-System
+
+Drei Themes, umschaltbar im Einstellungen-Modal unter „Erscheinungsbild":
+
+| Theme-Key | Name | Beschreibung |
+|---|---|---|
+| `brand` (default) | Professionell | Gradient-Navbar (Blau), Shimmer-Animation, Card-Hover-Lift |
+| `dark` | Dark | Vollständiges Dark Mode – alle Bootstrap-Komponenten überschrieben |
+| `clean` | Clean | Weiße Navbar, schattenbasierte Cards, modernes Blau (#2563eb) |
+
+**Technisch:**
+- `[data-theme]`-Attribut auf `<html>` — CSS Custom Properties werden überschrieben
+- `brand` = kein Attribut (Base-Styles gelten)
+- `css/themes.css` wird nach `css/app.css` geladen (gezieltes Überschreiben)
+- Persistenz: `localStorage["fordify_theme"]`
+- Funktionen: `themeWechseln(name)`, `themeLaden()`, `aktualisierThemeSwitcher(name)` in `app.js`
+- UI: `.theme-card` / `.theme-switcher` Komponenten im Einstellungen-Modal
+
+### 5.5 Print-Popup
 
 `drucken()` öffnet `window.open()` mit vollständigem HTML (CSS inline injiziert),
 ruft `window.print()` nach 400ms auf. Popup-Blocker-Fallback: Alert mit Hinweis.
@@ -242,7 +261,7 @@ Kein html2canvas / jsPDF — native Druckengine des Browsers erzeugt text-search
 
 ## 6. Service Worker & Caching
 
-- Cache-Name: `fordify-vN` (aktuell `fordify-v7`)
+- Cache-Name: `fordify-vN` (aktuell `fordify-v8`)
 - Strategie: Cache-First, dann Network
 - **Regel:** Bei jedem Commit mit geänderten Frontend-Dateien → N um 1 erhöhen
 - Asset-Liste in `sw.js` muss neue Dateien enthalten

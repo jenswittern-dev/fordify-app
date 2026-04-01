@@ -21,6 +21,11 @@
 - Commit-Message auf Deutsch, präzise (feat/fix/style/docs/refactor)
 - SW-Version (`fordify-vN` in `frontend/sw.js`) bei jedem Commit mit geänderten Frontend-Dateien um 1 erhöhen
 - Keine Rückfragen zu offensichtlichen Standardoperationen
+- **Dokumentation immer aktuell halten** – nach jeder Entscheidung und nach jeder Umsetzung:
+  - `docs/ROADMAP.md` — Status auf ✅ setzen + Datum eintragen
+  - `docs/SYSTEM.md` — neue/geänderte Datenstrukturen, Funktionen, Architekturentscheidungen eintragen
+  - `CLAUDE.md` — SW-Version, Kerndatenmodell, Architekturentscheidungen aktuell halten
+  - Diese Aktualisierungen im gleichen Commit wie die Implementierung mitliefern
 
 ---
 
@@ -55,9 +60,10 @@ fordify-app/
 │   ├── index.html          ← einzige HTML-Seite (SPA)
 │   ├── impressum.html      ← statische Impressumsseite
 │   ├── datenschutz.html    ← statische Datenschutzerklärung
-│   ├── sw.js               ← Service Worker (aktuell fordify-v7)
+│   ├── sw.js               ← Service Worker (aktuell fordify-v8)
 │   ├── manifest.json       ← PWA-Manifest
 │   ├── css/app.css         ← gesamtes Styling inkl. Print-CSS (@media print)
+  ├── css/themes.css      ← Theme-Overrides (brand/dark/clean via [data-theme])
 │   ├── js/
 │   │   ├── app.js          ← Haupt-App (~2100 Zeilen)
 │   │   ├── data.js         ← Datentabellen (BASISZINSSAETZE, RVG_TABELLE, GKG_TABELLE)
@@ -82,6 +88,7 @@ Siehe `docs/SYSTEM.md` für vollständiges Schema. Kurzübersicht:
 - `localStorage["fordify_cases"]` — Registry aller Fälle
 - `localStorage["fordify_settings"]` — Kanzlei-Einstellungen + Impressum
 - `localStorage["fordify_last_export"]` — Timestamp letzter Export
+- `localStorage["fordify_theme"]` — aktives Theme (`"brand"` / `"dark"` / `"clean"`)
 - `state.fall.positionen[]` — Array von Positions-Objekten (typ, id, datum, betrag, ...)
 - `gruppeId` — verknüpft Hauptforderung mit zugehöriger Zinsperiode
 
@@ -95,12 +102,19 @@ Siehe `docs/SYSTEM.md` für vollständiges Schema. Kurzübersicht:
 - **GKG_TABELLE in data.js** (nicht als JSON) — kein zusätzlicher Netzwerkaufruf nötig
 - **`baueSummaryTabelle()`** ist die aktive Zusammenfassungs-Funktion (in app.js, NICHT `erstelleZusammenfassung()` in zusammenfassung.js — deprecated)
 - **`migratePositionen()`** — lazy Migration: alte Positionen ohne `gruppeId` erhalten "g0"
+- **Theme-System** — `[data-theme]` auf `<html>`, CSS Custom Properties in `themes.css`, drei Themes: `brand` (default, kein Attribut), `dark`, `clean`
 
 ---
 
-## Dokumentation lesen
+## Dokumentation lesen + pflegen
 
-Vor neuen Features immer prüfen:
+**Vor neuen Features immer prüfen:**
 1. `docs/ROADMAP.md` — ist das Feature schon geplant/erledigt?
 2. `docs/SYSTEM.md` — welche Datenstrukturen und Funktionen sind betroffen?
-3. Aktuellen SW-Cache-Version in `frontend/sw.js` prüfen und nach Änderungen erhöhen
+3. Aktuelle SW-Cache-Version in `frontend/sw.js` prüfen und nach Änderungen erhöhen
+
+**Nach jeder Entscheidung und Umsetzung zwingend aktualisieren:**
+- `docs/ROADMAP.md` — Status ✅ + Datum setzen
+- `docs/SYSTEM.md` — neue Strukturen, Funktionen, Architekturdetails ergänzen
+- `CLAUDE.md` (diese Datei) — SW-Version, Kerndatenmodell, Architekturentscheidungen nachziehen
+- Immer im gleichen Commit wie die eigentliche Änderung
