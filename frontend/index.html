@@ -23,6 +23,7 @@
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/themes.css">
 </head>
 <body>
 <a href="#main-content" class="skip-nav">Zum Hauptinhalt springen</a>
@@ -374,8 +375,49 @@
 
       <div class="modal-body modal-body--app">
 
+        <!-- Erscheinungsbild / Theme -->
+        <h6 class="fw-bold mb-3">Erscheinungsbild</h6>
+        <div class="theme-switcher mb-4">
+
+          <button class="theme-card" id="theme-card-brand" data-theme-select="brand" onclick="themeWechseln('brand')" type="button" aria-pressed="true">
+            <div class="theme-card__preview">
+              <div class="theme-card__nav theme-card__nav--brand"></div>
+              <div class="theme-card__body theme-card__body--brand">
+                <div class="theme-card__dot theme-card__dot--brand-1"></div>
+                <div class="theme-card__dot theme-card__dot--brand-2"></div>
+              </div>
+            </div>
+            <span class="theme-card__label">Professionell</span>
+          </button>
+
+          <button class="theme-card" id="theme-card-dark" data-theme-select="dark" onclick="themeWechseln('dark')" type="button" aria-pressed="false">
+            <div class="theme-card__preview">
+              <div class="theme-card__nav theme-card__nav--dark"></div>
+              <div class="theme-card__body theme-card__body--dark">
+                <div class="theme-card__dot theme-card__dot--dark-1"></div>
+                <div class="theme-card__dot theme-card__dot--dark-2"></div>
+              </div>
+            </div>
+            <span class="theme-card__label">Dark</span>
+          </button>
+
+          <button class="theme-card" id="theme-card-clean" data-theme-select="clean" onclick="themeWechseln('clean')" type="button" aria-pressed="false">
+            <div class="theme-card__preview">
+              <div class="theme-card__nav theme-card__nav--clean"></div>
+              <div class="theme-card__body theme-card__body--clean">
+                <div class="theme-card__dot theme-card__dot--clean-1"></div>
+                <div class="theme-card__dot theme-card__dot--clean-2"></div>
+              </div>
+            </div>
+            <span class="theme-card__label">Clean</span>
+          </button>
+
+        </div>
+
+        <hr>
+
         <!-- Logo -->
-        <h6 class="fw-bold mb-3">Unternehmenslogo (für PDF)</h6>
+        <h6 class="fw-bold mb-3 mt-3">Unternehmenslogo (für PDF)</h6>
 
         <div class="mb-3">
           <label class="form-label">Logo hochladen (PNG, JPG, SVG, WebP · max. 500 KB)</label>

@@ -11,6 +11,7 @@ const STORAGE_KEY_CASES       = "fordify_cases";
 const STORAGE_KEY_LEGACY      = "forderungsaufstellung_state";
 const STORAGE_KEY_SETTINGS    = "fordify_settings";
 const STORAGE_KEY_LAST_EXPORT = "fordify_last_export";
+const STORAGE_KEY_THEME       = "fordify_theme";
 
 function leerFall() {
   return {
@@ -1732,6 +1733,8 @@ function speichereEinstellungen(einst) {
 function zeigeEinstellungenModal() {
   const einst = ladeEinstellungen();
 
+  aktualisierThemeSwitcher(localStorage.getItem(STORAGE_KEY_THEME) || "brand");
+
   const posEl = document.getElementById("einst-logo-position");
   if (posEl) posEl.value = einst.logoPosition || "links";
 
@@ -2001,6 +2004,7 @@ function fallZuruecksetzen() {
 // ---- Init ----
 
 document.addEventListener("DOMContentLoaded", () => {
+  themeLaden();
   laden();
   stammdatenLaden();
   aktualisiereNavContext();
@@ -2058,6 +2062,33 @@ function onboardingBestaetigen() {
 function egbgbHinweisToggle(val) {
   const el = document.getElementById("hinweis-egbgb");
   if (el) el.classList.toggle("d-none", String(val) !== "9");
+}
+
+// ---- Theme ----
+
+function themeWechseln(name) {
+  const valid = ["brand", "dark", "clean"];
+  if (!valid.includes(name)) name = "brand";
+  if (name === "brand") {
+    document.documentElement.removeAttribute("data-theme");
+  } else {
+    document.documentElement.setAttribute("data-theme", name);
+  }
+  localStorage.setItem(STORAGE_KEY_THEME, name);
+  aktualisierThemeSwitcher(name);
+}
+
+function aktualisierThemeSwitcher(name) {
+  document.querySelectorAll(".theme-card").forEach(el => {
+    const active = el.dataset.themeSelect === name;
+    el.classList.toggle("theme-card--active", active);
+    el.setAttribute("aria-pressed", active ? "true" : "false");
+  });
+}
+
+function themeLaden() {
+  const saved = localStorage.getItem(STORAGE_KEY_THEME) || "brand";
+  themeWechseln(saved);
 }
 
 // ---- Export-Reminder ----
