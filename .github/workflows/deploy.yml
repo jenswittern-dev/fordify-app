@@ -18,15 +18,5 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /html/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            docs/**
-            tests/**
-            static/**
-            *.py
-            requirements.txt
-            LIESMICH.txt
-            .gitignore
+          local-dir: ./frontend/
+          server-dir: /
