@@ -115,7 +115,7 @@ function berechneVerzugszinsen(betrag, von, bis, aufschlagPP, basiszinssaetze, i
 function tageszins(betrag, aufschlagPP, stichtag, basiszinssaetze) {
   betrag = new Decimal(betrag);
   const basisSatz = aktuellerBasiszinssatz(stichtag, basiszinssaetze);
-  const zinssatz = basisSatz.plus(new Decimal(aufschlagPP));
+  const zinssatz = Decimal.max(basisSatz.plus(new Decimal(aufschlagPP)), new Decimal(0));
   return betrag.times(zinssatz).dividedBy(100).dividedBy(365).toDecimalPlaces(2);
 }
 

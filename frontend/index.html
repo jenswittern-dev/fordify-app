@@ -109,10 +109,13 @@
 
           <div class="mb-3">
             <label class="form-label" for="inp-aufschlag">Verzugszins-Aufschlag</label>
-            <select class="form-select" id="inp-aufschlag">
+            <select class="form-select" id="inp-aufschlag" onchange="egbgbHinweisToggle(this.value)">
               <option value="9">9 Prozentpunkte – Unternehmer (§ 288 Abs. 2 BGB)</option>
               <option value="5">5 Prozentpunkte – Verbraucher (§ 288 Abs. 1 BGB)</option>
             </select>
+            <div class="form-text d-none" id="hinweis-egbgb">
+              <strong>Hinweis Art. 229 § 34 EGBGB:</strong> Bei Verträgen, die <strong>vor dem 29.07.2014</strong> geschlossen wurden, gilt übergangszeitlich ggf. nur ein Aufschlag von 8 Prozentpunkten. Bitte prüfen Sie das Abschlussdatum des zugrunde liegenden Vertrags.
+            </div>
           </div>
 
           <hr class="my-4">
@@ -256,6 +259,9 @@
           <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('zahlung');return false;">Zahlung / Geldeingang</a></li>
         </ul>
       </div>
+      <button class="btn btn-outline-secondary" id="btn-undo" onclick="undo()" disabled title="Letzte Änderung rückgängig machen (Strg+Z)">
+        ↩ Rückgängig
+      </button>
       <button class="btn btn-outline-secondary" onclick="zeigeAnsicht('vorschau')">
         Vorschau &amp; PDF →
       </button>
@@ -270,6 +276,7 @@
 <div class="container ansicht d-none" id="ansicht-vorschau">
   <div class="no-print mb-3 d-flex flex-wrap gap-2">
     <button class="btn btn-primary" onclick="drucken()">Drucken / PDF speichern</button>
+    <button class="btn btn-outline-secondary" id="btn-teilen" onclick="falTeilen()">Teilen / Export</button>
     <button class="btn btn-outline-secondary" onclick="zeigeAnsicht('eingabe')">← Zurück</button>
   </div>
   <div class="content-card" id="vorschau-inhalt">

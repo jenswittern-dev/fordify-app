@@ -368,7 +368,9 @@ function stammdatenLaden() {
   document.getElementById("inp-mandant").value      = state.fall.mandant || "";
   document.getElementById("inp-gegner").value       = state.fall.gegner || "";
   document.getElementById("inp-aktenzeichen").value = state.fall.aktenzeichen || "";
-  document.getElementById("inp-aufschlag").value    = state.fall.aufschlagPP || 9;
+  const aufschlagVal = state.fall.aufschlagPP || 9;
+  document.getElementById("inp-aufschlag").value    = aufschlagVal;
+  egbgbHinweisToggle(aufschlagVal);
   document.getElementById("inp-inso-datum").value   = state.fall.insoDatum || "";
 
   // Forderungsgrund – Backward-Compat: altes titelArt ohne forderungsgrundKat → "Titel"
@@ -393,6 +395,35 @@ function fgKatWechseln(kat) {
   document.getElementById("fg-art-vertrag-wrap").classList.toggle("d-none", kat !== "Vertrag");
   document.getElementById("fg-art-gesetzlich-wrap").classList.toggle("d-none", kat !== "gesetzlich");
   document.getElementById("fg-titel-wrap").classList.toggle("d-none", kat !== "Titel");
+}
+
+// ---- Undo ----
+
+const UNDO_MAX = 20;
+let undoStack = [];
+
+function pushUndo() {
+  undoStack.push({
+    positionen: JSON.parse(JSON.stringify(state.fall.positionen)),
+    naechsteId: state.naechsteId,
+  });
+  if (undoStack.length > UNDO_MAX) undoStack.shift();
+  aktualisierUndoBtn();
+}
+
+function undo() {
+  if (undoStack.length === 0) return;
+  const snap = undoStack.pop();
+  state.fall.positionen = snap.positionen;
+  state.naechsteId = snap.naechsteId;
+  speichernMitFeedback();
+  renderePositionsliste();
+  aktualisierUndoBtn();
+}
+
+function aktualisierUndoBtn() {
+  const btn = document.getElementById("btn-undo");
+  if (btn) btn.disabled = undoStack.length === 0;
 }
 
 // ---- Positionen ----
@@ -428,6 +459,7 @@ function positionLoeschenAbbrechen(id) {
 }
 
 function positionLoeschenBestaetigen(id) {
+  pushUndo();
   state.fall.positionen = state.fall.positionen.filter(p => p.id !== id);
   speichernMitFeedback();
   renderePositionsliste();
@@ -436,6 +468,7 @@ function positionLoeschenBestaetigen(id) {
 function positionNachOben(id) {
   const idx = state.fall.positionen.findIndex(p => p.id === id);
   if (idx > 0) {
+    pushUndo();
     [state.fall.positionen[idx - 1], state.fall.positionen[idx]] =
       [state.fall.positionen[idx], state.fall.positionen[idx - 1]];
     speichernMitFeedback();
@@ -446,6 +479,7 @@ function positionNachOben(id) {
 function positionNachUnten(id) {
   const idx = state.fall.positionen.findIndex(p => p.id === id);
   if (idx < state.fall.positionen.length - 1) {
+    pushUndo();
     [state.fall.positionen[idx], state.fall.positionen[idx + 1]] =
       [state.fall.positionen[idx + 1], state.fall.positionen[idx]];
     speichernMitFeedback();
@@ -626,6 +660,8 @@ function renderModalInhalt(typ, pos) {
 function modalSpeichern() {
   const pos = modalDatenLesen();
   if (!pos) return;
+
+  pushUndo();
 
   if (modalAktuellePos) {
     const idx = state.fall.positionen.findIndex(p => p.id === modalAktuellePos.id);
@@ -1650,6 +1686,18 @@ document.addEventListener("DOMContentLoaded", () => {
       modalDynamischAktualisieren(modalTyp);
   });
 
+  // Strg+Z Undo
+  document.addEventListener("keydown", e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
+      // Nicht auslösen wenn ein Eingabefeld fokussiert ist
+      const tag = document.activeElement?.tagName;
+      if (tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+        e.preventDefault();
+        undo();
+      }
+    }
+  });
+
   // Onboarding beim ersten Aufruf
   if (!localStorage.getItem("fordify_onboarded")) {
     setTimeout(() => {
@@ -1662,4 +1710,48 @@ document.addEventListener("DOMContentLoaded", () => {
 function onboardingBestaetigen() {
   localStorage.setItem("fordify_onboarded", "1");
   bootstrap.Modal.getInstance(document.getElementById("modal-onboarding"))?.hide();
+}
+
+function egbgbHinweisToggle(val) {
+  const el = document.getElementById("hinweis-egbgb");
+  if (el) el.classList.toggle("d-none", String(val) !== "9");
+}
+
+/**
+ * Teilt den aktuellen Fall als JSON-Datei über die Web Share API (mobile)
+ * oder löst einen Download aus (Desktop-Fallback).
+ */
+async function falTeilen() {
+  const reg = ladeRegistry();
+  const fallId = reg.currentCaseId;
+  if (!fallId || !reg.cases[fallId]) {
+    alert("Bitte speichern Sie den Fall zuerst.");
+    return;
+  }
+  const payload = { fall: state.fall, naechsteId: state.naechsteId };
+  const json = JSON.stringify(payload, null, 2);
+  const az = (state.fall.aktenzeichen || "fall").replace(/[^a-zA-Z0-9\-_]/g, "_");
+  const filename = `fordify-${az}.json`;
+  const blob = new Blob([json], { type: "application/json" });
+
+  if (navigator.canShare && navigator.canShare({ files: [new File([blob], filename, { type: "application/json" })] })) {
+    try {
+      await navigator.share({
+        title: "Forderungsaufstellung – " + (state.fall.aktenzeichen || state.fall.mandant || "fordify"),
+        text: "Erstellt mit fordify.de",
+        files: [new File([blob], filename, { type: "application/json" })],
+      });
+      return;
+    } catch (e) {
+      if (e.name === "AbortError") return; // Nutzer hat abgebrochen
+    }
+  }
+
+  // Fallback: direkter Download
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
 }
