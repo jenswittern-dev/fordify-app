@@ -306,7 +306,10 @@ function zeigeAnsicht(name) {
 
   // Stepper aktualisieren
   document.querySelectorAll(".stepper-step[data-ansicht]").forEach(link => {
-    link.classList.toggle("active", link.dataset.ansicht === name);
+    const isActive = link.dataset.ansicht === name;
+    link.classList.toggle("active", isActive);
+    if (isActive) link.setAttribute("aria-current", "step");
+    else link.removeAttribute("aria-current");
   });
 
   if (name === "eingabe") renderePositionsliste();
@@ -512,10 +515,10 @@ function renderePositionsliste() {
         <span class="amount${istZahlung ? " amount--negative" : ""}">${istZahlung ? "− " : ""}${betragStr}</span>
       </td>
       <td class="text-end" style="white-space:nowrap">
-        <button class="icon-btn" onclick="positionNachOben(${pos.id})" ${idx === 0 ? "disabled" : ""} title="Nach oben">${ICON.up}</button>
-        <button class="icon-btn" onclick="positionNachUnten(${pos.id})" ${last ? "disabled" : ""} title="Nach unten">${ICON.down}</button>
-        <button class="icon-btn icon-btn--edit" onclick="positionBearbeiten(${pos.id})" title="Bearbeiten">${ICON.edit}</button>
-        <button class="icon-btn icon-btn--loeschen icon-btn--danger" onclick="positionLoeschenAnfragen(${pos.id})" title="Löschen">${ICON.trash}</button>
+        <button class="icon-btn" onclick="positionNachOben(${pos.id})" ${idx === 0 ? "disabled" : ""} title="Nach oben" aria-label="Nach oben">${ICON.up}</button>
+        <button class="icon-btn" onclick="positionNachUnten(${pos.id})" ${last ? "disabled" : ""} title="Nach unten" aria-label="Nach unten">${ICON.down}</button>
+        <button class="icon-btn icon-btn--edit" onclick="positionBearbeiten(${pos.id})" title="Bearbeiten" aria-label="Bearbeiten">${ICON.edit}</button>
+        <button class="icon-btn icon-btn--loeschen icon-btn--danger" onclick="positionLoeschenAnfragen(${pos.id})" title="Löschen" aria-label="Löschen">${ICON.trash}</button>
         <span class="inline-confirm">
           <span class="inline-confirm__text">Löschen?</span>
           <button class="icon-btn icon-btn--danger" onclick="positionLoeschenBestaetigen(${pos.id})">Ja</button>
@@ -770,7 +773,7 @@ function modalDynamischAktualisieren(typ) {
 
 function datumFeld(id, wert, label = "Datum") {
   return `<div class="mb-3">
-    <label class="form-label">${label}</label>
+    <label class="form-label" for="${id}">${label}</label>
     <input type="date" class="form-control" id="${id}" value="${wert || ""}">
   </div>`;
 }
@@ -778,7 +781,7 @@ function datumFeld(id, wert, label = "Datum") {
 function betragFeld(id, wert, label = "Betrag (€)") {
   const val = wert ? new Decimal(wert).toFixed(2) : "";
   return `<div class="mb-3">
-    <label class="form-label">${label}</label>
+    <label class="form-label" for="${id}">${label}</label>
     <input type="number" step="0.01" min="0" class="form-control" id="${id}" value="${val}" placeholder="0,00">
   </div>`;
 }
@@ -926,9 +929,7 @@ function rendereVorschau() {
     : "";
 
   const imp = einst.imp || {};
-  const impressumHtml = imp.freitext
-    ? `<div class="pdf-impressum-footer">${imp.freitext.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g," &nbsp;·&nbsp; ")}</div>`
-    : "";
+  const impressumHtml = generiereImpressumFooterHtml(imp);
 
   // Forderungsgrund-Block (Backward-Compat: altes titelArt ohne forderungsgrundKat → "Titel")
   const fgKat = fall.forderungsgrundKat || (fall.titelArt ? "Titel" : "");
@@ -937,6 +938,7 @@ function rendereVorschau() {
   const fgBlock = hatForderungsgrund ? `
     <div class="pdf-section">
       <div class="pdf-section__label">Forderungsgrund</div>
+      <div class="table-scroll">
       <table class="pdf-meta-table">
         <tr><th>Grundlage:</th><td>${fgKat}</td></tr>
         ${fall.titelArt ? `<tr><th>Art:</th><td>${fall.titelArt}</td></tr>` : ""}
@@ -945,6 +947,7 @@ function rendereVorschau() {
         ${hatTitel && fall.titelDatum ? `<tr><th>Datum:</th><td>${formatDate(parseDate(fall.titelDatum))}</td></tr>` : ""}
         ${hatTitel && fall.titelRechtskraft ? `<tr><th>Zustellungsdatum:</th><td>${formatDate(parseDate(fall.titelRechtskraft))}</td></tr>` : ""}
       </table>
+      </div>
     </div>` : "";
 
   try { el.innerHTML = `
@@ -995,7 +998,9 @@ function rendereVorschau() {
     <!-- Zusammenfassung -->
     <div class="pdf-section">
       <div class="pdf-section__label">Zusammenfassung</div>
+      <div class="table-scroll">
       ${baueSummaryTabelle(fall, BASISZINSSAETZE, aufschlagPP)}
+      </div>
     </div>
 
     <!-- Fu\u00dfnote -->
@@ -1341,15 +1346,106 @@ function zeigeEinstellungenModal() {
   if (posEl) posEl.value = einst.logoPosition || "links";
 
   const imp = einst.imp || {};
-  const freitextEl = document.getElementById("einst-imp-freitext");
-  if (freitextEl) freitextEl.value = imp.freitext || "";
+  const IMP_FIELDS = ["name","rechtsform","strasse","plz","ort","tel","fax","email",
+                      "website","kammer","register","ustid","bhv","iban","bic","bank",
+                      "impressum-url","datenschutz-url"];
+  for (const f of IMP_FIELDS) {
+    const el = document.getElementById("einst-imp-" + f);
+    const key = f.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+    if (el) el.value = imp[key] || "";
+  }
+  aktualisiereFussVorschau();
 
   aktualisiereLogoVorschau(einst.logo || null);
 
   const m = document.getElementById("modal-einstellungen");
-  if (m) delete m.dataset.pendingLogo;
+  if (m) {
+    delete m.dataset.pendingLogo;
+    const body = m.querySelector(".modal-body--app");
+    if (body) {
+      body.removeEventListener("input", aktualisiereFussVorschau);
+      body.addEventListener("input", aktualisiereFussVorschau);
+    }
+  }
 
   new bootstrap.Modal(m).show();
+}
+
+function leseImpFelder() {
+  function v(id) { return document.getElementById(id)?.value?.trim() || ""; }
+  return {
+    name:           v("einst-imp-name"),
+    rechtsform:     v("einst-imp-rechtsform"),
+    strasse:        v("einst-imp-strasse"),
+    plz:            v("einst-imp-plz"),
+    ort:            v("einst-imp-ort"),
+    tel:            v("einst-imp-tel"),
+    fax:            v("einst-imp-fax"),
+    email:          v("einst-imp-email"),
+    website:        v("einst-imp-website"),
+    kammer:         v("einst-imp-kammer"),
+    register:       v("einst-imp-register"),
+    ustid:          v("einst-imp-ustid"),
+    bhv:            v("einst-imp-bhv"),
+    iban:           v("einst-imp-iban"),
+    bic:            v("einst-imp-bic"),
+    bank:           v("einst-imp-bank"),
+    impressumUrl:   v("einst-imp-impressum-url"),
+    datenschutzUrl: v("einst-imp-datenschutz-url"),
+  };
+}
+
+function aktualisiereFussVorschau() {
+  const vorschau = document.getElementById("einst-imp-vorschau");
+  if (!vorschau) return;
+  const html = generiereImpressumFooterHtml(leseImpFelder());
+  vorschau.innerHTML = html ||
+    "<em style='color:var(--color-text-subtle)'>Vorschau des generierten Footer-Texts erscheint hier\u2026</em>";
+}
+
+function generiereImpressumFooterHtml(imp) {
+  if (!imp) return "";
+
+  // Backward compat: altes Freitext-Format
+  if (imp.freitext && !imp.name) {
+    return `<div class="pdf-impressum-footer">${imp.freitext.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g," &nbsp;\u00b7&nbsp; ")}</div>`;
+  }
+  if (!imp.name) return "";
+
+  function e(s) { return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+  const teile = [];
+  teile.push(e(imp.name) + (imp.rechtsform ? ` ${e(imp.rechtsform)}` : ""));
+  if (imp.strasse) {
+    let adr = e(imp.strasse);
+    if (imp.plz || imp.ort) adr += ` \u00b7 ${e(imp.plz)} ${e(imp.ort)}`.trim();
+    teile.push(adr);
+  }
+  if (imp.tel)  teile.push(`Tel.: ${e(imp.tel)}`);
+  if (imp.fax)  teile.push(`Fax: ${e(imp.fax)}`);
+  if (imp.email) teile.push(`E-Mail: <a href="mailto:${e(imp.email)}" class="imp-link">${e(imp.email)}</a>`);
+  if (imp.website) teile.push(`<a href="${e(imp.website)}" target="_blank" rel="noopener noreferrer" class="imp-link">${e(imp.website.replace(/^https?:\/\//, ""))}</a>`);
+  if (imp.kammer)   teile.push(e(imp.kammer));
+  if (imp.register) teile.push(`Reg.-Nr.: ${e(imp.register)}`);
+  if (imp.ustid)    teile.push(`USt-ID: ${e(imp.ustid)}`);
+  if (imp.bhv)      teile.push(`BHV: ${e(imp.bhv)}`);
+  if (imp.iban) {
+    let b = `IBAN: ${e(imp.iban)}`;
+    if (imp.bic)  b += ` \u00b7 BIC: ${e(imp.bic)}`;
+    if (imp.bank) b += ` (${e(imp.bank)})`;
+    teile.push(b);
+  }
+  if (!teile.length) return "";
+
+  let html = `<div class="pdf-impressum-footer">${teile.join(" &nbsp;\u00b7&nbsp; ")}`;
+
+  const links = [];
+  if (imp.impressumUrl)   links.push(`<a href="${e(imp.impressumUrl)}" target="_blank" rel="noopener noreferrer" class="imp-link">Impressum</a>`);
+  if (imp.datenschutzUrl) links.push(`<a href="${e(imp.datenschutzUrl)}" target="_blank" rel="noopener noreferrer" class="imp-link">Datenschutz</a>`);
+  if (links.length) html += `<span class="no-print" style="margin-left:0.75em;font-size:0.85em"> \u00b7 ${links.join(" \u00b7 ")}</span>`;
+
+  html += `</div>`;
+  return html;
 }
 
 function logoHochladen(input) {
@@ -1419,9 +1515,7 @@ function einstellungenSpeichern() {
 
   einst.logoPosition = document.getElementById("einst-logo-position")?.value || "links";
 
-  einst.imp = {
-    freitext: document.getElementById("einst-imp-freitext")?.value?.trim() || "",
-  };
+  einst.imp = leseImpFelder();
 
   speichereEinstellungen(einst);
   bootstrap.Modal.getInstance(m)?.hide();

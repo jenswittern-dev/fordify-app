@@ -18,26 +18,38 @@
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
+<a href="#main-content" class="skip-nav">Zum Hauptinhalt springen</a>
 
 <!-- ============================================================
      Navbar
      ============================================================ -->
 <nav class="navbar navbar-expand-md navbar-fa mb-0 no-print">
-  <div class="container d-flex align-items-center gap-3">
+  <div class="container">
     <a class="navbar-brand" href="#">
       <img src="img/logo.svg" height="30" alt="fordify Logo">
       <span>fordify</span>
     </a>
-    <span id="nav-context"></span>
-    <div class="d-flex gap-2 ms-auto align-items-center">
-      <span id="save-indicator">Gespeichert ✓</span>
-      <button class="btn btn-sm btn-outline-light" onclick="zeigeFallModal()">Fälle</button>
-      <button class="btn btn-sm btn-outline-light" onclick="zeigeEinstellungenModal()">Einstellungen</button>
-      <button class="btn btn-sm btn-outline-light" onclick="fallZuruecksetzen()">Neu</button>
-      <button class="btn btn-sm btn-light" onclick="drucken()">Drucken / PDF</button>
+    <span id="nav-context" class="d-none d-md-block"></span>
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navbar-menu"
+            aria-controls="navbar-menu" aria-expanded="false"
+            aria-label="Navigation öffnen">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbar-menu">
+      <div class="d-flex flex-wrap gap-2 ms-auto align-items-center py-2 py-md-0">
+        <span id="save-indicator" aria-live="polite" aria-atomic="true">Gespeichert ✓</span>
+        <button class="btn btn-sm btn-outline-light" onclick="zeigeFallModal()">Fälle</button>
+        <button class="btn btn-sm btn-outline-light" onclick="zeigeEinstellungenModal()">Einstellungen</button>
+        <button class="btn btn-sm btn-outline-light" onclick="fallZuruecksetzen()">Neu</button>
+        <button class="btn btn-sm btn-light" onclick="drucken()">Drucken / PDF</button>
+      </div>
     </div>
   </div>
 </nav>
+
+<main id="main-content">
+<h1 class="visually-hidden">fordify – Forderungsaufstellung</h1>
 
 <!-- Stepper-Navigation -->
 <div class="container no-print">
@@ -193,20 +205,22 @@
 <div class="container ansicht d-none" id="ansicht-eingabe">
   <div class="content-card">
 
+    <div class="table-scroll">
     <table class="positions-table">
       <thead>
         <tr>
-          <th style="width:10rem">Typ</th>
-          <th style="width:6.5rem">Datum</th>
-          <th>Beschreibung</th>
-          <th class="text-end" style="width:9rem">Forderungsbetrag</th>
-          <th style="width:9rem"></th>
+          <th scope="col" style="width:10rem">Typ</th>
+          <th scope="col" style="width:6.5rem">Datum</th>
+          <th scope="col">Beschreibung</th>
+          <th scope="col" class="text-end" style="width:9rem">Forderungsbetrag</th>
+          <th scope="col"><span class="visually-hidden">Aktionen</span></th>
         </tr>
       </thead>
       <tbody id="positionen-tbody">
         <!-- per JS befüllt -->
       </tbody>
     </table>
+    </div>
 
     <div class="aktionen-leiste no-print">
       <div class="dropdown">
@@ -244,7 +258,7 @@
      Ansicht: Vorschau / Druck
      ============================================================ -->
 <div class="container ansicht d-none" id="ansicht-vorschau">
-  <div class="no-print mb-3 d-flex gap-2">
+  <div class="no-print mb-3 d-flex flex-wrap gap-2">
     <button class="btn btn-primary" onclick="drucken()">Drucken / PDF speichern</button>
     <button class="btn btn-outline-secondary" onclick="zeigeAnsicht('eingabe')">← Zurück</button>
   </div>
@@ -252,6 +266,8 @@
     <!-- per JS befüllt -->
   </div>
 </div>
+
+</main>
 
 <!-- ============================================================
      Modal: Positions-Eingabe
@@ -302,10 +318,11 @@
       </div>
 
       <div class="modal-footer modal-footer--app justify-content-between">
-        <div class="d-flex gap-2">
+        <div class="d-flex flex-wrap gap-2">
           <button type="button" class="btn-primary-app" onclick="neuenFallAnlegen()">+ Neuer Fall</button>
           <button type="button" class="btn-ghost" onclick="fallExportieren()">Export JSON</button>
-          <label class="btn-ghost mb-0" style="cursor:pointer">
+          <label class="btn-ghost mb-0" style="cursor:pointer" role="button" tabindex="0"
+                 onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.querySelector('input').click()}">
             Import JSON
             <input type="file" accept=".json" class="d-none" onchange="fallImportierenDatei(this)">
           </label>
@@ -342,7 +359,7 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Vorschau</label>
+          <div class="form-label">Vorschau</div>
           <div class="einst-logo-preview-box" id="einst-logo-vorschau">
             <span class="text-muted" style="font-size:0.85rem" id="einst-logo-placeholder">Kein Logo hochgeladen</span>
           </div>
@@ -351,8 +368,8 @@
         </div>
 
         <div class="mb-4">
-          <label class="form-label">Position im PDF-Header</label>
-          <select class="form-select form-select-sm" id="einst-logo-position" style="max-width:200px">
+          <label class="form-label" for="einst-logo-position">Position im PDF-Header</label>
+          <select class="form-select form-select-sm" id="einst-logo-position">
             <option value="links">Linksbündig</option>
             <option value="zentriert">Zentriert</option>
             <option value="rechts">Rechtsbündig</option>
@@ -361,15 +378,135 @@
 
         <hr>
 
-        <!-- Impressum -->
-        <h6 class="fw-bold mb-2 mt-3">Impressum / Kontaktdaten (*)</h6>
-        <p class="text-muted mb-2" style="font-size:0.8rem">
-          (*) Geben Sie bitte selbständig ein vollständiges und rechtskonformes Impressum bzw. Ihre
-          Kontaktdaten / Signatur ein. Wir übernehmen hierfür keine Haftung.
-          Leer lassen = kein Footer im PDF.
+        <!-- Impressum / Kanzleidaten -->
+        <h6 class="fw-bold mb-1 mt-3">Kanzlei-Footer (*)</h6>
+        <p class="text-muted mb-3" style="font-size:0.8rem">
+          (*) Angaben werden im PDF-Footer und in der Vorschau angezeigt. Pflichtfelder gemäß BRAO/BORA
+          sind mit <abbr title="Pflichtfeld">*</abbr> markiert. Leer lassen = kein Footer im PDF.
+          Wir übernehmen keine Haftung für die Vollständigkeit.
         </p>
-        <textarea class="form-control form-control-sm" id="einst-imp-freitext" rows="5"
-          placeholder="z.B. Rechtsanwaltskanzlei Mustermann · Musterstraße 1 · 12345 Musterstadt · Tel.: +49 421 123456 · kanzlei@mustermann.de"></textarea>
+
+        <!-- Gruppe 1: Stammdaten -->
+        <div class="row g-2 mb-2">
+          <div class="col-sm-8">
+            <label class="form-label form-label-sm" for="einst-imp-name">Kanzleiname *</label>
+            <input type="text" class="form-control form-control-sm" id="einst-imp-name"
+                   placeholder="z.B. Rechtsanwaltskanzlei Mustermann">
+          </div>
+          <div class="col-sm-4">
+            <label class="form-label form-label-sm" for="einst-imp-rechtsform">Rechtsform</label>
+            <select class="form-select form-select-sm" id="einst-imp-rechtsform">
+              <option value="">– keine / Einzelkanzlei –</option>
+              <option value="GbR">GbR</option>
+              <option value="PartG">PartG</option>
+              <option value="PartGmbB">PartGmbB</option>
+              <option value="GmbH">GmbH</option>
+              <option value="sonstige">sonstige</option>
+            </select>
+          </div>
+        </div>
+        <div class="row g-2 mb-2">
+          <div class="col-sm-8">
+            <label class="form-label form-label-sm" for="einst-imp-strasse">Straße &amp; Nr. *</label>
+            <input type="text" class="form-control form-control-sm" id="einst-imp-strasse"
+                   placeholder="Musterstraße 1">
+          </div>
+          <div class="col-sm-2">
+            <label class="form-label form-label-sm" for="einst-imp-plz">PLZ *</label>
+            <input type="text" class="form-control form-control-sm" id="einst-imp-plz"
+                   placeholder="12345" maxlength="5">
+          </div>
+          <div class="col-sm-2">
+            <label class="form-label form-label-sm" for="einst-imp-ort">Ort *</label>
+            <input type="text" class="form-control form-control-sm" id="einst-imp-ort"
+                   placeholder="Hamburg">
+          </div>
+        </div>
+        <div class="row g-2 mb-2">
+          <div class="col-sm-4">
+            <label class="form-label form-label-sm" for="einst-imp-tel">Telefon *</label>
+            <input type="tel" class="form-control form-control-sm" id="einst-imp-tel"
+                   placeholder="+49 40 123456">
+          </div>
+          <div class="col-sm-4">
+            <label class="form-label form-label-sm" for="einst-imp-email">E-Mail *</label>
+            <input type="email" class="form-control form-control-sm" id="einst-imp-email"
+                   placeholder="kanzlei@mustermann.de">
+          </div>
+          <div class="col-sm-4">
+            <label class="form-label form-label-sm" for="einst-imp-website">Website</label>
+            <input type="url" class="form-control form-control-sm" id="einst-imp-website"
+                   placeholder="https://www.kanzlei.de">
+          </div>
+        </div>
+
+        <!-- Gruppe 2: Berufsrecht -->
+        <div class="row g-2 mb-2">
+          <div class="col-sm-6">
+            <label class="form-label form-label-sm" for="einst-imp-kammer">Rechtsanwaltskammer *</label>
+            <input type="text" class="form-control form-control-sm" id="einst-imp-kammer"
+                   placeholder="Rechtsanwaltskammer Hamburg">
+          </div>
+          <div class="col-sm-6">
+            <label class="form-label form-label-sm" for="einst-imp-register">Registernummer (z.B. HRB)</label>
+            <input type="text" class="form-control form-control-sm" id="einst-imp-register"
+                   placeholder="HRB 25090 (Amtsgericht Hamburg)">
+          </div>
+        </div>
+        <div class="row g-2 mb-2">
+          <div class="col-sm-6">
+            <label class="form-label form-label-sm" for="einst-imp-ustid">USt-ID / Steuernummer</label>
+            <input type="text" class="form-control form-control-sm" id="einst-imp-ustid"
+                   placeholder="DE285190908">
+          </div>
+          <div class="col-sm-6">
+            <label class="form-label form-label-sm" for="einst-imp-bhv">Berufshaftpflicht (Versicherer)</label>
+            <input type="text" class="form-control form-control-sm" id="einst-imp-bhv"
+                   placeholder="z.B. R+V Versicherung, Europa">
+          </div>
+        </div>
+
+        <!-- Gruppe 3: Bankverbindung -->
+        <div class="row g-2 mb-2">
+          <div class="col-sm-5">
+            <label class="form-label form-label-sm" for="einst-imp-iban">IBAN</label>
+            <input type="text" class="form-control form-control-sm" id="einst-imp-iban"
+                   placeholder="DE12 3456 7890 1234 5678 90">
+          </div>
+          <div class="col-sm-3">
+            <label class="form-label form-label-sm" for="einst-imp-bic">BIC</label>
+            <input type="text" class="form-control form-control-sm" id="einst-imp-bic"
+                   placeholder="DEUTDEDB">
+          </div>
+          <div class="col-sm-4">
+            <label class="form-label form-label-sm" for="einst-imp-bank">Bank</label>
+            <input type="text" class="form-control form-control-sm" id="einst-imp-bank"
+                   placeholder="Deutsche Bank">
+          </div>
+        </div>
+
+        <!-- Gruppe 4: Weblinks (nur Webansicht) -->
+        <div class="row g-2 mb-2">
+          <div class="col-sm-6">
+            <label class="form-label form-label-sm" for="einst-imp-impressum-url">
+              Impressum-URL <span class="text-muted fw-normal">(nur Webansicht)</span>
+            </label>
+            <input type="url" class="form-control form-control-sm" id="einst-imp-impressum-url"
+                   placeholder="https://fordify.de/impressum.html">
+          </div>
+          <div class="col-sm-6">
+            <label class="form-label form-label-sm" for="einst-imp-datenschutz-url">
+              Datenschutz-URL <span class="text-muted fw-normal">(nur Webansicht)</span>
+            </label>
+            <input type="url" class="form-control form-control-sm" id="einst-imp-datenschutz-url"
+                   placeholder="https://fordify.de/datenschutz.html">
+          </div>
+        </div>
+
+        <!-- Vorschau Footer-Text -->
+        <div class="mt-3 p-2 rounded" style="background:var(--color-surface);border:1px solid var(--color-border);font-size:0.75rem;color:var(--color-text-muted);line-height:1.6" id="einst-imp-vorschau">
+          <em>Vorschau des generierten Footer-Texts erscheint hier…</em>
+        </div>
 
       </div><!-- /modal-body -->
 
