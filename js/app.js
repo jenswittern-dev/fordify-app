@@ -1,0 +1,1474 @@
+// ============================================================
+// Forderungsaufstellung – Haupt-App
+// State Management, UI-Rendering, Event-Handling
+// ============================================================
+
+"use strict";
+
+// ---- State ----
+
+const STORAGE_KEY_CASES    = "debitum_cases";
+const STORAGE_KEY_LEGACY   = "forderungsaufstellung_state";
+const STORAGE_KEY_SETTINGS = "debitum_settings";
+
+function leerFall() {
+  return {
+    mandant: "", gegner: "", aktenzeichen: "", aufschlagPP: 9, insoDatum: null,
+    forderungsgrundKat: "",
+    titelArt: "", titelDatum: "", titelRechtskraft: "", titelGericht: "", titelAz: "",
+    positionen: [],
+  };
+}
+
+let state = {
+  fall: leerFall(),
+  naechsteId: 1,
+  ansicht: "stammdaten",
+};
+
+// ---- Hilfsfunktionen ----
+
+function neuId() {
+  return state.naechsteId++;
+}
+
+function parseDate(str) {
+  if (!str) return null;
+  const [y, m, d] = str.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function formatDate(d) {
+  if (!d) return "";
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  return `${dd}.${mm}.${d.getFullYear()}`;
+}
+
+function formatEUR(val) {
+  if (val === null || val === undefined) return "";
+  const d = new Decimal(val);
+  const parts = d.toFixed(2).split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return parts.join(",") + "\u00a0€";
+}
+
+// ---- Fallverwaltung (mehrere Fälle in localStorage) ----
+
+function fallAnzeigename(fall) {
+  return [fall.aktenzeichen, fall.mandant].filter(Boolean).join(" – ")
+    || "Fall vom " + new Date().toLocaleDateString("de-DE");
+}
+
+function neueFallId() {
+  return "f" + Date.now();
+}
+
+function ladeRegistry() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_CASES);
+    if (raw) return JSON.parse(raw);
+  } catch (e) { /* ignore */ }
+  return { cases: {}, currentCaseId: null };
+}
+
+function speichereRegistry(reg) {
+  try {
+    localStorage.setItem(STORAGE_KEY_CASES, JSON.stringify(reg));
+  } catch (e) {
+    console.warn("Speichern fehlgeschlagen:", e);
+  }
+}
+
+function aktuellenFallInRegistry(reg) {
+  let id = reg.currentCaseId;
+  if (!id) {
+    id = neueFallId();
+    reg.currentCaseId = id;
+  }
+  reg.cases[id] = {
+    id,
+    name: fallAnzeigename(state.fall),
+    updatedAt: new Date().toISOString(),
+    fall: state.fall,
+    naechsteId: state.naechsteId,
+  };
+  return reg;
+}
+
+function speichern() {
+  const reg = aktuellenFallInRegistry(ladeRegistry());
+  speichereRegistry(reg);
+}
+
+let _saveIndicatorTimer;
+
+function speichernMitFeedback() {
+  speichern();
+  const ind = document.getElementById("save-indicator");
+  if (!ind) return;
+  ind.classList.add("visible");
+  clearTimeout(_saveIndicatorTimer);
+  _saveIndicatorTimer = setTimeout(() => ind.classList.remove("visible"), 2000);
+}
+
+/** Migriert alte Anwaltsvergütungs-Positionen auf neues Format (betrag = netto, ustSatz). */
+function migratePositionen(positionen) {
+  if (!positionen) return positionen;
+  return positionen.map(pos => {
+    if (pos.typ === "anwaltsverguetung" && pos.ustSatz === undefined) {
+      const ustSatz = pos.ohneUst ? 0 : 19;
+      // Altes betrag war gross (netto + ust); neues betrag = netto
+      const betrag = pos.netto || pos.betrag;
+      return { ...pos, ustSatz, betrag };
+    }
+    return pos;
+  });
+}
+
+function laden() {
+  try {
+    // Migration: alten Key in neue Registry übernehmen
+    const legacy = localStorage.getItem(STORAGE_KEY_LEGACY);
+    const regRaw = localStorage.getItem(STORAGE_KEY_CASES);
+    if (!regRaw && legacy) {
+      const alt = JSON.parse(legacy);
+      const id = neueFallId();
+      const reg = {
+        currentCaseId: id,
+        cases: { [id]: { id, name: fallAnzeigename(alt.fall || {}), updatedAt: new Date().toISOString(),
+                          fall: alt.fall || leerFall(), naechsteId: alt.naechsteId || 1 } },
+      };
+      speichereRegistry(reg);
+      state.fall = reg.cases[id].fall;
+      state.naechsteId = reg.cases[id].naechsteId;
+      return;
+    }
+    if (regRaw) {
+      const reg = JSON.parse(regRaw);
+      const id = reg.currentCaseId;
+      const eintrag = id && reg.cases[id];
+      if (eintrag) {
+        state.fall = eintrag.fall || leerFall();
+        state.fall.positionen = migratePositionen(state.fall.positionen);
+        state.naechsteId = eintrag.naechsteId || 1;
+      }
+    }
+  } catch (e) {
+    console.warn("Laden fehlgeschlagen:", e);
+  }
+}
+
+// ---- Fall-Aktionen ----
+
+function fallWechseln(id) {
+  speichern();
+  const reg = ladeRegistry();
+  const eintrag = reg.cases[id];
+  if (!eintrag) return;
+  reg.currentCaseId = id;
+  speichereRegistry(reg);
+  state.fall = eintrag.fall || leerFall();
+  state.fall.positionen = migratePositionen(state.fall.positionen);
+  state.naechsteId = eintrag.naechsteId || 1;
+  state.ansicht = "stammdaten";
+  stammdatenLaden();
+  aktualisiereNavContext();
+  zeigeAnsicht("stammdaten");
+  fallModalSchliessen();
+  aktualisiereNaechsteFallListe();
+}
+
+function neuenFallAnlegen() {
+  speichern();
+  const reg = ladeRegistry();
+  const id = neueFallId();
+  const fall = leerFall();
+  reg.cases[id] = { id, name: "Neuer Fall", updatedAt: new Date().toISOString(), fall, naechsteId: 1 };
+  reg.currentCaseId = id;
+  speichereRegistry(reg);
+  state.fall = fall;
+  state.naechsteId = 1;
+  state.ansicht = "stammdaten";
+  stammdatenLaden();
+  aktualisiereNavContext();
+  zeigeAnsicht("stammdaten");
+  fallModalSchliessen();
+  aktualisiereNaechsteFallListe();
+}
+
+function fallLoeschen(id) {
+  const reg = ladeRegistry();
+  if (!reg.cases[id]) return;
+  delete reg.cases[id];
+  const restIds = Object.keys(reg.cases);
+  if (reg.currentCaseId === id) {
+    reg.currentCaseId = restIds.length ? restIds[restIds.length - 1] : null;
+  }
+  speichereRegistry(reg);
+  if (reg.currentCaseId) {
+    fallWechseln(reg.currentCaseId);
+  } else {
+    neuenFallAnlegen();
+  }
+}
+
+function fallExportieren() {
+  const data = { fall: state.fall, naechsteId: state.naechsteId, exportDatum: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  const name = fallAnzeigename(state.fall).replace(/[/\\:*?"<>|]/g, "_");
+  a.download = (name || "fall") + ".json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function fallImportierenDatei(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.fall) throw new Error("Ungültiges Format");
+      speichern();
+      const reg = ladeRegistry();
+      const id = neueFallId();
+      reg.cases[id] = { id, name: fallAnzeigename(data.fall), updatedAt: new Date().toISOString(),
+                         fall: data.fall, naechsteId: data.naechsteId || 1 };
+      reg.currentCaseId = id;
+      speichereRegistry(reg);
+      state.fall = data.fall;
+      state.fall.positionen = migratePositionen(state.fall.positionen);
+      state.naechsteId = data.naechsteId || 1;
+      stammdatenLaden();
+      aktualisiereNavContext();
+      zeigeAnsicht("stammdaten");
+      fallModalSchliessen();
+      aktualisiereNaechsteFallListe();
+    } catch (err) {
+      alert("Import fehlgeschlagen: " + err.message);
+    }
+  };
+  reader.readAsText(file);
+  input.value = "";
+}
+
+function zeigeFallModal() {
+  const reg = ladeRegistry();
+  const cases = Object.values(reg.cases).sort((a, b) =>
+    (b.updatedAt || "").localeCompare(a.updatedAt || "")
+  );
+  const currentId = reg.currentCaseId;
+  const body = document.getElementById("modal-faelle-body");
+  if (!body) return;
+
+  body.innerHTML = cases.length === 0
+    ? `<p class="text-muted small mb-0">Keine gespeicherten F\u00e4lle.</p>`
+    : cases.map(c => {
+        const aktiv = c.id === currentId;
+        const datum = c.updatedAt ? new Date(c.updatedAt).toLocaleDateString("de-DE") : "";
+        return `<div class="d-flex align-items-center gap-2 py-2 border-bottom">
+          <span class="flex-grow-1" style="font-size:var(--text-sm);font-weight:${aktiv ? "600" : "400"}">${c.name}${aktiv ? ' <span class="badge bg-primary" style="font-size:10px;vertical-align:middle">aktiv</span>' : ""}</span>
+          <small class="text-muted" style="font-size:var(--text-xs);white-space:nowrap">${datum}</small>
+          ${!aktiv ? `<button class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size:var(--text-xs)" onclick="fallWechseln('${c.id}')">Öffnen</button>` : ""}
+          <button class="btn btn-sm btn-outline-danger py-0 px-1" style="font-size:var(--text-xs)" onclick="fallLoeschenBestaetigen('${c.id}')" title="Fall löschen">&times;</button>
+        </div>`;
+      }).join("");
+
+  bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-faelle")).show();
+}
+
+function fallLoeschenBestaetigen(id) {
+  if (confirm("Diesen Fall wirklich löschen?")) fallLoeschen(id);
+}
+
+function fallModalSchliessen() {
+  const el = document.getElementById("modal-faelle");
+  if (el) bootstrap.Modal.getInstance(el)?.hide();
+}
+
+function aktualisiereNaechsteFallListe() {
+  // Aktualisiert die Fall-Liste im Modal, falls offen
+  const modal = document.getElementById("modal-faelle");
+  if (modal && modal.classList.contains("show")) zeigeFallModal();
+}
+
+// ---- Navigation ----
+
+function zeigeAnsicht(name) {
+  state.ansicht = name;
+  document.querySelectorAll(".ansicht").forEach(el => el.classList.add("d-none"));
+  const el = document.getElementById("ansicht-" + name);
+  if (el) el.classList.remove("d-none");
+
+  // Stepper aktualisieren
+  document.querySelectorAll(".stepper-step[data-ansicht]").forEach(link => {
+    link.classList.toggle("active", link.dataset.ansicht === name);
+  });
+
+  if (name === "eingabe") renderePositionsliste();
+  if (name === "vorschau") rendereVorschau();
+}
+
+// ---- Nav-Kontext ----
+
+function aktualisiereNavContext() {
+  const ctx = document.getElementById("nav-context");
+  if (!ctx) return;
+  const az = state.fall.aktenzeichen;
+  const mandant = state.fall.mandant;
+  ctx.textContent = [az, mandant].filter(Boolean).join(" – ");
+}
+
+// ---- Stammdaten ----
+
+function stammdatenSpeichern(e) {
+  e.preventDefault();
+  state.fall.mandant      = document.getElementById("inp-mandant").value.trim();
+  state.fall.gegner       = document.getElementById("inp-gegner").value.trim();
+  state.fall.aktenzeichen = document.getElementById("inp-aktenzeichen").value.trim();
+  state.fall.aufschlagPP  = parseInt(document.getElementById("inp-aufschlag").value, 10) || 9;
+  state.fall.insoDatum    = document.getElementById("inp-inso-datum").value || null;
+
+  // Forderungsgrund
+  const kat = document.getElementById("inp-fg-kat").value;
+  state.fall.forderungsgrundKat = kat;
+  if (kat === "Vertrag") {
+    state.fall.titelArt = document.getElementById("inp-fg-art-vertrag").value;
+  } else if (kat === "gesetzlich") {
+    state.fall.titelArt = document.getElementById("inp-fg-art-gesetzlich").value;
+  } else if (kat === "Titel") {
+    state.fall.titelArt         = document.getElementById("inp-titel-art").value;
+    state.fall.titelDatum       = document.getElementById("inp-titel-datum").value || "";
+    state.fall.titelRechtskraft = document.getElementById("inp-titel-rechtskraft").value || "";
+    state.fall.titelGericht     = document.getElementById("inp-titel-gericht").value.trim();
+    state.fall.titelAz          = document.getElementById("inp-titel-az").value.trim();
+  } else {
+    state.fall.titelArt = "";
+  }
+  if (kat !== "Titel") {
+    state.fall.titelDatum = "";
+    state.fall.titelRechtskraft = "";
+    state.fall.titelGericht = "";
+    state.fall.titelAz = "";
+  }
+
+  speichernMitFeedback();
+  aktualisiereNavContext();
+  zeigeAnsicht("eingabe");
+}
+
+function stammdatenLaden() {
+  document.getElementById("inp-mandant").value      = state.fall.mandant || "";
+  document.getElementById("inp-gegner").value       = state.fall.gegner || "";
+  document.getElementById("inp-aktenzeichen").value = state.fall.aktenzeichen || "";
+  document.getElementById("inp-aufschlag").value    = state.fall.aufschlagPP || 9;
+  document.getElementById("inp-inso-datum").value   = state.fall.insoDatum || "";
+
+  // Forderungsgrund – Backward-Compat: altes titelArt ohne forderungsgrundKat → "Titel"
+  const kat = state.fall.forderungsgrundKat || (state.fall.titelArt ? "Titel" : "");
+  document.getElementById("inp-fg-kat").value = kat;
+  fgKatWechseln(kat);
+
+  if (kat === "Vertrag") {
+    document.getElementById("inp-fg-art-vertrag").value = state.fall.titelArt || "";
+  } else if (kat === "gesetzlich") {
+    document.getElementById("inp-fg-art-gesetzlich").value = state.fall.titelArt || "";
+  } else if (kat === "Titel") {
+    document.getElementById("inp-titel-art").value          = state.fall.titelArt || "";
+    document.getElementById("inp-titel-datum").value        = state.fall.titelDatum || "";
+    document.getElementById("inp-titel-rechtskraft").value  = state.fall.titelRechtskraft || "";
+    document.getElementById("inp-titel-gericht").value      = state.fall.titelGericht || "";
+    document.getElementById("inp-titel-az").value           = state.fall.titelAz || "";
+  }
+}
+
+function fgKatWechseln(kat) {
+  document.getElementById("fg-art-vertrag-wrap").classList.toggle("d-none", kat !== "Vertrag");
+  document.getElementById("fg-art-gesetzlich-wrap").classList.toggle("d-none", kat !== "gesetzlich");
+  document.getElementById("fg-titel-wrap").classList.toggle("d-none", kat !== "Titel");
+}
+
+// ---- Positionen ----
+
+function positionHinzufuegen(typ) {
+  modalOeffnen(typ, null);
+}
+
+function positionBearbeiten(id) {
+  const pos = state.fall.positionen.find(p => p.id === id);
+  if (pos) modalOeffnen(pos.typ, pos);
+}
+
+// Inline-Confirm-Logik (ersetzt confirm())
+function positionLoeschenAnfragen(id) {
+  const row = document.querySelector(`tr[data-pos-id="${id}"]`);
+  if (!row) return;
+  const confirmEl = row.querySelector(".inline-confirm");
+  const loeschenBtn = row.querySelector(".icon-btn--loeschen");
+  if (confirmEl) confirmEl.classList.add("visible");
+  if (loeschenBtn) loeschenBtn.style.display = "none";
+  // Auto-Abbruch nach 4 Sekunden
+  setTimeout(() => positionLoeschenAbbrechen(id), 4000);
+}
+
+function positionLoeschenAbbrechen(id) {
+  const row = document.querySelector(`tr[data-pos-id="${id}"]`);
+  if (!row) return;
+  const confirmEl = row.querySelector(".inline-confirm");
+  const loeschenBtn = row.querySelector(".icon-btn--loeschen");
+  if (confirmEl) confirmEl.classList.remove("visible");
+  if (loeschenBtn) loeschenBtn.style.display = "";
+}
+
+function positionLoeschenBestaetigen(id) {
+  state.fall.positionen = state.fall.positionen.filter(p => p.id !== id);
+  speichernMitFeedback();
+  renderePositionsliste();
+}
+
+function positionNachOben(id) {
+  const idx = state.fall.positionen.findIndex(p => p.id === id);
+  if (idx > 0) {
+    [state.fall.positionen[idx - 1], state.fall.positionen[idx]] =
+      [state.fall.positionen[idx], state.fall.positionen[idx - 1]];
+    speichernMitFeedback();
+    renderePositionsliste();
+  }
+}
+
+function positionNachUnten(id) {
+  const idx = state.fall.positionen.findIndex(p => p.id === id);
+  if (idx < state.fall.positionen.length - 1) {
+    [state.fall.positionen[idx], state.fall.positionen[idx + 1]] =
+      [state.fall.positionen[idx + 1], state.fall.positionen[idx]];
+    speichernMitFeedback();
+    renderePositionsliste();
+  }
+}
+
+// ---- Positionen Rendering ----
+
+// SVG-Icons (inline)
+const ICON = {
+  up:     `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>`,
+  down:   `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`,
+  edit:   `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+  trash:  `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`,
+};
+
+function badgeKlasse(typ) {
+  return `pos-badge pos-badge--${typ}`;
+}
+
+function renderePositionsliste() {
+  const tbody = document.getElementById("positionen-tbody");
+  if (!tbody) return;
+
+  // pos-count im Stepper aktualisieren
+  const posCount = document.getElementById("pos-count");
+  if (posCount) {
+    const n = state.fall.positionen.length;
+    posCount.textContent = n > 0 ? String(n) : "";
+  }
+
+  if (state.fall.positionen.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5">
+      <div class="empty-state">
+        <div class="empty-state__icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <line x1="10" y1="9" x2="8" y2="9"/>
+          </svg>
+        </div>
+        <p class="empty-state__title">Noch keine Positionen</p>
+        <p class="empty-state__subtitle">Fügen Sie über das Dropdown eine Hauptforderung, Kosten oder Zahlung hinzu.</p>
+      </div>
+    </td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = state.fall.positionen.map((pos, idx) => {
+    const typLabel = AKTIONSTYPEN[pos.typ] || pos.typ;
+    const istZahlung = pos.typ === "zahlung";
+    const betragStr = pos.typ === "zinsperiode"
+      ? '<span style="font-style:italic;color:var(--color-text-muted);font-size:var(--text-sm)">lfd.</span>'
+      : pos.betrag ? formatEUR(pos.betrag) : "—";
+    const datumStr = pos.datum ? formatDate(parseDate(pos.datum)) : "—";
+    const beschrStr = positionKurzbeschreibung(pos);
+    const last = idx === state.fall.positionen.length - 1;
+
+    return `<tr data-pos-id="${pos.id}" class="${istZahlung ? "position-row--zahlung" : ""}">
+      <td><span class="${badgeKlasse(pos.typ)}">${typLabel}</span></td>
+      <td style="color:var(--color-text-muted);font-size:var(--text-sm)">${datumStr}</td>
+      <td style="font-size:var(--text-sm)">${beschrStr}</td>
+      <td class="text-end">
+        <span class="amount${istZahlung ? " amount--negative" : ""}">${istZahlung ? "− " : ""}${betragStr}</span>
+      </td>
+      <td class="text-end" style="white-space:nowrap">
+        <button class="icon-btn" onclick="positionNachOben(${pos.id})" ${idx === 0 ? "disabled" : ""} title="Nach oben">${ICON.up}</button>
+        <button class="icon-btn" onclick="positionNachUnten(${pos.id})" ${last ? "disabled" : ""} title="Nach unten">${ICON.down}</button>
+        <button class="icon-btn icon-btn--edit" onclick="positionBearbeiten(${pos.id})" title="Bearbeiten">${ICON.edit}</button>
+        <button class="icon-btn icon-btn--loeschen icon-btn--danger" onclick="positionLoeschenAnfragen(${pos.id})" title="Löschen">${ICON.trash}</button>
+        <span class="inline-confirm">
+          <span class="inline-confirm__text">Löschen?</span>
+          <button class="icon-btn icon-btn--danger" onclick="positionLoeschenBestaetigen(${pos.id})">Ja</button>
+          <button class="icon-btn" onclick="positionLoeschenAbbrechen(${pos.id})">Nein</button>
+        </span>
+      </td>
+    </tr>`;
+  }).join("");
+}
+
+function positionKurzbeschreibung(pos) {
+  switch (pos.typ) {
+    case "hauptforderung": return pos.beschreibung || "—";
+    case "zinsforderung_titel": return `Laufend ab ${formatDate(parseDate(pos.zinsBis))}`;
+    case "zinsperiode": return `Zinsen ab ${formatDate(parseDate(pos.zinsVon))}`;
+    case "anwaltsverguetung": {
+      const ustSatz = pos.ustSatz ?? (pos.ohneUst ? 0 : 19);
+      const ustHint = ustSatz === 0 ? "· netto" : `· zzgl. ${ustSatz}\u00a0% USt`;
+      return (pos.vvNummern ? pos.vvNummern.join(", ") : "—") + " " + ustHint;
+    }
+    case "zahlung": return pos.beschreibung || "Zahlung";
+    default: return pos.beschreibung || "—";
+  }
+}
+
+// ---- Modal ----
+
+let modalAktuellePos = null;
+let modalTyp = null;
+
+function modalOeffnen(typ, pos) {
+  modalTyp = typ;
+  modalAktuellePos = pos;
+
+  const modalEl = document.getElementById("modal-position");
+  const modalTitle = document.getElementById("modal-titel");
+  const modalBody = document.getElementById("modal-body");
+  const previewContainer = document.getElementById("modal-preview-container");
+
+  // Typ-Badge im Header
+  const badge = document.getElementById("modal-typ-badge");
+  if (badge) {
+    badge.className = badgeKlasse(typ);
+    badge.textContent = AKTIONSTYPEN[typ] || typ;
+  }
+
+  modalTitle.textContent = pos ? "Bearbeiten" : "Neue Position";
+  modalBody.innerHTML = renderModalInhalt(typ, pos);
+  if (previewContainer) previewContainer.innerHTML = "";
+
+  // Events für dynamische Vorschau
+  modalBody.querySelectorAll("[data-onchange]").forEach(el => {
+    el.addEventListener("change", () => modalDynamischAktualisieren(typ));
+    el.addEventListener("input", () => modalDynamischAktualisieren(typ));
+  });
+
+  // Checkbox-Events separat
+  modalBody.querySelectorAll(".mf-vv-check").forEach(cb => {
+    cb.addEventListener("change", () => modalDynamischAktualisieren(typ));
+  });
+
+  modalDynamischAktualisieren(typ);
+
+  const modal = new bootstrap.Modal(modalEl);
+  modal.show();
+}
+
+function renderModalInhalt(typ, pos) {
+  switch (typ) {
+    case "hauptforderung":       return tplHauptforderung(pos);
+    case "anwaltsverguetung":    return tplAnwalt(pos);
+    case "zinsforderung_titel":  return tplZinsforderungTitel(pos);
+    case "zinsperiode":          return tplZinsperiode(pos);
+    case "zahlung":              return tplZahlung(pos);
+    case "gv_kosten":            return tplEinfacheKosten(pos, "ZV-Kosten (Gerichtsvollzieher)", "");
+    case "gerichtskosten":       return tplEinfacheKosten(pos, "Gerichtskosten", "");
+    case "zahlungsverbot":       return tplEinfacheKosten(pos, "Vorläufiges Zahlungsverbot", "");
+    case "auskunftskosten":      return tplEinfacheKosten(pos, "Auskunftskosten", STANDARDKOSTEN.auskunftskosten);
+    case "mahnkosten":           return tplEinfacheKosten(pos, "Mahnkosten", STANDARDKOSTEN.mahnkosten);
+    case "sonstige_kosten":      return tplEinfacheKosten(pos, "Sonstige Kosten", "");
+    default: return "<p>Unbekannter Typ.</p>";
+  }
+}
+
+function modalSpeichern() {
+  const pos = modalDatenLesen();
+  if (!pos) return;
+
+  if (modalAktuellePos) {
+    const idx = state.fall.positionen.findIndex(p => p.id === modalAktuellePos.id);
+    if (idx !== -1) state.fall.positionen[idx] = { ...pos, id: modalAktuellePos.id };
+  } else {
+    pos.id = neuId();
+    state.fall.positionen.push(pos);
+  }
+
+  speichernMitFeedback();
+  renderePositionsliste();
+
+  const modalEl = document.getElementById("modal-position");
+  bootstrap.Modal.getInstance(modalEl)?.hide();
+}
+
+function modalDatenLesen() {
+  const v = id => document.getElementById(id)?.value?.trim() || "";
+  const f = id => document.getElementById(id);
+
+  const basis = {
+    typ: modalTyp,
+    datum: v("mf-datum"),
+    beschreibung: v("mf-beschreibung"),
+    tituliert: f("mf-tituliert")?.checked || false,
+  };
+
+  switch (modalTyp) {
+    case "hauptforderung":
+      return { ...basis, betrag: v("mf-betrag") };
+
+    case "anwaltsverguetung": {
+      const streitwert = v("mf-streitwert");
+      const vvNummern = [...document.querySelectorAll(".mf-vv-check:checked")].map(cb => cb.value);
+      if (!streitwert || !vvNummern.length) {
+        zeigeModalFehler("mf-streitwert", "Bitte Streitwert und mindestens eine VV-Nummer angeben.");
+        return null;
+      }
+      const faktoren = {};
+      document.querySelectorAll(".mf-vv-faktor").forEach(inp => {
+        if (inp.value) faktoren[inp.dataset.vv] = inp.value;
+      });
+      const ustSatz = parseInt(document.getElementById("mf-ust-satz")?.value ?? "19", 10);
+      const { positionen: rvgPos, netto, ust: ust19 } = berechneRVGGesamt(
+        streitwert, vvNummern, RVG_TABELLE, VV_DEFINITIONEN, faktoren
+      );
+      // USt nach gewähltem Satz berechnen (berechneRVGGesamt verwendet intern immer 19 %)
+      const ust = ustSatz === 0 ? new Decimal(0)
+                : ustSatz === 7 ? netto.times("0.07").toDecimalPlaces(2)
+                : ust19;
+      const betrag = netto.toFixed(2);  // Betrag = Netto (USt wird separat ausgewiesen)
+      return { ...basis, streitwert, vvNummern, faktoren, ustSatz, ohneUst: ustSatz === 0, netto: netto.toFixed(2), ust: ust.toFixed(2), betrag };
+    }
+
+    case "zinsforderung_titel":
+      return {
+        ...basis,
+        zinsBis: v("mf-zins-bis"),
+        aufschlag: parseInt(v("mf-aufschlag"), 10) || state.fall.aufschlagPP,
+        betrag: v("mf-betrag"),
+      };
+
+    case "zinsperiode": {
+      const betrag = v("mf-hauptbetrag");
+      const von = v("mf-zins-von");
+      const bis = v("mf-zins-bis") || new Date().toISOString().slice(0, 10);
+      const aufschlag = parseInt(v("mf-aufschlag"), 10) || state.fall.aufschlagPP;
+      if (!betrag || !von) {
+        zeigeModalFehler(!betrag ? "mf-hauptbetrag" : "mf-zins-von",
+          "Bitte Betrag und Startdatum angeben.");
+        return null;
+      }
+      const insoDatum = state.fall.insoDatum ? parseDate(state.fall.insoDatum) : null;
+      const perioden = berechneVerzugszinsen(
+        betrag, parseDate(von), parseDate(bis), aufschlag, BASISZINSSAETZE, insoDatum
+      );
+      const gesamtBetrag = perioden.reduce((s, p) => s.plus(p.zinsbetrag), new Decimal(0));
+      return {
+        ...basis,
+        hauptbetrag: betrag,
+        zinsVon: von,
+        zinsBis: bis,
+        aufschlag,
+        perioden,
+        betrag: gesamtBetrag.toFixed(2),
+        tage: perioden.reduce((s, p) => s + p.tage, 0),
+      };
+    }
+
+    case "zahlung":
+      return { ...basis, betrag: v("mf-betrag") };
+
+    default:
+      return { ...basis, betrag: v("mf-betrag") };
+  }
+}
+
+function zeigeModalFehler(feldId, meldung) {
+  document.querySelectorAll(".modal-fehler").forEach(el => el.remove());
+  document.querySelectorAll(".is-invalid").forEach(el => el.classList.remove("is-invalid"));
+  if (feldId) document.getElementById(feldId)?.classList.add("is-invalid");
+  const ziel = feldId
+    ? document.getElementById(feldId)?.closest(".mb-3")
+    : document.getElementById("modal-body");
+  if (ziel) {
+    const div = document.createElement("div");
+    div.className = "alert alert-danger py-1 px-2 mt-1 small modal-fehler";
+    div.textContent = meldung;
+    ziel.appendChild(div);
+  }
+}
+
+function modalDynamischAktualisieren(typ) {
+  if (typ === "anwaltsverguetung") {
+    const streitwert = document.getElementById("mf-streitwert")?.value?.trim();
+    const vvNummern = [...document.querySelectorAll(".mf-vv-check:checked")].map(cb => cb.value);
+    const container = document.getElementById("modal-preview-container");
+    if (!container) return;
+
+    if (!streitwert || !vvNummern.length) {
+      container.innerHTML = "";
+      return;
+    }
+    try {
+      const faktoren = {};
+      document.querySelectorAll(".mf-vv-faktor").forEach(inp => {
+        if (inp.value) faktoren[inp.dataset.vv] = inp.value;
+      });
+      const ustSatzVorschau = parseInt(document.getElementById("mf-ust-satz")?.value ?? "19", 10);
+      const ohneUst = ustSatzVorschau === 0;
+      const { positionen, netto, ust, gesamt } = berechneRVGGesamt(
+        streitwert, vvNummern, RVG_TABELLE, VV_DEFINITIONEN, faktoren
+      );
+      container.innerHTML = "";  // Berechnungsergebnis wird im Hintergrund berechnet, nicht angezeigt
+    } catch (e) {
+      container.innerHTML = `<div class="modal-preview-area"><p class="text-danger small mb-0">${e.message}</p></div>`;
+    }
+  }
+
+  if (typ === "zinsperiode") {
+    const betrag = document.getElementById("mf-hauptbetrag")?.value?.trim();
+    const von = document.getElementById("mf-zins-von")?.value;
+    const bis = document.getElementById("mf-zins-bis")?.value;
+    const aufschlag = parseInt(document.getElementById("mf-aufschlag")?.value, 10) || state.fall.aufschlagPP;
+    const container = document.getElementById("modal-preview-container");
+    if (!container) return;
+
+    if (!betrag || !von || !bis) {
+      container.innerHTML = "";
+      return;
+    }
+    try {
+      const insoDatum = state.fall.insoDatum ? parseDate(state.fall.insoDatum) : null;
+      const perioden = berechneVerzugszinsen(
+        betrag, parseDate(von), parseDate(bis), aufschlag, BASISZINSSAETZE, insoDatum
+      );
+      container.innerHTML = "";  // Berechnungsergebnis wird im Hintergrund berechnet, nicht angezeigt
+    } catch (e) {
+      container.innerHTML = `<div class="modal-preview-area"><p class="text-danger small mb-0">${e.message}</p></div>`;
+    }
+  }
+}
+
+// ---- Modal-Templates ----
+
+function datumFeld(id, wert, label = "Datum") {
+  return `<div class="mb-3">
+    <label class="form-label">${label}</label>
+    <input type="date" class="form-control" id="${id}" value="${wert || ""}">
+  </div>`;
+}
+
+function betragFeld(id, wert, label = "Betrag (€)") {
+  const val = wert ? new Decimal(wert).toFixed(2) : "";
+  return `<div class="mb-3">
+    <label class="form-label">${label}</label>
+    <input type="number" step="0.01" min="0" class="form-control" id="${id}" value="${val}" placeholder="0,00">
+  </div>`;
+}
+
+function tituliertFeld(wert) {
+  return `<div class="mb-3 form-check">
+    <input type="checkbox" class="form-check-input" id="mf-tituliert" ${wert ? "checked" : ""}>
+    <label class="form-check-label" for="mf-tituliert">Tituliert (im Vollstreckungstitel enthalten)</label>
+  </div>`;
+}
+
+function tplHauptforderung(pos) {
+  return `
+    ${datumFeld("mf-datum", pos?.datum, "Fälligkeitsdatum")}
+    <div class="mb-3">
+      <label class="form-label">Beschreibung</label>
+      <input type="text" class="form-control" id="mf-beschreibung" value="${pos?.beschreibung || ""}" placeholder="z.B. Rechnung Nr. 1234 vom …">
+    </div>
+    ${betragFeld("mf-betrag", pos?.betrag)}
+    ${tituliertFeld(pos?.tituliert)}
+  `;
+}
+
+function tplAnwalt(pos) {
+  const streitwert = pos?.streitwert || "";
+  const checked = vv => pos?.vvNummern?.includes(vv) ? "checked" : "";
+  const gespeicherterFaktor = vv => pos?.faktoren?.[vv] || VV_DEFINITIONEN[vv]?.faktor || "";
+  const ustSatz = pos?.ustSatz ?? (pos?.ohneUst ? 0 : 19);
+  return `
+    ${datumFeld("mf-datum", pos?.datum, "Datum der Beauftragung")}
+    <div class="mb-3">
+      <label class="form-label">Streitwert (€)</label>
+      <input type="number" step="0.01" min="0" class="form-control" id="mf-streitwert" value="${streitwert}" placeholder="0,00" data-onchange="1">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">VV-Nummern</label>
+      ${Object.entries(VV_DEFINITIONEN).map(([vv, def]) => `
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <div class="form-check mb-0 flex-grow-1">
+            <input class="form-check-input mf-vv-check" type="checkbox" value="${vv}" id="vv-${vv}" ${checked(vv)}>
+            <label class="form-check-label" for="vv-${vv}">${def.beschreibung}</label>
+          </div>
+          ${def.faktorMin != null ? `
+          <div class="input-group input-group-sm" style="width:7.5rem;flex-shrink:0">
+            <input type="number" class="form-control mf-vv-faktor" data-vv="${vv}"
+                   id="faktor-${vv}" value="${gespeicherterFaktor(vv)}"
+                   min="${def.faktorMin}" max="${def.faktorMax}" step="0.1"
+                   style="text-align:right" data-onchange="1">
+            <span class="input-group-text">-fach</span>
+          </div>` : `<span class="text-muted" style="font-size:var(--text-xs);width:7.5rem;flex-shrink:0;text-align:right;padding-right:0.5rem">${def.faktor ? def.faktor + "-fach" : "pauschal"}</span>`}
+        </div>`).join("")}
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="mf-ust-satz">Umsatzsteuer</label>
+      <select class="form-select form-select-sm" id="mf-ust-satz" style="max-width:260px" data-onchange="1">
+        <option value="19" ${ustSatz === 19 ? "selected" : ""}>19&nbsp;% USt</option>
+        <option value="7"  ${ustSatz === 7  ? "selected" : ""}>7&nbsp;% USt</option>
+        <option value="0"  ${ustSatz === 0  ? "selected" : ""}>Ohne USt (Vorsteuerabzugsberechtigt)</option>
+      </select>
+    </div>
+    ${tituliertFeld(pos?.tituliert)}
+  `;
+}
+
+function tplZinsforderungTitel(pos) {
+  return `
+    ${datumFeld("mf-datum", pos?.datum, "Datum letzter Zinsabschluss / Titel")}
+    <div class="mb-3">
+      <label class="form-label">Zinsen laufend ab</label>
+      <input type="date" class="form-control" id="mf-zins-bis" value="${pos?.zinsBis || ""}">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Zinsaufschlag (Prozentpunkte über jeweiligem Basiszinssatz p.\u00a0a.)</label>
+      <input type="number" step="1" min="1" max="20" class="form-control" id="mf-aufschlag" value="${pos?.aufschlag || state.fall.aufschlagPP}">
+    </div>
+    ${betragFeld("mf-betrag", pos?.betrag, "Zinsbetrag (bis Datum oben)")}
+    ${tituliertFeld(pos?.tituliert)}
+  `;
+}
+
+function tplZinsperiode(pos) {
+  const heuteBis = new Date().toISOString().slice(0, 10);
+  return `
+    ${datumFeld("mf-datum", pos?.datum, "Buchungsdatum")}
+    ${betragFeld("mf-hauptbetrag", pos?.hauptbetrag, "Hauptbetrag (€)")}
+    <div class="mb-3">
+      <label class="form-label">Zinsen ab (Datum)</label>
+      <input type="date" class="form-control" id="mf-zins-von" value="${pos?.zinsVon || ""}" data-onchange="1">
+    </div>
+    <input type="hidden" id="mf-zins-bis" value="${pos?.zinsBis || heuteBis}">
+    <div class="mb-3">
+      <label class="form-label">Zinsaufschlag (Prozentpunkte über jeweiligem Basiszinssatz p.\u00a0a.)</label>
+      <input type="number" step="1" min="1" max="20" class="form-control" id="mf-aufschlag" value="${pos?.aufschlag || state.fall.aufschlagPP}" data-onchange="1">
+    </div>
+    ${tituliertFeld(pos?.tituliert)}
+  `;
+}
+
+function tplZahlung(pos) {
+  return `
+    ${datumFeld("mf-datum", pos?.datum, "Zahlungsdatum")}
+    <div class="mb-3">
+      <label class="form-label">Beschreibung</label>
+      <input type="text" class="form-control" id="mf-beschreibung" value="${pos?.beschreibung || ""}" placeholder="z.B. Überweisung vom …">
+    </div>
+    ${betragFeld("mf-betrag", pos?.betrag, "Zahlbetrag (€)")}
+  `;
+}
+
+function tplEinfacheKosten(pos, label, standard) {
+  return `
+    ${datumFeld("mf-datum", pos?.datum)}
+    <div class="mb-3">
+      <label class="form-label">Beschreibung</label>
+      <input type="text" class="form-control" id="mf-beschreibung" value="${pos?.beschreibung || label}" placeholder="${label}">
+    </div>
+    ${betragFeld("mf-betrag", pos?.betrag || standard)}
+    ${tituliertFeld(pos?.tituliert)}
+  `;
+}
+
+// ---- Vorschau ----
+
+function rendereVorschau() {
+  const el = document.getElementById("vorschau-inhalt");
+  if (!el) return;
+
+  const fall = state.fall;
+  const aufschlagPP = fall.aufschlagPP || 9;
+  const insoDatum = fall.insoDatum ? parseDate(fall.insoDatum) : null;
+
+  let aktBasisSatz = null;
+  let aktZinssatzStr = "";
+  try {
+    aktBasisSatz = aktuellerBasiszinssatz(new Date(), BASISZINSSAETZE);
+    const gesamt = aktBasisSatz.plus(new Decimal(aufschlagPP));
+    aktZinssatzStr = gesamt.toFixed(2).replace(".", ",") + "\u00a0% p.a.";
+  } catch (e) {}
+
+  // Einstellungen: Logo + Impressum
+  const einst = ladeEinstellungen();
+  const logoPos = einst.logoPosition || "links";
+  const logoHtml = einst.logo
+    ? `<div class="pdf-logo-wrap pdf-logo-wrap--${logoPos}"><img class="pdf-logo" src="${einst.logo}" alt="Kanzlei-Logo"></div>`
+    : "";
+
+  const imp = einst.imp || {};
+  const impressumHtml = imp.freitext
+    ? `<div class="pdf-impressum-footer">${imp.freitext.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g," &nbsp;·&nbsp; ")}</div>`
+    : "";
+
+  // Forderungsgrund-Block (Backward-Compat: altes titelArt ohne forderungsgrundKat → "Titel")
+  const fgKat = fall.forderungsgrundKat || (fall.titelArt ? "Titel" : "");
+  const hatForderungsgrund = !!fgKat;
+  const hatTitel = fgKat === "Titel";
+  const fgBlock = hatForderungsgrund ? `
+    <div class="pdf-section">
+      <div class="pdf-section__label">Forderungsgrund</div>
+      <table class="pdf-meta-table">
+        <tr><th>Grundlage:</th><td>${fgKat}</td></tr>
+        ${fall.titelArt ? `<tr><th>Art:</th><td>${fall.titelArt}</td></tr>` : ""}
+        ${hatTitel && fall.titelGericht ? `<tr><th>Gericht / Beh\u00f6rde:</th><td>${fall.titelGericht}</td></tr>` : ""}
+        ${hatTitel && fall.titelAz ? `<tr><th>Aktenzeichen:</th><td>${fall.titelAz}</td></tr>` : ""}
+        ${hatTitel && fall.titelDatum ? `<tr><th>Datum:</th><td>${formatDate(parseDate(fall.titelDatum))}</td></tr>` : ""}
+        ${hatTitel && fall.titelRechtskraft ? `<tr><th>Zustellungsdatum:</th><td>${formatDate(parseDate(fall.titelRechtskraft))}</td></tr>` : ""}
+      </table>
+    </div>` : "";
+
+  try { el.innerHTML = `
+    ${logoHtml}
+    <!-- PDF-Kopf (nur Print) -->
+    <div class="pdf-header">
+      <div>
+        <div class="pdf-header__title">Forderungsaufstellung</div>
+        <div class="pdf-header__subtitle">gem\u00e4\u00df \u00a7\u00a0367\u00a0BGB</div>
+      </div>
+      <div class="pdf-header__meta">
+        Aufgestellt am: ${formatDate(new Date())}<br>
+        Basiszinssatz: ${aktBasisSatz ? aktBasisSatz.toFixed(2).replace(".", ",") + "\u00a0%" : "\u2014"} (\u00a7\u00a0247\u00a0BGB)<br>
+        Verzugszinsaufschlag: ${aufschlagPP}\u00a0Prozentpunkte (\u00a7\u00a0288\u00a0BGB)
+        ${insoDatum ? `<br>InsO-Er\u00f6ffnung: ${formatDate(insoDatum)}` : ""}
+      </div>
+    </div>
+
+    <!-- Screen-Kopf (kein Print) -->
+    <div class="no-print mb-4">
+      <h2 style="font-size:var(--text-xl);font-weight:700;margin:0 0 0.25rem">Forderungsaufstellung</h2>
+      <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin:0">
+        Basiszinssatz ${aktBasisSatz ? aktBasisSatz.toFixed(2).replace(".", ",") + "\u00a0%" : "\u2014"} +
+        ${aufschlagPP}\u00a0PP = <strong>${aktZinssatzStr}</strong>
+        ${insoDatum ? " \u00b7 InsO: " + formatDate(insoDatum) : ""}
+      </p>
+    </div>
+
+    <!-- Parteien -->
+    <div class="pdf-section">
+      <div class="pdf-section__label">Parteien</div>
+      <div class="pdf-parties">
+        <div class="pdf-party">
+          <span class="pdf-party__role">Gl\u00e4ubiger</span>
+          <span class="pdf-party__name">${fall.mandant || "\u2014"}</span>
+        </div>
+        <div class="pdf-party__sep">./.</div>
+        <div class="pdf-party">
+          <span class="pdf-party__role">Schuldner</span>
+          <span class="pdf-party__name">${fall.gegner || "\u2014"}</span>
+        </div>
+        ${fall.aktenzeichen ? `<div class="pdf-party__az">GZ.: ${fall.aktenzeichen}</div>` : ""}
+      </div>
+    </div>
+
+    ${fgBlock}
+
+    <!-- Zusammenfassung -->
+    <div class="pdf-section">
+      <div class="pdf-section__label">Zusammenfassung</div>
+      ${baueSummaryTabelle(fall, BASISZINSSAETZE, aufschlagPP)}
+    </div>
+
+    <!-- Fu\u00dfnote -->
+    <div class="vorschau-footer">
+      (*)\u00a0${aufschlagPP}\u00a0Prozentpunkte\u00a0p.\u00a0a. \u00fcber dem Basiszinssatz gem\u00e4\u00df \u00a7\u00a0247\u00a0BGB.<br>
+      Verrechnung gem.\u00a0\u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB.
+      ${insoDatum ? " Zinslauf endet gem.\u00a0\u00a7\u00a041\u00a0InsO am " + formatDate(insoDatum) + "." : ""}
+    </div>
+
+    ${impressumHtml}
+  `;
+  } catch (err) {
+    el.innerHTML = `<div class="alert alert-danger m-3"><strong>Fehler beim Rendern der Vorschau:</strong><br><code>${err.message}</code></div>`;
+    console.error("rendereVorschau el.innerHTML:", err);
+  }
+}
+
+/**
+ * Baut die neue 4-spaltige Zusammenfassungstabelle:
+ * Bezeichnung | Forderung | Verrechnung | Restforderung
+ * – Jede HF einzeln mit zugehörigen Zinsen
+ * – Zinsen jeweils bis zum Zahlungsdatum (oder heute)
+ * – Nach Zahlung: Neuberechnung auf verbleibende HF-Beträge
+ */
+function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
+  const insoDatum = fall.insoDatum ? parseDate(fall.insoDatum) : null;
+  const heute = new Date();
+  const ZERO = new Decimal(0);
+
+  const pos = fall.positionen || [];
+
+  const hfs = pos.filter(p => p.typ === "hauptforderung")
+    .sort((a, b) => (a.id || 0) - (b.id || 0));
+
+  const zpAll = pos.filter(p => p.typ === "zinsperiode");
+
+  const kostenTypen = ["anwaltsverguetung","gv_kosten","gerichtskosten","zahlungsverbot",
+    "auskunftskosten","mahnkosten","sonstige_kosten"];
+  const kostenPos = pos.filter(p => kostenTypen.includes(p.typ));
+
+  const zahlungen = pos.filter(p => p.typ === "zahlung")
+    .sort((a, b) => parseDate(a.datum) - parseDate(b.datum));
+
+  // Jede HF ihrer Zinsperiode zuordnen (nach hauptbetrag)
+  const usedZpIds = new Set();
+  const hfZpMap = {};
+  for (const hf of hfs) {
+    const zp = zpAll.find(z =>
+      !usedZpIds.has(z.id) &&
+      Math.abs(parseFloat(z.hauptbetrag || 0) - parseFloat(hf.betrag || 0)) < 0.01
+    );
+    if (zp) { hfZpMap[hf.id] = zp; usedZpIds.add(zp.id); }
+  }
+
+  function calcZinsen(betrag, vonStr, bisDate) {
+    if (!vonStr || !betrag || new Decimal(betrag).lte(0)) return ZERO;
+    const vonDate = parseDate(vonStr);
+    if (vonDate >= bisDate) return ZERO;
+    try {
+      const per = berechneVerzugszinsen(
+        new Decimal(betrag).toFixed(2), vonDate, bisDate,
+        aufschlagPP, basiszinssaetze, insoDatum
+      );
+      return per.reduce((s, p) => s.plus(new Decimal(p.zinsbetrag)), ZERO);
+    } catch(e) { return ZERO; }
+  }
+
+  function kostenBrutto(k) {
+    if (k.typ === "anwaltsverguetung") {
+      const ustSatz = k.ustSatz ?? (k.ohneUst ? 0 : 19);
+      return new Decimal(parseFloat(k.netto || k.betrag || 0) + (ustSatz > 0 ? parseFloat(k.ust || 0) : 0));
+    }
+    return new Decimal(k.betrag || 0);
+  }
+
+  // Laufende Restbeträge
+  const hfRestMap = {};
+  for (const hf of hfs) hfRestMap[hf.id] = new Decimal(hf.betrag || 0);
+  const kostenRestMap = {};
+  for (const k of kostenPos) kostenRestMap[k.id] = kostenBrutto(k);
+
+  // Zeilen-Array: { typ, bezeichnung, forderung, verrechnung, restforderung }
+  const zeilen = [];
+
+  const phaseEnd = i => i < zahlungen.length ? parseDate(zahlungen[i].datum) : heute;
+  const phaseCount = zahlungen.length + 1;
+
+  for (let phase = 0; phase < phaseCount; phase++) {
+    const endDate = phaseEnd(phase);
+    const isFirst = phase === 0;
+    const isLast  = phase === phaseCount - 1;
+
+    if (isFirst) {
+      // HF + Zinsen bis erste Zahlung (oder heute)
+      for (const hf of hfs) {
+        const b = new Decimal(hf.betrag || 0);
+        const label = hf.beschreibung ? `Hauptforderung: ${hf.beschreibung}` : "Hauptforderung";
+        zeilen.push({ typ: "hf", hfId: hf.id, bezeichnung: label,
+          forderung: b, restforderung: b });
+
+        const zp = hfZpMap[hf.id];
+        if (zp && zp.zinsVon) {
+          const z = calcZinsen(b, zp.zinsVon, endDate);
+          if (z.gt(0)) {
+            const bisLabel = zahlungen.length > 0 ? ` bis ${formatDate(endDate)}` : " bis heute";
+            zeilen.push({ typ: "zinsen", hfId: hf.id,
+              bezeichnung: `Zinsen ab ${formatDate(parseDate(zp.zinsVon))}${bisLabel}`,
+              forderung: z, restforderung: z });
+          }
+        }
+      }
+      // Kosten
+      for (const k of kostenPos) {
+        const b = kostenBrutto(k);
+        const label = k.beschreibung || AKTIONSTYPEN[k.typ] || k.typ;
+        zeilen.push({ typ: "kosten", kostenId: k.id, bezeichnung: label,
+          forderung: b, restforderung: b });
+      }
+    } else {
+      // Zinsen auf verbleibende HF ab letzter Zahlung
+      const prevPayDatum = zahlungen[phase - 1].datum;
+      for (const hf of hfs) {
+        const rest = hfRestMap[hf.id];
+        if (rest.lte(0)) continue;
+        const zp = hfZpMap[hf.id];
+        if (!zp) continue;
+        const z = calcZinsen(rest, prevPayDatum, endDate);
+        if (z.lte(0)) continue;
+        const bisLabel = isLast ? " bis heute" : ` bis ${formatDate(endDate)}`;
+        zeilen.push({ typ: "zinsen_neu", hfId: hf.id,
+          bezeichnung: `Zinsen auf ${formatEUR(rest)} ab ${formatDate(parseDate(prevPayDatum))}${bisLabel}`,
+          forderung: ZERO, restforderung: z });
+      }
+    }
+
+    // Zahlung verarbeiten
+    if (phase < zahlungen.length) {
+      const zahlung = zahlungen[phase];
+      let restZahlung = new Decimal(zahlung.betrag || 0);
+
+      const zinsenGes = zeilen
+        .filter(z => (z.typ === "zinsen" || z.typ === "zinsen_neu") && z.restforderung.gt(0))
+        .reduce((s, z) => s.plus(z.restforderung), ZERO);
+      const kostenGes = Object.values(kostenRestMap).reduce((s, v) => s.plus(v), ZERO);
+      const hfGes    = Object.values(hfRestMap).reduce((s, v) => s.plus(v), ZERO);
+
+      const verrZinsen = Decimal.min(restZahlung, zinsenGes);
+      restZahlung = restZahlung.minus(verrZinsen);
+      const verrKosten = Decimal.min(restZahlung, kostenGes);
+      restZahlung = restZahlung.minus(verrKosten);
+      const verrHF = Decimal.min(restZahlung, hfGes);
+
+      // Zinsen-Zeilen reduzieren
+      let rem = verrZinsen;
+      for (const z of zeilen) {
+        if (z.typ !== "zinsen" && z.typ !== "zinsen_neu") continue;
+        if (rem.lte(0)) break;
+        const used = Decimal.min(rem, z.restforderung);
+        z.restforderung = z.restforderung.minus(used);
+        rem = rem.minus(used);
+      }
+      // Kosten-Zeilen reduzieren
+      rem = verrKosten;
+      for (const z of zeilen) {
+        if (z.typ !== "kosten") continue;
+        if (rem.lte(0)) break;
+        const used = Decimal.min(rem, z.restforderung);
+        z.restforderung = z.restforderung.minus(used);
+        if (z.kostenId !== undefined) kostenRestMap[z.kostenId] = z.restforderung;
+        rem = rem.minus(used);
+      }
+      // HF-Zeilen reduzieren (FIFO)
+      rem = verrHF;
+      for (const hf of hfs) {
+        if (rem.lte(0)) break;
+        const rest = hfRestMap[hf.id];
+        const used = Decimal.min(rem, rest);
+        hfRestMap[hf.id] = rest.minus(used);
+        rem = rem.minus(used);
+        for (const z of zeilen) {
+          if (z.typ === "hf" && z.hfId === hf.id) {
+            z.restforderung = z.restforderung.minus(used);
+          }
+        }
+      }
+
+      const zahlBetrag = new Decimal(zahlung.betrag || 0);
+      const zahlLabel = `Zahlung ${formatDate(parseDate(zahlung.datum))}${zahlung.beschreibung ? " – " + zahlung.beschreibung : ""}`;
+      zeilen.push({ typ: "zahlung", bezeichnung: zahlLabel,
+        forderung: ZERO, verrechnung: zahlBetrag.negated(), restforderung: ZERO });
+    }
+  }
+
+  // Tageszins auf verbleibende HF
+  const hfRestFinal = hfs.reduce((s, hf) => s.plus(hfRestMap[hf.id]), ZERO);
+  let tageszinsZeile = null;
+  if (hfRestFinal.gt(0)) {
+    try {
+      const tz = tageszins(hfRestFinal, aufschlagPP, heute, basiszinssaetze);
+      if (tz.gt(0)) {
+        tageszinsZeile = {
+          typ: "tageszins",
+          bezeichnung: "Tageszins ab heute (*)",
+          forderung: ZERO, verrechnung: ZERO, restforderung: tz,
+        };
+      }
+    } catch(e) {}
+  }
+
+  // Gesamtzeile
+  const totForderung = zeilen.reduce((s, z) => s.plus(z.forderung || ZERO), ZERO);
+  const totVerrechnung = zeilen.filter(z => z.typ === "zahlung").reduce((s, z) => s.plus(z.verrechnung || ZERO), ZERO);
+  const totRest = zeilen.filter(z => z.typ !== "zahlung").reduce((s, z) => s.plus(z.restforderung || ZERO), ZERO);
+
+  // HTML-Tabelle rendern
+  const dash = "\u2014";
+  function amtCell(val, cls) {
+    if (val === null || val === undefined) return `<td class="text-end">${dash}</td>`;
+    const d = new Decimal(val);
+    if (d.isZero()) return `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
+    const neg = d.lt(0);
+    return `<td class="text-end"><span class="amount${cls ? " " + cls : ""}${neg ? " amount--negative" : ""}">${formatEUR(d)}</span></td>`;
+  }
+
+  const rows = zeilen.map(z => {
+    let rowCls = "";
+    let fCell, vCell, rCell;
+
+    if (z.typ === "zahlung") {
+      rowCls = "summary-row--zahlung";
+      fCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
+      vCell = amtCell(z.verrechnung);
+      rCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
+    } else if (z.typ === "zinsen_neu") {
+      rowCls = "summary-row--zinsen-neu";
+      fCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
+      vCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
+      rCell = amtCell(z.restforderung);
+    } else {
+      fCell = amtCell(z.forderung);
+      vCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
+      rCell = amtCell(z.restforderung);
+    }
+    return `<tr class="${rowCls}"><td>${z.bezeichnung}</td>${fCell}${vCell}${rCell}</tr>`;
+  }).join("");
+
+  const gesamtRow = `<tr class="summary-row--gesamt">
+    <td>Offene Forderung</td>
+    ${amtCell(totForderung, "amount--gesamt")}
+    ${amtCell(totVerrechnung, "amount--gesamt")}
+    ${amtCell(totRest, "amount--gesamt")}
+  </tr>`;
+
+  const tageszinsRow = tageszinsZeile ? `<tr class="summary-row--tageszins">
+    <td>${tageszinsZeile.bezeichnung}</td>
+    <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+    <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+    ${amtCell(tageszinsZeile.restforderung)}
+  </tr>` : "";
+
+  return `<table class="summary-table">
+    <thead>
+      <tr>
+        <th>Bezeichnung</th>
+        <th class="text-end">Forderung</th>
+        <th class="text-end">Verrechnung</th>
+        <th class="text-end">Restforderung</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${rows}
+      ${gesamtRow}
+      ${tageszinsRow}
+    </tbody>
+  </table>`;
+}
+
+/** Rendert Zins-Detailzeilen für Zinsperioden im PDF */
+function renderZinsdetail(pos) {
+  if (pos.typ !== "zinsperiode" || !pos.perioden || !pos.perioden.length) return "";
+  // Nach JSON-Roundtrip (localStorage / Import) sind von/bis Strings, zinssatz ein String
+  const zuDatum = v => v instanceof Date ? v : new Date(v);
+  const zinssatzStr = v => parseFloat(v).toFixed(2).replace(".", ",");
+  const zeilen = pos.perioden.map(p =>
+    `${formatDate(zuDatum(p.von))}\u00a0\u2013\u00a0${formatDate(zuDatum(p.bis))} ` +
+    `(${p.tage}\u00a0Tage \u00d7 ${zinssatzStr(p.zinssatz)}\u00a0% p.a. = ${formatEUR(p.zinsbetrag)})`
+  ).join("<br>");
+  return `<div class="zins-detail">${zeilen}</div>`;
+}
+
+function positionDetailBeschreibung(pos) {
+  switch (pos.typ) {
+    case "hauptforderung":
+      return pos.beschreibung || "—";
+    case "anwaltsverguetung": {
+      const ustSatz = pos.ustSatz ?? (pos.ohneUst ? 0 : 19);
+      const ustHinweis = ustSatz === 0 ? " · netto (Vorsteuer)" : ustSatz === 7 ? " · zzgl. 7\u00a0% USt" : "";
+      if (pos.streitwert && pos.vvNummern && pos.vvNummern.length) {
+        try {
+          const { positionen: rp } = berechneRVGGesamt(
+            pos.streitwert, pos.vvNummern, RVG_TABELLE, VV_DEFINITIONEN, pos.faktoren || {}
+          );
+          return rp.map(p => {
+            const f = p.faktor != null ? parseFloat(p.faktor) : null;
+            const fStr = f && !isNaN(f) ? f.toFixed(1).replace(/\.0$/, "") + "-fach" : null;
+            return `${p.beschreibung}${fStr ? " (" + fStr + ")" : ""}`;
+          }).join("; ") + ustHinweis;
+        } catch (e) { /* fallback */ }
+      }
+      return (pos.vvNummern ? pos.vvNummern.join(", ") : "—") + ustHinweis;
+    }
+    case "zinsforderung_titel":
+      return `Laufende Zinsen ab ${formatDate(parseDate(pos.zinsBis))}, ${pos.aufschlag || state.fall.aufschlagPP} PP über Basiszins`;
+    case "zinsperiode":
+      return `Zinsen ${formatDate(parseDate(pos.zinsVon))} – ${formatDate(parseDate(pos.zinsBis))} (${pos.tage || "?"} Tage, ${pos.aufschlag || state.fall.aufschlagPP} PP)`;
+    case "zahlung":
+      return pos.beschreibung || "Zahlung";
+    default:
+      return pos.beschreibung || "—";
+  }
+}
+
+// ---- Einstellungen (Logo + Impressum) ----
+
+function ladeEinstellungen() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_SETTINGS);
+    if (!raw) return { logo: null, logoPosition: "links", imp: {} };
+    return JSON.parse(raw);
+  } catch (e) {
+    return { logo: null, logoPosition: "links", imp: {} };
+  }
+}
+
+function speichereEinstellungen(einst) {
+  localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(einst));
+}
+
+function zeigeEinstellungenModal() {
+  const einst = ladeEinstellungen();
+
+  const posEl = document.getElementById("einst-logo-position");
+  if (posEl) posEl.value = einst.logoPosition || "links";
+
+  const imp = einst.imp || {};
+  const freitextEl = document.getElementById("einst-imp-freitext");
+  if (freitextEl) freitextEl.value = imp.freitext || "";
+
+  aktualisiereLogoVorschau(einst.logo || null);
+
+  const m = document.getElementById("modal-einstellungen");
+  if (m) delete m.dataset.pendingLogo;
+
+  new bootstrap.Modal(m).show();
+}
+
+function logoHochladen(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const ERLAUBT = ["image/png", "image/jpeg", "image/svg+xml", "image/webp"];
+  if (!ERLAUBT.includes(file.type)) {
+    alert("Ungültiges Format. Erlaubt: PNG, JPG, SVG, WebP.");
+    input.value = "";
+    return;
+  }
+  if (file.size > 500 * 1024) {
+    alert("Das Logo ist zu groß (max. 500 KB).");
+    input.value = "";
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    const m = document.getElementById("modal-einstellungen");
+    if (m) m.dataset.pendingLogo = e.target.result;
+    aktualisiereLogoVorschau(e.target.result);
+  };
+  reader.readAsDataURL(file);
+}
+
+function aktualisiereLogoVorschau(dataUrl) {
+  const box = document.getElementById("einst-logo-vorschau");
+  const placeholder = document.getElementById("einst-logo-placeholder");
+  const loeschenBtn = document.getElementById("einst-logo-loeschen-btn");
+  if (!box) return;
+
+  const existing = box.querySelector("img.einst-logo-img");
+  if (existing) existing.remove();
+
+  if (dataUrl) {
+    const img = document.createElement("img");
+    img.className = "einst-logo-img";
+    img.src = dataUrl;
+    img.style.cssText = "max-height:60px;max-width:200px;width:auto;height:auto;object-fit:contain;display:block;";
+    box.insertBefore(img, placeholder);
+    if (placeholder) placeholder.style.display = "none";
+    loeschenBtn?.classList.remove("d-none");
+  } else {
+    if (placeholder) placeholder.style.display = "";
+    loeschenBtn?.classList.add("d-none");
+  }
+}
+
+function logoLoeschen() {
+  const m = document.getElementById("modal-einstellungen");
+  if (m) m.dataset.pendingLogo = "";
+  aktualisiereLogoVorschau(null);
+  const input = document.getElementById("einst-logo-input");
+  if (input) input.value = "";
+}
+
+function einstellungenSpeichern() {
+  const einst = ladeEinstellungen();
+
+  const m = document.getElementById("modal-einstellungen");
+  if (m && m.dataset.pendingLogo !== undefined) {
+    einst.logo = m.dataset.pendingLogo || null;
+    delete m.dataset.pendingLogo;
+  }
+
+  einst.logoPosition = document.getElementById("einst-logo-position")?.value || "links";
+
+  einst.imp = {
+    freitext: document.getElementById("einst-imp-freitext")?.value?.trim() || "",
+  };
+
+  speichereEinstellungen(einst);
+  bootstrap.Modal.getInstance(m)?.hide();
+  rendereVorschau();
+}
+
+// ---- Drucken / PDF ----
+
+function drucken() {
+  window.print();
+}
+
+// ---- Zurücksetzen ----
+
+function fallZuruecksetzen() {
+  if (!confirm("Neuen leeren Fall anlegen?")) return;
+  neuenFallAnlegen();
+}
+
+// ---- Init ----
+
+document.addEventListener("DOMContentLoaded", () => {
+  laden();
+  stammdatenLaden();
+  aktualisiereNavContext();
+  zeigeAnsicht(state.ansicht || "stammdaten");
+
+  // Stammdaten-Formular
+  document.getElementById("form-stammdaten")?.addEventListener("submit", stammdatenSpeichern);
+
+  // Stepper-Navigation
+  document.querySelectorAll(".stepper-step[data-ansicht]").forEach(link => {
+    link.addEventListener("click", e => {
+      e.preventDefault();
+      zeigeAnsicht(link.dataset.ansicht);
+    });
+  });
+
+  // Modal-Speichern-Button
+  document.getElementById("btn-modal-speichern")?.addEventListener("click", modalSpeichern);
+
+  // Modal: dynamische Aktualisierung
+  document.getElementById("modal-body")?.addEventListener("input", e => {
+    if (e.target.dataset.onchange) modalDynamischAktualisieren(modalTyp);
+  });
+  document.getElementById("modal-body")?.addEventListener("change", e => {
+    if (e.target.dataset.onchange || e.target.classList.contains("mf-vv-check"))
+      modalDynamischAktualisieren(modalTyp);
+  });
+});

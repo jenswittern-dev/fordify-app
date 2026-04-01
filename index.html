@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>debitum</title>
+  <link rel="icon" type="image/svg+xml" href="img/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<!-- ============================================================
+     Navbar
+     ============================================================ -->
+<nav class="navbar navbar-expand-md navbar-fa mb-0 no-print">
+  <div class="container d-flex align-items-center gap-3">
+    <a class="navbar-brand" href="#">
+      <img src="img/logo.svg" height="30" alt="debitum Logo">
+      <span>debitum</span>
+    </a>
+    <span id="nav-context"></span>
+    <div class="d-flex gap-2 ms-auto align-items-center">
+      <span id="save-indicator">Gespeichert ✓</span>
+      <button class="btn btn-sm btn-outline-light" onclick="zeigeFallModal()">Fälle</button>
+      <button class="btn btn-sm btn-outline-light" onclick="zeigeEinstellungenModal()">Einstellungen</button>
+      <button class="btn btn-sm btn-outline-light" onclick="fallZuruecksetzen()">Neu</button>
+      <button class="btn btn-sm btn-light" onclick="drucken()">Drucken / PDF</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Stepper-Navigation -->
+<div class="container no-print">
+  <nav class="stepper-nav" aria-label="Workflow-Schritte">
+    <a href="#" class="stepper-step" data-ansicht="stammdaten">
+      <span class="stepper-step__num">1</span>
+      <span class="stepper-step__label">Allgemeine Angaben</span>
+    </a>
+    <span class="stepper-sep" aria-hidden="true"></span>
+    <a href="#" class="stepper-step" data-ansicht="eingabe">
+      <span class="stepper-step__num">2</span>
+      <span class="stepper-step__label">Positionen</span>
+      <span class="stepper-step__badge" id="pos-count"></span>
+    </a>
+    <span class="stepper-sep" aria-hidden="true"></span>
+    <a href="#" class="stepper-step" data-ansicht="vorschau">
+      <span class="stepper-step__num">3</span>
+      <span class="stepper-step__label">Vorschau &amp; PDF</span>
+    </a>
+  </nav>
+</div>
+
+<!-- ============================================================
+     Ansicht: Stammdaten
+     ============================================================ -->
+<div class="container ansicht d-none" id="ansicht-stammdaten">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="content-card">
+        <h2 class="h5 mb-4" style="font-weight:600;color:var(--color-text)">Allgemeine Angaben</h2>
+        <form id="form-stammdaten">
+
+          <div class="row g-3 mb-3">
+            <div class="col-sm-6">
+              <label class="form-label" for="inp-mandant">Gläubiger*in</label>
+              <input type="text" class="form-control" id="inp-mandant" placeholder="Name der Gläubigerin / des Gläubigers">
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label" for="inp-gegner">Schuldner*in</label>
+              <input type="text" class="form-control" id="inp-gegner" placeholder="Name der Schuldnerin / des Schuldners">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="inp-aktenzeichen">Geschäftszeichen <span class="text-muted fw-normal">(optional)</span></label>
+            <input type="text" class="form-control" id="inp-aktenzeichen" placeholder="z.B. Kunden-Nr. 1234/25">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="inp-aufschlag">Verzugszins-Aufschlag</label>
+            <select class="form-select" id="inp-aufschlag">
+              <option value="9">9 Prozentpunkte – Unternehmer (§ 288 Abs. 2 BGB)</option>
+              <option value="5">5 Prozentpunkte – Verbraucher (§ 288 Abs. 1 BGB)</option>
+            </select>
+          </div>
+
+          <hr class="my-4">
+          <h3 class="h6 mb-3" style="font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.05em;font-size:var(--text-xs)">Forderungsgrund <span class="fw-normal text-muted">(optional)</span></h3>
+
+          <div class="mb-3">
+            <label class="form-label" for="inp-fg-kat">Grundlage der Forderung</label>
+            <select class="form-select" id="inp-fg-kat" onchange="fgKatWechseln(this.value)">
+              <option value="">– keine Angabe –</option>
+              <option value="Vertrag">Vertrag</option>
+              <option value="gesetzlich">gesetzlich</option>
+              <option value="Titel">Titel</option>
+            </select>
+          </div>
+
+          <!-- Untertyp: Vertrag -->
+          <div class="mb-3 d-none" id="fg-art-vertrag-wrap">
+            <label class="form-label" for="inp-fg-art-vertrag">Art des Vertrags</label>
+            <select class="form-select" id="inp-fg-art-vertrag">
+              <option value="">– bitte wählen –</option>
+              <option value="Dienstleistung">Dienstleistung</option>
+              <option value="Kauf">Kauf</option>
+              <option value="Werkvertrag">Werkvertrag</option>
+              <option value="Ratenzahlung">Ratenzahlung</option>
+              <option value="Vergleich">Vergleich</option>
+              <option value="sonstiger Vertrag">sonstiger Vertrag</option>
+            </select>
+          </div>
+
+          <!-- Untertyp: gesetzlich -->
+          <div class="mb-3 d-none" id="fg-art-gesetzlich-wrap">
+            <label class="form-label" for="inp-fg-art-gesetzlich">Art des Anspruchs</label>
+            <select class="form-select" id="inp-fg-art-gesetzlich">
+              <option value="">– bitte wählen –</option>
+              <option value="Schadenersatz">Schadenersatz</option>
+              <option value="Schmerzensgeld">Schmerzensgeld</option>
+              <option value="Delikt">Delikt</option>
+              <option value="sonstiger Anspruch">sonstiger Anspruch</option>
+            </select>
+          </div>
+
+          <!-- Untertyp + Felder: Titel -->
+          <div class="d-none" id="fg-titel-wrap">
+            <div class="row g-3 mb-3">
+              <div class="col-sm-5">
+                <label class="form-label" for="inp-titel-art">Art des Titels</label>
+                <select class="form-select" id="inp-titel-art">
+                  <option value="">– bitte wählen –</option>
+                  <option value="Urteil">Urteil</option>
+                  <option value="Versäumnisurteil">Versäumnisurteil</option>
+                  <option value="Vollstreckungsbescheid">Vollstreckungsbescheid</option>
+                  <option value="Beschluss">Beschluss</option>
+                  <option value="gerichtlicher Vergleich">gerichtlicher Vergleich</option>
+                  <option value="notarielles Anerkenntnis">notarielles Anerkenntnis</option>
+                  <option value="sonstiger Titel">sonstiger Titel</option>
+                </select>
+              </div>
+              <div class="col-sm-4">
+                <label class="form-label" for="inp-titel-datum">Datum des Titels</label>
+                <input type="date" class="form-control" id="inp-titel-datum">
+              </div>
+              <div class="col-sm-3">
+                <label class="form-label" for="inp-titel-rechtskraft">Zustellungsdatum</label>
+                <input type="date" class="form-control" id="inp-titel-rechtskraft">
+              </div>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-sm-6">
+                <label class="form-label" for="inp-titel-gericht">Gericht / Behörde</label>
+                <input type="text" class="form-control" id="inp-titel-gericht" placeholder="z.B. AG München">
+              </div>
+              <div class="col-sm-6">
+                <label class="form-label" for="inp-titel-az">Aktenzeichen des Titels</label>
+                <input type="text" class="form-control" id="inp-titel-az" placeholder="z.B. 11 C 1234/25">
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-4">
+
+          <div class="mb-4">
+            <label class="form-label" for="inp-inso-datum">Insolvenzverfahren – Eröffnungsdatum <span class="text-muted fw-normal">(optional)</span></label>
+            <input type="date" class="form-control" id="inp-inso-datum">
+            <div class="form-text">Wenn ausgefüllt, wird der Zinslauf am Eröffnungstag gekappt.</div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="background:var(--color-primary);border-color:var(--color-primary);border-radius:6px;font-size:var(--text-sm);font-weight:500">
+            Weiter zu Positionen →
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Ansicht: Positionen-Eingabe
+     ============================================================ -->
+<div class="container ansicht d-none" id="ansicht-eingabe">
+  <div class="content-card">
+
+    <table class="positions-table">
+      <thead>
+        <tr>
+          <th style="width:10rem">Typ</th>
+          <th style="width:6.5rem">Datum</th>
+          <th>Beschreibung</th>
+          <th class="text-end" style="width:9rem">Forderungsbetrag</th>
+          <th style="width:9rem"></th>
+        </tr>
+      </thead>
+      <tbody id="positionen-tbody">
+        <!-- per JS befüllt -->
+      </tbody>
+    </table>
+
+    <div class="aktionen-leiste no-print">
+      <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          + Position hinzufügen
+        </button>
+        <ul class="dropdown-menu">
+          <li><h6 class="dropdown-header">Forderungen</h6></li>
+          <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('hauptforderung');return false;">Hauptforderung</a></li>
+          <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('zinsperiode');return false;">Zinsen (Periode)</a></li>
+          <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('zinsforderung_titel');return false;">Zinsforderung (Titel)</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><h6 class="dropdown-header">Kosten</h6></li>
+          <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('anwaltsverguetung');return false;">Anwaltsvergütung (RVG)</a></li>
+          <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('gv_kosten');return false;">ZV-Kosten (Gerichtsvollzieher)</a></li>
+          <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('gerichtskosten');return false;">Gerichtskosten</a></li>
+          <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('zahlungsverbot');return false;">Vorläufiges Zahlungsverbot</a></li>
+          <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('auskunftskosten');return false;">Auskünfte</a></li>
+          <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('mahnkosten');return false;">Mahnkosten</a></li>
+          <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('sonstige_kosten');return false;">Sonstige Kosten</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><h6 class="dropdown-header">Zahlungen</h6></li>
+          <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('zahlung');return false;">Zahlung / Geldeingang</a></li>
+        </ul>
+      </div>
+      <button class="btn btn-outline-secondary" onclick="zeigeAnsicht('vorschau')">
+        Vorschau &amp; PDF →
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================
+     Ansicht: Vorschau / Druck
+     ============================================================ -->
+<div class="container ansicht d-none" id="ansicht-vorschau">
+  <div class="no-print mb-3 d-flex gap-2">
+    <button class="btn btn-primary" onclick="drucken()">Drucken / PDF speichern</button>
+    <button class="btn btn-outline-secondary" onclick="zeigeAnsicht('eingabe')">← Zurück</button>
+  </div>
+  <div class="content-card" id="vorschau-inhalt">
+    <!-- per JS befüllt -->
+  </div>
+</div>
+
+<!-- ============================================================
+     Modal: Positions-Eingabe
+     ============================================================ -->
+<div class="modal fade" id="modal-position" tabindex="-1" aria-labelledby="modal-titel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content modal-content--app">
+
+      <div class="modal-header modal-header--app">
+        <span id="modal-typ-badge" class="pos-badge"></span>
+        <h5 class="modal-title" id="modal-titel">Position</h5>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Schließen"></button>
+      </div>
+
+      <div class="modal-body modal-body--app" id="modal-body">
+        <!-- per JS befüllt -->
+      </div>
+
+      <div id="modal-preview-container">
+        <!-- per JS befüllt -->
+      </div>
+
+      <div class="modal-footer modal-footer--app">
+        <button type="button" class="btn-ghost" data-bs-dismiss="modal">Abbrechen</button>
+        <button type="button" class="btn-primary-app" id="btn-modal-speichern">Übernehmen</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Modal: Fallverwaltung
+     ============================================================ -->
+<div class="modal fade" id="modal-faelle" tabindex="-1" aria-labelledby="modal-faelle-titel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content modal-content--app">
+
+      <div class="modal-header modal-header--app">
+        <h5 class="modal-title" id="modal-faelle-titel">Fälle</h5>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Schließen"></button>
+      </div>
+
+      <div class="modal-body modal-body--app">
+        <div id="modal-faelle-body">
+          <!-- per JS befüllt -->
+        </div>
+      </div>
+
+      <div class="modal-footer modal-footer--app justify-content-between">
+        <div class="d-flex gap-2">
+          <button type="button" class="btn-primary-app" onclick="neuenFallAnlegen()">+ Neuer Fall</button>
+          <button type="button" class="btn-ghost" onclick="fallExportieren()">Export JSON</button>
+          <label class="btn-ghost mb-0" style="cursor:pointer">
+            Import JSON
+            <input type="file" accept=".json" class="d-none" onchange="fallImportierenDatei(this)">
+          </label>
+        </div>
+        <button type="button" class="btn-ghost" data-bs-dismiss="modal">Schließen</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Einstellungen-Modal
+     ============================================================ -->
+<div class="modal fade" id="modal-einstellungen" tabindex="-1" aria-labelledby="modal-einst-titel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content modal-content--app">
+
+      <div class="modal-header modal-header--app">
+        <h5 class="modal-title" id="modal-einst-titel">Einstellungen</h5>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Schließen"></button>
+      </div>
+
+      <div class="modal-body modal-body--app">
+
+        <!-- Logo -->
+        <h6 class="fw-bold mb-3">Unternehmenslogo (für PDF)</h6>
+
+        <div class="mb-3">
+          <label class="form-label">Logo hochladen (PNG, JPG, SVG, WebP · max. 500 KB)</label>
+          <input type="file" class="form-control form-control-sm" id="einst-logo-input"
+                 accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                 onchange="logoHochladen(this)">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Vorschau</label>
+          <div class="einst-logo-preview-box" id="einst-logo-vorschau">
+            <span class="text-muted" style="font-size:0.85rem" id="einst-logo-placeholder">Kein Logo hochgeladen</span>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-danger mt-2 d-none" id="einst-logo-loeschen-btn"
+                  onclick="logoLoeschen()">Logo entfernen</button>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Position im PDF-Header</label>
+          <select class="form-select form-select-sm" id="einst-logo-position" style="max-width:200px">
+            <option value="links">Linksbündig</option>
+            <option value="zentriert">Zentriert</option>
+            <option value="rechts">Rechtsbündig</option>
+          </select>
+        </div>
+
+        <hr>
+
+        <!-- Impressum -->
+        <h6 class="fw-bold mb-2 mt-3">Impressum / Kontaktdaten (*)</h6>
+        <p class="text-muted mb-2" style="font-size:0.8rem">
+          (*) Geben Sie bitte selbständig ein vollständiges und rechtskonformes Impressum bzw. Ihre
+          Kontaktdaten / Signatur ein. Wir übernehmen hierfür keine Haftung.
+          Leer lassen = kein Footer im PDF.
+        </p>
+        <textarea class="form-control form-control-sm" id="einst-imp-freitext" rows="5"
+          placeholder="z.B. Rechtsanwaltskanzlei Mustermann · Musterstraße 1 · 12345 Musterstadt · Tel.: +49 421 123456 · kanzlei@mustermann.de"></textarea>
+
+      </div><!-- /modal-body -->
+
+      <div class="modal-footer modal-footer--app">
+        <button type="button" class="btn-ghost" data-bs-dismiss="modal">Abbrechen</button>
+        <button type="button" class="btn-primary-app" onclick="einstellungenSpeichern()">Speichern</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Scripts
+     ============================================================ -->
+<script src="js/decimal.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/zinsen.js"></script>
+<script src="js/rvg.js"></script>
+<script src="js/verrechnung.js"></script>
+<script src="js/zusammenfassung.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

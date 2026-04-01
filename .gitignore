@@ -1,0 +1,33 @@
+# Betriebssystem
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Python (alter Backup-Code)
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+*.egg-info/
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Generierte PDFs (werden on-the-fly erzeugt)
+docs/*.pdf
+
+# Lokale Testdateien
+*.local.*

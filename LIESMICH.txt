@@ -1,0 +1,40 @@
+debitum – Forderungsaufstellung
+================================
+
+STARTEN
+-------
+Datei "index.html" per Doppelklick öffnen.
+
+Das war's. Kein Python, keine Installation, kein Server notwendig.
+Die App läuft direkt im Browser (Chrome, Firefox, Edge, Safari).
+
+
+DATEN
+-----
+Alle Eingaben werden automatisch im Browser gespeichert (localStorage)
+und bleiben beim nächsten Öffnen erhalten.
+
+"Neu" in der Toolbar löscht alle Daten und beginnt einen neuen Fall.
+
+
+PDF ERSTELLEN
+-------------
+1. Vorschau & PDF (Schritt 3) aufrufen
+2. "Drucken / PDF speichern" klicken
+3. Im Druckdialog: "Als PDF speichern" oder "Microsoft Print to PDF" wählen
+
+Empfehlung: Hintergrundgrafiken aktivieren für korrekte Darstellung
+der Zusammenfassungstabelle.
+
+
+HINWEISE
+--------
+- Basiszinssätze sind bis 01.07.2026 aktualisiert (Quelle: Deutsche Bundesbank)
+- RVG-Tabelle nach BGBl. 2025 I Nr. 109 (verifiziert 31.03.2026)
+- Berechnung gemäß § 288 BGB, Anrechnung gemäß § 367 BGB
+
+
+SYSTEMANFORDERUNGEN
+-------------------
+Moderner Browser (Chrome 90+, Firefox 88+, Edge 90+, Safari 14+)
+Internetzugang beim ersten Start empfohlen (Schriftarten werden geladen)

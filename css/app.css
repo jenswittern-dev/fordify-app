@@ -1,0 +1,1196 @@
+/* ============================================================
+   Forderungsaufstellung – Design-System
+   ============================================================ */
+
+/* ---- 1. CSS Custom Properties ---- */
+
+:root {
+  /* Primär: Schieferblau */
+  --color-primary:        #1e3a5f;
+  --color-primary-hover:  #16304f;
+  --color-primary-light:  #e8eef5;
+
+  /* Akzent: Petrol */
+  --color-accent:         #0f7c8c;
+  --color-accent-hover:   #0c6878;
+  --color-accent-light:   #e6f4f6;
+
+  /* Semantisch: Typ-Farben */
+  --color-forderung:      #1e3a5f;
+  --color-forderung-bg:   #e8eef5;
+  --color-zahlung:        #b05e00;
+  --color-zahlung-bg:     #fef4e6;
+  --color-kosten:         #5c4d00;
+  --color-kosten-bg:      #fdf9e6;
+  --color-zinsen:         #1a5c3a;
+  --color-zinsen-bg:      #e8f4ed;
+
+  /* Status */
+  --color-success:        #145a32;
+  --color-success-bg:     #d4edda;
+  --color-success-border: #a3cfbb;
+  --color-danger:         #842029;
+  --color-warning:        #664d03;
+  --color-warning-bg:     #fff3cd;
+
+  /* Neutrals */
+  --color-surface:        #f7f8fa;
+  --color-card:           #ffffff;
+  --color-border:         #dde1e7;
+  --color-border-strong:  #b0b8c4;
+  --color-text:           #1a1d23;
+  --color-text-muted:     #6b7280;
+  --color-text-subtle:    #9ca3af;
+
+  /* Navbar */
+  --color-nav-bg:         #1e3a5f;
+  --color-nav-text:       #e8eef5;
+  --color-nav-text-muted: #94aec6;
+
+  /* Typografie */
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  --text-xs:   0.75rem;
+  --text-sm:   0.8125rem;
+  --text-base: 0.9375rem;
+  --text-md:   1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+
+  /* Transitions */
+  --transition-fast:   0.12s ease;
+  --transition-normal: 0.2s ease;
+}
+
+/* ---- 2. Base ---- */
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  background: var(--color-surface);
+  line-height: 1.5;
+}
+
+/* ---- 3. Navbar ---- */
+
+.navbar-fa {
+  background: var(--color-nav-bg) !important;
+  padding: 0.625rem 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.navbar-fa .navbar-brand {
+  color: var(--color-nav-text) !important;
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-fa .navbar-brand img {
+  object-fit: contain;
+  height: 28px;
+}
+
+#nav-context {
+  color: var(--color-nav-text-muted);
+  font-size: var(--text-sm);
+  border-left: 1px solid rgba(255,255,255,0.15);
+  padding-left: 0.875rem;
+  margin-left: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+#save-indicator {
+  color: var(--color-nav-text-muted);
+  font-size: var(--text-xs);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  white-space: nowrap;
+}
+
+#save-indicator.visible {
+  opacity: 1;
+}
+
+/* ---- 4. Stepper-Navigation ---- */
+
+.stepper-nav {
+  display: flex;
+  align-items: center;
+  padding: 0.875rem 0 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.stepper-step {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.5rem 0.875rem;
+  text-decoration: none;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  transition: color var(--transition-fast);
+  position: relative;
+  white-space: nowrap;
+}
+
+.stepper-step::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+  transition: background var(--transition-fast);
+}
+
+.stepper-step.active {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.stepper-step.active::after {
+  background: var(--color-primary);
+}
+
+.stepper-step:hover {
+  color: var(--color-primary);
+}
+
+.stepper-step__num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  background: var(--color-border);
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.stepper-step.active .stepper-step__num {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.stepper-step__label {
+  display: inline;
+}
+
+.stepper-step__badge {
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 1px 6px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.stepper-step__badge:empty {
+  display: none;
+}
+
+.stepper-sep {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+  margin: 0 0.5rem 0.5rem;
+  max-width: 4rem;
+  min-width: 1rem;
+}
+
+/* ---- 5. Content Cards ---- */
+
+.content-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+/* ---- 6. Positions-Tabelle ---- */
+
+.positions-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.positions-table thead th {
+  padding: 0.5rem 0.75rem;
+  background: var(--color-surface);
+  border-bottom: 2px solid var(--color-border);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.positions-table tbody td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.positions-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.positions-table tbody tr:hover td {
+  background: var(--color-primary-light);
+}
+
+.position-row--zahlung td {
+  background: var(--color-zahlung-bg);
+}
+
+.position-row--zahlung:hover td {
+  background: #fde8cc !important;
+}
+
+/* Aktions-Buttons: nur bei Hover sichtbar */
+.icon-btn {
+  background: none;
+  border: 1px solid transparent;
+  padding: 3px 4px;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  opacity: 0;
+  transition: opacity var(--transition-fast), color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.positions-table tbody tr:hover .icon-btn {
+  opacity: 1;
+}
+
+.icon-btn:hover {
+  background: var(--color-card);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.icon-btn--edit:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
+}
+
+.icon-btn--danger:hover {
+  color: var(--color-danger);
+  border-color: #fca5a5;
+  background: #fef2f2;
+}
+
+.icon-btn:disabled {
+  opacity: 0.2 !important;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Inline-Confirm */
+.inline-confirm {
+  display: none;
+  align-items: center;
+  gap: 0.2rem;
+  animation: slideIn 0.12s ease;
+}
+
+.inline-confirm.visible {
+  display: inline-flex;
+}
+
+.inline-confirm__text {
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+  font-weight: 500;
+  white-space: nowrap;
+  margin-right: 2px;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ---- 7. Semantische Badges ---- */
+
+.pos-badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 9999px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+.pos-badge--hauptforderung {
+  background: var(--color-forderung-bg);
+  color: var(--color-forderung);
+  border-color: #b8cce0;
+}
+
+.pos-badge--zinsperiode,
+.pos-badge--zinsforderung_titel {
+  background: var(--color-zinsen-bg);
+  color: var(--color-zinsen);
+  border-color: #a3cfb8;
+}
+
+.pos-badge--anwaltsverguetung,
+.pos-badge--gv_kosten,
+.pos-badge--zahlungsverbot,
+.pos-badge--auskunftskosten,
+.pos-badge--mahnkosten,
+.pos-badge--sonstige_kosten {
+  background: var(--color-kosten-bg);
+  color: var(--color-kosten);
+  border-color: #e0d090;
+}
+
+.pos-badge--zahlung {
+  background: var(--color-zahlung-bg);
+  color: var(--color-zahlung);
+  border-color: #e0b070;
+}
+
+/* ---- 8. Geldbeträge ---- */
+
+.amount {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  font-size: var(--text-sm);
+}
+
+.amount--negative {
+  color: var(--color-zahlung);
+}
+
+.amount--gesamt {
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+/* ---- 9. Zusammenfassungstabelle ---- */
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.summary-table thead th {
+  padding: 0.5rem 0.75rem;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.summary-table td,
+.summary-table th {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.summary-row--subtotal td,
+.summary-row--subtotal th {
+  font-weight: 600;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border-strong);
+}
+
+.summary-row--abzug td {
+  color: var(--color-zahlung);
+}
+
+.summary-row--zahlung td {
+  color: var(--color-zahlung);
+  background: var(--color-zahlung-bg);
+  font-style: italic;
+  font-size: var(--text-sm);
+  border-top: 1px solid var(--color-border-strong);
+}
+
+.summary-row--zinsen-neu td {
+  color: var(--color-zinsen);
+  font-style: italic;
+  font-size: var(--text-xs);
+  border-top: 1px dashed var(--color-border);
+}
+
+.summary-row--tageszins td {
+  color: var(--color-zinsen);
+  font-style: italic;
+  background: var(--color-zinsen-bg);
+  font-size: var(--text-xs);
+}
+
+.summary-row--gesamt {
+  border-top: 3px solid var(--color-primary);
+}
+
+.summary-row--gesamt td,
+.summary-row--gesamt th {
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+  padding: 0.75rem 0.75rem;
+  border-bottom: none;
+}
+
+.summary-row--gesamt .amount {
+  color: #fff;
+  font-size: var(--text-base);
+  font-weight: 700;
+}
+
+/* ---- 10. Empty State ---- */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.empty-state__icon {
+  color: var(--color-border-strong);
+  margin-bottom: 0.875rem;
+}
+
+.empty-state__title {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin: 0 0 0.25rem;
+}
+
+.empty-state__subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+  margin: 0;
+}
+
+/* ---- 11. Modal ---- */
+
+.modal-content--app {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+  overflow: hidden;
+}
+
+.modal-header--app {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.875rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.modal-header--app .modal-title {
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.modal-body--app {
+  padding: 1.25rem;
+}
+
+.modal-body--app .form-label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: 0.25rem;
+}
+
+.modal-body--app .form-control,
+.modal-body--app .form-select {
+  border-color: var(--color-border);
+  font-size: var(--text-sm);
+  border-radius: 6px;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.modal-body--app .form-control:focus,
+.modal-body--app .form-select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(15, 124, 140, 0.15);
+  outline: none;
+}
+
+.modal-footer--app {
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* Preview-Bereich im Modal */
+.modal-preview-area {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.875rem 1rem;
+  margin: 0 1.25rem 0.75rem;
+  background: var(--color-surface);
+  font-size: var(--text-sm);
+}
+
+.modal-preview-area__label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+/* Modal-Buttons */
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  border-radius: 6px;
+  padding: 0.4rem 0.875rem;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.btn-ghost:hover {
+  background: var(--color-border);
+  color: var(--color-text);
+}
+
+.btn-primary-app {
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  color: #fff;
+  border-radius: 6px;
+  padding: 0.4rem 1rem;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.btn-primary-app:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+/* ---- 12. Aktionsleiste ---- */
+
+.aktionen-leiste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Dropdown-Button anpassen */
+.aktionen-leiste .dropdown-toggle {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  border-radius: 6px;
+  padding: 0.4rem 0.875rem;
+  transition: background var(--transition-fast);
+}
+
+.aktionen-leiste .dropdown-toggle:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.aktionen-leiste .btn-outline-secondary {
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  border-radius: 6px;
+  padding: 0.4rem 0.875rem;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.aktionen-leiste .btn-outline-secondary:hover {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* Dropdown-Menü */
+.dropdown-menu {
+  font-size: var(--text-sm);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.dropdown-header {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-subtle);
+  padding: 0.5rem 1rem 0.2rem;
+}
+
+/* Vorschau-Buttons */
+#ansicht-vorschau .btn-primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  font-size: var(--text-sm);
+  border-radius: 6px;
+}
+
+#ansicht-vorschau .btn-primary:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+/* Fußzeilen-Text */
+.vorschau-footer {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-top: 1.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* ---- PDF-Logo ---- */
+.pdf-logo {
+  max-height: 60px;
+  max-width: 200px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* ---- PDF-Impressum-Footer ---- */
+.pdf-impressum-footer {
+  margin-top: 1.5rem;
+  padding-top: 0.5rem;
+  border-top: 2px solid var(--color-border);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+.pdf-impressum-footer strong {
+  color: var(--color-text);
+}
+
+/* ---- Einstellungen-Logo-Vorschau ---- */
+.einst-logo-preview-box {
+  min-height: 70px;
+  border: 1px dashed var(--color-border);
+  border-radius: 6px;
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--color-surface);
+}
+
+/* ---- PDF-Dokumentstruktur ---- */
+
+/* PDF-Kopf (Screen: versteckt, nur Print) */
+.pdf-header {
+  display: none;
+}
+
+/* Screen-Abschnitte */
+.pdf-section {
+  margin-bottom: 1.5rem;
+}
+
+.pdf-section__label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Parteien-Block */
+.pdf-parties {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.pdf-party {
+  display: flex;
+  flex-direction: column;
+}
+
+.pdf-party__role {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pdf-party__name {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.pdf-party__sep {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.pdf-party__az {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+/* Meta-Tabelle (Titel-Daten) */
+.pdf-meta-table {
+  font-size: var(--text-sm);
+  border-collapse: collapse;
+}
+
+.pdf-meta-table th {
+  font-weight: 500;
+  color: var(--color-text-muted);
+  padding: 0.15rem 1.25rem 0.15rem 0;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.pdf-meta-table td {
+  color: var(--color-text);
+  padding: 0.15rem 0;
+}
+
+/* PDF-Tabelle (Buchungsübersicht) */
+.pdf-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.pdf-table thead th {
+  padding: 0.5rem 0.75rem;
+  background: var(--color-surface);
+  border-bottom: 2px solid var(--color-border);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.pdf-table tbody td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+.pdf-table .col-date {
+  width: 6.5rem;
+  white-space: nowrap;
+  color: var(--color-text-muted);
+}
+
+.pdf-table .col-amount {
+  width: 9rem;
+  white-space: nowrap;
+}
+
+.pdf-table .pdf-row--zahlung td {
+  background: var(--color-zahlung-bg);
+}
+
+/* Zins-Detail-Zeile */
+.zins-detail {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-top: 0.2rem;
+  line-height: 1.6;
+}
+
+/* Print-only Typ-Label (ersetzt Badge) */
+.print-type-label {
+  display: none;
+}
+
+/* Logo on screen (Vorschau) */
+.pdf-logo-wrap {
+  display: flex;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+.pdf-logo-wrap--links    { justify-content: flex-start; }
+.pdf-logo-wrap--zentriert { justify-content: center; }
+.pdf-logo-wrap--rechts   { justify-content: flex-end; }
+
+.pdf-logo {
+  max-height: 60px;
+  max-width: 200px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* Impressum-Footer on screen */
+.pdf-impressum-footer {
+  margin-top: 2rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--color-border);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   Print / PDF
+   ============================================================ */
+
+@media print {
+  /* Ausblenden */
+  .navbar, .stepper-nav, .aktionen-leiste,
+  .btn, .btn-ghost, .btn-primary-app,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Nur Vorschau drucken */
+  .ansicht:not(#ansicht-vorschau) {
+    display: none !important;
+  }
+
+  #ansicht-vorschau {
+    display: block !important;
+  }
+
+  /* Typografie: Serifen für gedruckte Dokumente */
+  body {
+    font-family: 'Times New Roman', Times, Georgia, serif;
+    font-size: 10pt;
+    color: #000;
+    background: #fff;
+  }
+
+  .amount {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 9.5pt;
+  }
+
+  .container {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .content-card {
+    border: none;
+    padding: 0;
+    background: transparent;
+  }
+
+  @page {
+    margin: 2cm 2.5cm 2.5cm 2.5cm;
+  }
+
+  /* Print-Kopf */
+  .print-header {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1.5pt solid #000;
+    padding-bottom: 0.4cm;
+    margin-bottom: 0.8cm;
+  }
+
+  .print-header__logo {
+    max-width: 4cm;
+    max-height: 1.5cm;
+  }
+
+  .print-header__meta {
+    text-align: right;
+    font-size: 8.5pt;
+    line-height: 1.5;
+    color: #333;
+  }
+
+  /* Tabellen */
+  table {
+    font-size: 9.5pt;
+    page-break-inside: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+
+  h2, h3 {
+    page-break-after: avoid;
+    font-size: 11pt;
+  }
+
+  /* Bootstrap-Hintergrundfarben neutralisieren */
+  .table-light, .table-warning, .table-primary,
+  .table-info, .table-success {
+    background: transparent !important;
+    color: #000 !important;
+  }
+
+  /* Badges im Print nur mit Rahmen */
+  .pos-badge {
+    background: transparent !important;
+    color: #000 !important;
+    border: 0.5pt solid #666 !important;
+    font-size: 7.5pt;
+  }
+
+  /* Zusammenfassungs-Zeilen */
+  .summary-row--gesamt td,
+  .summary-row--gesamt th {
+    background: transparent !important;
+    color: #000 !important;
+    border-top: 2pt solid #000 !important;
+    border-bottom: 2pt solid #000 !important;
+    font-weight: bold;
+  }
+
+  .summary-row--tageszins td {
+    background: transparent !important;
+    color: #333 !important;
+    font-style: italic;
+  }
+
+  .summary-row--abzug td {
+    color: #000 !important;
+  }
+
+  .summary-row--zahlung td {
+    background: transparent !important;
+    color: #333 !important;
+    font-style: italic;
+    border-top: 0.5pt solid #888 !important;
+  }
+
+  .summary-row--zinsen-neu td {
+    background: transparent !important;
+    color: #444 !important;
+    font-style: italic;
+  }
+
+  /* Fußzeile */
+  .vorschau-footer {
+    font-size: 7.5pt;
+    color: #333 !important;
+    border-top: 0.5pt solid #aaa;
+    padding-top: 0.2cm;
+    margin-top: 1cm;
+    page-break-inside: avoid;
+  }
+
+  /* PDF-Kopf: im Print anzeigen */
+  .pdf-header {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1.5pt solid #000;
+    padding-bottom: 0.4cm;
+    margin-bottom: 0.8cm;
+  }
+
+  .pdf-header__title {
+    font-size: 16pt;
+    font-weight: bold;
+    letter-spacing: 0.01em;
+  }
+
+  .pdf-header__subtitle {
+    font-size: 9pt;
+    color: #444;
+    margin-top: 2pt;
+  }
+
+  .pdf-header__meta {
+    text-align: right;
+    font-size: 8.5pt;
+    line-height: 1.6;
+    color: #333;
+  }
+
+  /* Abschnitte */
+  .pdf-section {
+    margin-bottom: 0.6cm;
+    page-break-inside: avoid;
+  }
+
+  .pdf-section__label {
+    font-size: 8pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #555;
+    border-bottom: 0.5pt solid #aaa;
+    padding-bottom: 1pt;
+    margin-bottom: 0.2cm;
+  }
+
+  /* Parteien im Print: horizontal */
+  .pdf-parties {
+    font-size: 10pt;
+  }
+
+  .pdf-party__role {
+    font-size: 7.5pt;
+    color: #555;
+  }
+
+  .pdf-party__name {
+    font-size: 10.5pt;
+    font-weight: bold;
+  }
+
+  /* Meta-Tabelle */
+  .pdf-meta-table {
+    font-size: 9pt;
+  }
+
+  /* PDF-Haupttabelle */
+  .pdf-table {
+    font-size: 9pt;
+  }
+
+  .pdf-table thead th {
+    font-size: 7.5pt;
+    border-bottom: 1pt solid #000;
+    border-top: 1pt solid #000;
+    background: transparent !important;
+    color: #000 !important;
+    padding: 3pt 4pt;
+  }
+
+  .pdf-table tbody td {
+    padding: 3pt 4pt;
+    border-bottom: 0.5pt solid #ccc;
+  }
+
+  .pdf-table .pdf-row--zahlung td {
+    background: transparent !important;
+    border-left: 2pt solid #888;
+  }
+
+  /* Typ-Badge ausblenden, Print-Label einblenden */
+  .pos-badge {
+    display: none !important;
+  }
+
+  .print-type-label {
+    display: inline;
+    font-weight: bold;
+    font-size: 8pt;
+  }
+
+  /* Zins-Details im Print */
+  .zins-detail {
+    font-size: 8pt;
+    color: #444;
+  }
+
+  /* Logo im Print */
+  .pdf-logo {
+    max-height: 1.5cm;
+    max-width: 5cm;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  .pdf-logo-wrap--links   { justify-content: flex-start; }
+  .pdf-logo-wrap--zentriert { justify-content: center; }
+  .pdf-logo-wrap--rechts  { justify-content: flex-end; }
+
+  .pdf-logo-wrap {
+    display: flex;
+    width: 100%;
+    margin-bottom: 0.4cm;
+  }
+
+  /* Impressum-Footer im Print */
+  .pdf-impressum-footer {
+    margin-top: 1.5cm;
+    padding-top: 0.3cm;
+    border-top: 0.5pt solid #999;
+    font-size: 7pt;
+    color: #444;
+    line-height: 1.4;
+    page-break-inside: avoid;
+  }
+
+  /* Seitennummerierung */
+  @page {
+    margin: 2cm 2.5cm 2.5cm 2.5cm;
+    @bottom-right {
+      content: "Seite " counter(page) " von " counter(pages);
+      font-size: 7.5pt;
+      color: #666;
+    }
+  }
+}
