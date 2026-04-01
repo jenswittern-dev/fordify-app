@@ -1590,7 +1590,7 @@ function einstellungenImportieren(input) {
     try {
       const parsed = JSON.parse(e.target.result);
       if (!parsed.fordify_settings) {
-        alert("Import fehlgeschlagen: Dies ist keine fordify-Einstellungsdatei.\nBitte verwenden Sie eine zuvor über „Export" heruntergeladene Datei.");
+        alert("Import fehlgeschlagen: Dies ist keine fordify-Einstellungsdatei.\nBitte verwenden Sie eine zuvor \u00fcber \u201eExport\u201c heruntergeladene Datei.");
         input.value = "";
         return;
       }
