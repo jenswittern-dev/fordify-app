@@ -16,7 +16,11 @@ const ASSETS = [
   "/img/logo.svg",
   "/img/logo-wordmark.svg",
   "/data/basiszinssaetze.json",
-  "/data/rvg_tabelle.json"
+  "/data/rvg_tabelle.json",
+  "/fonts/inter-latin.woff2",
+  "/fonts/inter-latin-ext.woff2",
+  "/fonts/jetbrains-mono-latin.woff2",
+  "/fonts/jetbrains-mono-latin-ext.woff2"
 ];
 
 self.addEventListener("install", e => {
