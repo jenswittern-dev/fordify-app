@@ -928,8 +928,8 @@ body {
 
 /* Skip-Nav */
 .skip-nav {
-  position: absolute;
-  top: -100%;
+  position: fixed;
+  top: -120px;
   left: 1rem;
   z-index: 9999;
   background: var(--color-primary);
