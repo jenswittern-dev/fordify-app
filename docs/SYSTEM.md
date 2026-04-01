@@ -23,7 +23,7 @@ Browser
         └── js/app.js            (State, UI, Event-Handling – ~2100 Zeilen)
 ```
 
-**Service Worker** (`sw.js`, aktuell `fordify-v8`) cached alle Assets für Offline-Nutzung.
+**Service Worker** (`sw.js`, aktuell `fordify-v9`) cached alle Assets für Offline-Nutzung.
 Bei Frontend-Änderungen: Cache-Name inkrementieren.
 
 ---
@@ -241,7 +241,13 @@ Drei Themes, umschaltbar im Einstellungen-Modal unter „Erscheinungsbild":
 |---|---|---|
 | `brand` (default) | Professionell | Gradient-Navbar (Blau), Shimmer-Animation, Card-Hover-Lift |
 | `dark` | Dark | Vollständiges Dark Mode – alle Bootstrap-Komponenten überschrieben |
-| `clean` | Clean | Weiße Navbar, schattenbasierte Cards, modernes Blau (#2563eb) |
+| `clean` | Clean | Notion-Stil: weiße Navbar, flache Cards mit 1px-Border, kein Schatten, Blau #2383e2 |
+
+**Logo-Varianten:**
+- `img/logo.svg` — Standard (blauer Hintergrund, weißes F)
+- `img/logo-dark.svg` — freigestellt, kein Hintergrund, weißes F (für Dark-Navbar)
+- `img/logo-clean.svg` — freigestellt, kein Hintergrund, blaues F (für weiße Navbar)
+- Logo-Tausch erfolgt per JS in `themeWechseln()` via `.navbar-brand img` src-Swap
 
 **Technisch:**
 - `[data-theme]`-Attribut auf `<html>` — CSS Custom Properties werden überschrieben
@@ -261,7 +267,7 @@ Kein html2canvas / jsPDF — native Druckengine des Browsers erzeugt text-search
 
 ## 6. Service Worker & Caching
 
-- Cache-Name: `fordify-vN` (aktuell `fordify-v8`)
+- Cache-Name: `fordify-vN` (aktuell `fordify-v9`)
 - Strategie: Cache-First, dann Network
 - **Regel:** Bei jedem Commit mit geänderten Frontend-Dateien → N um 1 erhöhen
 - Asset-Liste in `sw.js` muss neue Dateien enthalten

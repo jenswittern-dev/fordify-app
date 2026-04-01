@@ -2074,6 +2074,12 @@ function themeWechseln(name) {
   } else {
     document.documentElement.setAttribute("data-theme", name);
   }
+  // Logo je Theme tauschen
+  const logoImg = document.querySelector(".navbar-brand img");
+  if (logoImg) {
+    const logoMap = { brand: "img/logo.svg", dark: "img/logo-dark.svg", clean: "img/logo-clean.svg" };
+    logoImg.src = logoMap[name] || "img/logo.svg";
+  }
   localStorage.setItem(STORAGE_KEY_THEME, name);
   aktualisierThemeSwitcher(name);
 }

@@ -523,138 +523,149 @@ body {
 
 
 /* ================================================================
-   THEME: clean  (Clean / Modern)
+   THEME: clean  (Notion-Style – minimal, viel Luft, klar)
    ================================================================ */
 
 [data-theme="clean"] {
-  /* Farben: klares Blau, viel Weiß */
-  --color-primary:        #2563eb;
-  --color-primary-hover:  #1d4ed8;
-  --color-primary-light:  #eff6ff;
+  --color-primary:        #2383e2;
+  --color-primary-hover:  #1a6dc7;
+  --color-primary-light:  #eef4fd;
 
   --color-accent:         #0891b2;
   --color-accent-hover:   #0e7490;
   --color-accent-light:   #ecfeff;
 
-  --color-forderung:      #1d4ed8;
-  --color-forderung-bg:   #eff6ff;
+  --color-forderung:      #1a6dc7;
+  --color-forderung-bg:   #eef4fd;
   --color-zahlung:        #b45309;
-  --color-zahlung-bg:     #fffbeb;
+  --color-zahlung-bg:     #fef9f0;
   --color-kosten:         #7c6d00;
   --color-kosten-bg:      #fefce8;
   --color-zinsen:         #15803d;
-  --color-zinsen-bg:      #f0fdf4;
+  --color-zinsen-bg:      #f3faf6;
 
   --color-success:        #166534;
-  --color-success-bg:     #f0fdf4;
-  --color-success-border: #86efac;
-  --color-danger:         #dc2626;
+  --color-success-bg:     #f3faf6;
+  --color-success-border: #bbf7d0;
+  --color-danger:         #d93025;
   --color-warning:        #d97706;
-  --color-warning-bg:     #fffbeb;
+  --color-warning-bg:     #fef9f0;
 
-  --color-surface:        #f8fafc;
+  /* Fast unsichtbare Trennlinien – Notion-Stil */
+  --color-surface:        #f7f7f5;
   --color-card:           #ffffff;
-  --color-border:         #e2e8f0;
-  --color-border-strong:  #cbd5e1;
-  --color-text:           #0f172a;
-  --color-text-muted:     #64748b;
-  --color-text-subtle:    #94a3b8;
+  --color-border:         #e9e9e7;
+  --color-border-strong:  #d3d2cf;
+  --color-text:           #1a1a19;
+  --color-text-muted:     #6b6b69;
+  --color-text-subtle:    #9b9b99;
 
-  /* Navbar: WEISS */
   --color-nav-bg:         #ffffff;
-  --color-nav-text:       #1e293b;
-  --color-nav-text-muted: #64748b;
+  --color-nav-text:       #1a1a19;
+  --color-nav-text-muted: #6b6b69;
 
-  --theme-radius-card: 16px;
+  /* Kleiner Radius – Notion nutzt wenig Rundung */
+  --theme-radius-card: 8px;
 }
 
-/* Navbar: weiß mit Trennlinie */
+/* Body: leicht getöntes Off-White */
+[data-theme="clean"] body {
+  background-color: var(--color-surface);
+}
+
+/* Navbar: rein weiß, minimale Trennlinie */
 [data-theme="clean"] .navbar-fa {
   background: #ffffff !important;
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  border-bottom: 1px solid #e9e9e7;
+  box-shadow: none;
 }
 
 [data-theme="clean"] .navbar-fa .navbar-brand {
-  color: #0f172a !important;
+  color: #1a1a19 !important;
 }
 
 [data-theme="clean"] .navbar-fa .navbar-brand span {
-  color: #1e293b;
+  color: #1a1a19;
   font-weight: 700;
-  letter-spacing: -0.025em;
-}
-
-/* Logo im Clean-Theme: dunkle Variante per Farbfilter */
-[data-theme="clean"] .navbar-fa .navbar-brand img {
-  filter: brightness(0) saturate(100%) invert(12%) sepia(62%) saturate(1200%) hue-rotate(215deg) brightness(85%);
+  letter-spacing: -0.02em;
+  /* kein Gradient, kein Shimmer */
+  background: none;
+  -webkit-text-fill-color: #1a1a19;
+  animation: none;
 }
 
 [data-theme="clean"] #nav-context {
-  color: #64748b;
-  border-left-color: #e2e8f0;
+  color: #6b6b69;
+  border-left-color: #e9e9e7;
 }
 
 [data-theme="clean"] #save-indicator {
-  color: #64748b;
+  color: #9b9b99;
 }
 
-/* Hamburger-Icon für hellen Hintergrund */
+/* Hamburger für helle Navbar */
 [data-theme="clean"] .navbar-fa .navbar-toggler {
-  border-color: #e2e8f0;
+  border-color: #e9e9e7;
 }
 
 [data-theme="clean"] .navbar-fa .navbar-toggler-icon {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2815%2C23%2C42%2C0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2826%2C26%2C25%2C0.7%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
 [data-theme="clean"] .navbar-fa .navbar-nav-actions {
-  border-top-color: #e2e8f0;
+  border-top-color: #e9e9e7;
+  border-left-color: #e9e9e7;
 }
 
-[data-theme="clean"] .navbar-fa .navbar-nav-actions {
-  border-left-color: #e2e8f0;
-}
-
-/* Outline-Buttons in der Clean-Navbar */
+/* Navbar-Buttons: borderless, Notion-Grau */
 [data-theme="clean"] .navbar-fa .navbar-nav-buttons .btn-outline-light {
-  border-color: #e2e8f0;
-  color: #475569;
+  border-color: transparent !important;
+  color: #4a4a48;
+  background: transparent;
 }
 
 [data-theme="clean"] .navbar-fa .navbar-nav-buttons .btn-outline-light:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-  color: #1e293b;
+  background: #f0f0ee;
+  border-color: transparent !important;
+  color: #1a1a19;
 }
 
 [data-theme="clean"] .btn-nav-primary {
   background: var(--color-primary);
   border-color: var(--color-primary);
+  color: #fff;
 }
 
-/* Karten: minimal, ohne Border, weicher Schatten */
+[data-theme="clean"] .btn-nav-primary:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+/* Karten: flach, 1px Border, kein Schatten */
 [data-theme="clean"] .content-card {
-  border: none;
+  border: 1px solid var(--color-border);
   border-radius: var(--theme-radius-card);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 6px 20px rgba(0,0,0,0.05);
-  transition: box-shadow 0.2s ease, transform 0.15s ease;
+  box-shadow: none;
+  background: var(--color-card);
+  transition: border-color 0.15s ease;
 }
 
 [data-theme="clean"] .content-card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 12px 32px rgba(0,0,0,0.07);
-  transform: translateY(-1px);
+  border-color: var(--color-border-strong);
+  box-shadow: none;
+  transform: none;
 }
 
-/* Stepper: clean, mit dünner Linie */
+/* Stepper: Notion-minimal */
 [data-theme="clean"] .stepper-nav {
-  border-color: #e2e8f0;
+  border-color: #e9e9e7;
   padding-bottom: 0;
   margin-bottom: 1.75rem;
 }
 
 [data-theme="clean"] .stepper-step {
-  color: #94a3b8;
+  color: #9b9b99;
+  font-size: 0.8125rem;
 }
 
 [data-theme="clean"] .stepper-step.active {
@@ -663,85 +674,135 @@ body {
 
 [data-theme="clean"] .stepper-step.active::after {
   background: var(--color-primary);
-  height: 3px;
-  border-radius: 2px 2px 0 0;
+  height: 2px;
+  border-radius: 0;
 }
 
 [data-theme="clean"] .stepper-step__num {
-  background: #f1f5f9;
-  color: #94a3b8;
+  background: #f0f0ee;
+  color: #9b9b99;
+  border-radius: 4px;
 }
 
 [data-theme="clean"] .stepper-step.active .stepper-step__num {
   background: var(--color-primary);
-  box-shadow: 0 2px 8px rgba(37,99,235,0.35);
+  border-radius: 4px;
+  box-shadow: none;
 }
 
-/* Modal: mehr Radius */
+/* Modal: subtiler, kein Radius-Overdrive */
 [data-theme="clean"] .modal-content--app {
-  border: none;
-  border-radius: 18px;
-  box-shadow: 0 32px 80px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.07);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06);
 }
 
 [data-theme="clean"] .modal-header--app {
-  background: #f8fafc;
-  border-color: #e2e8f0;
-  border-radius: 18px 18px 0 0;
+  background: #fafaf9;
+  border-color: var(--color-border);
+  border-radius: 10px 10px 0 0;
 }
 
 [data-theme="clean"] .modal-footer--app {
-  background: #f8fafc;
-  border-color: #e2e8f0;
-  border-radius: 0 0 18px 18px;
+  background: #fafaf9;
+  border-color: var(--color-border);
+  border-radius: 0 0 10px 10px;
 }
 
-/* Dropdown: mehr Radius, weicher */
+/* Dropdown */
 [data-theme="clean"] .dropdown-menu {
-  border: none;
-  border-radius: 14px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
 }
 
 [data-theme="clean"] .dropdown-item:hover {
-  background: #eff6ff;
-  color: var(--color-primary);
+  background: #f0f0ee;
+  color: var(--color-text);
 }
 
-/* Buttons: runder, cleaner */
-[data-theme="clean"] .btn-primary-app,
-[data-theme="clean"] .aktionen-leiste .dropdown-toggle {
-  border-radius: 10px;
+[data-theme="clean"] .dropdown-item:focus {
+  background: #e9e9e7;
+  color: var(--color-text);
 }
 
+/* Aktions-Buttons: flach, keine Gradienten */
 [data-theme="clean"] .aktionen-leiste .dropdown-toggle {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+  box-shadow: none;
   font-weight: 600;
+  border-radius: 6px;
 }
 
 [data-theme="clean"] .aktionen-leiste .dropdown-toggle:hover {
   background: var(--color-primary-hover);
-  box-shadow: 0 4px 14px rgba(37,99,235,0.4);
-  transform: translateY(-1px);
+  border-color: var(--color-primary-hover);
+  box-shadow: none;
+  transform: none;
 }
 
 [data-theme="clean"] .aktionen-leiste .btn-outline-secondary {
-  border-radius: 10px;
+  border-radius: 6px;
+  border-color: var(--color-border-strong);
+  color: var(--color-text-muted);
+}
+
+[data-theme="clean"] .aktionen-leiste .btn-outline-secondary:hover {
+  background: #f0f0ee;
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+[data-theme="clean"] .btn-primary-app {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+[data-theme="clean"] .btn-primary-app:hover {
+  background: var(--color-primary-hover);
 }
 
 [data-theme="clean"] .summary-row--gesamt td,
 [data-theme="clean"] .summary-row--gesamt th {
   background: var(--color-primary);
-  border-radius: 0;
 }
 
-/* Focus-Ringe: sauberes Blau */
+/* Focus-Ringe */
 [data-theme="clean"] .form-control:focus,
 [data-theme="clean"] .form-select:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+  box-shadow: 0 0 0 2px rgba(35,131,226,0.2);
+}
+
+/* Tabellen: sauberere Trennlinien */
+[data-theme="clean"] .positions-table thead th {
+  background: #fafaf9;
+  border-color: var(--color-border);
+}
+
+[data-theme="clean"] .positions-table tbody td {
+  border-color: var(--color-border);
+}
+
+/* Badges: flacher, Notion-Stil */
+[data-theme="clean"] .pos-badge--hauptforderung {
+  background: #eef4fd;
+  color: #1a6dc7;
+  border-color: #cde0f6;
+}
+
+[data-theme="clean"] .icon-btn:hover {
+  background: #f0f0ee;
+  border-color: var(--color-border-strong);
+}
+
+[data-theme="clean"] .icon-btn--edit:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background: #eef4fd;
 }
 
 /* ================================================================

@@ -1,5 +1,5 @@
 // fordify Service Worker
-const CACHE = "fordify-v8";
+const CACHE = "fordify-v9";
 const ASSETS = [
   "/",
   "/index.html",
@@ -15,6 +15,8 @@ const ASSETS = [
   "/js/verrechnung.js",
   "/js/zusammenfassung.js",
   "/img/logo.svg",
+  "/img/logo-dark.svg",
+  "/img/logo-clean.svg",
   "/img/logo-wordmark.svg",
   "/img/og-image.png",
   "/data/basiszinssaetze.json",
