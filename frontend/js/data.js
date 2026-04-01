@@ -129,6 +129,7 @@ const AKTIONSTYPEN = {
   mahnkosten:           "Mahnkosten",
   inkassopauschale:     "Inkassopauschale (§ 288 V BGB)",
   sonstige_kosten:      "Sonstige Kosten",
+  wiederkehrend:        "Wiederkehrende Positionen",
 };
 
 const STANDARDKOSTEN = {
@@ -136,6 +137,55 @@ const STANDARDKOSTEN = {
   mahnkosten:      "5.00",
   inkassopauschale: "40.00",
 };
+
+// GKG Anlage 2 – Gerichtskostengebührentabelle
+// Quelle: KostBRÄG 2021, BGBl. 2021 I S. 14 (gültig ab 01.01.2021)
+// Hinweis: Tabellenwerte vor Verwendung mit aktueller amtlicher Quelle abgleichen.
+const GKG_TABELLE = [
+  { bis:     500, gebuehr:   38 },
+  { bis:    1000, gebuehr:   58 },
+  { bis:    1500, gebuehr:   78 },
+  { bis:    2000, gebuehr:   98 },
+  { bis:    3000, gebuehr:  119 },
+  { bis:    4000, gebuehr:  140 },
+  { bis:    5000, gebuehr:  161 },
+  { bis:    6000, gebuehr:  182 },
+  { bis:    7000, gebuehr:  203 },
+  { bis:    8000, gebuehr:  224 },
+  { bis:    9000, gebuehr:  245 },
+  { bis:   10000, gebuehr:  266 },
+  { bis:   13000, gebuehr:  295 },
+  { bis:   16000, gebuehr:  324 },
+  { bis:   19000, gebuehr:  353 },
+  { bis:   22000, gebuehr:  382 },
+  { bis:   25000, gebuehr:  411 },
+  { bis:   30000, gebuehr:  449 },
+  { bis:   35000, gebuehr:  487 },
+  { bis:   40000, gebuehr:  525 },
+  { bis:   45000, gebuehr:  563 },
+  { bis:   50000, gebuehr:  601 },
+  { bis:   65000, gebuehr:  663 },
+  { bis:   80000, gebuehr:  725 },
+  { bis:   95000, gebuehr:  787 },
+  { bis:  110000, gebuehr:  849 },
+  { bis:  125000, gebuehr:  911 },
+  { bis:  140000, gebuehr:  973 },
+  { bis:  155000, gebuehr: 1035 },
+  { bis:  170000, gebuehr: 1097 },
+  { bis:  185000, gebuehr: 1159 },
+  { bis:  200000, gebuehr: 1221 },
+  { bis:  230000, gebuehr: 1319 },
+  { bis:  260000, gebuehr: 1417 },
+  { bis:  290000, gebuehr: 1515 },
+  { bis:  320000, gebuehr: 1613 },
+  { bis:  350000, gebuehr: 1711 },
+  { bis:  380000, gebuehr: 1809 },
+  { bis:  410000, gebuehr: 1907 },
+  { bis:  440000, gebuehr: 2005 },
+  { bis:  470000, gebuehr: 2103 },
+  { bis:  500000, gebuehr: 2201 },
+  // Über 500.000 €: 2.201 € + 108 € je angefangene weitere 30.000 €
+];
 
 // Kategorien für Zusammenfassungstabelle
 const KATEGORIEN = {

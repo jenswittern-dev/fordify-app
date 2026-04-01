@@ -215,6 +215,12 @@
      Ansicht: Positionen-Eingabe
      ============================================================ -->
 <div class="container ansicht d-none" id="ansicht-eingabe">
+
+  <div class="alert alert-warning alert-dismissible d-none no-print mb-3" id="export-reminder" role="alert">
+    <strong>Tipp:</strong> Sichern Sie Ihren Fall regelmäßig über „Teilen&nbsp;/&nbsp;Export". Ihr letzter Export liegt mehr als 7&nbsp;Tage zurück.
+    <button type="button" class="btn-close" onclick="exportReminderDismiss()" aria-label="Schließen"></button>
+  </div>
+
   <div class="content-card">
 
     <div class="table-scroll">
@@ -257,6 +263,9 @@
           <li><hr class="dropdown-divider"></li>
           <li><h6 class="dropdown-header">Zahlungen</h6></li>
           <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('zahlung');return false;">Zahlung / Geldeingang</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><h6 class="dropdown-header">Wiederkehrend</h6></li>
+          <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('wiederkehrend');return false;">Wiederkehrende Positionen</a></li>
         </ul>
       </div>
       <button class="btn btn-outline-secondary" id="btn-undo" onclick="undo()" disabled title="Letzte Änderung rückgängig machen (Strg+Z)">

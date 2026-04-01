@@ -7,9 +7,10 @@
 
 // ---- State ----
 
-const STORAGE_KEY_CASES    = "fordify_cases";
-const STORAGE_KEY_LEGACY   = "forderungsaufstellung_state";
-const STORAGE_KEY_SETTINGS = "fordify_settings";
+const STORAGE_KEY_CASES       = "fordify_cases";
+const STORAGE_KEY_LEGACY      = "forderungsaufstellung_state";
+const STORAGE_KEY_SETTINGS    = "fordify_settings";
+const STORAGE_KEY_LAST_EXPORT = "fordify_last_export";
 
 function leerFall() {
   return {
@@ -320,7 +321,7 @@ function zeigeAnsicht(name) {
     else link.removeAttribute("aria-current");
   });
 
-  if (name === "eingabe") renderePositionsliste();
+  if (name === "eingabe") { renderePositionsliste(); pruefeExportReminder(); }
   if (name === "vorschau") rendereVorschau();
 }
 
@@ -725,12 +726,13 @@ function renderModalInhalt(typ, pos) {
     case "zinsperiode":          return tplZinsperiode(pos);
     case "zahlung":              return tplZahlung(pos);
     case "gv_kosten":            return tplEinfacheKosten(pos, "ZV-Kosten (Gerichtsvollzieher)", "");
-    case "gerichtskosten":       return tplEinfacheKosten(pos, "Gerichtskosten", "");
+    case "gerichtskosten":       return tplGerichtskosten(pos);
     case "zahlungsverbot":       return tplEinfacheKosten(pos, "Vorläufiges Zahlungsverbot", "");
     case "auskunftskosten":      return tplEinfacheKosten(pos, "Auskunftskosten", STANDARDKOSTEN.auskunftskosten);
     case "mahnkosten":           return tplEinfacheKosten(pos, "Mahnkosten", STANDARDKOSTEN.mahnkosten);
     case "inkassopauschale":     return tplInkassopauschale(pos);
     case "sonstige_kosten":      return tplEinfacheKosten(pos, "Sonstige Kosten", "");
+    case "wiederkehrend":        return tplWiederkehrend(pos);
     default: return "<p>Unbekannter Typ.</p>";
   }
 }
@@ -738,6 +740,31 @@ function renderModalInhalt(typ, pos) {
 function modalSpeichern() {
   const pos = modalDatenLesen();
   if (!pos) return;
+
+  // Sonderfall: Wiederkehrende Buchungen → mehrere Einzelpositionen erzeugen
+  if (pos.typ === "wiederkehrend") {
+    pushUndo();
+    const start = parseDate(pos.datum);
+    const intervallMonate = { monatlich: 1, quartalsweise: 3, halbjaehrlich: 6, jaehrlich: 12 };
+    const monate = intervallMonate[pos.wkIntervall] || 1;
+    for (let i = 0; i < pos.wkAnzahl; i++) {
+      const d = new Date(start.getFullYear(), start.getMonth() + i * monate, start.getDate());
+      const datum = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+      state.fall.positionen.push({
+        id: neuId(),
+        typ: pos.wkTyp,
+        datum,
+        beschreibung: pos.beschreibung,
+        betrag: pos.betrag,
+        tituliert: pos.tituliert,
+      });
+    }
+    speichernMitFeedback();
+    renderePositionsliste();
+    const modalEl = document.getElementById("modal-position");
+    bootstrap.Modal.getInstance(modalEl)?.hide();
+    return;
+  }
 
   pushUndo();
 
@@ -844,6 +871,33 @@ function modalDatenLesen() {
     case "zahlung":
       return { ...basis, betrag: v("mf-betrag") };
 
+    case "gerichtskosten": {
+      const verfahrenSel = document.getElementById("mf-gkg-verfahren")?.value || "3.0";
+      const isCustom = verfahrenSel === "custom";
+      const gkgVerfahren = isCustom
+        ? (document.getElementById("mf-gkg-faktor")?.value?.trim() || "3.0")
+        : verfahrenSel;
+      return {
+        ...basis,
+        betrag: v("mf-betrag"),
+        gkgStreitwert: document.getElementById("mf-gkg-streitwert")?.value?.trim() || "",
+        gkgVerfahren,
+      };
+    }
+
+    case "wiederkehrend": {
+      const betrag = v("mf-betrag");
+      const startdatum = v("mf-datum");
+      const anzahl = parseInt(document.getElementById("mf-wk-anzahl")?.value, 10) || 2;
+      const intervall = document.getElementById("mf-wk-intervall")?.value || "monatlich";
+      const wkTyp = document.getElementById("mf-wk-typ")?.value || "zahlung";
+      if (!betrag || !startdatum) {
+        zeigeModalFehler(!betrag ? "mf-betrag" : "mf-datum", "Bitte Betrag und Startdatum angeben.");
+        return null;
+      }
+      return { ...basis, typ: "wiederkehrend", betrag, wkTyp, wkAnzahl: anzahl, wkIntervall: intervall };
+    }
+
     default:
       return { ...basis, betrag: v("mf-betrag") };
   }
@@ -888,6 +942,32 @@ function modalDynamischAktualisieren(typ) {
       container.innerHTML = "";  // Berechnungsergebnis wird im Hintergrund berechnet, nicht angezeigt
     } catch (e) {
       container.innerHTML = `<div class="modal-preview-area"><p class="text-danger small mb-0">${e.message}</p></div>`;
+    }
+  }
+
+  if (typ === "gerichtskosten") {
+    const streitwertRaw = document.getElementById("mf-gkg-streitwert")?.value?.trim();
+    const verfahrenSel = document.getElementById("mf-gkg-verfahren")?.value;
+    const customWrap = document.getElementById("gkg-custom-wrap");
+    const isCustom = verfahrenSel === "custom";
+    if (customWrap) customWrap.classList.toggle("d-none", !isCustom);
+    const faktor = isCustom
+      ? parseFloat(document.getElementById("mf-gkg-faktor")?.value || "0")
+      : parseFloat(verfahrenSel || "0");
+    const ergebnisEl = document.getElementById("gkg-ergebnis");
+    if (streitwertRaw && !isNaN(parseFloat(streitwertRaw)) && faktor > 0) {
+      const sw = parseFloat(streitwertRaw.replace(",", "."));
+      const basis = gkgGebuehr(sw);
+      const gesamt = basis * faktor;
+      const betragEl = document.getElementById("mf-betrag");
+      if (betragEl) betragEl.value = gesamt.toFixed(2);
+      const basisEl = document.getElementById("gkg-basis");
+      const gesamtEl = document.getElementById("gkg-gesamt");
+      if (basisEl) basisEl.textContent = formatEUR(basis.toFixed(2));
+      if (gesamtEl) gesamtEl.textContent = formatEUR(gesamt.toFixed(2));
+      if (ergebnisEl) ergebnisEl.classList.remove("d-none");
+    } else {
+      if (ergebnisEl) ergebnisEl.classList.add("d-none");
     }
   }
 
@@ -1065,6 +1145,96 @@ function tplEinfacheKosten(pos, label, standard) {
     </div>
     ${betragFeld("mf-betrag", pos?.betrag || standard)}
     ${tituliertFeld(pos?.tituliert)}
+  `;
+}
+
+function tplGerichtskosten(pos) {
+  const streitwert = pos?.gkgStreitwert || "";
+  const verfahren = pos?.gkgVerfahren || "3.0";
+  const gebuehr = streitwert ? gkgGebuehr(parseFloat(streitwert.replace(",", "."))) : 0;
+  const betrag = streitwert ? (gebuehr * parseFloat(verfahren)).toFixed(2) : (pos?.betrag || "");
+  return `
+    ${datumFeld("mf-datum", pos?.datum)}
+    <div class="row g-2 mb-3">
+      <div class="col-sm-7">
+        <label class="form-label" for="mf-gkg-streitwert">Streitwert (€)</label>
+        <input type="number" class="form-control" id="mf-gkg-streitwert" min="0" step="0.01"
+               value="${streitwert}" placeholder="z.\u00a0B. 5000" data-onchange="1">
+      </div>
+      <div class="col-sm-5">
+        <label class="form-label" for="mf-gkg-verfahren">Verfahrensart</label>
+        <select class="form-select" id="mf-gkg-verfahren" data-onchange="1">
+          <option value="0.5"${verfahren === "0.5" ? " selected" : ""}>Mahnbescheid (0,5)</option>
+          <option value="1.5"${verfahren === "1.5" ? " selected" : ""}>Vollstreckungsbescheid (1,5)</option>
+          <option value="3.0"${verfahren === "3.0" ? " selected" : ""}>Klage 1. Instanz (3,0)</option>
+          <option value="4.0"${verfahren === "4.0" ? " selected" : ""}>Berufung (4,0)</option>
+          <option value="custom"${verfahren !== "0.5" && verfahren !== "1.5" && verfahren !== "3.0" && verfahren !== "4.0" ? " selected" : ""}>Benutzerdefiniert</option>
+        </select>
+      </div>
+    </div>
+    <div class="mb-3${verfahren !== "0.5" && verfahren !== "1.5" && verfahren !== "3.0" && verfahren !== "4.0" ? "" : " d-none"}" id="gkg-custom-wrap">
+      <label class="form-label" for="mf-gkg-faktor">Gebührenfaktor</label>
+      <input type="number" class="form-control" id="mf-gkg-faktor" min="0" step="0.5"
+             value="${verfahren !== "0.5" && verfahren !== "1.5" && verfahren !== "3.0" && verfahren !== "4.0" ? verfahren : ""}"
+             placeholder="z.\u00a0B. 2.0" data-onchange="1">
+    </div>
+    <div id="gkg-ergebnis" class="mb-3 ${streitwert ? "" : "d-none"}">
+      <div class="alert alert-info py-2 px-3 small">
+        1,0-Gebühr: <strong id="gkg-basis">${formatEUR(gebuehr.toFixed(2))}</strong> &nbsp;&middot;&nbsp;
+        Gesamtgebühr: <strong id="gkg-gesamt">${formatEUR((gebuehr * parseFloat(verfahren || 0)).toFixed(2))}</strong>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="mf-beschreibung">Beschreibung</label>
+      <input type="text" class="form-control" id="mf-beschreibung"
+             value="${pos?.beschreibung || "Gerichtskosten"}" placeholder="Gerichtskosten">
+    </div>
+    ${betragFeld("mf-betrag", betrag)}
+    ${tituliertFeld(pos?.tituliert)}
+    <div class="alert alert-warning py-2 px-3 small mb-0" style="font-size:var(--text-xs)">
+      Die Tabellenwerte basieren auf GKG Anlage\u00a02 (KostBR\u00c4G 2021). Bitte vor Verwendung mit der
+      aktuellen amtlichen Fassung abgleichen.
+    </div>
+  `;
+}
+
+function tplWiederkehrend(pos) {
+  return `
+    <div class="mb-3">
+      <label class="form-label" for="mf-wk-typ">Positionstyp</label>
+      <select class="form-select" id="mf-wk-typ">
+        <option value="zahlung"${pos?.wkTyp === "zahlung" ? " selected" : ""}>Zahlung / Geldeingang</option>
+        <option value="mahnkosten"${pos?.wkTyp === "mahnkosten" ? " selected" : ""}>Mahnkosten</option>
+        <option value="gv_kosten"${pos?.wkTyp === "gv_kosten" ? " selected" : ""}>ZV-Kosten (Gerichtsvollzieher)</option>
+        <option value="sonstige_kosten"${pos?.wkTyp === "sonstige_kosten" ? " selected" : ""}>Sonstige Kosten</option>
+      </select>
+    </div>
+    ${betragFeld("mf-betrag", pos?.betrag || "", "Betrag je Position (€)")}
+    <div class="mb-3">
+      <label class="form-label" for="mf-beschreibung">Beschreibung</label>
+      <input type="text" class="form-control" id="mf-beschreibung"
+             value="${pos?.beschreibung || ""}" placeholder="z.\u00a0B. Monatliche Mahnkosten">
+    </div>
+    ${datumFeld("mf-datum", pos?.datum, "Startdatum (1. Position)")}
+    <div class="row g-2 mb-3">
+      <div class="col-sm-6">
+        <label class="form-label" for="mf-wk-anzahl">Anzahl Positionen</label>
+        <input type="number" class="form-control" id="mf-wk-anzahl" min="2" max="60" step="1"
+               value="${pos?.wkAnzahl || 2}">
+      </div>
+      <div class="col-sm-6">
+        <label class="form-label" for="mf-wk-intervall">Intervall</label>
+        <select class="form-select" id="mf-wk-intervall">
+          <option value="monatlich"${(pos?.wkIntervall || "monatlich") === "monatlich" ? " selected" : ""}>Monatlich</option>
+          <option value="quartalsweise"${pos?.wkIntervall === "quartalsweise" ? " selected" : ""}>Quartalsweise</option>
+          <option value="halbjaehrlich"${pos?.wkIntervall === "halbjaehrlich" ? " selected" : ""}>Halbjährlich</option>
+          <option value="jaehrlich"${pos?.wkIntervall === "jaehrlich" ? " selected" : ""}>Jährlich</option>
+        </select>
+      </div>
+    </div>
+    <div class="alert alert-info py-2 px-3 small">
+      Erzeugt mehrere Einzelpositionen mit dem gewählten Intervall ab dem Startdatum.
+    </div>
   `;
 }
 
@@ -1862,6 +2032,44 @@ function egbgbHinweisToggle(val) {
   if (el) el.classList.toggle("d-none", String(val) !== "9");
 }
 
+// ---- Export-Reminder ----
+
+function merkeExportZeitpunkt() {
+  localStorage.setItem(STORAGE_KEY_LAST_EXPORT, new Date().toISOString());
+  document.getElementById("export-reminder")?.classList.add("d-none");
+}
+
+function pruefeExportReminder() {
+  const el = document.getElementById("export-reminder");
+  if (!el) return;
+  if (state.fall.positionen.length === 0) { el.classList.add("d-none"); return; }
+  const last = localStorage.getItem(STORAGE_KEY_LAST_EXPORT);
+  if (!last) { el.classList.remove("d-none"); return; }
+  const tage = (Date.now() - new Date(last).getTime()) / 86400000;
+  el.classList.toggle("d-none", tage <= 7);
+}
+
+function exportReminderDismiss() {
+  merkeExportZeitpunkt();
+}
+
+// ---- GKG-Streitwertrechner ----
+
+/**
+ * Ermittelt die 1,0-Gebühr nach GKG Anlage 2 für einen gegebenen Streitwert.
+ * @param {number} streitwert
+ * @returns {number} Gebühr in Euro
+ */
+function gkgGebuehr(streitwert) {
+  if (!streitwert || streitwert <= 0) return 0;
+  for (const zeile of GKG_TABELLE) {
+    if (streitwert <= zeile.bis) return zeile.gebuehr;
+  }
+  // Über 500.000 €: 2.201 € + 108 € je angefangene weitere 30.000 €
+  const ueber = streitwert - 500000;
+  return 2201 + Math.ceil(ueber / 30000) * 108;
+}
+
 /**
  * Teilt den aktuellen Fall als JSON-Datei über die Web Share API (mobile)
  * oder löst einen Download aus (Desktop-Fallback).
@@ -1886,6 +2094,7 @@ async function falTeilen() {
         text: "Erstellt mit fordify.de",
         files: [new File([blob], filename, { type: "application/json" })],
       });
+      merkeExportZeitpunkt();
       return;
     } catch (e) {
       if (e.name === "AbortError") return; // Nutzer hat abgebrochen
@@ -1899,4 +2108,5 @@ async function falTeilen() {
   a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
+  merkeExportZeitpunkt();
 }
