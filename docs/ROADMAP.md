@@ -87,8 +87,8 @@
 
 | # | Feature | Status | Datum |
 |---|---|---|---|
-| 4.1 | Zusammenfassung: Restsaldo-HF nach jeder Zahlung sichtbar | 📋 | — |
-| 4.2 | Buchungsdatum / Verrechnungsdatum in Zusammenfassung links | 📋 | — |
+| 4.1 | Zusammenfassung: Restsaldo-HF nach jeder Zahlung sichtbar | ✅ | 2026-04-01 |
+| 4.2 | Buchungsdatum / Verrechnungsdatum in Zusammenfassung links | ✅ | 2026-04-01 |
 
 > Quelle: Nutzerfeedback-2/01 (Andreas) – Zwischenbemerkung nach Zahlung soll als eigene
 > Zeile erscheinen: „Nach Zahlung X reduziert sich HF auf Y €, Restzinsen Z €"
@@ -113,6 +113,6 @@
 
 | Quelle | Beschreibung | Status |
 |---|---|---|
-| feedback-2/01 | Restsaldo und Verrechnungsdatum in Zusammenfassung (→ Phase 4.1/4.2) | 📋 |
+| feedback-2/01 | Restsaldo und Verrechnungsdatum in Zusammenfassung (→ Phase 4.1/4.2) | ✅ |
 | feedback-2/02 | Impressum-Links im PDF klickbar — ist umgesetzt (`<a>`-Tags bleiben in Print-to-PDF erhalten), visuell bewusst neutral (kein Underline, Grauton) | ✅ |
 | feedback-2/03 | Print: „Gläubiger"/„Schuldner"-Labels, Seitenumbruch Zusammenfassung, Schriftgröße | ✅ |

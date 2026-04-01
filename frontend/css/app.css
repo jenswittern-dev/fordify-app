@@ -578,6 +578,28 @@ body {
   border-top: 1px dashed var(--color-border);
 }
 
+.summary-row--restsaldo td {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border-bottom: none;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.summary-datum {
+  white-space: nowrap;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  width: 5.5rem;
+  min-width: 5.5rem;
+}
+
+.summary-datum-th {
+  width: 5.5rem;
+  min-width: 5.5rem;
+}
+
 .summary-row--tageszins td {
   color: var(--color-zinsen);
   font-style: italic;
@@ -1272,6 +1294,19 @@ body {
     background: transparent !important;
     color: #444 !important;
     font-style: italic;
+  }
+
+  .summary-row--restsaldo td {
+    background: transparent !important;
+    color: #555 !important;
+    font-size: 7pt;
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+  }
+
+  .summary-datum {
+    font-size: 7pt;
+    color: #555 !important;
   }
 
   /* Fußzeile */

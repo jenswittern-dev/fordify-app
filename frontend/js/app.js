@@ -1460,7 +1460,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
         const label = hf.beschreibung
           ? `Hauptforderung${hfNum}: ${hf.beschreibung}`
           : `Hauptforderung${hfNum}`;
-        zeilen.push({ typ: "hf", hfId: hf.id, bezeichnung: label,
+        zeilen.push({ typ: "hf", datum: hf.datum || null, hfId: hf.id, bezeichnung: label,
           forderung: b, restforderung: b });
 
         const zp = hfZpMap[hf.id];
@@ -1468,7 +1468,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
           const z = calcZinsen(b, zp.zinsVon, endDate);
           if (z.gt(0)) {
             const bisLabel = zahlungen.length > 0 ? ` bis ${formatDate(endDate)}` : " bis heute";
-            zeilen.push({ typ: "zinsen", hfId: hf.id,
+            zeilen.push({ typ: "zinsen", datum: null, hfId: hf.id,
               bezeichnung: `Zinsen ab ${formatDate(parseDate(zp.zinsVon))}${bisLabel}`,
               forderung: z, restforderung: z });
           }
@@ -1478,8 +1478,8 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
       for (const k of kostenPos) {
         const b = kostenBrutto(k);
         const label = k.beschreibung || AKTIONSTYPEN[k.typ] || k.typ;
-        zeilen.push({ typ: "kosten", kostenId: k.id, bezeichnung: label,
-          forderung: b, restforderung: b });
+        zeilen.push({ typ: "kosten", datum: k.datum || null, kostenId: k.id,
+          bezeichnung: label, forderung: b, restforderung: b });
       }
     } else {
       // Zinsen auf verbleibende HF ab letzter Zahlung
@@ -1492,7 +1492,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
         const z = calcZinsen(rest, prevPayDatum, endDate);
         if (z.lte(0)) continue;
         const bisLabel = isLast ? " bis heute" : ` bis ${formatDate(endDate)}`;
-        zeilen.push({ typ: "zinsen_neu", hfId: hf.id,
+        zeilen.push({ typ: "zinsen_neu", datum: null, hfId: hf.id,
           bezeichnung: `Zinsen auf ${formatEUR(rest)} ab ${formatDate(parseDate(prevPayDatum))}${bisLabel}`,
           forderung: ZERO, restforderung: z });
       }
@@ -1550,9 +1550,26 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
       }
 
       const zahlBetrag = new Decimal(zahlung.betrag || 0);
-      const zahlLabel = `Zahlung ${formatDate(parseDate(zahlung.datum))}${zahlung.beschreibung ? " – " + zahlung.beschreibung : ""}`;
-      zeilen.push({ typ: "zahlung", bezeichnung: zahlLabel,
+      const zahlLabel = `Zahlung${zahlung.beschreibung ? " – " + zahlung.beschreibung : ""}`;
+      zeilen.push({ typ: "zahlung", datum: zahlung.datum || null, bezeichnung: zahlLabel,
         forderung: ZERO, verrechnung: zahlBetrag.negated(), restforderung: ZERO });
+
+      // Restsaldo-Zeilen nach der Zahlung: zeigt verbleibende HF und Kosten explizit
+      for (let hfIdx = 0; hfIdx < hfs.length; hfIdx++) {
+        const hf = hfs[hfIdx];
+        const rest = hfRestMap[hf.id];
+        if (rest.lte(0)) continue;
+        const hfNum = hfs.length > 1 ? ` ${hfIdx + 1}` : "";
+        zeilen.push({ typ: "restsaldo_hf", datum: null, hfId: hf.id,
+          bezeichnung: `\u2514 Hauptforderung${hfNum}: Restsaldo`,
+          forderung: ZERO, restforderung: rest });
+      }
+      const kostenRestGes = Object.values(kostenRestMap).reduce((s, v) => s.plus(v), ZERO);
+      if (kostenRestGes.gt(0)) {
+        zeilen.push({ typ: "restsaldo_kosten", datum: null,
+          bezeichnung: "\u2514 Kosten: Restsaldo",
+          forderung: ZERO, restforderung: kostenRestGes });
+      }
     }
   }
 
@@ -1586,6 +1603,9 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     const neg = d.lt(0);
     return `<td class="text-end"><span class="amount${cls ? " " + cls : ""}${neg ? " amount--negative" : ""}">${formatEUR(d)}</span></td>`;
   }
+  function datumCell(datum, cls) {
+    return `<td class="summary-datum${cls ? " " + cls : ""}">${datum ? formatDate(parseDate(datum)) : ""}</td>`;
+  }
 
   const rows = zeilen.map(z => {
     let rowCls = "";
@@ -1601,15 +1621,21 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
       fCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
       vCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
       rCell = amtCell(z.restforderung);
+    } else if (z.typ === "restsaldo_hf" || z.typ === "restsaldo_kosten") {
+      rowCls = "summary-row--restsaldo";
+      fCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
+      vCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
+      rCell = amtCell(z.restforderung);
     } else {
       fCell = amtCell(z.forderung);
       vCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
       rCell = amtCell(z.restforderung);
     }
-    return `<tr class="${rowCls}"><td>${z.bezeichnung}</td>${fCell}${vCell}${rCell}</tr>`;
+    return `<tr class="${rowCls}">${datumCell(z.datum || null)}<td>${z.bezeichnung}</td>${fCell}${vCell}${rCell}</tr>`;
   }).join("");
 
   const gesamtRow = `<tr class="summary-row--gesamt">
+    <td></td>
     <td>Offene Forderung</td>
     ${amtCell(totForderung, "amount--gesamt")}
     ${amtCell(totVerrechnung, "amount--gesamt")}
@@ -1617,6 +1643,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   </tr>`;
 
   const tageszinsRow = tageszinsZeile ? `<tr class="summary-row--tageszins">
+    <td></td>
     <td>${tageszinsZeile.bezeichnung}</td>
     <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
     <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
@@ -1626,6 +1653,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   return `<table class="summary-table">
     <thead>
       <tr>
+        <th class="summary-datum-th">Datum</th>
         <th>Bezeichnung</th>
         <th class="text-end">Forderung</th>
         <th class="text-end">Verrechnung</th>
