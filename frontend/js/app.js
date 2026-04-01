@@ -1347,7 +1347,7 @@ function zeigeEinstellungenModal() {
 
   const imp = einst.imp || {};
   const IMP_FIELDS = ["name","rechtsform","strasse","plz","ort","tel","fax","email",
-                      "website","kammer","register","ustid","bhv","iban","bic","bank",
+                      "website","kammer","register","vertreten","ustid","bhv","iban","bic","bank",
                       "impressum-url","datenschutz-url"];
   for (const f of IMP_FIELDS) {
     const el = document.getElementById("einst-imp-" + f);
@@ -1385,6 +1385,7 @@ function leseImpFelder() {
     website:        v("einst-imp-website"),
     kammer:         v("einst-imp-kammer"),
     register:       v("einst-imp-register"),
+    vertreten:      v("einst-imp-vertreten"),
     ustid:          v("einst-imp-ustid"),
     bhv:            v("einst-imp-bhv"),
     iban:           v("einst-imp-iban"),
@@ -1427,6 +1428,7 @@ function generiereImpressumFooterHtml(imp) {
   if (imp.website) teile.push(`<a href="${e(imp.website)}" target="_blank" rel="noopener noreferrer" class="imp-link">${e(imp.website.replace(/^https?:\/\//, ""))}</a>`);
   if (imp.kammer)   teile.push(e(imp.kammer));
   if (imp.register) teile.push(`Reg.-Nr.: ${e(imp.register)}`);
+  if (imp.vertreten) teile.push(`Vertreten durch: ${e(imp.vertreten)}`);
   if (imp.ustid)    teile.push(`USt-ID: ${e(imp.ustid)}`);
   if (imp.bhv)      teile.push(`BHV: ${e(imp.bhv)}`);
   if (imp.iban) {
