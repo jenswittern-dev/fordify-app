@@ -23,7 +23,7 @@ Browser
         └── js/app.js            (State, UI, Event-Handling – ~2100 Zeilen)
 ```
 
-**Service Worker** (`sw.js`, aktuell `fordify-v9`) cached alle Assets für Offline-Nutzung.
+**Service Worker** (`sw.js`, aktuell `fordify-v10`) cached alle Assets für Offline-Nutzung.
 Bei Frontend-Änderungen: Cache-Name inkrementieren.
 
 ---
@@ -267,7 +267,7 @@ Kein html2canvas / jsPDF — native Druckengine des Browsers erzeugt text-search
 
 ## 6. Service Worker & Caching
 
-- Cache-Name: `fordify-vN` (aktuell `fordify-v9`)
+- Cache-Name: `fordify-vN` (aktuell `fordify-v10`)
 - Strategie: Cache-First, dann Network
 - **Regel:** Bei jedem Commit mit geänderten Frontend-Dateien → N um 1 erhöhen
 - Asset-Liste in `sw.js` muss neue Dateien enthalten

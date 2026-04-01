@@ -113,9 +113,12 @@ function speichernMitFeedback() {
   speichern();
   const ind = document.getElementById("save-indicator");
   if (!ind) return;
+  // Animation neu starten: Klasse kurz entfernen → reflow → neu hinzufügen
+  ind.classList.remove("visible");
+  void ind.offsetWidth;
   ind.classList.add("visible");
   clearTimeout(_saveIndicatorTimer);
-  _saveIndicatorTimer = setTimeout(() => ind.classList.remove("visible"), 2000);
+  _saveIndicatorTimer = setTimeout(() => ind.classList.remove("visible"), 2200);
 }
 
 /** Migriert alte Positionen auf aktuelle Formate. */
@@ -310,20 +313,37 @@ function aktualisiereNaechsteFallListe() {
 
 function zeigeAnsicht(name) {
   state.ansicht = name;
-  document.querySelectorAll(".ansicht").forEach(el => el.classList.add("d-none"));
-  const el = document.getElementById("ansicht-" + name);
-  if (el) el.classList.remove("d-none");
 
-  // Stepper aktualisieren
-  document.querySelectorAll(".stepper-step[data-ansicht]").forEach(link => {
-    const isActive = link.dataset.ansicht === name;
-    link.classList.toggle("active", isActive);
-    if (isActive) link.setAttribute("aria-current", "step");
-    else link.removeAttribute("aria-current");
-  });
+  const applyView = () => {
+    document.querySelectorAll(".ansicht").forEach(el => {
+      el.classList.add("d-none");
+      el.classList.remove("ansicht--exiting");
+    });
+    const next = document.getElementById("ansicht-" + name);
+    if (!next) return;
+    next.classList.remove("d-none");
+    void next.offsetWidth; // reflow → Animation neu starten
+    next.classList.add("ansicht--entering");
+    next.addEventListener("animationend", () => next.classList.remove("ansicht--entering"), { once: true });
 
-  if (name === "eingabe") { renderePositionsliste(); pruefeExportReminder(); }
-  if (name === "vorschau") rendereVorschau();
+    document.querySelectorAll(".stepper-step[data-ansicht]").forEach(link => {
+      const isActive = link.dataset.ansicht === name;
+      link.classList.toggle("active", isActive);
+      if (isActive) link.setAttribute("aria-current", "step");
+      else link.removeAttribute("aria-current");
+    });
+
+    if (name === "eingabe") { renderePositionsliste(); pruefeExportReminder(); }
+    if (name === "vorschau") rendereVorschau();
+  };
+
+  const prev = document.querySelector(".ansicht:not(.d-none)");
+  if (prev && prev.id !== "ansicht-" + name) {
+    prev.classList.add("ansicht--exiting");
+    prev.addEventListener("animationend", applyView, { once: true });
+  } else {
+    applyView();
+  }
 }
 
 // ---- Nav-Kontext ----
@@ -508,28 +528,35 @@ function positionLoeschenAbbrechen(id) {
 function positionLoeschenBestaetigen(id) {
   pushUndo();
   const pos = state.fall.positionen.find(p => p.id === id);
-  if (pos && pos.typ === "hauptforderung" && pos.gruppeId) {
+  const idsToRemove = new Set([id]);
+
+  if (pos?.typ === "hauptforderung" && pos.gruppeId) {
     const zugehoerig = state.fall.positionen.filter(
       p => p.typ === "zinsperiode" && p.gruppeId === pos.gruppeId
     );
     if (zugehoerig.length > 0) {
-      const mitLoeschen = confirm(
-        `Diese Hauptforderung hat ${zugehoerig.length} zugehörige Zinsperiode(n).\nSollen diese ebenfalls gelöscht werden?`
-      );
-      if (mitLoeschen) {
-        const zuLoeschen = new Set([id, ...zugehoerig.map(p => p.id)]);
-        state.fall.positionen = state.fall.positionen.filter(p => !zuLoeschen.has(p.id));
-      } else {
-        state.fall.positionen = state.fall.positionen.filter(p => p.id !== id);
+      if (confirm(`Diese Hauptforderung hat ${zugehoerig.length} zugeh\u00f6rige Zinsperiode(n).\nSollen diese ebenfalls gel\u00f6scht werden?`)) {
+        zugehoerig.forEach(p => idsToRemove.add(p.id));
       }
-    } else {
-      state.fall.positionen = state.fall.positionen.filter(p => p.id !== id);
     }
-  } else {
-    state.fall.positionen = state.fall.positionen.filter(p => p.id !== id);
   }
-  speichernMitFeedback();
-  renderePositionsliste();
+
+  const commit = () => {
+    state.fall.positionen = state.fall.positionen.filter(p => !idsToRemove.has(p.id));
+    speichernMitFeedback();
+    renderePositionsliste();
+  };
+
+  const rows = [...idsToRemove]
+    .map(rid => document.querySelector(`tr[data-pos-id="${rid}"]`))
+    .filter(Boolean);
+
+  if (rows.length > 0) {
+    rows.forEach(r => r.classList.add("pos-row--removing"));
+    rows[0].addEventListener("animationend", commit, { once: true });
+  } else {
+    commit();
+  }
 }
 
 function positionNachOben(id) {
@@ -642,6 +669,11 @@ function renderePositionsliste() {
       </td>
     </tr>`;
   }).join("");
+
+  // Stagger-Index als CSS Custom Property setzen (für row-in Animation)
+  tbody.querySelectorAll("tr[data-pos-id]").forEach((row, i) => {
+    row.style.setProperty("--row-idx", i);
+  });
 }
 
 function positionKurzbeschreibung(pos) {
@@ -1370,6 +1402,10 @@ function rendereVorschau() {
 
     ${impressumHtml}
   `;
+  // Stagger-Index für Summary-Zeilen setzen (nach innerHTML-Zuweisung)
+  el.querySelectorAll(".summary-table tbody tr").forEach((row, i) => {
+    row.style.setProperty("--row-idx", i);
+  });
   } catch (err) {
     el.innerHTML = `<div class="alert alert-danger m-3"><strong>Fehler beim Rendern der Vorschau:</strong><br><code>${err.message}</code></div>`;
     console.error("rendereVorschau el.innerHTML:", err);

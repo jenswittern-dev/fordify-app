@@ -265,8 +265,7 @@ body {
   left: 0;
   right: 0;
   height: 2px;
-  background: transparent;
-  transition: background var(--transition-fast);
+  background: var(--color-primary);
 }
 
 .stepper-step.active {
@@ -1158,6 +1157,123 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   Animations & Micro-Interactions
+   ============================================================ */
+
+/* 1. View Transitions – sanftes Fade+Slide beim Ansicht-Wechsel */
+@keyframes view-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes view-exit {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-6px); }
+}
+
+.ansicht--entering {
+  animation: view-enter 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.ansicht--exiting {
+  animation: view-exit 0.16s ease-in both;
+  pointer-events: none;
+}
+
+/* 2. Positions-Tabelle: Zeilen gleiten gestaffelt rein */
+@keyframes row-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes row-out {
+  0%   { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(10px); }
+}
+
+.positions-table tbody tr {
+  animation: row-in 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--row-idx, 0) * 35ms);
+}
+.pos-row--removing {
+  animation: row-out 0.18s ease-in forwards !important;
+  pointer-events: none;
+}
+
+/* 3. Stepper: Unterlinie gleitet animiert */
+.stepper-step {
+  transition: color 0.2s ease;
+}
+.stepper-step__num {
+  transition: background 0.22s ease, color 0.22s ease, box-shadow 0.22s ease, transform 0.22s cubic-bezier(0.34, 1.5, 0.64, 1);
+}
+.stepper-step.active .stepper-step__num {
+  transform: scale(1.08);
+}
+.stepper-step::after {
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), background 0.2s ease;
+}
+.stepper-step.active::after {
+  transform: scaleX(1);
+}
+
+/* 4. Button-Feedback: kurzes Scale bei Klick */
+.btn:not(:disabled):active,
+.btn-ghost:not(:disabled):active,
+.btn-primary-app:not(:disabled):active,
+.btn-nav-primary:not(:disabled):active {
+  transform: scale(0.95);
+  transition: transform 0.07s ease !important;
+}
+.icon-btn:not(:disabled):active {
+  transform: scale(0.88);
+  transition: transform 0.07s ease !important;
+}
+
+/* 5. Save-Indicator: Flash-Animation */
+@keyframes save-flash {
+  0%   { opacity: 0; transform: translateY(-3px); }
+  12%  { opacity: 1; transform: translateY(0); }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+#save-indicator.visible {
+  animation: save-flash 2.2s ease forwards;
+}
+
+/* 6. Modal: federnder Eingang statt flachem Slide */
+.modal.fade .modal-dialog {
+  transform: scale(0.96) translateY(10px) !important;
+  transition: transform 0.22s cubic-bezier(0.34, 1.4, 0.64, 1) !important;
+}
+.modal.show .modal-dialog {
+  transform: scale(1) translateY(0) !important;
+}
+
+/* 7. Summary-Beträge: erscheinen gestaffelt */
+@keyframes amount-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.summary-table tbody tr {
+  animation: amount-in 0.18s ease both;
+  animation-delay: calc(var(--row-idx, 0) * 28ms);
+}
+
+/* Keine Animationen bei reduzierter Bewegungs-Präferenz (bereits weiter oben,
+   aber explizit auch hier um die neuen Keyframes zu deaktivieren) */
+@media (prefers-reduced-motion: reduce) {
+  .ansicht--entering,
+  .ansicht--exiting,
+  .positions-table tbody tr,
+  .pos-row--removing,
+  .summary-table tbody tr,
+  #save-indicator.visible {
+    animation: none !important;
+    transition: none !important;
   }
 }
 
