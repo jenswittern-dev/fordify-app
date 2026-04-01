@@ -1589,8 +1589,12 @@ function einstellungenImportieren(input) {
   reader.onload = function(e) {
     try {
       const parsed = JSON.parse(e.target.result);
-      const einst = parsed.fordify_settings || parsed;
-      speichereEinstellungen(einst);
+      if (!parsed.fordify_settings) {
+        alert("Import fehlgeschlagen: Dies ist keine fordify-Einstellungsdatei.\nBitte verwenden Sie eine zuvor über „Export" heruntergeladene Datei.");
+        input.value = "";
+        return;
+      }
+      speichereEinstellungen(parsed.fordify_settings);
       // Modal-Felder neu befüllen
       zeigeEinstellungenModal();
       // Datei-Input zurücksetzen
