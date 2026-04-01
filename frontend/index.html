@@ -249,6 +249,7 @@
           <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('zahlungsverbot');return false;">Vorläufiges Zahlungsverbot</a></li>
           <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('auskunftskosten');return false;">Auskünfte</a></li>
           <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('mahnkosten');return false;">Mahnkosten</a></li>
+          <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('inkassopauschale');return false;">Inkassopauschale (§ 288 V BGB)</a></li>
           <li><a class="dropdown-item" href="#" onclick="positionHinzufuegen('sonstige_kosten');return false;">Sonstige Kosten</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><h6 class="dropdown-header">Zahlungen</h6></li>
@@ -526,11 +527,47 @@
 
       </div><!-- /modal-body -->
 
-      <div class="modal-footer modal-footer--app">
-        <button type="button" class="btn-ghost" data-bs-dismiss="modal">Abbrechen</button>
-        <button type="button" class="btn-primary-app" onclick="einstellungenSpeichern()">Speichern</button>
+      <div class="modal-footer modal-footer--app d-flex flex-wrap gap-2 justify-content-between">
+        <div class="d-flex gap-2">
+          <button type="button" class="btn-ghost" onclick="einstellungenExportieren()" title="Einstellungen als JSON-Datei exportieren">Export</button>
+          <label class="btn-ghost mb-0" role="button" tabindex="0"
+                 onkeydown="if(event.key==='Enter'||event.key===' ')this.click()"
+                 title="Einstellungen aus JSON-Datei importieren">
+            Import
+            <input type="file" accept=".json" id="einst-import-datei" style="display:none"
+                   onchange="einstellungenImportieren(this)">
+          </label>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn-ghost" data-bs-dismiss="modal">Abbrechen</button>
+          <button type="button" class="btn-primary-app" onclick="einstellungenSpeichern()">Speichern</button>
+        </div>
       </div>
 
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     Onboarding-Modal (erster Aufruf)
+     ============================================================ -->
+<div class="modal fade" id="modal-onboarding" tabindex="-1" aria-labelledby="modal-onboarding-titel" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content modal-content--app">
+      <div class="modal-header modal-header--app">
+        <h5 class="modal-title" id="modal-onboarding-titel">Willkommen bei fordify</h5>
+      </div>
+      <div class="modal-body modal-body--app">
+        <h6 class="fw-semibold mb-1">Ihre Daten bleiben bei Ihnen</h6>
+        <p class="mb-3" style="font-size:var(--text-sm)">fordify speichert alle Daten <strong>ausschließlich in Ihrem Browser</strong> (localStorage). Kein Mandantendatum verlässt Ihr Gerät – kein Server, keine Cloud, DSGVO-konform.</p>
+        <h6 class="fw-semibold mb-1">Wichtig: Datensicherung</h6>
+        <p class="mb-3" style="font-size:var(--text-sm)">Browser können gespeicherte Daten bei Cache-Bereinigung oder einem Gerätewechsel verlieren. <strong>Exportieren Sie Ihre Fälle regelmäßig als JSON-Datei</strong> (Fälle&nbsp;→&nbsp;Export&nbsp;JSON) und bewahren Sie die Datei sicher auf.</p>
+        <h6 class="fw-semibold mb-1">Geräteübergreifend nutzen</h6>
+        <p class="mb-0" style="font-size:var(--text-sm)">Den JSON-Export können Sie auf einem anderen Gerät oder Browser über Fälle&nbsp;→&nbsp;Import&nbsp;JSON wieder einlesen.</p>
+      </div>
+      <div class="modal-footer modal-footer--app">
+        <button type="button" class="btn-primary-app" onclick="onboardingBestaetigen()">Verstanden – loslegen</button>
+      </div>
     </div>
   </div>
 </div>

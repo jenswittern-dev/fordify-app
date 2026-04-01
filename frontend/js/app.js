@@ -505,12 +505,13 @@ function renderePositionsliste() {
       : pos.betrag ? formatEUR(pos.betrag) : "—";
     const datumStr = pos.datum ? formatDate(parseDate(pos.datum)) : "—";
     const beschrStr = positionKurzbeschreibung(pos);
+    const warnHtml = verjährungsWarnungHtml(pos);
     const last = idx === state.fall.positionen.length - 1;
 
     return `<tr data-pos-id="${pos.id}" class="${istZahlung ? "position-row--zahlung" : ""}">
       <td><span class="${badgeKlasse(pos.typ)}">${typLabel}</span></td>
       <td style="color:var(--color-text-muted);font-size:var(--text-sm)">${datumStr}</td>
-      <td style="font-size:var(--text-sm)">${beschrStr}</td>
+      <td style="font-size:var(--text-sm)">${beschrStr}${warnHtml}</td>
       <td class="text-end">
         <span class="amount${istZahlung ? " amount--negative" : ""}">${istZahlung ? "− " : ""}${betragStr}</span>
       </td>
@@ -542,6 +543,24 @@ function positionKurzbeschreibung(pos) {
     case "zahlung": return pos.beschreibung || "Zahlung";
     default: return pos.beschreibung || "—";
   }
+}
+
+/**
+ * Gibt ein Warn-Icon zurück, wenn eine Zinsforderung möglicherweise verjährt ist (§ 197 BGB: 3 Jahre).
+ * Betroffen: zinsperiode (ab zinsVon) und zinsforderung_titel (ab datum).
+ */
+function verjährungsWarnungHtml(pos) {
+  const DREI_JAHRE_MS = 3 * 365.25 * 24 * 60 * 60 * 1000;
+  let refDatumStr = null;
+  if (pos.typ === "zinsperiode") refDatumStr = pos.zinsVon;
+  else if (pos.typ === "zinsforderung_titel") refDatumStr = pos.datum;
+  if (!refDatumStr) return "";
+  const refDatum = parseDate(refDatumStr);
+  if (!refDatum) return "";
+  if (Date.now() - refDatum.getTime() > DREI_JAHRE_MS) {
+    return `<span class="verjaerungs-warnung" title="Mögliche Verjährung: Zinsforderungen verjähren gem. § 197 BGB in 3 Jahren (ab ${formatDate(refDatum)})">⚠</span>`;
+  }
+  return "";
 }
 
 // ---- Modal ----
@@ -598,6 +617,7 @@ function renderModalInhalt(typ, pos) {
     case "zahlungsverbot":       return tplEinfacheKosten(pos, "Vorläufiges Zahlungsverbot", "");
     case "auskunftskosten":      return tplEinfacheKosten(pos, "Auskunftskosten", STANDARDKOSTEN.auskunftskosten);
     case "mahnkosten":           return tplEinfacheKosten(pos, "Mahnkosten", STANDARDKOSTEN.mahnkosten);
+    case "inkassopauschale":     return tplInkassopauschale(pos);
     case "sonstige_kosten":      return tplEinfacheKosten(pos, "Sonstige Kosten", "");
     default: return "<p>Unbekannter Typ.</p>";
   }
@@ -903,6 +923,24 @@ function tplEinfacheKosten(pos, label, standard) {
   `;
 }
 
+function tplInkassopauschale(pos) {
+  return `
+    ${datumFeld("mf-datum", pos?.datum, "Datum der Entstehung")}
+    <div class="mb-3">
+      <label class="form-label" for="mf-beschreibung">Beschreibung</label>
+      <input type="text" class="form-control" id="mf-beschreibung"
+             value="${pos?.beschreibung || "Inkassopauschale (§ 288 Abs. 5 BGB)"}"
+             placeholder="Inkassopauschale (§ 288 Abs. 5 BGB)">
+    </div>
+    ${betragFeld("mf-betrag", pos?.betrag || STANDARDKOSTEN.inkassopauschale, "Pauschalbetrag (€)")}
+    <div class="alert alert-info py-2 px-3 small mb-3" style="font-size:var(--text-xs)">
+      Die Inkassopauschale von 40\u00a0€ steht nur bei <strong>unternehmerischen Forderungen</strong>
+      zu (§\u00a0288\u00a0Abs.\u00a05\u00a0BGB, B2B). Nicht anwendbar bei Verbrauchern als Schuldner.
+    </div>
+    ${tituliertFeld(pos?.tituliert)}
+  `;
+}
+
 // ---- Vorschau ----
 
 function rendereVorschau() {
@@ -1008,6 +1046,8 @@ function rendereVorschau() {
       (*)\u00a0${aufschlagPP}\u00a0Prozentpunkte\u00a0p.\u00a0a. \u00fcber dem Basiszinssatz gem\u00e4\u00df \u00a7\u00a0247\u00a0BGB.<br>
       Verrechnung gem.\u00a0\u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB.
       ${insoDatum ? " Zinslauf endet gem.\u00a0\u00a7\u00a041\u00a0InsO am " + formatDate(insoDatum) + "." : ""}
+      ${fall.positionen.some(p => verjährungsWarnungHtml(p)) ? "<br><span style=\"color:var(--color-warning)\">\u26a0 Hinweis: Mindestens eine Zinsforderung ist m\u00f6glicherweise gem.\u00a0\u00a7\u00a0197\u00a0BGB verj\u00e4hrt (3-Jahres-Frist). Bitte pr\u00fcfen Sie die Durchsetzbarkeit.</span>" : ""}
+      <br><span style="opacity:0.75">Erstellt mit fordify.de \u00b7 Alle Angaben ohne Gew\u00e4hr \u2013 keine Rechtsberatung.</span>
     </div>
 
     ${impressumHtml}
@@ -1524,6 +1564,44 @@ function einstellungenSpeichern() {
   rendereVorschau();
 }
 
+/**
+ * Exportiert die aktuellen Einstellungen (inkl. Impressum) als JSON-Datei.
+ */
+function einstellungenExportieren() {
+  const einst = ladeEinstellungen();
+  const json = JSON.stringify({ fordify_settings: einst }, null, 2);
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "fordify-einstellungen.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Importiert Einstellungen aus einer JSON-Datei und befüllt das Modal.
+ */
+function einstellungenImportieren(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      const einst = parsed.fordify_settings || parsed;
+      speichereEinstellungen(einst);
+      // Modal-Felder neu befüllen
+      zeigeEinstellungenModal();
+      // Datei-Input zurücksetzen
+      input.value = "";
+    } catch (err) {
+      alert("Import fehlgeschlagen: Ungültige JSON-Datei.\n" + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
 // ---- Drucken / PDF ----
 
 function drucken() {
@@ -1567,4 +1645,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target.dataset.onchange || e.target.classList.contains("mf-vv-check"))
       modalDynamischAktualisieren(modalTyp);
   });
+
+  // Onboarding beim ersten Aufruf
+  if (!localStorage.getItem("fordify_onboarded")) {
+    setTimeout(() => {
+      const m = document.getElementById("modal-onboarding");
+      if (m) new bootstrap.Modal(m).show();
+    }, 400);
+  }
 });
+
+function onboardingBestaetigen() {
+  localStorage.setItem("fordify_onboarded", "1");
+  bootstrap.Modal.getInstance(document.getElementById("modal-onboarding"))?.hide();
+}

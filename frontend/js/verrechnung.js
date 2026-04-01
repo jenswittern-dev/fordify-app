@@ -94,6 +94,7 @@ function berechneVerrechnung(positionen, basiszinssaetze) {
       case "zahlungsverbot":
       case "auskunftskosten":
       case "mahnkosten":
+      case "inkassopauschale":
       case "sonstige_kosten":
         saldo.unverzinsliche_kosten = saldo.unverzinsliche_kosten.plus(new Decimal(pos.betrag || 0));
         break;

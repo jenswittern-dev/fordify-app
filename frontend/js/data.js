@@ -127,12 +127,14 @@ const AKTIONSTYPEN = {
   zahlungsverbot:       "Vorläufiges Zahlungsverbot",
   auskunftskosten:      "Auskünfte",
   mahnkosten:           "Mahnkosten",
+  inkassopauschale:     "Inkassopauschale (§ 288 V BGB)",
   sonstige_kosten:      "Sonstige Kosten",
 };
 
 const STANDARDKOSTEN = {
   auskunftskosten: "25.00",
   mahnkosten:      "5.00",
+  inkassopauschale: "40.00",
 };
 
 // Kategorien für Zusammenfassungstabelle

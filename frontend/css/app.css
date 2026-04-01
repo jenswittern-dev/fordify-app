@@ -478,6 +478,7 @@ body {
 .pos-badge--zahlungsverbot,
 .pos-badge--auskunftskosten,
 .pos-badge--mahnkosten,
+.pos-badge--inkassopauschale,
 .pos-badge--sonstige_kosten {
   background: var(--color-kosten-bg);
   color: var(--color-kosten);
@@ -501,6 +502,14 @@ body {
 
 .amount--negative {
   color: var(--color-zahlung);
+}
+
+/* Verjährungswarnung */
+.verjaerungs-warnung {
+  color: var(--color-warning);
+  cursor: help;
+  margin-left: 0.25rem;
+  font-size: var(--text-sm);
 }
 
 .amount--gesamt {
