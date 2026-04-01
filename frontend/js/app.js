@@ -32,6 +32,10 @@ function neuId() {
   return state.naechsteId++;
 }
 
+function neuGruppeId() {
+  return "g" + neuId();
+}
+
 function parseDate(str) {
   if (!str) return null;
   const [y, m, d] = str.split("-").map(Number);
@@ -112,15 +116,19 @@ function speichernMitFeedback() {
   _saveIndicatorTimer = setTimeout(() => ind.classList.remove("visible"), 2000);
 }
 
-/** Migriert alte Anwaltsvergütungs-Positionen auf neues Format (betrag = netto, ustSatz). */
+/** Migriert alte Positionen auf aktuelle Formate. */
 function migratePositionen(positionen) {
   if (!positionen) return positionen;
   return positionen.map(pos => {
+    // Migration 1: Anwaltsvergütung auf neues Format (betrag = netto, ustSatz)
     if (pos.typ === "anwaltsverguetung" && pos.ustSatz === undefined) {
       const ustSatz = pos.ohneUst ? 0 : 19;
-      // Altes betrag war gross (netto + ust); neues betrag = netto
       const betrag = pos.netto || pos.betrag;
       return { ...pos, ustSatz, betrag };
+    }
+    // Migration 2: gruppeId für Hauptforderungen und Zinsperioden
+    if ((pos.typ === "hauptforderung" || pos.typ === "zinsperiode") && !pos.gruppeId) {
+      return { ...pos, gruppeId: "g0" };
     }
     return pos;
   });
@@ -397,6 +405,32 @@ function fgKatWechseln(kat) {
   document.getElementById("fg-titel-wrap").classList.toggle("d-none", kat !== "Titel");
 }
 
+// ---- Gruppen ----
+
+let modalGruppeId = null;
+
+/**
+ * Gibt alle Hauptforderungen als Gruppen-Referenzen zurück (dedupliziert nach gruppeId).
+ */
+function holeGruppen() {
+  const seen = new Set();
+  return state.fall.positionen
+    .filter(p => p.typ === "hauptforderung")
+    .filter(hf => {
+      if (seen.has(hf.gruppeId)) return false;
+      seen.add(hf.gruppeId);
+      return true;
+    });
+}
+
+/**
+ * Legt eine neue Rechnungsgruppe an und öffnet das Hauptforderungs-Modal.
+ */
+function neueRechnungsgruppe() {
+  modalGruppeId = neuGruppeId();
+  modalOeffnen("hauptforderung", null);
+}
+
 // ---- Undo ----
 
 const UNDO_MAX = 20;
@@ -429,6 +463,17 @@ function aktualisierUndoBtn() {
 // ---- Positionen ----
 
 function positionHinzufuegen(typ) {
+  if (typ === "zinsperiode") {
+    const gruppen = holeGruppen();
+    if (gruppen.length === 0) {
+      alert("Bitte legen Sie zuerst eine Hauptforderung an.");
+      return;
+    }
+    // Bei genau einer Gruppe: automatisch zuordnen
+    modalGruppeId = gruppen.length === 1 ? gruppen[0].gruppeId : null;
+  } else {
+    modalGruppeId = null;
+  }
   modalOeffnen(typ, null);
 }
 
@@ -460,7 +505,27 @@ function positionLoeschenAbbrechen(id) {
 
 function positionLoeschenBestaetigen(id) {
   pushUndo();
-  state.fall.positionen = state.fall.positionen.filter(p => p.id !== id);
+  const pos = state.fall.positionen.find(p => p.id === id);
+  if (pos && pos.typ === "hauptforderung" && pos.gruppeId) {
+    const zugehoerig = state.fall.positionen.filter(
+      p => p.typ === "zinsperiode" && p.gruppeId === pos.gruppeId
+    );
+    if (zugehoerig.length > 0) {
+      const mitLoeschen = confirm(
+        `Diese Hauptforderung hat ${zugehoerig.length} zugehörige Zinsperiode(n).\nSollen diese ebenfalls gelöscht werden?`
+      );
+      if (mitLoeschen) {
+        const zuLoeschen = new Set([id, ...zugehoerig.map(p => p.id)]);
+        state.fall.positionen = state.fall.positionen.filter(p => !zuLoeschen.has(p.id));
+      } else {
+        state.fall.positionen = state.fall.positionen.filter(p => p.id !== id);
+      }
+    } else {
+      state.fall.positionen = state.fall.positionen.filter(p => p.id !== id);
+    }
+  } else {
+    state.fall.positionen = state.fall.positionen.filter(p => p.id !== id);
+  }
   speichernMitFeedback();
   renderePositionsliste();
 }
@@ -531,6 +596,16 @@ function renderePositionsliste() {
     return;
   }
 
+  // Gruppen-Index-Map aufbauen (für Label "1", "2", …)
+  const gruppenIndex = {};
+  let gruppenZaehler = 0;
+  for (const p of state.fall.positionen) {
+    if (p.typ === "hauptforderung" && p.gruppeId && !(p.gruppeId in gruppenIndex)) {
+      gruppenIndex[p.gruppeId] = ++gruppenZaehler;
+    }
+  }
+  const hatMehreGruppen = gruppenZaehler > 1;
+
   tbody.innerHTML = state.fall.positionen.map((pos, idx) => {
     const typLabel = AKTIONSTYPEN[pos.typ] || pos.typ;
     const istZahlung = pos.typ === "zahlung";
@@ -542,8 +617,11 @@ function renderePositionsliste() {
     const warnHtml = verjährungsWarnungHtml(pos);
     const last = idx === state.fall.positionen.length - 1;
 
+    const gruppeLabel = hatMehreGruppen && pos.gruppeId && gruppenIndex[pos.gruppeId]
+      ? `<span class="gruppe-label">\u00b7\u00a0${gruppenIndex[pos.gruppeId]}</span>` : "";
+
     return `<tr data-pos-id="${pos.id}" class="${istZahlung ? "position-row--zahlung" : ""}">
-      <td><span class="${badgeKlasse(pos.typ)}">${typLabel}</span></td>
+      <td><span class="${badgeKlasse(pos.typ)}">${typLabel}</span>${gruppeLabel}</td>
       <td style="color:var(--color-text-muted);font-size:var(--text-sm)">${datumStr}</td>
       <td style="font-size:var(--text-sm)">${beschrStr}${warnHtml}</td>
       <td class="text-end">
@@ -665,9 +743,19 @@ function modalSpeichern() {
 
   if (modalAktuellePos) {
     const idx = state.fall.positionen.findIndex(p => p.id === modalAktuellePos.id);
-    if (idx !== -1) state.fall.positionen[idx] = { ...pos, id: modalAktuellePos.id };
+    if (idx !== -1) {
+      const merged = { ...pos, id: modalAktuellePos.id };
+      // gruppeId beim Bearbeiten erhalten
+      if (modalAktuellePos.gruppeId) merged.gruppeId = modalAktuellePos.gruppeId;
+      state.fall.positionen[idx] = merged;
+    }
   } else {
     pos.id = neuId();
+    // gruppeId für neue Hauptforderungen und Zinsperioden setzen
+    if ((pos.typ === "hauptforderung" || pos.typ === "zinsperiode") && !pos.gruppeId) {
+      pos.gruppeId = modalGruppeId || "g0";
+    }
+    modalGruppeId = null;
     state.fall.positionen.push(pos);
   }
 
@@ -739,6 +827,7 @@ function modalDatenLesen() {
         betrag, parseDate(von), parseDate(bis), aufschlag, BASISZINSSAETZE, insoDatum
       );
       const gesamtBetrag = perioden.reduce((s, p) => s.plus(p.zinsbetrag), new Decimal(0));
+      const gruppeIdFromDropdown = v("mf-gruppe") || null;
       return {
         ...basis,
         hauptbetrag: betrag,
@@ -748,6 +837,7 @@ function modalDatenLesen() {
         perioden,
         betrag: gesamtBetrag.toFixed(2),
         tage: perioden.reduce((s, p) => s + p.tage, 0),
+        ...(gruppeIdFromDropdown ? { gruppeId: gruppeIdFromDropdown } : {}),
       };
     }
 
@@ -920,7 +1010,26 @@ function tplZinsforderungTitel(pos) {
 
 function tplZinsperiode(pos) {
   const heuteBis = new Date().toISOString().slice(0, 10);
+  const gruppen = holeGruppen();
+
+  let gruppenDropdown = "";
+  if (gruppen.length > 1) {
+    const options = gruppen.map((hf, i) => {
+      const label = hf.beschreibung
+        ? `Rechnung\u00a0${i + 1}: ${hf.beschreibung} (${formatEUR(hf.betrag)})`
+        : `Hauptforderung\u00a0${i + 1} (${formatEUR(hf.betrag)})`;
+      const selected = pos?.gruppeId === hf.gruppeId || (!pos?.gruppeId && i === 0) ? "selected" : "";
+      return `<option value="${hf.gruppeId}" ${selected}>${label}</option>`;
+    }).join("");
+    gruppenDropdown = `
+    <div class="mb-3">
+      <label class="form-label" for="mf-gruppe">Gehört zu Hauptforderung</label>
+      <select class="form-select" id="mf-gruppe">${options}</select>
+    </div>`;
+  }
+
   return `
+    ${gruppenDropdown}
     ${datumFeld("mf-datum", pos?.datum, "Buchungsdatum")}
     ${betragFeld("mf-hauptbetrag", pos?.hauptbetrag, "Hauptbetrag (€)")}
     <div class="mb-3">
@@ -1120,15 +1229,18 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   const zahlungen = pos.filter(p => p.typ === "zahlung")
     .sort((a, b) => parseDate(a.datum) - parseDate(b.datum));
 
-  // Jede HF ihrer Zinsperiode zuordnen (nach hauptbetrag)
-  const usedZpIds = new Set();
+  // Jede HF ihrer Zinsperiode zuordnen – primär per gruppeId, Fallback: Betrags-Heuristik
   const hfZpMap = {};
   for (const hf of hfs) {
-    const zp = zpAll.find(z =>
-      !usedZpIds.has(z.id) &&
-      Math.abs(parseFloat(z.hauptbetrag || 0) - parseFloat(hf.betrag || 0)) < 0.01
-    );
-    if (zp) { hfZpMap[hf.id] = zp; usedZpIds.add(zp.id); }
+    let zp = zpAll.find(z => z.gruppeId && z.gruppeId === hf.gruppeId);
+    if (!zp) {
+      const usedIds = new Set(Object.values(hfZpMap).map(z => z.id));
+      zp = zpAll.find(z =>
+        !usedIds.has(z.id) &&
+        Math.abs(parseFloat(z.hauptbetrag || 0) - parseFloat(hf.betrag || 0)) < 0.01
+      );
+    }
+    if (zp) hfZpMap[hf.id] = zp;
   }
 
   function calcZinsen(betrag, vonStr, bisDate) {
@@ -1171,9 +1283,13 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
 
     if (isFirst) {
       // HF + Zinsen bis erste Zahlung (oder heute)
-      for (const hf of hfs) {
+      for (let hfIdx = 0; hfIdx < hfs.length; hfIdx++) {
+        const hf = hfs[hfIdx];
         const b = new Decimal(hf.betrag || 0);
-        const label = hf.beschreibung ? `Hauptforderung: ${hf.beschreibung}` : "Hauptforderung";
+        const hfNum = hfs.length > 1 ? ` ${hfIdx + 1}` : "";
+        const label = hf.beschreibung
+          ? `Hauptforderung${hfNum}: ${hf.beschreibung}`
+          : `Hauptforderung${hfNum}`;
         zeilen.push({ typ: "hf", hfId: hf.id, bezeichnung: label,
           forderung: b, restforderung: b });
 
@@ -1645,7 +1761,36 @@ function einstellungenImportieren(input) {
 // ---- Drucken / PDF ----
 
 function drucken() {
-  window.print();
+  rendereVorschau();
+  const vorschauEl = document.getElementById("vorschau-inhalt");
+  if (!vorschauEl) { window.print(); return; }
+
+  // no-print-Elemente entfernen
+  const tmp = document.createElement("div");
+  tmp.innerHTML = vorschauEl.innerHTML;
+  tmp.querySelectorAll(".no-print").forEach(el => el.remove());
+  const cleanHtml = tmp.innerHTML;
+
+  const origin = window.location.origin;
+  const fullHtml = `<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Forderungsaufstellung</title>
+  <link rel="stylesheet" href="${origin}/css/bootstrap.min.css">
+  <link rel="stylesheet" href="${origin}/css/app.css">
+  <style>body{margin:2rem}@media print{body{margin:0}}</style>
+</head>
+<body>
+  <div class="content-card">${cleanHtml}</div>
+  <script>window.onload=function(){setTimeout(function(){window.print();},400);}<\/script>
+</body>
+</html>`;
+
+  const popup = window.open("", "_blank", "width=960,height=750");
+  if (!popup) { window.print(); return; }  // Popup-Blocker: Fallback
+  popup.document.write(fullHtml);
+  popup.document.close();
 }
 
 // ---- Zurücksetzen ----

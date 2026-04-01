@@ -504,6 +504,15 @@ body {
   color: var(--color-zahlung);
 }
 
+/* Gruppen-Label in der Positionstabelle */
+.gruppe-label {
+  display: inline-block;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-left: 0.35rem;
+  font-weight: 500;
+}
+
 /* Verjährungswarnung */
 .verjaerungs-warnung {
   color: var(--color-warning);
