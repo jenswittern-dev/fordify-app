@@ -7,9 +7,9 @@
 
 // ---- State ----
 
-const STORAGE_KEY_CASES    = "debitum_cases";
+const STORAGE_KEY_CASES    = "fordify_cases";
 const STORAGE_KEY_LEGACY   = "forderungsaufstellung_state";
-const STORAGE_KEY_SETTINGS = "debitum_settings";
+const STORAGE_KEY_SETTINGS = "fordify_settings";
 
 function leerFall() {
   return {

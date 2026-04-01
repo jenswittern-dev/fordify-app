@@ -1,19 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="debitum">
-  <!-- Background: rounded square in slate blue -->
-  <rect width="100" height="100" rx="18" fill="#1e3a5f"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="fordify">
+  <!-- Background: rounded square in indigo -->
+  <rect width="100" height="100" rx="18" fill="#1e3a8a"/>
 
-  <!-- D letterform: vertical stroke -->
-  <rect x="21" y="20" width="12" height="60" rx="6" fill="white"/>
+  <!-- F vertical stroke -->
+  <rect x="22" y="20" width="12" height="60" rx="6" fill="white"/>
 
-  <!-- D letterform: arc (cubic bezier, stroke-based) -->
-  <path d="M 33 22
-           C 64 22 75 33 75 50
-           C 75 67 64 78 33 78"
-        fill="none"
-        stroke="white"
-        stroke-width="12"
-        stroke-linecap="round"/>
+  <!-- F top bar -->
+  <rect x="22" y="20" width="46" height="12" rx="4" fill="white"/>
 
-  <!-- Teal accent: balance/ledger line inside the D belly -->
-  <rect x="33" y="44" width="24" height="9" rx="4.5" fill="#0f7c8c"/>
+  <!-- F middle bar: cyan accent -->
+  <rect x="22" y="44" width="32" height="10" rx="4" fill="#0891b2"/>
 </svg>

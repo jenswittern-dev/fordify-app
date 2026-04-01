@@ -5,18 +5,18 @@
 /* ---- 1. CSS Custom Properties ---- */
 
 :root {
-  /* Primär: Schieferblau */
-  --color-primary:        #1e3a5f;
-  --color-primary-hover:  #16304f;
-  --color-primary-light:  #e8eef5;
+  /* Primär: Indigo */
+  --color-primary:        #1e3a8a;
+  --color-primary-hover:  #1e40af;
+  --color-primary-light:  #eff6ff;
 
-  /* Akzent: Petrol */
-  --color-accent:         #0f7c8c;
-  --color-accent-hover:   #0c6878;
-  --color-accent-light:   #e6f4f6;
+  /* Akzent: Cyan */
+  --color-accent:         #0891b2;
+  --color-accent-hover:   #0e7490;
+  --color-accent-light:   #ecfeff;
 
   /* Semantisch: Typ-Farben */
-  --color-forderung:      #1e3a5f;
+  --color-forderung:      #1e3a8a;
   --color-forderung-bg:   #e8eef5;
   --color-zahlung:        #b05e00;
   --color-zahlung-bg:     #fef4e6;
@@ -43,9 +43,9 @@
   --color-text-subtle:    #9ca3af;
 
   /* Navbar */
-  --color-nav-bg:         #1e3a5f;
-  --color-nav-text:       #e8eef5;
-  --color-nav-text-muted: #94aec6;
+  --color-nav-bg:         #1e3a8a;
+  --color-nav-text:       #eff6ff;
+  --color-nav-text-muted: #93c5fd;
 
   /* Typografie */
   --font-body: 'Inter', system-ui, -apple-system, sans-serif;

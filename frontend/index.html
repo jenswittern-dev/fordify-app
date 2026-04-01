@@ -3,8 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>debitum</title>
+  <title>fordify – Forderungsaufstellung</title>
+  <meta name="description" content="Professionelle Forderungsaufstellungen für Anwaltskanzleien – kostenlos, direkt im Browser, DSGVO-konform.">
+  <meta name="theme-color" content="#1e3a8a">
+  <meta property="og:title" content="fordify – Forderungsaufstellung">
+  <meta property="og:description" content="Professionelle Forderungsaufstellungen für Anwaltskanzleien – kostenlos, direkt im Browser, DSGVO-konform.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fordify.de/">
+  <meta property="og:image" content="https://fordify.de/img/logo.svg">
   <link rel="icon" type="image/svg+xml" href="img/logo.svg">
+  <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -19,8 +27,8 @@
 <nav class="navbar navbar-expand-md navbar-fa mb-0 no-print">
   <div class="container d-flex align-items-center gap-3">
     <a class="navbar-brand" href="#">
-      <img src="img/logo.svg" height="30" alt="debitum Logo">
-      <span>debitum</span>
+      <img src="img/logo.svg" height="30" alt="fordify Logo">
+      <span>fordify</span>
     </a>
     <span id="nav-context"></span>
     <div class="d-flex gap-2 ms-auto align-items-center">
@@ -377,6 +385,17 @@
 </div>
 
 <!-- ============================================================
+     Footer
+     ============================================================ -->
+<footer class="no-print" style="margin-top:3rem;padding:1.25rem 0;border-top:1px solid var(--color-border);background:var(--color-surface)">
+  <div class="container d-flex gap-3 justify-content-center" style="font-size:0.8rem;color:var(--color-text-muted)">
+    <span>© 2026 fordify</span>
+    <a href="impressum.html" style="color:var(--color-text-muted);text-decoration:none" onmouseover="this.style.color='var(--color-accent)'" onmouseout="this.style.color='var(--color-text-muted)'">Impressum</a>
+    <a href="datenschutz.html" style="color:var(--color-text-muted);text-decoration:none" onmouseover="this.style.color='var(--color-accent)'" onmouseout="this.style.color='var(--color-text-muted)'">Datenschutz</a>
+  </div>
+</footer>
+
+<!-- ============================================================
      Scripts
      ============================================================ -->
 <script src="js/decimal.min.js"></script>
@@ -387,6 +406,11 @@
 <script src="js/verrechnung.js"></script>
 <script src="js/zusammenfassung.js"></script>
 <script src="js/app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+</script>
 
 </body>
 </html>
