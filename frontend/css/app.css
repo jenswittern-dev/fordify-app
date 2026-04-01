@@ -84,8 +84,8 @@ body {
 .navbar-fa .navbar-brand {
   color: var(--color-nav-text) !important;
   font-size: var(--text-md);
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -94,7 +94,8 @@ body {
 
 .navbar-fa .navbar-brand img {
   object-fit: contain;
-  height: 28px;
+  height: 32px;
+  width: auto;
 }
 
 #nav-context {
@@ -102,11 +103,13 @@ body {
   font-size: var(--text-sm);
   border-left: 1px solid rgba(255,255,255,0.15);
   padding-left: 0.875rem;
-  margin-left: 0.25rem;
+  margin-left: 0.5rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 300px;
+  max-width: 260px;
+  min-width: 0;
+  flex-shrink: 1;
 }
 
 #save-indicator {
@@ -119,6 +122,99 @@ body {
 
 #save-indicator.visible {
   opacity: 1;
+}
+
+/* ---- Nav Actions Block ---- */
+
+/* Mobile: stacked, volle Breite */
+.navbar-nav-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  padding: 0.75rem 0;
+  gap: 0.375rem;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  margin-top: 0.25rem;
+}
+
+.navbar-nav-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  width: 100%;
+}
+
+.navbar-nav-buttons .btn {
+  width: 100%;
+  justify-content: center;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+/* Desktop: inline, rechts */
+@media (min-width: 768px) {
+  .navbar-nav-actions {
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    padding: 0;
+    gap: 0.5rem;
+    border-top: none;
+    border-left: 1px solid rgba(255,255,255,0.15);
+    padding-left: 1rem;
+    margin-left: 0.5rem;
+    margin-top: 0;
+  }
+
+  .navbar-nav-buttons {
+    flex-direction: row;
+    gap: 0.5rem;
+    width: auto;
+  }
+
+  .navbar-nav-buttons .btn {
+    width: auto;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+}
+
+/* Outline-Buttons in der Navbar */
+.navbar-fa .navbar-nav-buttons .btn-outline-light {
+  border-color: rgba(255,255,255,0.35);
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.navbar-fa .navbar-nav-buttons .btn-outline-light:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.55);
+  color: #fff;
+}
+
+.navbar-fa .navbar-nav-buttons .btn-outline-light:focus-visible {
+  box-shadow: 0 0 0 3px rgba(147,197,253,0.45);
+  outline: none;
+}
+
+/* Primär-Button "Drucken / PDF" */
+.btn-nav-primary {
+  background: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  color: #fff;
+  font-weight: 600;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.btn-nav-primary:hover {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+  color: #fff;
+}
+
+.btn-nav-primary:focus-visible {
+  box-shadow: 0 0 0 3px rgba(14,116,144,0.45);
+  outline: none;
 }
 
 /* Hamburger-Toggler auf dunklem Navbar-Hintergrund */

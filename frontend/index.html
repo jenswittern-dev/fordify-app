@@ -44,12 +44,14 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbar-menu">
-      <div class="d-flex flex-wrap gap-2 ms-auto align-items-center py-2 py-md-0">
+      <div class="navbar-nav-actions ms-auto">
         <span id="save-indicator" aria-live="polite" aria-atomic="true">Gespeichert ✓</span>
-        <button class="btn btn-sm btn-outline-light" onclick="zeigeFallModal()">Fälle</button>
-        <button class="btn btn-sm btn-outline-light" onclick="zeigeEinstellungenModal()">Einstellungen</button>
-        <button class="btn btn-sm btn-outline-light" onclick="fallZuruecksetzen()">Neu</button>
-        <button class="btn btn-sm btn-light" onclick="drucken()">Drucken / PDF</button>
+        <div class="navbar-nav-buttons">
+          <button class="btn btn-sm btn-outline-light" onclick="zeigeFallModal()">Fälle</button>
+          <button class="btn btn-sm btn-outline-light" onclick="zeigeEinstellungenModal()">Einstellungen</button>
+          <button class="btn btn-sm btn-outline-light" onclick="fallZuruecksetzen()">Neu</button>
+          <button class="btn btn-sm btn-nav-primary" onclick="drucken()">Drucken / PDF</button>
+        </div>
       </div>
     </div>
   </div>
