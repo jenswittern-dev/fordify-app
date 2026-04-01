@@ -1,4 +1,4 @@
-# CLAUDE.md – fordify-app (debitum)
+# CLAUDE.md – fordify-app (Fordify)
 
 > Diese Datei wird bei jedem Gesprächsstart automatisch geladen.
 > Sie ist die einzige Quelle der Wahrheit für Kontext, Verhalten und Architektur.
@@ -7,7 +7,7 @@
 
 ## Projekt
 
-**Name:** debitum (Produktname) / fordify (interner/Repository-Name)
+**Name:** Fordify
 **URL:** https://fordify.de
 **Repo:** https://github.com/jenswittern-dev/fordify-app
 **Typ:** Pure Static SPA (HTML/CSS/Vanilla JS) – kein Backend, kein Build-Schritt

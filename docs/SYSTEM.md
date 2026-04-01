@@ -1,4 +1,4 @@
-# SYSTEM.md – Technisches Whitepaper debitum / fordify
+# SYSTEM.md – Technisches Whitepaper Fordify
 
 > Stand: 2026-04-01
 > Zielgruppe: Entwickler, Claude Code (Kontext für neue Features)
@@ -7,7 +7,7 @@
 
 ## 1. Architekturüberblick
 
-debitum ist eine **reine Client-Side-SPA** ohne Build-Schritt:
+Fordify ist eine **reine Client-Side-SPA** ohne Build-Schritt:
 
 ```
 Browser

@@ -5,7 +5,7 @@
 
 ## Ausgangslage
 
-debitum ist aktuell eine pure HTML/CSS/JS Single-Page-App, die lokal über das `file://`-Protokoll läuft. Alle Daten liegen im `localStorage` des Browsers. Es gibt keinen Server, keine Datenbank, keine Nutzerkonten.
+Fordify ist aktuell eine pure HTML/CSS/JS Single-Page-App, die lokal über das `file://`-Protokoll läuft. Alle Daten liegen im `localStorage` des Browsers. Es gibt keinen Server, keine Datenbank, keine Nutzerkonten.
 
 **Das zentrale Problem:** Versionskontrolle. Nutzer arbeiten mit der Version, die sie einmal heruntergeladen haben — Updates erreichen sie nicht automatisch.
 

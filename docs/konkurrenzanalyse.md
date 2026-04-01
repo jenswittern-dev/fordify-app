@@ -1,4 +1,4 @@
-# Konkurrenzanalyse: debitum – Forderungsaufstellung nach § 367 BGB
+# Konkurrenzanalyse: Fordify – Forderungsaufstellung nach § 367 BGB
 **Stand: April 2026**
 
 ---
@@ -30,9 +30,9 @@
 
 **Preismodell:** Lifetime-Lizenz (einmalig, kein Abo). Kostenlose Testlizenz verfügbar. Professional Plus enthält einen separaten „Forderungsmanager" für die Verwaltung mehrerer Aufstellungen.
 
-**Features (im Vergleich zu debitum):**
+**Features (im Vergleich zu Fordify):**
 
-| Feature | Forderungsaufstellung 367 | debitum |
+| Feature | Forderungsaufstellung 367 | Fordify |
 |---|:---:|:---:|
 | § 367 BGB Verrechnung | ✓ | ✓ |
 | Mehrere Teilforderungen | ✓ | ✓ |
@@ -62,7 +62,7 @@
 
 **Preismodell:** Jahresabo: Standard 116,34 €/Jahr + MwSt., Mini-Lizenz (max. 10 Aufstellungen/Jahr) 47,77 €/Jahr. Einmaliger Scanner-Treiber 69 €. 90 Minuten kostenloser Support/Monat inklusive. 30 Tage Probeversion.
 
-**Zusätzliche Features gegenüber debitum:**
+**Zusätzliche Features gegenüber Fordify:**
 
 - Säumniszuschläge nach § 24 SGB IV (relevant für Sozialversicherungsforderungen)
 - TWAIN-Scanner-Integration (direktes Scannen von Belegen in Fälle)
@@ -122,7 +122,7 @@
 
 ### 2.5 ZV-Assistent (Formularassistent, zv-assistent.de)
 
-**Technologie:** Webbasiertes Formular (Browser, kein Server-Account, localStorage). Ähnliches Grundprinzip wie debitum.
+**Technologie:** Webbasiertes Formular (Browser, kein Server-Account, localStorage). Ähnliches Grundprinzip wie Fordify.
 
 **Zweck:** Erstellung von Zwangsvollstreckungsaufträgen (ZVA) als ausfüllbares PDF für Gerichtsvollzieher und Gläubiger — nicht primär Forderungsberechnung nach § 367 BGB.
 
@@ -154,14 +154,14 @@
 - Template-Import (.60tools-Format)
 - Aktueller Basiszinssatz integriert
 
-**Defizite gegenüber debitum:**
+**Defizite gegenüber Fordify:**
 
 - Kein RVG
 - Keine Mehrfall-Verwaltung
 - Beta, begrenzte Weiterentwicklung
 - Daten werden serverseitig (wenn auch temporär) verarbeitet — Datenschutzfrage für Kanzleien
 
-**Fazit:** Nächster struktureller Verwandter zu debitum (Browser, kostenlos, § 367 BGB), aber funktional deutlich eingeschränkter und im Beta-Stadium.
+**Fazit:** Nächster struktureller Verwandter zu Fordify (Browser, kostenlos, § 367 BGB), aber funktional deutlich eingeschränkter und im Beta-Stadium.
 
 ---
 
@@ -178,7 +178,7 @@ Diese Kategorie umfasst einfache Einzel-Rechner ohne Fallverwaltung.
 - Teilweise Teilzahlungen und § 367 BGB-Verrechnung (zinsen-berechnen.de)
 - Zinstagmethoden-Auswahl (act/act, 30E/360 etc.)
 
-**Defizite gegenüber debitum:**
+**Defizite gegenüber Fordify:**
 
 - Kein RVG, keine Gerichtskosten/GV-Kosten
 - Keine Fallverwaltung (kein localStorage, kein Import/Export)
@@ -216,11 +216,11 @@ Diese Produkte sind vollständige Kanzleimanagementsysteme. Die Forderungsaufste
 - Microsoft SQL Server Business Intelligence für Reporting
 - REST/Web-Service-Schnittstellen für ERP-Integration
 
-**Fazit:** Diese Systeme konkurrieren nicht direkt mit debitum, da sie eine vollständige Kanzleiinfrastruktur voraussetzen und erhebliche Lizenzkosten verursachen. Sie zeigen aber, welches Feature-Niveau der Markt erwartet, wenn Budget vorhanden ist.
+**Fazit:** Diese Systeme konkurrieren nicht direkt mit Fordify, da sie eine vollständige Kanzleiinfrastruktur voraussetzen und erhebliche Lizenzkosten verursachen. Sie zeigen aber, welches Feature-Niveau der Markt erwartet, wenn Budget vorhanden ist.
 
 ---
 
-## 3. Features der Konkurrenz, die debitum fehlen
+## 3. Features der Konkurrenz, die Fordify fehlen
 
 ### 3.1 Hochpriorität (häufig vorhanden, klar nützlich für Anwaltskanzleien)
 
@@ -274,17 +274,17 @@ Diese Produkte sind vollständige Kanzleimanagementsysteme. Die Forderungsaufste
 
 ---
 
-## 5. Was debitum besser macht
+## 5. Was Fordify besser macht
 
 ### 5.1 Technologische Überlegenheit
 
-**Browserbasiert ohne Installation:** Kein einziger direkter Wettbewerber im Bereich vollständiger Forderungsaufstellung mit RVG ist eine reine Browser-App. Alle Desktop-Konkurrenten erfordern Windows-Installation mit Administratorrechten, .NET Framework und Update-Verwaltung. debitum läuft auf jedem Betriebssystem (Windows, macOS, Linux, iPad) direkt im Browser — ohne Installer, ohne Update-Aufwand, ohne IT-Abteilung.
+**Browserbasiert ohne Installation:** Kein einziger direkter Wettbewerber im Bereich vollständiger Forderungsaufstellung mit RVG ist eine reine Browser-App. Alle Desktop-Konkurrenten erfordern Windows-Installation mit Administratorrechten, .NET Framework und Update-Verwaltung. Fordify läuft auf jedem Betriebssystem (Windows, macOS, Linux, iPad) direkt im Browser — ohne Installer, ohne Update-Aufwand, ohne IT-Abteilung.
 
-**Kein Datenschutzrisiko durch Serverzugriff:** 60tools speichert Daten temporär auf deutschen Servern. Online-Rechner übertragen Daten an externe Server. debitum hält alle Daten ausschließlich im Browser (localStorage) — kein Mandantendatum verlässt den Rechner. Das ist für Kanzleien unter DSGVO und anwaltlicher Schweigepflicht (§ 43a BRAO) ein erheblicher Vorteil.
+**Kein Datenschutzrisiko durch Serverzugriff:** 60tools speichert Daten temporär auf deutschen Servern. Online-Rechner übertragen Daten an externe Server. Fordify hält alle Daten ausschließlich im Browser (localStorage) — kein Mandantendatum verlässt den Rechner. Das ist für Kanzleien unter DSGVO und anwaltlicher Schweigepflicht (§ 43a BRAO) ein erheblicher Vorteil.
 
 ### 5.2 Funktionale Stärken gegenüber dem Markt
 
-| Feature | debitum | Konkurrenz |
+| Feature | Fordify | Konkurrenz |
 |---|:---:|:---:|
 | Browserbasiert, kein Install | ✓ | nur 60tools (Beta) |
 | Rein lokal / datenschutzkonform | ✓ | nur Desktop-Software |
@@ -317,7 +317,7 @@ Diese Produkte sind vollständige Kanzleimanagementsysteme. Die Forderungsaufste
 | P2.1 | **Wiederkehrende Buchungen** | Miet- und Ratenforderungen sind ein häufiger Anwendungsfall. Manuelle Einzeleingabe von z. B. 24 Monatsmieten ist fehleranfällig. Automatische Generierung von n Perioden mit konstantem Betrag wäre ein klarer Wettbewerbsvorteil. | Mittel |
 | P2.2 | **Zukunfts-Zahlungsplan** | Für Vergleichsgespräche: „Bei Zahlung von X € monatlich, wann ist die Schuld getilgt?" Diese Funktion hat Alleinstellungspotenzial im Browser-Segment. | Mittel |
 | P2.3 | **GKG-Streitwertrechner** | Gerichtskosten werden derzeit als freie Eingabe erfasst. Ein eingebetteter GKG-Rechner (Tabelle nach KostBRÄG 2025) würde den Workflow für Kläger stark vereinfachen. | Mittel |
-| P2.4 | **PKH-Abrechnung** | Prozesskostenhilfe-Mandate sind in deutschen Kanzleien häufig. LAWgistic bietet das für 34,90 € — debitum könnte es kostenlos bieten. | Hoch |
+| P2.4 | **PKH-Abrechnung** | Prozesskostenhilfe-Mandate sind in deutschen Kanzleien häufig. LAWgistic bietet das für 34,90 € — Fordify könnte es kostenlos bieten. | Hoch |
 | P2.5 | **Mehrere Zinsmethoden** | 30/360 (Standard in Deutschland), act/365 und act/360 für bestimmte Vertragstypen (gewerbliche Darlehen). Auswahl-Dropdown mit Standardwert „30/360" wäre ausreichend. | Gering–Mittel |
 
 ### Priorität 3 – Langfristig / optional (Nischenbedarf)
@@ -328,7 +328,7 @@ Diese Produkte sind vollständige Kanzleimanagementsysteme. Die Forderungsaufste
 | P3.2 | **§ 24 SGB IV Säumniszuschläge** | Nur für Sozialversicherungsträger relevant. Enge Nische. | Mittel |
 | P3.3 | **USt-Abzugsfähigkeit bei RVG** | Korrekte Behandlung wenn Mandant vorsteuerabzugsberechtigt ist (USt nicht als Kostenforderung). | Mittel |
 | P3.4 | **Mehrere Gläubiger / Schuldner** | Für Streitgenossenschaften und Gesamtschuldner. Erhöht Komplexität erheblich. | Hoch |
-| P3.5 | **ZV-Auftrag-Generierung (ZwVollstrFormV 2024)** | Integration des nächsten Verfahrensschritts. Würde debitum zum vollständigen ZV-Workflow-Tool machen. Sehr hoher Aufwand, aber klares Alleinstellungsmerkmal. | Sehr hoch |
+| P3.5 | **ZV-Auftrag-Generierung (ZwVollstrFormV 2024)** | Integration des nächsten Verfahrensschritts. Würde Fordify zum vollständigen ZV-Workflow-Tool machen. Sehr hoher Aufwand, aber klares Alleinstellungsmerkmal. | Sehr hoch |
 
 ---
 
@@ -338,7 +338,7 @@ Diese Produkte sind vollständige Kanzleimanagementsysteme. Die Forderungsaufste
 
 Der Markt für spezialisierte Forderungsaufstellungs-Software nach § 367 BGB ist **ein Nischenmarkt** innerhalb des deutschsprachigen Legal-Tech-Sektors. Er gliedert sich in drei Schichten:
 
-**Schicht 1 – Spezialsoftware (direkter Wettbewerb mit debitum):**
+**Schicht 1 – Spezialsoftware (direkter Wettbewerb mit Fordify):**
 Vier bis fünf Produkte (Forderungsaufstellung 367, XForderung, LAWgistic, Workshop Software) dominieren seit Jahrzehnten als Windows-Desktop-Anwendungen. Diese Produkte sind technisch veraltet (Windows-only, .NET, kein mobiles Arbeiten), haben aber treue Bestandskundschaft und hohe Wechselkosten durch proprietäre Datenformate.
 
 **Schicht 2 – Vollkanzleisoftware-Module:**
@@ -347,19 +347,19 @@ RA-MICRO, LawFirm, AnNoText und ähnliche Systeme bieten Forderungsaufstellung a
 **Schicht 3 – Online-Rechner:**
 Dutzende kostenloser Verzugszinsrechner im Web (zinsen-berechnen.de, fachanwalt.de etc.) decken einfache Berechnungen ab, sind aber nicht für professionelle Forderungsaufstellungen geeignet.
 
-**Lücke im Markt:** Es gibt keine vollwertige, professionell nutzbare Forderungsaufstellungs-Software, die (a) browserbasiert, (b) datenschutzkonform lokal, (c) ohne Installation und (d) kostenlos oder sehr günstig ist. Genau diese Lücke füllt debitum.
+**Lücke im Markt:** Es gibt keine vollwertige, professionell nutzbare Forderungsaufstellungs-Software, die (a) browserbasiert, (b) datenschutzkonform lokal, (c) ohne Installation und (d) kostenlos oder sehr günstig ist. Genau diese Lücke füllt Fordify.
 
 ### 7.2 Markttrends
 
 **Cloud vs. Privacy:** Der allgemeine Trend in der Legal-Tech geht zu Cloud-Lösungen. Gleichzeitig ist das anwaltliche Berufsgeheimnis (§ 43a BRAO) und die DSGVO ein erhebliches Hemmnis für Cloud-Adoption im Mandantendaten-Bereich. Eine rein lokale Browser-App, die keine Daten überträgt, ist hier eine elegante Antwort auf diesen Konflikt — modernes UI-Erlebnis ohne Cloud-Risiko.
 
-**RVG 2025 als Updatezwang:** Die RVG-Reform vom 1. Juni 2025 (KostBRÄG 2025) hat alle Anbieter zu kostspieligen Updates gezwungen. Desktop-Software mit eigenem Update-Mechanismus ist dabei im Nachteil gegenüber Web-Apps, die automatisch aktuell sind. Das unterstreicht den strukturellen Vorteil von debitum.
+**RVG 2025 als Updatezwang:** Die RVG-Reform vom 1. Juni 2025 (KostBRÄG 2025) hat alle Anbieter zu kostspieligen Updates gezwungen. Desktop-Software mit eigenem Update-Mechanismus ist dabei im Nachteil gegenüber Web-Apps, die automatisch aktuell sind. Das unterstreicht den strukturellen Vorteil von Fordify.
 
 **Neue ZV-Formulare 2024:** Die neue Zwangsvollstreckungsformular-Verordnung (in Kraft 1.9.2024, Übergangsfrist bis 30.9.2025 abgelaufen) hat einen weiteren Updatebedarf bei Desktop-Software erzeugt.
 
 **KI im Legal Tech:** Erste Anbieter (LawFirm) integrieren KI für Mandatsgewinnung und Dokumentenanalyse. Im Bereich Forderungsberechnung ist KI noch kein Thema — die rechtliche Exaktheit erfordert deterministische Berechnung. Mittelfristig könnte KI jedoch für das automatische Erkennen und Vorausfüllen von Forderungsdaten aus Dokumenten relevant werden.
 
-### 7.3 SWOT-Analyse debitum
+### 7.3 SWOT-Analyse Fordify
 
 **Stärken (Strengths):**
 - Einzige vollständige Forderungsaufstellungs-App, die rein browserbasiert und datenschutzkonform lokal arbeitet
@@ -407,7 +407,7 @@ Dutzende kostenloser Verzugszinsrechner im Web (zinsen-berechnen.de, fachanwalt.
 
 ## 8. Marktzusammenfassung
 
-| Kriterium | debitum | F.aufstellung 367 | XForderung | LAWgistic | 60tools |
+| Kriterium | Fordify | F.aufstellung 367 | XForderung | LAWgistic | 60tools |
 |---|:---:|:---:|:---:|:---:|:---:|
 | Browserbasiert | ✓ | ✗ | ✗ | ✗ | ✓ |
 | Datenschutz (rein lokal) | ✓ | ✓ | ✓ | ✓ | ✗ |

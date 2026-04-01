@@ -1,4 +1,4 @@
-# ROADMAP – debitum / fordify
+# ROADMAP – Fordify
 
 > Lebendiges Dokument. Jeder abgehakte Punkt enthält das Commit-Datum.
 > Basis: Konkurrenzanalyse (April 2026), Nutzerfeedback (Runde 1+2), webapp-transformation.md
