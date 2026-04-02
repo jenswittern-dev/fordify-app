@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="fordify Logo-Entwurf F – Waage">
+  <!--
+    VARIANTE F: "Waage-F / Justitia"
+    Der vertikale Balken des F wird zum Mast der Waage.
+    Der Querbalken wird zur Balance-Stange – fast bildbreite Ausdehnung.
+    An jedem Ende hängt eine Waagschale (Cyan-Kreis + kurze Kette).
+    Der obere Querbalken (nur nach rechts) macht das F lesbar.
+    Das Ganze liest sich als F UND als Justitia-Waage – beides gleichzeitig.
+    Unverwechselbar juristisch. Kein anderes Tech-Logo nutzt dieses Motiv.
+  -->
+
+  <!-- Hintergrund -->
+  <rect width="100" height="100" rx="18" fill="#1e3a8a"/>
+
+  <!-- F – vertikaler Mast -->
+  <rect x="22" y="17" width="13" height="54" rx="5" fill="white"/>
+
+  <!-- F – oberer Querbalken (nur rechts → F-Lesbarkeit) -->
+  <rect x="22" y="17" width="46" height="12" rx="5" fill="white"/>
+
+  <!-- Waage-Balken (fast bildbreit, durch den Mast) -->
+  <rect x="9" y="45" width="82" height="9" rx="4" fill="white"/>
+
+  <!-- Linke Kette -->
+  <line x1="14" y1="54" x2="14" y2="59"
+        stroke="#0891b2" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Linke Waagschale -->
+  <circle cx="14" cy="70" r="10"
+          fill="none" stroke="#0891b2" stroke-width="4.5"/>
+
+  <!-- Rechte Kette -->
+  <line x1="86" y1="54" x2="86" y2="59"
+        stroke="#0891b2" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Rechte Waagschale -->
+  <circle cx="86" cy="70" r="10"
+          fill="none" stroke="#0891b2" stroke-width="4.5"/>
+</svg>

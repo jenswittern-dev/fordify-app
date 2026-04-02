@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="fordify Logo-Entwurf E – Split">
+  <!--
+    VARIANTE E: "Durchbruch"
+    Das F wird durch einen diagonalen Schnitt (oben-rechts nach unten-links) in
+    zwei Hälften geteilt. Die untere Hälfte erscheint in Cyan und ist um 5px
+    nach rechts/unten versetzt. Zwischen den Hälften entsteht ein dunkler Spalt –
+    wie ein Riss, Blitz oder Schnitt durch Material.
+    Symbolik: Forderungen durchsetzen, Hindernisse überwinden.
+    Maximale Energie. Kein Bezug zu Facebooks statischem F.
+  -->
+
+  <!-- Hintergrund -->
+  <rect width="100" height="100" rx="18" fill="#1e3a8a"/>
+
+  <defs>
+    <!-- Obere/linke Hälfte (weiß): über der Diagonale -->
+    <clipPath id="e-clip-top">
+      <polygon points="0,0 100,0 100,18 70,18 20,82 0,82"/>
+    </clipPath>
+    <!-- Untere/rechte Hälfte (cyan): unter der Diagonale -->
+    <clipPath id="e-clip-bottom">
+      <polygon points="70,18 100,18 100,100 0,100 0,82 20,82"/>
+    </clipPath>
+  </defs>
+
+  <!-- F – weiße Hälfte (oben/links der Diagonale) -->
+  <g clip-path="url(#e-clip-top)">
+    <rect x="22" y="20" width="13" height="60" rx="5" fill="white"/>
+    <rect x="22" y="20" width="46" height="13" rx="5" fill="white"/>
+    <rect x="22" y="45" width="34" height="11" rx="5" fill="white"/>
+  </g>
+
+  <!-- F – Cyan-Hälfte (unten/rechts der Diagonale), um 5px versetzt -->
+  <g clip-path="url(#e-clip-bottom)" transform="translate(5,5)">
+    <rect x="22" y="20" width="13" height="60" rx="5" fill="#0891b2"/>
+    <rect x="22" y="20" width="46" height="13" rx="5" fill="#0891b2"/>
+    <rect x="22" y="45" width="34" height="11" rx="5" fill="#0891b2"/>
+  </g>
+</svg>

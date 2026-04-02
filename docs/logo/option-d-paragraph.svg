@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="fordify Logo-Entwurf D – §-F">
+  <!--
+    VARIANTE D: "§-F-Krone"
+    Der § ersetzt den oberen Querbalken des F vollständig.
+    Das Zeichen liest sich als "F§" – gleichzeitig Buchstabe und Rechtsreferenz.
+    Kein anderes Tech-Logo nutzt dieses Motiv.
+    Unmissverständliche Sprache: das ist juristische Software.
+    §-Konstruktion: zwei gegenläufige Bögen (S-Kurve) mit Querstrichen,
+    gezeichnet als dicke Strichlinien ohne Füllung.
+  -->
+
+  <!-- Hintergrund -->
+  <rect width="100" height="100" rx="18" fill="#1e3a8a"/>
+
+  <!-- F – vertikaler Balken -->
+  <rect x="20" y="18" width="13" height="58" rx="5" fill="white"/>
+
+  <!-- § – oberer Querstrich -->
+  <line x1="36" y1="21" x2="64" y2="21"
+        stroke="white" stroke-width="6.5" stroke-linecap="round"/>
+
+  <!-- § – oberer Bogen (öffnet nach rechts) -->
+  <path d="M 64,21 C 76,21 76,39 52,41"
+        fill="none" stroke="white" stroke-width="6.5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- § – Mittelsteg (verbindet beide Bögen) -->
+  <line x1="52" y1="41" x2="62" y2="41"
+        stroke="white" stroke-width="6.5" stroke-linecap="round"/>
+
+  <!-- § – unterer Bogen (öffnet nach links) -->
+  <path d="M 62,41 C 80,43 76,59 52,59"
+        fill="none" stroke="white" stroke-width="6.5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- § – unterer Querstrich -->
+  <line x1="52" y1="59" x2="74" y2="59"
+        stroke="white" stroke-width="6.5" stroke-linecap="round"/>
+
+  <!-- F – Mittelbalken als Pfeil (Cyan-Akzent, tief positioniert) -->
+  <path d="M20,70 H50 L70,75 L50,80 H20 Z" fill="#0891b2"/>
+</svg>
