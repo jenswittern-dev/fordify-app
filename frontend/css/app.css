@@ -589,6 +589,20 @@ body {
   padding-bottom: 0.25rem;
 }
 
+.summary-row--pay-alloc td {
+  color: var(--color-zahlung);
+  background: var(--color-zahlung-bg);
+  font-style: italic;
+  font-size: var(--text-xs);
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  border-bottom: none;
+}
+
+.summary-row--pay-alloc .pay-alloc-label {
+  padding-left: 1.25rem;
+}
+
 .summary-datum {
   white-space: nowrap;
   font-size: var(--text-xs);
@@ -1418,6 +1432,15 @@ body {
   .summary-row--restsaldo td {
     background: transparent !important;
     color: #555 !important;
+    font-size: 7pt;
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+  }
+
+  .summary-row--pay-alloc td {
+    background: transparent !important;
+    color: #333 !important;
+    font-style: italic;
     font-size: 7pt;
     padding-top: 0.1rem;
     padding-bottom: 0.1rem;

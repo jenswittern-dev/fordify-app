@@ -901,8 +901,10 @@ function modalDatenLesen() {
       };
     }
 
-    case "zahlung":
-      return { ...basis, betrag: v("mf-betrag") };
+    case "zahlung": {
+      const verrAnw = document.getElementById("mf-verrechnungsanweisung")?.value?.trim() || "";
+      return { ...basis, betrag: v("mf-betrag"), ...(verrAnw ? { verrechnungsanweisung: verrAnw } : {}) };
+    }
 
     case "gerichtskosten": {
       const verfahrenSel = document.getElementById("mf-gkg-verfahren")?.value || "3.0";
@@ -1210,6 +1212,10 @@ function tplZahlung(pos) {
       <input type="text" class="form-control" id="mf-beschreibung" value="${pos?.beschreibung || ""}" placeholder="z.B. Überweisung vom …">
     </div>
     ${betragFeld("mf-betrag", pos?.betrag, "Zahlbetrag (€)")}
+    <div class="mb-3">
+      <label class="form-label">Verrechnungsanweisung <span class="text-muted">(optional)</span></label>
+      <textarea class="form-control" id="mf-verrechnungsanweisung" rows="2" placeholder="z.B. Zahlung soll vorrangig auf Hauptforderung 2 verrechnet werden">${pos?.verrechnungsanweisung || ""}</textarea>
+    </div>
   `;
 }
 
@@ -1458,10 +1464,11 @@ function rendereVorschau() {
 
 /**
  * Baut die neue 4-spaltige Zusammenfassungstabelle:
- * Bezeichnung | Forderung | Verrechnung | Restforderung
- * – Jede HF einzeln mit zugehörigen Zinsen
- * – Zinsen jeweils bis zum Zahlungsdatum (oder heute)
- * – Nach Zahlung: Neuberechnung auf verbleibende HF-Beträge
+ * Bezeichnung | Forderung | (Teil-)Zahlung | Restforderung
+ * – Initiale Zinsen + Kosten + HF als separate Abschnitte
+ * – Jede Position mit eingerückten Zahlungs-Sub-Rows
+ * – Neue Zinsen nach Zahlung direkt unter der zugehörigen HF
+ * – §367 BGB Verrechnungsreihenfolge: Zinsen → Kosten → HF
  */
 function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   const insoDatum = fall.insoDatum ? parseDate(fall.insoDatum) : null;
@@ -1517,170 +1524,188 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     return new Decimal(k.betrag || 0);
   }
 
-  // Laufende Restbeträge
-  const hfRestMap = {};
-  for (const hf of hfs) hfRestMap[hf.id] = new Decimal(hf.betrag || 0);
-  const kostenRestMap = {};
-  for (const k of kostenPos) kostenRestMap[k.id] = kostenBrutto(k);
+  // ----------------------------------------------------------------
+  // Datenstrukturen aufbauen
+  // Jeder Eintrag: { ..., betrag, rest, payAllocs: [{zahlIdx, datum, beschreibung, amount, restAfter}] }
+  // ----------------------------------------------------------------
 
-  // Zeilen-Array: { typ, bezeichnung, forderung, verrechnung, restforderung }
-  const zeilen = [];
+  // zinsenEntries: initiale Zinsen (zt-Positionen + HF-Zinsen Phase 0) + neue Zinsen nach Zahlung
+  // isNew=true: neue Zinsen nach Zahlung, afterPayIdx = Index der auslösenden Zahlung
+  const zinsenEntries = [];
 
-  const phaseEnd = i => i < zahlungen.length ? parseDate(zahlungen[i].datum) : heute;
-  const phaseCount = zahlungen.length + 1;
+  // zinsforderung_titel
+  const ztPos = pos.filter(p => p.typ === "zinsforderung_titel")
+    .sort((a, b) => parseDate(a.datum || "1900-01-01") - parseDate(b.datum || "1900-01-01"));
+  for (const zt of ztPos) {
+    const b = new Decimal(zt.betrag || 0);
+    zinsenEntries.push({
+      id: `zt_${zt.id}`, hfId: null, isNew: false, afterPayIdx: null,
+      bezeichnung: zt.beschreibung || "Titulierte Zinsen",
+      betrag: b, rest: b.plus(ZERO), payAllocs: []
+    });
+  }
 
-  for (let phase = 0; phase < phaseCount; phase++) {
-    const endDate = phaseEnd(phase);
-    const isFirst = phase === 0;
-    const isLast  = phase === phaseCount - 1;
+  // Initiale HF-Zinsen (Phase 0: von zp.zinsVon bis erster Zahlung oder heute)
+  const phase0End = zahlungen.length > 0 ? parseDate(zahlungen[0].datum) : heute;
+  for (let hfIdx = 0; hfIdx < hfs.length; hfIdx++) {
+    const hf = hfs[hfIdx];
+    const zp = hfZpMap[hf.id];
+    if (!zp || !zp.zinsVon) continue;
+    const z = calcZinsen(hf.betrag, zp.zinsVon, phase0End);
+    if (z.lte(0)) continue;
+    const hfNum = hfs.length > 1 ? ` ${hfIdx + 1}` : "";
+    const bisLabel = zahlungen.length > 0 ? ` bis ${formatDate(phase0End)}` : " bis heute";
+    zinsenEntries.push({
+      id: `hfz_init_${hf.id}`, hfId: hf.id, isNew: false, afterPayIdx: null,
+      vonStr: zp.zinsVon, bisDate: phase0End,
+      bezeichnung: `Zinsen HF${hfNum} ab ${formatDate(parseDate(zp.zinsVon))}${bisLabel}`,
+      betrag: z, rest: z.plus(ZERO), payAllocs: []
+    });
+  }
 
-    if (isFirst) {
-      // HF + Zinsen bis erste Zahlung (oder heute)
+  // kostenEntries
+  const kostenEntries = kostenPos.map(k => {
+    const b = kostenBrutto(k);
+    return {
+      id: k.id, bezeichnung: k.beschreibung || AKTIONSTYPEN[k.typ] || k.typ,
+      datum: k.datum || null, betrag: b, rest: b.plus(ZERO), payAllocs: []
+    };
+  });
+
+  // hfEntries
+  const hfEntries = hfs.map((hf, hfIdx) => {
+    const b = new Decimal(hf.betrag || 0);
+    const hfNum = hfs.length > 1 ? ` ${hfIdx + 1}` : "";
+    const label = hf.beschreibung
+      ? `Hauptforderung${hfNum}: ${hf.beschreibung}`
+      : `Hauptforderung${hfNum}`;
+    return {
+      id: hf.id, hfId: hf.id, bezeichnung: label,
+      datum: hf.datum || null, betrag: b, rest: b.plus(ZERO), payAllocs: []
+    };
+  });
+
+  // ----------------------------------------------------------------
+  // Zahlungen verarbeiten (§367 BGB: Zinsen → Kosten → HF)
+  // ----------------------------------------------------------------
+  for (let zahlIdx = 0; zahlIdx < zahlungen.length; zahlIdx++) {
+    const zahlung = zahlungen[zahlIdx];
+    const zahlDatum = parseDate(zahlung.datum);
+    let restZahlung = new Decimal(zahlung.betrag || 0);
+
+    // Neue Zinsen zwischen voriger Zahlung und dieser (für verbleibende HFs)
+    if (zahlIdx > 0) {
+      const prevPayDatum = zahlungen[zahlIdx - 1].datum;
       for (let hfIdx = 0; hfIdx < hfs.length; hfIdx++) {
         const hf = hfs[hfIdx];
-        const b = new Decimal(hf.betrag || 0);
-        const hfNum = hfs.length > 1 ? ` ${hfIdx + 1}` : "";
-        const label = hf.beschreibung
-          ? `Hauptforderung${hfNum}: ${hf.beschreibung}`
-          : `Hauptforderung${hfNum}`;
-        zeilen.push({ typ: "hf", datum: hf.datum || null, hfId: hf.id, bezeichnung: label,
-          forderung: b, restforderung: b });
-
-        const zp = hfZpMap[hf.id];
-        if (zp && zp.zinsVon) {
-          const z = calcZinsen(b, zp.zinsVon, endDate);
-          if (z.gt(0)) {
-            const bisLabel = zahlungen.length > 0 ? ` bis ${formatDate(endDate)}` : " bis heute";
-            zeilen.push({ typ: "zinsen", datum: null, hfId: hf.id,
-              bezeichnung: `Zinsen ab ${formatDate(parseDate(zp.zinsVon))}${bisLabel}`,
-              forderung: z, restforderung: z });
-          }
-        }
-      }
-      // Kosten
-      for (const k of kostenPos) {
-        const b = kostenBrutto(k);
-        const label = k.beschreibung || AKTIONSTYPEN[k.typ] || k.typ;
-        zeilen.push({ typ: "kosten", datum: k.datum || null, kostenId: k.id,
-          bezeichnung: label, forderung: b, restforderung: b });
-      }
-    } else {
-      // Zinsen auf verbleibende HF ab letzter Zahlung
-      const prevPayDatum = zahlungen[phase - 1].datum;
-      for (const hf of hfs) {
-        const rest = hfRestMap[hf.id];
-        if (rest.lte(0)) continue;
-        const zp = hfZpMap[hf.id];
-        if (!zp) continue;
-        const z = calcZinsen(rest, prevPayDatum, endDate);
+        const hfEntry = hfEntries.find(e => e.hfId === hf.id);
+        if (!hfEntry || hfEntry.rest.lte(0)) continue;
+        if (!hfZpMap[hf.id]) continue;
+        const z = calcZinsen(hfEntry.rest, prevPayDatum, zahlDatum);
         if (z.lte(0)) continue;
-        const bisLabel = isLast ? " bis heute" : ` bis ${formatDate(endDate)}`;
-        zeilen.push({ typ: "zinsen_neu", datum: null, hfId: hf.id,
-          bezeichnung: `Zinsen auf ${formatEUR(rest)} ab ${formatDate(parseDate(prevPayDatum))}${bisLabel}`,
-          forderung: ZERO, restforderung: z });
+        const hfNum = hfs.length > 1 ? ` ${hfIdx + 1}` : "";
+        zinsenEntries.push({
+          id: `hfz_new_${hf.id}_${zahlIdx}`, hfId: hf.id, isNew: true,
+          afterPayIdx: zahlIdx - 1,
+          vonStr: prevPayDatum, bisDate: zahlDatum,
+          bezeichnung: `Zinsen HF${hfNum} ab ${formatDate(parseDate(prevPayDatum))} bis ${formatDate(zahlDatum)}`,
+          betrag: z, rest: z.plus(ZERO), payAllocs: []
+        });
       }
     }
 
-    // Zahlung verarbeiten
-    if (phase < zahlungen.length) {
-      const zahlung = zahlungen[phase];
-      let restZahlung = new Decimal(zahlung.betrag || 0);
+    // Alle Zinsen-Einträge in Verrechnungsreihenfolge: zt → initiale hfZinsen → neue (nach afterPayIdx)
+    const zinsenGeordnet = [
+      ...zinsenEntries.filter(e => !e.isNew),
+      ...zinsenEntries.filter(e => e.isNew).sort((a, b) => (a.afterPayIdx || 0) - (b.afterPayIdx || 0))
+    ];
 
-      const zinsenGes = zeilen
-        .filter(z => (z.typ === "zinsen" || z.typ === "zinsen_neu") && z.restforderung.gt(0))
-        .reduce((s, z) => s.plus(z.restforderung), ZERO);
-      const kostenGes = Object.values(kostenRestMap).reduce((s, v) => s.plus(v), ZERO);
-      const hfGes    = Object.values(hfRestMap).reduce((s, v) => s.plus(v), ZERO);
+    // 1. Zinsen
+    for (const e of zinsenGeordnet) {
+      if (restZahlung.lte(0)) break;
+      if (e.rest.lte(0)) continue;
+      const used = Decimal.min(restZahlung, e.rest);
+      restZahlung = restZahlung.minus(used);
+      e.rest = e.rest.minus(used);
+      e.payAllocs.push({ zahlIdx, datum: zahlung.datum, beschreibung: zahlung.beschreibung || "", amount: used, restAfter: e.rest.plus(ZERO) });
+    }
 
-      const verrZinsen = Decimal.min(restZahlung, zinsenGes);
-      restZahlung = restZahlung.minus(verrZinsen);
-      const verrKosten = Decimal.min(restZahlung, kostenGes);
-      restZahlung = restZahlung.minus(verrKosten);
-      const verrHF = Decimal.min(restZahlung, hfGes);
+    // 2. Kosten
+    for (const e of kostenEntries) {
+      if (restZahlung.lte(0)) break;
+      if (e.rest.lte(0)) continue;
+      const used = Decimal.min(restZahlung, e.rest);
+      restZahlung = restZahlung.minus(used);
+      e.rest = e.rest.minus(used);
+      e.payAllocs.push({ zahlIdx, datum: zahlung.datum, beschreibung: zahlung.beschreibung || "", amount: used, restAfter: e.rest.plus(ZERO) });
+    }
 
-      // Zinsen-Zeilen reduzieren
-      let rem = verrZinsen;
-      for (const z of zeilen) {
-        if (z.typ !== "zinsen" && z.typ !== "zinsen_neu") continue;
-        if (rem.lte(0)) break;
-        const used = Decimal.min(rem, z.restforderung);
-        z.restforderung = z.restforderung.minus(used);
-        rem = rem.minus(used);
-      }
-      // Kosten-Zeilen reduzieren
-      rem = verrKosten;
-      for (const z of zeilen) {
-        if (z.typ !== "kosten") continue;
-        if (rem.lte(0)) break;
-        const used = Decimal.min(rem, z.restforderung);
-        z.restforderung = z.restforderung.minus(used);
-        if (z.kostenId !== undefined) kostenRestMap[z.kostenId] = z.restforderung;
-        rem = rem.minus(used);
-      }
-      // HF-Zeilen reduzieren (FIFO)
-      rem = verrHF;
-      for (const hf of hfs) {
-        if (rem.lte(0)) break;
-        const rest = hfRestMap[hf.id];
-        const used = Decimal.min(rem, rest);
-        hfRestMap[hf.id] = rest.minus(used);
-        rem = rem.minus(used);
-        for (const z of zeilen) {
-          if (z.typ === "hf" && z.hfId === hf.id) {
-            z.restforderung = z.restforderung.minus(used);
-          }
-        }
-      }
-
-      const zahlBetrag = new Decimal(zahlung.betrag || 0);
-      const zahlLabel = `Zahlung${zahlung.beschreibung ? " – " + zahlung.beschreibung : ""}`;
-      zeilen.push({ typ: "zahlung", datum: zahlung.datum || null, bezeichnung: zahlLabel,
-        forderung: ZERO, verrechnung: zahlBetrag.negated(), restforderung: ZERO });
-
-      // Restsaldo-Zeilen nach der Zahlung: zeigt verbleibende HF und Kosten explizit
-      for (let hfIdx = 0; hfIdx < hfs.length; hfIdx++) {
-        const hf = hfs[hfIdx];
-        const rest = hfRestMap[hf.id];
-        if (rest.lte(0)) continue;
-        const hfNum = hfs.length > 1 ? ` ${hfIdx + 1}` : "";
-        zeilen.push({ typ: "restsaldo_hf", datum: null, hfId: hf.id,
-          bezeichnung: `\u2514 Hauptforderung${hfNum}: Restsaldo`,
-          forderung: ZERO, restforderung: rest });
-      }
-      const kostenRestGes = Object.values(kostenRestMap).reduce((s, v) => s.plus(v), ZERO);
-      if (kostenRestGes.gt(0)) {
-        zeilen.push({ typ: "restsaldo_kosten", datum: null,
-          bezeichnung: "\u2514 Kosten: Restsaldo",
-          forderung: ZERO, restforderung: kostenRestGes });
-      }
+    // 3. HF (älteste zuerst)
+    for (const e of hfEntries) {
+      if (restZahlung.lte(0)) break;
+      if (e.rest.lte(0)) continue;
+      const used = Decimal.min(restZahlung, e.rest);
+      restZahlung = restZahlung.minus(used);
+      e.rest = e.rest.minus(used);
+      e.payAllocs.push({ zahlIdx, datum: zahlung.datum, beschreibung: zahlung.beschreibung || "", amount: used, restAfter: e.rest.plus(ZERO) });
     }
   }
 
-  // Tageszins auf verbleibende HF
-  const hfRestFinal = hfs.reduce((s, hf) => s.plus(hfRestMap[hf.id]), ZERO);
+  // Abschließender Zinslauf auf verbleibende HF-Beträge (nach letzter Zahlung bis heute)
+  if (zahlungen.length > 0) {
+    const lastPayDatum = zahlungen[zahlungen.length - 1].datum;
+    for (let hfIdx = 0; hfIdx < hfs.length; hfIdx++) {
+      const hf = hfs[hfIdx];
+      const hfEntry = hfEntries.find(e => e.hfId === hf.id);
+      if (!hfEntry || hfEntry.rest.lte(0)) continue;
+      if (!hfZpMap[hf.id]) continue;
+      const z = calcZinsen(hfEntry.rest, lastPayDatum, heute);
+      if (z.lte(0)) continue;
+      const hfNum = hfs.length > 1 ? ` ${hfIdx + 1}` : "";
+      zinsenEntries.push({
+        id: `hfz_final_${hf.id}`, hfId: hf.id, isNew: true,
+        afterPayIdx: zahlungen.length - 1,
+        vonStr: lastPayDatum, bisDate: heute,
+        bezeichnung: `Zinsen HF${hfNum} ab ${formatDate(parseDate(lastPayDatum))} bis heute`,
+        betrag: z, rest: z.plus(ZERO), payAllocs: []
+      });
+    }
+  }
+
+  // ----------------------------------------------------------------
+  // Tageszins
+  // ----------------------------------------------------------------
+  const hfRestFinal = hfEntries.reduce((s, e) => s.plus(e.rest), ZERO);
   let tageszinsZeile = null;
   if (hfRestFinal.gt(0)) {
     try {
       const tz = tageszins(hfRestFinal, aufschlagPP, heute, basiszinssaetze);
-      if (tz.gt(0)) {
-        tageszinsZeile = {
-          typ: "tageszins",
-          bezeichnung: "Tageszins ab heute (*)",
-          forderung: ZERO, verrechnung: ZERO, restforderung: tz,
-        };
-      }
+      if (tz.gt(0)) tageszinsZeile = { bezeichnung: "Tageszins ab heute (*)", betrag: tz };
     } catch(e) {}
   }
 
-  // Gesamtzeile
-  const totForderung = zeilen.reduce((s, z) => s.plus(z.forderung || ZERO), ZERO);
-  const totVerrechnung = zeilen.filter(z => z.typ === "zahlung").reduce((s, z) => s.plus(z.verrechnung || ZERO), ZERO);
-  const totRest = zeilen.filter(z =>
-    z.typ !== "zahlung" && z.typ !== "restsaldo_hf" && z.typ !== "restsaldo_kosten"
-  ).reduce((s, z) => s.plus(z.restforderung || ZERO), ZERO);
+  // ----------------------------------------------------------------
+  // Totals
+  // ----------------------------------------------------------------
+  const totForderung = [
+    ...zinsenEntries.filter(e => !e.isNew),
+    ...kostenEntries,
+    ...hfEntries
+  ].reduce((s, e) => s.plus(e.betrag), ZERO);
 
-  // HTML-Tabelle rendern
+  const totZahlung = zahlungen.reduce((s, z) => s.plus(new Decimal(z.betrag || 0)), ZERO);
+
+  const totRest = [
+    ...zinsenEntries,
+    ...kostenEntries,
+    ...hfEntries
+  ].reduce((s, e) => s.plus(e.rest), ZERO);
+
+  // ----------------------------------------------------------------
+  // HTML-Rendering
+  // ----------------------------------------------------------------
   const dash = "\u2014";
+
   function amtCell(val, cls) {
     if (val === null || val === undefined) return `<td class="text-end">${dash}</td>`;
     const d = new Decimal(val);
@@ -1691,39 +1716,90 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   function datumCell(datum, cls) {
     return `<td class="summary-datum${cls ? " " + cls : ""}">${datum ? formatDate(parseDate(datum)) : ""}</td>`;
   }
+  function payAllocRow(alloc) {
+    const label = alloc.beschreibung
+      ? `\u2514\u00a0${formatDate(parseDate(alloc.datum))}\u00a0${alloc.beschreibung}`
+      : `\u2514\u00a0${formatDate(parseDate(alloc.datum))}\u00a0Zahlung`;
+    return `<tr class="summary-row--pay-alloc">
+      <td class="summary-datum"></td>
+      <td class="pay-alloc-label">${label}</td>
+      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      ${amtCell(alloc.amount.negated())}
+      ${amtCell(alloc.restAfter)}
+    </tr>`;
+  }
+  function zinsenNeuRow(e) {
+    return `<tr class="summary-row--zinsen-neu">
+      ${datumCell(null)}
+      <td>${e.bezeichnung}</td>
+      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      ${amtCell(e.betrag)}
+    </tr>`;
+  }
 
-  const rows = zeilen.map(z => {
-    let rowCls = "";
-    let fCell, vCell, rCell;
+  const rowsHtml = [];
 
-    if (z.typ === "zahlung") {
-      rowCls = "summary-row--zahlung";
-      fCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
-      vCell = amtCell(z.verrechnung);
-      rCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
-    } else if (z.typ === "zinsen_neu") {
-      rowCls = "summary-row--zinsen-neu";
-      fCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
-      vCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
-      rCell = amtCell(z.restforderung);
-    } else if (z.typ === "restsaldo_hf" || z.typ === "restsaldo_kosten") {
-      rowCls = "summary-row--restsaldo";
-      fCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
-      vCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
-      rCell = amtCell(z.restforderung);
-    } else {
-      fCell = amtCell(z.forderung);
-      vCell = `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
-      rCell = amtCell(z.restforderung);
+  // Abschnitt 1: Initiale Zinsen (zt + hfZinsen phase 0)
+  for (const e of zinsenEntries.filter(en => !en.isNew)) {
+    rowsHtml.push(`<tr class="summary-row--zinsen">
+      ${datumCell(null)}
+      <td>${e.bezeichnung}</td>
+      ${amtCell(e.betrag)}
+      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      ${amtCell(e.betrag)}
+    </tr>`);
+    for (const alloc of e.payAllocs) rowsHtml.push(payAllocRow(alloc));
+  }
+
+  // Abschnitt 2: Kosten
+  for (const e of kostenEntries) {
+    rowsHtml.push(`<tr>
+      ${datumCell(e.datum)}
+      <td>${e.bezeichnung}</td>
+      ${amtCell(e.betrag)}
+      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      ${amtCell(e.betrag)}
+    </tr>`);
+    for (const alloc of e.payAllocs) rowsHtml.push(payAllocRow(alloc));
+  }
+
+  // Abschnitt 3: HF (mit neuen Zinsen interleaved nach jeder Zahlung)
+  for (const hfEntry of hfEntries) {
+    rowsHtml.push(`<tr>
+      ${datumCell(hfEntry.datum)}
+      <td>${hfEntry.bezeichnung}</td>
+      ${amtCell(hfEntry.betrag)}
+      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      ${amtCell(hfEntry.betrag)}
+    </tr>`);
+
+    const shownAfterPayIdx = new Set();
+    for (const alloc of hfEntry.payAllocs) {
+      rowsHtml.push(payAllocRow(alloc));
+      shownAfterPayIdx.add(alloc.zahlIdx);
+      // Neue Zinsen, die nach dieser Zahlung für diese HF beginnen
+      const newZinsen = zinsenEntries.filter(e =>
+        e.isNew && e.hfId === hfEntry.hfId && e.afterPayIdx === alloc.zahlIdx
+      );
+      for (const nz of newZinsen) {
+        rowsHtml.push(zinsenNeuRow(nz));
+        for (const subAlloc of nz.payAllocs) rowsHtml.push(payAllocRow(subAlloc));
+      }
     }
-    return `<tr class="${rowCls}">${datumCell(z.datum || null)}<td>${z.bezeichnung}</td>${fCell}${vCell}${rCell}</tr>`;
-  }).join("");
+
+    // Abschließende Zinsen, die nach einer Zahlung starteten, auf die diese HF NICHT verrechnet wurde
+    const finalZinsen = zinsenEntries.filter(e =>
+      e.isNew && e.hfId === hfEntry.hfId && !shownAfterPayIdx.has(e.afterPayIdx)
+    );
+    for (const fz of finalZinsen) rowsHtml.push(zinsenNeuRow(fz));
+  }
 
   const gesamtRow = `<tr class="summary-row--gesamt">
     <td></td>
     <td>Offene Forderung</td>
     ${amtCell(totForderung, "amount--gesamt")}
-    ${amtCell(totVerrechnung, "amount--gesamt")}
+    ${amtCell(totZahlung.negated(), "amount--gesamt")}
     ${amtCell(totRest, "amount--gesamt")}
   </tr>`;
 
@@ -1732,7 +1808,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     <td>${tageszinsZeile.bezeichnung}</td>
     <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
     <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-    ${amtCell(tageszinsZeile.restforderung)}
+    ${amtCell(tageszinsZeile.betrag)}
   </tr>` : "";
 
   const html = `<table class="summary-table">
@@ -1741,12 +1817,12 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
         <th class="summary-datum-th">Datum</th>
         <th>Bezeichnung</th>
         <th class="text-end">Forderung</th>
-        <th class="text-end">Verrechnung</th>
+        <th class="text-end">(Teil-)Zahlung</th>
         <th class="text-end">Restforderung</th>
       </tr>
     </thead>
     <tbody>
-      ${rows}
+      ${rowsHtml.join("\n      ")}
       ${gesamtRow}
       ${tageszinsRow}
     </tbody>

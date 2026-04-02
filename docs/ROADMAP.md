@@ -90,9 +90,14 @@
 |---|---|---|---|
 | 4.1 | Zusammenfassung: Restsaldo-HF nach jeder Zahlung sichtbar | ✅ | 2026-04-01 |
 | 4.2 | Buchungsdatum / Verrechnungsdatum in Zusammenfassung links | ✅ | 2026-04-01 |
+| 4.3 | Zusammenfassung: Positionsbezogene Zahlungs-Sub-Rows (§367 BGB, direkt unter jeweiliger Position) | ✅ | 2026-04-02 |
+| 4.4 | Spaltenkopf „(Teil-)Zahlung" statt „Verrechnung" | ✅ | 2026-04-02 |
+| 4.5 | Neue Zinsen nach Zahlung direkt unter der HF (nicht am Ende) | ✅ | 2026-04-02 |
+| 4.6 | Verrechnungsanweisung-Feld bei Zahlungs-Position | ✅ | 2026-04-02 |
+| 4.7 | RVG-Vorschau im Modal (Einzelpositionen mit Faktor und Auslagenpauschale-Berechnungsbasis) | ✅ | 2026-04-02 |
 
-> Quelle: Nutzerfeedback-2/01 (Andreas) – Zwischenbemerkung nach Zahlung soll als eigene
-> Zeile erscheinen: „Nach Zahlung X reduziert sich HF auf Y €, Restzinsen Z €"
+> Quelle: Anwaltsgespräch (transcript.md) – positionsbezogene Verrechnung mit Sub-Rows,
+> neue Zinsen direkt unter HF, klares 4-Spalten-Layout
 
 ---
 
