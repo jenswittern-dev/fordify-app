@@ -574,9 +574,6 @@ body {
 }
 
 .summary-row--zinsen-neu td {
-  color: var(--color-zinsen);
-  font-style: italic;
-  font-size: var(--text-xs);
   border-top: 1px dashed var(--color-border);
 }
 
@@ -1425,8 +1422,6 @@ body {
 
   .summary-row--zinsen-neu td {
     background: transparent !important;
-    color: #444 !important;
-    font-style: italic;
   }
 
   .summary-row--restsaldo td {

@@ -1731,6 +1731,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   function datumCell(datum, cls) {
     return `<td class="summary-datum${cls ? " " + cls : ""}">${datum ? formatDate(parseDate(datum)) : ""}</td>`;
   }
+  // Sub-Row: nur Betrag der Zahlung, kein Restforderungs-Zwischenstand
   function payAllocRow(alloc) {
     const label = alloc.beschreibung
       ? `\u2514\u00a0${formatDate(parseDate(alloc.datum))}\u00a0${alloc.beschreibung}`
@@ -1740,12 +1741,13 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
       <td class="pay-alloc-label">${label}</td>
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
       ${amtCell(alloc.amount.negated())}
-      ${amtCell(alloc.restAfter)}
+      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
     </tr>`;
   }
+  // Neue Zinsen: kein Sonder-Styling, Datum links
   function zinsenNeuRow(e) {
-    return `<tr class="summary-row--zinsen-neu">
-      ${datumCell(null)}
+    return `<tr>
+      ${datumCell(e.vonStr)}
       <td>${e.bezeichnung}</td>
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
@@ -1756,58 +1758,54 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   const rowsHtml = [];
 
   // Abschnitt 1: Initiale Zinsen (zt + hfZinsen phase 0)
+  // – Datum links = Zinsbeginn, Restforderung = aktueller Endstand
   for (const e of zinsenEntries.filter(en => !en.isNew)) {
-    rowsHtml.push(`<tr class="summary-row--zinsen">
-      ${datumCell(null)}
+    rowsHtml.push(`<tr>
+      ${datumCell(e.vonStr)}
       <td>${e.bezeichnung}</td>
       ${amtCell(e.betrag)}
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-      ${amtCell(e.betrag)}
+      ${amtCell(e.rest)}
     </tr>`);
     for (const alloc of e.payAllocs) rowsHtml.push(payAllocRow(alloc));
   }
 
-  // Abschnitt 2: Kosten
+  // Abschnitt 2: Kosten – Restforderung = aktueller Endstand
   for (const e of kostenEntries) {
     rowsHtml.push(`<tr>
       ${datumCell(e.datum)}
       <td>${e.bezeichnung}</td>
       ${amtCell(e.betrag)}
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-      ${amtCell(e.betrag)}
+      ${amtCell(e.rest)}
     </tr>`);
     for (const alloc of e.payAllocs) rowsHtml.push(payAllocRow(alloc));
   }
 
-  // Abschnitt 3: HF (mit neuen Zinsen interleaved nach jeder Zahlung)
+  // Abschnitt 3: HF – nach payIdx iterieren, damit neue Zinsen auch ohne HF-Alloc korrekt erscheinen
   for (const hfEntry of hfEntries) {
     rowsHtml.push(`<tr>
       ${datumCell(hfEntry.datum)}
       <td>${hfEntry.bezeichnung}</td>
       ${amtCell(hfEntry.betrag)}
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-      ${amtCell(hfEntry.betrag)}
+      ${amtCell(hfEntry.rest)}
     </tr>`);
 
-    const shownAfterPayIdx = new Set();
-    for (const alloc of hfEntry.payAllocs) {
-      rowsHtml.push(payAllocRow(alloc));
-      shownAfterPayIdx.add(alloc.zahlIdx);
-      // Neue Zinsen, die nach dieser Zahlung für diese HF beginnen
+    for (let payIdx = 0; payIdx < zahlungen.length; payIdx++) {
+      // Zahlungs-Alloc auf diese HF (falls vorhanden)
+      const alloc = hfEntry.payAllocs.find(a => a.zahlIdx === payIdx);
+      if (alloc) rowsHtml.push(payAllocRow(alloc));
+
+      // Neue Zinsen, die nach dieser Zahlung für diese HF beginnen (unabhängig von Alloc)
       const newZinsen = zinsenEntries.filter(e =>
-        e.isNew && e.hfId === hfEntry.hfId && e.afterPayIdx === alloc.zahlIdx
+        e.isNew && e.hfId === hfEntry.hfId && e.afterPayIdx === payIdx
       );
       for (const nz of newZinsen) {
         rowsHtml.push(zinsenNeuRow(nz));
         for (const subAlloc of nz.payAllocs) rowsHtml.push(payAllocRow(subAlloc));
       }
     }
-
-    // Abschließende Zinsen, die nach einer Zahlung starteten, auf die diese HF NICHT verrechnet wurde
-    const finalZinsen = zinsenEntries.filter(e =>
-      e.isNew && e.hfId === hfEntry.hfId && !shownAfterPayIdx.has(e.afterPayIdx)
-    );
-    for (const fz of finalZinsen) rowsHtml.push(zinsenNeuRow(fz));
   }
 
   const gesamtRow = `<tr class="summary-row--gesamt">
