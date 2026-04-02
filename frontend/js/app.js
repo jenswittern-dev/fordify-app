@@ -968,11 +968,55 @@ function modalDynamischAktualisieren(typ) {
         if (inp.value) faktoren[inp.dataset.vv] = inp.value;
       });
       const ustSatzVorschau = parseInt(document.getElementById("mf-ust-satz")?.value ?? "19", 10);
-      const ohneUst = ustSatzVorschau === 0;
-      const { positionen, netto, ust, gesamt } = berechneRVGGesamt(
+      const { positionen, netto, ust: ust19 } = berechneRVGGesamt(
         streitwert, vvNummern, RVG_TABELLE, VV_DEFINITIONEN, faktoren
       );
-      container.innerHTML = "";  // Berechnungsergebnis wird im Hintergrund berechnet, nicht angezeigt
+      const ustVorschau = ustSatzVorschau === 0 ? new Decimal(0)
+                        : ustSatzVorschau === 7  ? netto.times("0.07").toDecimalPlaces(2)
+                        : ust19;
+      const gesamtVorschau = netto.plus(ustVorschau);
+
+      // Basis für VV 7002 = Netto ohne Auslagenpauschale selbst
+      const nettoOhne7002 = positionen
+        .filter(p => p.vvNummer !== "7002")
+        .reduce((s, p) => s.plus(new Decimal(p.gebuehrGesamt)), new Decimal(0));
+
+      const posRows = positionen.map(p => {
+        let detail = "";
+        if (p.vvNummer === "7002") {
+          const gekappt = nettoOhne7002.times("0.20").toDecimalPlaces(2).gt(new Decimal("20.00"));
+          detail = `<span class="text-muted ms-1" style="font-size:var(--text-xs)">20\u00a0% von\u00a0${formatEUR(nettoOhne7002)}${gekappt ? ", max.\u00a020,00\u00a0€" : ""}</span>`;
+        } else if (p.faktor != null && p.gebuehrEinfach != null) {
+          const fStr = parseFloat(p.faktor).toFixed(1).replace(/\.0$/, "");
+          detail = `<span class="text-muted ms-1" style="font-size:var(--text-xs)">${fStr}-fach\u00a0×\u00a0${formatEUR(p.gebuehrEinfach)}</span>`;
+        }
+        return `<div class="d-flex justify-content-between align-items-baseline mb-1">
+          <span style="flex:1">${p.beschreibung} ${detail}</span>
+          <span class="amount ms-3" style="white-space:nowrap;font-variant-numeric:tabular-nums">${formatEUR(p.gebuehrGesamt)}</span>
+        </div>`;
+      }).join("");
+
+      const ustLabel = ustSatzVorschau === 0
+        ? `<span class="text-muted" style="font-size:var(--text-xs)">Ohne USt (Vorsteuer)</span>`
+        : `<div class="d-flex justify-content-between mb-1" style="color:var(--color-text-muted)">
+            <span>zzgl.\u00a0${ustSatzVorschau}\u00a0% USt</span>
+            <span class="amount">${formatEUR(ustVorschau)}</span>
+           </div>`;
+
+      container.innerHTML = `<div class="modal-preview-area">
+        <div class="modal-preview-area__label">Vorschau</div>
+        ${posRows}
+        <div style="border-top:1px solid var(--color-border);margin:0.5rem 0 0.4rem"></div>
+        <div class="d-flex justify-content-between mb-1">
+          <span>Netto</span>
+          <span class="amount">${formatEUR(netto)}</span>
+        </div>
+        ${ustLabel}
+        <div class="d-flex justify-content-between" style="font-weight:600;border-top:1px solid var(--color-border);padding-top:0.4rem;margin-top:0.25rem">
+          <span>Gesamt</span>
+          <span class="amount">${formatEUR(gesamtVorschau)}</span>
+        </div>
+      </div>`;
     } catch (e) {
       container.innerHTML = `<div class="modal-preview-area"><p class="text-danger small mb-0">${e.message}</p></div>`;
     }
