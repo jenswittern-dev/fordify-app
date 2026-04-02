@@ -59,6 +59,22 @@ function formatEUR(val) {
   return parts.join(",") + "\u00a0€";
 }
 
+/**
+ * Erzeugt den Basisdateinamen für Fall-Exporte.
+ * Schema: Forderungsaufstellung_[Gläubiger]_[Schuldner]_[YYYY-MM-DD]
+ */
+function exportBasisname(fall) {
+  const clean = s => (s || "").replace(/[/\\:*?"<>|]/g, "").replace(/\s+/g, "_").slice(0, 40);
+  const mandant = clean(fall.mandant);
+  const gegner  = clean(fall.gegner);
+  const datum   = new Date().toISOString().slice(0, 10);
+  const teile   = ["Forderungsaufstellung"];
+  if (mandant) teile.push(mandant);
+  if (gegner)  teile.push(gegner);
+  teile.push(datum);
+  return teile.join("_");
+}
+
 // ---- Fallverwaltung (mehrere Fälle in localStorage) ----
 
 function fallAnzeigename(fall) {
@@ -232,8 +248,7 @@ function fallExportieren() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  const name = fallAnzeigename(state.fall).replace(/[/\\:*?"<>|]/g, "_");
-  a.download = (name || "fall") + ".json";
+  a.download = exportBasisname(state.fall) + ".json";
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -2088,7 +2103,8 @@ function einstellungenExportieren() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = "fordify-einstellungen.json";
+  const firma = (einst.name || "").replace(/[/\\:*?"<>|]/g, "").replace(/\s+/g, "_").slice(0, 50);
+  a.download = "Fordify_Einstellungen" + (firma ? "_" + firma : "") + ".json";
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -2134,11 +2150,14 @@ function drucken() {
   const cleanHtml = tmp.innerHTML;
 
   const origin = window.location.origin;
+  const escHtml = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const parteien = [state.fall.mandant, state.fall.gegner].filter(Boolean).join(" ./. ");
+  const druckTitel = escHtml("Forderungsaufstellung" + (parteien ? " – " + parteien : "") + " – " + new Date().toLocaleDateString("de-DE"));
   const fullHtml = `<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Forderungsaufstellung</title>
+  <title>${druckTitel}</title>
   <link rel="stylesheet" href="${origin}/css/bootstrap.min.css">
   <link rel="stylesheet" href="${origin}/css/app.css">
   <style>body{margin:2rem}@media print{body{margin:0}}</style>
@@ -2309,14 +2328,14 @@ async function falTeilen() {
   }
   const payload = { fall: state.fall, naechsteId: state.naechsteId };
   const json = JSON.stringify(payload, null, 2);
-  const az = (state.fall.aktenzeichen || "fall").replace(/[^a-zA-Z0-9\-_]/g, "_");
-  const filename = `fordify-${az}.json`;
+  const filename = exportBasisname(state.fall) + ".json";
   const blob = new Blob([json], { type: "application/json" });
 
   if (navigator.canShare && navigator.canShare({ files: [new File([blob], filename, { type: "application/json" })] })) {
     try {
+      const parteien = [state.fall.mandant, state.fall.gegner].filter(Boolean).join(" ./. ");
       await navigator.share({
-        title: "Forderungsaufstellung – " + (state.fall.aktenzeichen || state.fall.mandant || "fordify"),
+        title: "Forderungsaufstellung" + (parteien ? " – " + parteien : ""),
         text: "Erstellt mit fordify.de",
         files: [new File([blob], filename, { type: "application/json" })],
       });
