@@ -1631,7 +1631,9 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   // Gesamtzeile
   const totForderung = zeilen.reduce((s, z) => s.plus(z.forderung || ZERO), ZERO);
   const totVerrechnung = zeilen.filter(z => z.typ === "zahlung").reduce((s, z) => s.plus(z.verrechnung || ZERO), ZERO);
-  const totRest = zeilen.filter(z => z.typ !== "zahlung").reduce((s, z) => s.plus(z.restforderung || ZERO), ZERO);
+  const totRest = zeilen.filter(z =>
+    z.typ !== "zahlung" && z.typ !== "restsaldo_hf" && z.typ !== "restsaldo_kosten"
+  ).reduce((s, z) => s.plus(z.restforderung || ZERO), ZERO);
 
   // HTML-Tabelle rendern
   const dash = "\u2014";
