@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="fordify Logo-Entwurf C – Dokument">
+  <!--
+    VARIANTE C: "Dokument-F"
+    Der obere Querbalken hat eine abgeschrägte Ecke (oben rechts),
+    wie eine umgeschlagene Dokumentseite – klassisches Zeichen für
+    juristische Schriftstücke und Akten.
+    Das abgeschnittene Dreieck wird in Cyan ausgefüllt ("Eselsohr").
+    Subtile Referenz auf Forderungsaufstellungen / juristische Dokumente.
+    Klar abgegrenzt vom technisch-neutralen Facebook-F.
+  -->
+
+  <!-- Hintergrund -->
+  <rect width="100" height="100" rx="18" fill="#1e3a8a"/>
+
+  <!-- F – vertikaler Balken -->
+  <rect x="22" y="20" width="12" height="60" rx="5" fill="white"/>
+
+  <!-- F – oberer Querbalken mit abgeschrägter Ecke oben rechts (Eselsohr) -->
+  <!-- Normal wäre: rect 22,20 → 66,32 -->
+  <!-- Abgeschrägter Punkt: statt (66,20) → Diagonale (54,20) → (66,30) -->
+  <polygon points="22,20 54,20 66,30 66,32 22,32" fill="white"/>
+
+  <!-- Eselsohr: das abgeschnittene Dreieck in Cyan -->
+  <polygon points="54,20 66,20 66,30" fill="#0891b2"/>
+
+  <!-- F – Mittelbalken -->
+  <rect x="22" y="44" width="32" height="10" rx="4" fill="#0891b2"/>
+</svg>
