@@ -101,7 +101,7 @@ Typ-spezifische Zusatzfelder:
 | `zinsforderung_titel` | `zinsBis`, `aufschlag` |
 | `anwaltsverguetung` | `streitwert`, `vvNummern[]`, `faktoren{}`, `ustSatz`, `ohneUst`, `netto`, `ust` |
 | `gerichtskosten` | `gkgStreitwert`, `gkgVerfahren` (Faktor als String, z.B. "3.0") |
-| `zahlung` | _(nur Basisfelder)_ |
+| `zahlung` | `tilgungsbestimmung` (bool, optional), `tilgungsGruppeId` (string, optional), `verrechnungsanweisung` (string, optional) |
 | `inkassopauschale` | _(nur Basisfelder)_ |
 | `gv_kosten`, `zahlungsverbot`, `auskunftskosten`, `mahnkosten`, `sonstige_kosten` | _(nur Basisfelder)_ |
 
@@ -181,9 +181,11 @@ Funktion: `berechneVerrechnung(positionen, stichtag, basiszinssaetze, aufschlagP
 ### 3.5 Zusammenfassung (`js/app.js: baueSummaryTabelle()`)
 
 - Aktive Funktion ist `baueSummaryTabelle()` in `app.js` (NICHT `erstelleZusammenfassung()` in `zusammenfassung.js` — deprecated)
-- Spalten: Hauptforderung / Zinsen / Kosten / Summe
+- Spalten: Datum / Bezeichnung / Forderung / (Teil-)Zahlung / Restforderung
 - Ordnet Zinsperioden per `gruppeId` der jeweiligen Hauptforderung zu
 - Fallback-Heuristik: Betragsvergleich für Legacy-Daten ohne `gruppeId`
+- Zinsperioden-Datumsspalte: zeigt „VON – BIS" als Range statt nur Startdatum (`datumRangeCell()`)
+- **Tilgungsbestimmung:** Wenn `zahlung.tilgungsbestimmung === true` und `zahlung.tilgungsGruppeId` gesetzt: Zahlung wird zuerst auf Zinsen + HF der Ziel-Gruppe verrechnet, dann Rest nach § 367 BGB (Zinsen → Kosten → HF). Abweichung von Standard ist in Sub-Rows mit Badge „Tilgungsbestimmung" sichtbar.
 
 ---
 

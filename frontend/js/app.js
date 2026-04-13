@@ -918,7 +918,16 @@ function modalDatenLesen() {
 
     case "zahlung": {
       const verrAnw = document.getElementById("mf-verrechnungsanweisung")?.value?.trim() || "";
-      return { ...basis, betrag: v("mf-betrag"), ...(verrAnw ? { verrechnungsanweisung: verrAnw } : {}) };
+      const tilgungsbestimmung = document.getElementById("mf-tilgungsbestimmung")?.checked || false;
+      const tilgungsGruppeId = tilgungsbestimmung
+        ? (document.getElementById("mf-tilgung-gruppeId")?.value || null)
+        : null;
+      return {
+        ...basis,
+        betrag: v("mf-betrag"),
+        ...(tilgungsbestimmung ? { tilgungsbestimmung: true, tilgungsGruppeId } : {}),
+        ...(verrAnw ? { verrechnungsanweisung: verrAnw } : {})
+      };
     }
 
     case "gerichtskosten": {
@@ -1220,16 +1229,54 @@ function tplZinsperiode(pos) {
 }
 
 function tplZahlung(pos) {
+  const gruppen = holeGruppen();
+  const hatMehrereHFs = gruppen.length > 1;
+  const tilgungAktiv = pos?.tilgungsbestimmung || false;
+
+  let gruppenOptionen = "";
+  if (gruppen.length > 0) {
+    gruppenOptionen = gruppen.map((hf, i) => {
+      const label = hf.beschreibung
+        ? `HF\u00a0${i + 1}: ${hf.beschreibung}`
+        : `Hauptforderung\u00a0${i + 1}`;
+      const betragStr = hf.betrag ? ` (${formatEUR(new Decimal(hf.betrag))})` : "";
+      const sel = tilgungAktiv && pos?.tilgungsGruppeId === hf.gruppeId ? " selected" : "";
+      return `<option value="${hf.gruppeId}"${sel}>${label}${betragStr}</option>`;
+    }).join("");
+  }
+
+  const tilgungDetails = gruppen.length > 0 ? `
+    <div id="mf-tilgung-details" class="${tilgungAktiv ? "" : "d-none"} mt-2">
+      ${hatMehrereHFs ? `<label class="form-label mb-1">Zahlung zugeordnet auf</label>` : ""}
+      ${hatMehrereHFs
+        ? `<select class="form-select form-select-sm" id="mf-tilgung-gruppeId">${gruppenOptionen}</select>`
+        : `<input type="hidden" id="mf-tilgung-gruppeId" value="${gruppen[0].gruppeId}">`
+      }
+      <div class="form-text">Zahlung wird zuerst auf Zinsen, dann auf die genannte Hauptforderung angerechnet.</div>
+    </div>` : "";
+
   return `
     ${datumFeld("mf-datum", pos?.datum, "Zahlungsdatum")}
     <div class="mb-3">
       <label class="form-label">Beschreibung</label>
-      <input type="text" class="form-control" id="mf-beschreibung" value="${pos?.beschreibung || ""}" placeholder="z.B. Überweisung vom …">
+      <input type="text" class="form-control" id="mf-beschreibung" value="${pos?.beschreibung || ""}" placeholder="z.B. Überweisung vom \u2026">
     </div>
-    ${betragFeld("mf-betrag", pos?.betrag, "Zahlbetrag (€)")}
+    ${betragFeld("mf-betrag", pos?.betrag, "Zahlbetrag (\u20ac)")}
     <div class="mb-3">
-      <label class="form-label">Verrechnungsanweisung <span class="text-muted">(optional)</span></label>
-      <textarea class="form-control" id="mf-verrechnungsanweisung" rows="2" placeholder="z.B. Zahlung soll vorrangig auf Hauptforderung 2 verrechnet werden">${pos?.verrechnungsanweisung || ""}</textarea>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="mf-tilgungsbestimmung"
+          ${tilgungAktiv ? "checked" : ""}
+          onchange="document.getElementById('mf-tilgung-details')?.classList.toggle('d-none', !this.checked)">
+        <label class="form-check-label" for="mf-tilgungsbestimmung">
+          Tilgungsbestimmung vorhanden
+          <span class="text-muted small">(Schuldner hat Zahlung explizit einer Forderung zugeordnet)</span>
+        </label>
+      </div>
+      ${tilgungDetails}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Notiz <span class="text-muted">(optional)</span></label>
+      <textarea class="form-control" id="mf-verrechnungsanweisung" rows="1" placeholder="z.B. Wortlaut des Verwendungszwecks">${pos?.verrechnungsanweisung || ""}</textarea>
     </div>
   `;
 }
@@ -1569,11 +1616,10 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     const z = calcZinsen(hf.betrag, zp.zinsVon, phase0End);
     if (z.lte(0)) continue;
     const hfNum = hfs.length > 1 ? ` ${hfIdx + 1}` : "";
-    const bisLabel = zahlungen.length > 0 ? ` bis ${formatDate(phase0End)}` : " bis heute";
     zinsenEntries.push({
       id: `hfz_init_${hf.id}`, hfId: hf.id, isNew: false, afterPayIdx: null,
       vonStr: zp.zinsVon, bisDate: phase0End,
-      bezeichnung: `Zinsen HF${hfNum} ab ${formatDate(parseDate(zp.zinsVon))}${bisLabel}`,
+      bezeichnung: `Zinsen HF${hfNum}`,
       betrag: z, rest: z.plus(ZERO), payAllocs: []
     });
   }
@@ -1623,7 +1669,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
           id: `hfz_new_${hf.id}_${zahlIdx}`, hfId: hf.id, isNew: true,
           afterPayIdx: zahlIdx - 1,
           vonStr: prevPayDatum, bisDate: zahlDatum,
-          bezeichnung: `Zinsen HF${hfNum} ab ${formatDate(parseDate(prevPayDatum))} bis ${formatDate(zahlDatum)}`,
+          bezeichnung: `Zinsen HF${hfNum}`,
           betrag: z, rest: z.plus(ZERO), payAllocs: []
         });
       }
@@ -1635,34 +1681,37 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
       ...zinsenEntries.filter(e => e.isNew).sort((a, b) => (a.afterPayIdx || 0) - (b.afterPayIdx || 0))
     ];
 
-    // 1. Zinsen
-    for (const e of zinsenGeordnet) {
-      if (restZahlung.lte(0)) break;
-      if (e.rest.lte(0)) continue;
-      const used = Decimal.min(restZahlung, e.rest);
-      restZahlung = restZahlung.minus(used);
-      e.rest = e.rest.minus(used);
-      e.payAllocs.push({ zahlIdx, datum: zahlung.datum, beschreibung: zahlung.beschreibung || "", amount: used, restAfter: e.rest.plus(ZERO) });
+    function verrechneAufEntry(entries, zahlLabel) {
+      for (const e of entries) {
+        if (restZahlung.lte(0)) break;
+        if (e.rest.lte(0)) continue;
+        const used = Decimal.min(restZahlung, e.rest);
+        restZahlung = restZahlung.minus(used);
+        e.rest = e.rest.minus(used);
+        e.payAllocs.push({ zahlIdx, datum: zahlung.datum, beschreibung: zahlLabel, amount: used, restAfter: e.rest.plus(ZERO), hasTilgung: !!zahlung.tilgungsbestimmung });
+      }
     }
 
-    // 2. Kosten
-    for (const e of kostenEntries) {
-      if (restZahlung.lte(0)) break;
-      if (e.rest.lte(0)) continue;
-      const used = Decimal.min(restZahlung, e.rest);
-      restZahlung = restZahlung.minus(used);
-      e.rest = e.rest.minus(used);
-      e.payAllocs.push({ zahlIdx, datum: zahlung.datum, beschreibung: zahlung.beschreibung || "", amount: used, restAfter: e.rest.plus(ZERO) });
-    }
+    const zahlLabel = zahlung.beschreibung || "";
 
-    // 3. HF (älteste zuerst)
-    for (const e of hfEntries) {
-      if (restZahlung.lte(0)) break;
-      if (e.rest.lte(0)) continue;
-      const used = Decimal.min(restZahlung, e.rest);
-      restZahlung = restZahlung.minus(used);
-      e.rest = e.rest.minus(used);
-      e.payAllocs.push({ zahlIdx, datum: zahlung.datum, beschreibung: zahlung.beschreibung || "", amount: used, restAfter: e.rest.plus(ZERO) });
+    if (zahlung.tilgungsbestimmung && zahlung.tilgungsGruppeId) {
+      // Tilgungsbestimmung: Zahlung zuerst auf Zinsen + HF der Ziel-Gruppe, dann Rest nach § 367
+      const zielHF = hfs.find(h => h.gruppeId === zahlung.tilgungsGruppeId);
+      if (zielHF) {
+        // 1a. Zinsen der Ziel-HF
+        verrechneAufEntry(zinsenGeordnet.filter(e => e.hfId === zielHF.id), zahlLabel);
+        // 1b. HF der Ziel-Gruppe
+        verrechneAufEntry(hfEntries.filter(e => e.hfId === zielHF.id), zahlLabel);
+      }
+      // 2. Restbetrag nach § 367: alle verbleibenden Zinsen → Kosten → übrige HFs
+      verrechneAufEntry(zinsenGeordnet, zahlLabel);
+      verrechneAufEntry(kostenEntries, zahlLabel);
+      verrechneAufEntry(hfEntries, zahlLabel);
+    } else {
+      // Standard § 367 BGB: Zinsen → Kosten → HF (älteste zuerst)
+      verrechneAufEntry(zinsenGeordnet, zahlLabel);
+      verrechneAufEntry(kostenEntries, zahlLabel);
+      verrechneAufEntry(hfEntries, zahlLabel);
     }
   }
 
@@ -1681,7 +1730,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
         id: `hfz_final_${hf.id}`, hfId: hf.id, isNew: true,
         afterPayIdx: zahlungen.length - 1,
         vonStr: lastPayDatum, bisDate: heute,
-        bezeichnung: `Zinsen HF${hfNum} ab ${formatDate(parseDate(lastPayDatum))} bis heute`,
+        bezeichnung: `Zinsen HF${hfNum}`,
         betrag: z, rest: z.plus(ZERO), payAllocs: []
       });
     }
@@ -1731,23 +1780,32 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   function datumCell(datum, cls) {
     return `<td class="summary-datum${cls ? " " + cls : ""}">${datum ? formatDate(parseDate(datum)) : ""}</td>`;
   }
+  function datumRangeCell(vonStr, bisDate) {
+    if (!vonStr) return `<td class="summary-datum"></td>`;
+    const vonFmt = formatDate(parseDate(vonStr));
+    const bisFmt = bisDate ? formatDate(bisDate instanceof Date ? bisDate : parseDate(bisDate)) : "heute";
+    return `<td class="summary-datum summary-datum--range">${vonFmt}\u00a0\u2013\u00a0${bisFmt}</td>`;
+  }
   // Sub-Row: nur Betrag der Zahlung, kein Restforderungs-Zwischenstand
   function payAllocRow(alloc) {
-    const label = alloc.beschreibung
+    const base = alloc.beschreibung
       ? `\u2514\u00a0${formatDate(parseDate(alloc.datum))}\u00a0${alloc.beschreibung}`
       : `\u2514\u00a0${formatDate(parseDate(alloc.datum))}\u00a0Zahlung`;
+    const badge = alloc.hasTilgung
+      ? `\u00a0<span class="badge-tilgung">Tilgungsbestimmung</span>`
+      : "";
     return `<tr class="summary-row--pay-alloc">
       <td class="summary-datum"></td>
-      <td class="pay-alloc-label">${label}</td>
+      <td class="pay-alloc-label">${base}${badge}</td>
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
       ${amtCell(alloc.amount.negated())}
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
     </tr>`;
   }
-  // Neue Zinsen: kein Sonder-Styling, Datum links
+  // Neue Zinsen: Datum links als Periode VON – BIS
   function zinsenNeuRow(e) {
     return `<tr>
-      ${datumCell(e.vonStr)}
+      ${datumRangeCell(e.vonStr, e.bisDate)}
       <td>${e.bezeichnung}</td>
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
@@ -1758,10 +1816,13 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   const rowsHtml = [];
 
   // Abschnitt 1: Initiale Zinsen (zt + hfZinsen phase 0)
-  // – Datum links = Zinsbeginn, Restforderung = aktueller Endstand
+  // – Datum links = Zinsperiode VON – BIS, Restforderung = aktueller Endstand
   for (const e of zinsenEntries.filter(en => !en.isNew)) {
+    const datumSpalte = e.vonStr
+      ? datumRangeCell(e.vonStr, e.bisDate)
+      : datumCell(null);
     rowsHtml.push(`<tr>
-      ${datumCell(e.vonStr)}
+      ${datumSpalte}
       <td>${e.bezeichnung}</td>
       ${amtCell(e.betrag)}
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>

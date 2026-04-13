@@ -95,9 +95,10 @@
 | 4.5 | Neue Zinsen nach Zahlung direkt unter der HF (nicht am Ende) | ✅ | 2026-04-02 |
 | 4.6 | Verrechnungsanweisung-Feld bei Zahlungs-Position | ✅ | 2026-04-02 |
 | 4.7 | RVG-Vorschau im Modal (Einzelpositionen mit Faktor und Auslagenpauschale-Berechnungsbasis) | ✅ | 2026-04-02 |
+| 4.8 | Zinsperioden-Enddatum in Datumsspalte der Zusammenfassung (VON – BIS statt nur VON) | ✅ | 2026-04-13 |
+| 4.9 | Tilgungsbestimmung bei Zahlungen: strukturiertes UI + gruppeId-spezifische Verrechnung | ✅ | 2026-04-13 |
 
-> Quelle: Anwaltsgespräch (transcript.md) – positionsbezogene Verrechnung mit Sub-Rows,
-> neue Zinsen direkt unter HF, klares 4-Spalten-Layout
+> Quelle: Anwaltsgespräch (transcript.md, feedback-4) – Zinsperioden-Enddatum, Tilgungsbestimmung
 
 ---
 

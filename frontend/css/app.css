@@ -600,6 +600,20 @@ body {
   padding-left: 1.25rem;
 }
 
+.badge-tilgung {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: 0.02em;
+  padding: 0.1em 0.45em;
+  border-radius: 3px;
+  vertical-align: middle;
+  background: var(--color-accent, #1a56db);
+  color: #fff;
+  opacity: 0.85;
+}
+
 .summary-datum {
   white-space: nowrap;
   font-size: var(--text-xs);
@@ -611,6 +625,13 @@ body {
 .summary-datum-th {
   width: 5.5rem;
   min-width: 5.5rem;
+}
+
+.summary-datum--range {
+  min-width: 9rem;
+  width: auto;
+  font-size: var(--text-xs);
+  letter-spacing: -0.01em;
 }
 
 .summary-row--tageszins td {
@@ -1441,9 +1462,18 @@ body {
     padding-bottom: 0.1rem;
   }
 
-  .summary-datum {
+  .summary-datum,
+  .summary-datum--range {
     font-size: 7pt;
     color: #555 !important;
+  }
+
+  .badge-tilgung {
+    background: transparent !important;
+    color: #555 !important;
+    border: 0.5pt solid #888;
+    font-size: 6pt;
+    padding: 0 0.3em;
   }
 
   /* Fußzeile */
