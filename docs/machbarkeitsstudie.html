@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machbarkeitsstudie – Fordify</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   FORDIFY – Machbarkeitsstudie PDF
+   Brandfarben: Primary #1e3a8a | Gradient #1a3480→#1c439a | Accent #0e7490
+   ============================================================ */
+
+:root {
+  --primary:       #1e3a8a;
+  --primary-mid:   #1e40af;
+  --primary-light: #2563eb;
+  --accent:        #0e7490;
+  --accent-light:  #ecfeff;
+  --surface:       #f7f8fa;
+  --card:          #ffffff;
+  --border:        #dde1e7;
+  --border-strong: #b0b8c4;
+  --text:          #1a1d23;
+  --text-muted:    #595f6b;
+  --text-subtle:   #9ca3af;
+  --success:       #145a32;
+  --success-bg:    #d4edda;
+  --warning:       #7c4a00;
+  --warning-bg:    #fff3cd;
+  --danger:        #842029;
+  --danger-bg:     #f8d7da;
+
+  --font: 'Inter', system-ui, -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  font-size: 10pt;
+  color: var(--text);
+  background: white;
+  line-height: 1.65;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ============================================================
+   COVER PAGE
+   ============================================================ */
+
+.cover {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(160deg, #0d1f4e 0%, #1a3480 35%, #1e3a8a 65%, #1c439a 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  page-break-after: always;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative circles */
+.cover::before {
+  content: "";
+  position: absolute;
+  top: -120px; right: -120px;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(147,197,253,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cover::after {
+  content: "";
+  position: absolute;
+  bottom: -80px; left: -80px;
+  width: 380px; height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(14,116,144,0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cover-inner {
+  position: relative;
+  z-index: 1;
+  padding: 64px 72px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: space-between;
+}
+
+.cover-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cover-logo-icon {
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.12);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #93c5fd;
+}
+
+.cover-logo-name {
+  font-size: 22pt;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: white;
+  line-height: 1;
+}
+
+.cover-logo-name span {
+  color: #93c5fd;
+}
+
+.cover-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 40px;
+}
+
+.cover-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(14,116,144,0.25);
+  border: 1px solid rgba(34,211,238,0.35);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 8pt;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #67e8f9;
+  width: fit-content;
+  margin-bottom: 28px;
+}
+
+.cover-title {
+  font-size: 34pt;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.cover-subtitle {
+  font-size: 17pt;
+  font-weight: 400;
+  color: rgba(219,234,254,0.85);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin-bottom: 40px;
+}
+
+.cover-divider {
+  width: 64px;
+  height: 3px;
+  background: linear-gradient(90deg, #38bdf8, #0e7490);
+  border-radius: 2px;
+  margin-bottom: 36px;
+}
+
+.cover-tags {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cover-tag {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 8pt;
+  font-weight: 500;
+  color: rgba(219,234,254,0.9);
+}
+
+.cover-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  padding-top: 24px;
+}
+
+.cover-meta {
+  display: flex;
+  gap: 32px;
+}
+
+.cover-meta-item label {
+  display: block;
+  font-size: 7pt;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(147,197,253,0.7);
+  margin-bottom: 3px;
+}
+
+.cover-meta-item value {
+  display: block;
+  font-size: 9pt;
+  font-weight: 500;
+  color: rgba(255,255,255,0.9);
+}
+
+.cover-confidential {
+  font-size: 7.5pt;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(251,191,36,0.75);
+  border: 1px solid rgba(251,191,36,0.25);
+  border-radius: 4px;
+  padding: 4px 10px;
+}
+
+/* ============================================================
+   TOC PAGE
+   ============================================================ */
+
+.toc-page {
+  padding: 60px 72px 48px;
+  page-break-after: always;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.toc-header {
+  margin-bottom: 36px;
+}
+
+.toc-header h2 {
+  font-size: 22pt;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--primary);
+  line-height: 1.2;
+}
+
+.toc-header .toc-line {
+  width: 48px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 2px;
+  margin-top: 10px;
+}
+
+.toc-group {
+  margin-bottom: 10px;
+}
+
+.toc-group-label {
+  font-size: 7.5pt;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 5px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #e0f2fe;
+}
+
+.toc-entry {
+  display: flex;
+  align-items: baseline;
+  padding: 4.5px 0;
+  border-bottom: 1px dotted #e5e7eb;
+}
+
+.toc-entry:last-child {
+  border-bottom: none;
+}
+
+.toc-num {
+  font-size: 8.5pt;
+  font-weight: 700;
+  color: var(--primary);
+  min-width: 30px;
+  flex-shrink: 0;
+}
+
+.toc-label {
+  font-size: 9.5pt;
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+  padding: 0 8px;
+}
+
+.toc-dots {
+  flex: 1;
+  border-bottom: 1px dotted #d1d5db;
+  margin: 0 4px;
+  max-width: 120px;
+}
+
+.toc-page-num {
+  font-size: 8.5pt;
+  font-weight: 600;
+  color: var(--text-muted);
+  min-width: 24px;
+  text-align: right;
+}
+
+/* ============================================================
+   CONTENT PAGES
+   ============================================================ */
+
+.content {
+  padding: 52px 72px 52px;
+}
+
+/* Page header stripe */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  margin-bottom: 28px;
+  border-bottom: 2px solid var(--primary);
+}
+
+.page-header-brand {
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.page-header-title {
+  font-size: 8pt;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* Chapter heading */
+.chapter {
+  page-break-before: always;
+  padding-top: 0;
+}
+
+.chapter:first-child {
+  page-break-before: avoid;
+}
+
+.chapter-num {
+  font-size: 8.5pt;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+h1 {
+  font-size: 22pt;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--primary);
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.chapter-line {
+  width: 48px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 2px;
+  margin-bottom: 24px;
+}
+
+h2 {
+  font-size: 14pt;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--primary);
+  margin-top: 28px;
+  margin-bottom: 10px;
+  padding-bottom: 7px;
+  border-bottom: 1.5px solid #e8eef5;
+  line-height: 1.3;
+}
+
+h3 {
+  font-size: 11pt;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 20px;
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+
+p {
+  font-size: 9.5pt;
+  margin-bottom: 10px;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+p strong {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+ul, ol {
+  padding-left: 18px;
+  margin-bottom: 12px;
+}
+
+li {
+  font-size: 9.5pt;
+  line-height: 1.65;
+  margin-bottom: 3px;
+  color: var(--text);
+}
+
+li strong {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* ============================================================
+   CALLOUT BOXES
+   ============================================================ */
+
+.callout {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 18px 0;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.callout-icon {
+  font-size: 14pt;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+.callout-body {
+  flex: 1;
+}
+
+.callout-title {
+  font-size: 9pt;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.callout-text {
+  font-size: 9pt;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.callout--info {
+  background: #eff6ff;
+  border-left: 3px solid var(--primary-light);
+}
+.callout--info .callout-title { color: var(--primary); }
+.callout--info .callout-text { color: #1e40af; }
+
+.callout--success {
+  background: var(--success-bg);
+  border-left: 3px solid #22c55e;
+}
+.callout--success .callout-title { color: var(--success); }
+.callout--success .callout-text { color: #166534; }
+
+.callout--warning {
+  background: var(--warning-bg);
+  border-left: 3px solid #f59e0b;
+}
+.callout--warning .callout-title { color: var(--warning); }
+.callout--warning .callout-text { color: #78350f; }
+
+.callout--danger {
+  background: var(--danger-bg);
+  border-left: 3px solid #ef4444;
+}
+.callout--danger .callout-title { color: var(--danger); }
+.callout--danger .callout-text { color: #7f1d1d; }
+
+/* ============================================================
+   STRATEGY BOX (big callout for key strategy)
+   ============================================================ */
+
+.strategy-box {
+  background: linear-gradient(135deg, #0d1f4e 0%, #1a3480 50%, #1e3a8a 100%);
+  border-radius: 10px;
+  padding: 24px 28px;
+  margin: 20px 0;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.strategy-box::before {
+  content: "";
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: rgba(147,197,253,0.08);
+}
+
+.strategy-box-label {
+  font-size: 7.5pt;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #67e8f9;
+  margin-bottom: 8px;
+}
+
+.strategy-box-text {
+  font-size: 11pt;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: white;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+
+.table-wrapper {
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8.5pt;
+}
+
+table thead tr {
+  background: linear-gradient(90deg, #1a3480, #1e3a8a);
+  color: white;
+}
+
+table thead th {
+  padding: 9px 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-align: left;
+  white-space: nowrap;
+  font-size: 8pt;
+}
+
+table tbody tr {
+  border-bottom: 1px solid var(--border);
+}
+
+table tbody tr:last-child {
+  border-bottom: none;
+}
+
+table tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+table tbody tr:hover {
+  background: #eff6ff;
+}
+
+table tbody td {
+  padding: 8px 12px;
+  color: var(--text);
+  line-height: 1.45;
+  vertical-align: top;
+}
+
+table tbody td strong {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+/* Highlight rows */
+.tr-highlight td {
+  background: #eff6ff !important;
+  font-weight: 600;
+  color: var(--primary) !important;
+}
+
+.tr-recommended td:first-child::after {
+  content: " ✓";
+  color: #22c55e;
+  font-weight: 700;
+}
+
+/* ============================================================
+   CODE BLOCKS
+   ============================================================ */
+
+pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 8px;
+  padding: 16px 18px;
+  font-family: var(--mono);
+  font-size: 7.5pt;
+  line-height: 1.6;
+  overflow: hidden;
+  margin: 14px 0;
+  border-left: 3px solid var(--accent);
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 8pt;
+  background: #e8eef5;
+  color: var(--primary);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+  font-size: 7.5pt;
+}
+
+/* SQL keywords */
+.kw { color: #38bdf8; font-weight: 600; }
+.cm { color: #64748b; }
+.str { color: #a3e635; }
+.num { color: #fbbf24; }
+
+/* ============================================================
+   BADGES / TAGS
+   ============================================================ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 7.5pt;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.badge--primary   { background: #dbeafe; color: var(--primary); }
+.badge--success   { background: var(--success-bg); color: var(--success); }
+.badge--warning   { background: var(--warning-bg); color: var(--warning); }
+.badge--danger    { background: var(--danger-bg); color: var(--danger); }
+.badge--accent    { background: var(--accent-light); color: var(--accent); }
+.badge--neutral   { background: #f3f4f6; color: var(--text-muted); }
+
+/* ============================================================
+   METRICS / KPI CARDS
+   ============================================================ */
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.metric-card {
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.metric-card .metric-value {
+  font-size: 20pt;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--primary);
+  line-height: 1.1;
+  display: block;
+}
+
+.metric-card .metric-label {
+  font-size: 8pt;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-top: 4px;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.metric-card .metric-sub {
+  font-size: 7.5pt;
+  color: var(--text-subtle);
+  margin-top: 3px;
+  display: block;
+}
+
+/* ============================================================
+   CHECKLIST
+   ============================================================ */
+
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+}
+
+.checklist li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 6px 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 9pt;
+}
+
+.checklist li:last-child {
+  border-bottom: none;
+}
+
+.check-box {
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.check-box--blocker {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.check-label {
+  flex: 1;
+  line-height: 1.55;
+}
+
+.check-category {
+  font-size: 8pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-subtle);
+  margin-top: 14px;
+  margin-bottom: 4px;
+}
+
+/* ============================================================
+   ROADMAP
+   ============================================================ */
+
+.roadmap-phase {
+  margin-bottom: 24px;
+}
+
+.roadmap-phase-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 10px 16px;
+  border-radius: 8px;
+}
+
+.phase-a { background: #eff6ff; border-left: 4px solid var(--primary); }
+.phase-b { background: #ecfeff; border-left: 4px solid var(--accent); }
+.phase-c { background: #f0fdf4; border-left: 4px solid #22c55e; }
+.phase-d { background: #fdf4ff; border-left: 4px solid #9333ea; }
+
+.phase-label {
+  font-size: 9pt;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.phase-a .phase-label { color: var(--primary); }
+.phase-b .phase-label { color: var(--accent); }
+.phase-c .phase-label { color: #15803d; }
+.phase-d .phase-label { color: #7e22ce; }
+
+.phase-title {
+  font-size: 10pt;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.phase-period {
+  margin-left: auto;
+  font-size: 8pt;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   RISK MATRIX
+   ============================================================ */
+
+.risk-low  { color: #15803d; font-weight: 700; }
+.risk-mid  { color: #d97706; font-weight: 700; }
+.risk-high { color: #dc2626; font-weight: 700; }
+
+/* ============================================================
+   DECISION MATRIX
+   ============================================================ */
+
+.decision-grid {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1.5fr 1.5fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 14px 0;
+  font-size: 8.5pt;
+}
+
+.dg-header {
+  background: linear-gradient(90deg, #1a3480, #1e3a8a);
+  color: white;
+  padding: 9px 12px;
+  font-weight: 700;
+  font-size: 8pt;
+}
+
+.dg-cell {
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.dg-cell:not(:nth-child(4n)) {
+  border-right: 1px solid var(--border);
+}
+
+.dg-rec {
+  background: #f0fdf4;
+  color: #15803d;
+  font-weight: 700;
+}
+
+/* ============================================================
+   PAGE BREAK CONTROL
+   ============================================================ */
+
+.break-before { page-break-before: always; }
+.break-avoid  { page-break-inside: avoid; }
+
+/* ============================================================
+   SECTION DIVIDER
+   ============================================================ */
+
+.section-divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+  margin: 24px 0;
+}
+
+/* ============================================================
+   FOOTER (per page)
+   ============================================================ */
+
+.page-footer {
+  margin-top: 32px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 7.5pt;
+  color: var(--text-subtle);
+}
+
+.page-footer-brand {
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+@media print {
+  body { background: white; }
+  .cover { min-height: 100vh; }
+  a { text-decoration: none; color: inherit; }
+  .break-before { page-break-before: always; }
+}
+
+/* ============================================================
+   FLOW DIAGRAM
+   ============================================================ */
+.flow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+
+.flow-step {
+  background: var(--primary);
+  color: white;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 9pt;
+  font-weight: 700;
+  text-align: center;
+}
+
+.flow-arrow {
+  font-size: 14pt;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.flow-step--accent {
+  background: var(--accent);
+}
+
+/* ============================================================
+   TIER CARDS
+   ============================================================ */
+.tier-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.tier-card {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.tier-card--pro {
+  border-color: var(--primary);
+  box-shadow: 0 2px 12px rgba(30,58,138,0.12);
+}
+
+.tier-header {
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.tier-header--free   { background: #f9fafb; }
+.tier-header--pro    { background: linear-gradient(135deg, #1a3480, #1e3a8a); color: white; }
+.tier-header--kanzlei{ background: linear-gradient(135deg, #064e3b, #065f46); color: white; }
+
+.tier-name {
+  font-size: 11pt;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  display: block;
+}
+
+.tier-price {
+  font-size: 18pt;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  display: block;
+  margin-top: 5px;
+}
+
+.tier-price-sub {
+  font-size: 8pt;
+  font-weight: 500;
+  opacity: 0.75;
+  display: block;
+}
+
+.tier-features {
+  padding: 12px 16px;
+}
+
+.tier-feature {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 8.5pt;
+  line-height: 1.4;
+}
+
+.tier-feature .check { color: #22c55e; font-weight: 700; }
+.tier-feature .cross { color: #dc2626; font-weight: 700; }
+
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     COVER PAGE
+     ============================================================ -->
+<div class="cover">
+  <div class="cover-inner">
+    <div class="cover-logo">
+      <div class="cover-logo-icon">§</div>
+      <div class="cover-logo-name">fordi<span>fy</span></div>
+    </div>
+
+    <div class="cover-center">
+      <div class="cover-badge">Machbarkeitsstudie</div>
+      <div class="cover-title">Forderungsmarktplatz,<br>Monetarisierung &<br>Weiterentwicklung</div>
+      <div class="cover-subtitle">Holistische Analyse · Strategische Entscheidungsgrundlage</div>
+      <div class="cover-divider"></div>
+      <div class="cover-tags">
+        <div class="cover-tag">Rechtsanalyse (BGB · RDG · KWG · DSGVO)</div>
+        <div class="cover-tag">Marktanalyse & Wettbewerb</div>
+        <div class="cover-tag">Free/Paid-Architektur</div>
+        <div class="cover-tag">Monetarisierung & Pricing</div>
+        <div class="cover-tag">Technische Roadmap</div>
+      </div>
+    </div>
+
+    <div class="cover-footer">
+      <div class="cover-meta">
+        <div class="cover-meta-item">
+          <label>Erstellt</label>
+          <value>April 2026</value>
+        </div>
+        <div class="cover-meta-item">
+          <label>Version</label>
+          <value>2.0 – Gesamtbericht</value>
+        </div>
+        <div class="cover-meta-item">
+          <label>Analysisten</label>
+          <value>Legal · Market · Architecture · Pricing · DSGVO</value>
+        </div>
+      </div>
+      <div class="cover-confidential">Vertraulich</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TABLE OF CONTENTS
+     ============================================================ -->
+<div class="toc-page">
+  <div class="toc-header">
+    <h2>Inhaltsverzeichnis</h2>
+    <div class="toc-line"></div>
+  </div>
+
+  <div class="toc-group">
+    <div class="toc-group-label">Strategie & Konzept</div>
+    <div class="toc-entry"><span class="toc-num">1</span><span class="toc-label">Executive Summary</span><span class="toc-dots"></span><span class="toc-page-num">3</span></div>
+    <div class="toc-entry"><span class="toc-num">2</span><span class="toc-label">Das Konzept: Forderungsabtretungs-Marktplatz</span><span class="toc-dots"></span><span class="toc-page-num">4</span></div>
+    <div class="toc-entry"><span class="toc-num">13</span><span class="toc-label">Gesamtbewertung & Entscheidungsmatrix</span><span class="toc-dots"></span><span class="toc-page-num">18</span></div>
+  </div>
+
+  <div class="toc-group">
+    <div class="toc-group-label">Rechts- und Marktanalyse</div>
+    <div class="toc-entry"><span class="toc-num">3</span><span class="toc-label">Rechtsanalyse (BGB · RDG · KWG · DSGVO · GwG)</span><span class="toc-dots"></span><span class="toc-page-num">5</span></div>
+    <div class="toc-entry"><span class="toc-num">4</span><span class="toc-label">Markt- und Wettbewerbsanalyse</span><span class="toc-dots"></span><span class="toc-page-num">7</span></div>
+    <div class="toc-entry"><span class="toc-num">9</span><span class="toc-label">DSGVO und Datenschutz (Account-Modell)</span><span class="toc-dots"></span><span class="toc-page-num">14</span></div>
+  </div>
+
+  <div class="toc-group">
+    <div class="toc-group-label">Monetarisierung & Pricing</div>
+    <div class="toc-entry"><span class="toc-num">5</span><span class="toc-label">Monetarisierungskonzept: Free vs. Paid</span><span class="toc-dots"></span><span class="toc-page-num">9</span></div>
+    <div class="toc-entry"><span class="toc-num">6</span><span class="toc-label">Preisstruktur und Psychologie</span><span class="toc-dots"></span><span class="toc-page-num">10</span></div>
+    <div class="toc-entry"><span class="toc-num">7</span><span class="toc-label">Payment Provider (Paddle vs. Stripe)</span><span class="toc-dots"></span><span class="toc-page-num">11</span></div>
+    <div class="toc-entry"><span class="toc-num">12</span><span class="toc-label">Umsatzpotenzial und Wachstumspfad</span><span class="toc-dots"></span><span class="toc-page-num">17</span></div>
+  </div>
+
+  <div class="toc-group">
+    <div class="toc-group-label">Technische Architektur</div>
+    <div class="toc-entry"><span class="toc-num">8</span><span class="toc-label">Technische Architektur (Free/Paid SPA · Supabase · Marktplatz-DB)</span><span class="toc-dots"></span><span class="toc-page-num">12</span></div>
+    <div class="toc-entry"><span class="toc-num">10</span><span class="toc-label">Feature-Expansion-Strategie</span><span class="toc-dots"></span><span class="toc-page-num">15</span></div>
+    <div class="toc-entry"><span class="toc-num">11</span><span class="toc-label">Marktplatz Modell A: Konkretisierung</span><span class="toc-dots"></span><span class="toc-page-num">16</span></div>
+  </div>
+
+  <div class="toc-group">
+    <div class="toc-group-label">Umsetzung</div>
+    <div class="toc-entry"><span class="toc-num">14</span><span class="toc-label">Roadmap (4 Phasen bis Monat 36)</span><span class="toc-dots"></span><span class="toc-page-num">19</span></div>
+    <div class="toc-entry"><span class="toc-num">15</span><span class="toc-label">Launch-Checkliste</span><span class="toc-dots"></span><span class="toc-page-num">20</span></div>
+    <div class="toc-entry"><span class="toc-num">16</span><span class="toc-label">Offene Fragen &amp; nächste Schritte</span><span class="toc-dots"></span><span class="toc-page-num">21</span></div>
+    <div class="toc-entry"><span class="toc-num">17</span><span class="toc-label">Quellenverweise</span><span class="toc-dots"></span><span class="toc-page-num">21</span></div>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-brand">Fordify</span>
+    <span>Machbarkeitsstudie V2.0 · April 2026 · Vertraulich</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     1. EXECUTIVE SUMMARY
+     ============================================================ -->
+<div class="content">
+  <div class="page-header">
+    <span class="page-header-brand">Fordify · Machbarkeitsstudie</span>
+    <span class="page-header-title">1 · Executive Summary</span>
+  </div>
+
+  <div class="chapter-num">Kapitel 1</div>
+  <h1>Executive Summary</h1>
+  <div class="chapter-line"></div>
+
+  <div class="strategy-box break-avoid">
+    <div class="strategy-box-label">Die Kernstrategie in einem Satz</div>
+    <p class="strategy-box-text">Fordify wächst in drei Stufen: <strong style="color:#93c5fd">Werkzeug</strong> (beste Forderungsaufstellung im Browser) → <strong style="color:#93c5fd">Produkt</strong> (Freemium-SaaS für Kanzleien) → <strong style="color:#93c5fd">Plattform</strong> (Marktplatz für Forderungsabtretungen) — wobei jede Stufe wirtschaftlich eigenständig tragfähig sein muss.</p>
+  </div>
+
+  <div class="metrics-grid break-avoid">
+    <div class="metric-card">
+      <span class="metric-value">60 Mrd.</span>
+      <span class="metric-label">NPL-Markt 2026</span>
+      <span class="metric-sub">Deutschland, wachsend</span>
+    </div>
+    <div class="metric-card">
+      <span class="metric-value">~2–3 Wo.</span>
+      <span class="metric-label">Architektur-Umbau</span>
+      <span class="metric-sub">Free/Paid MVP</span>
+    </div>
+    <div class="metric-card">
+      <span class="metric-value">29 €/Mo.</span>
+      <span class="metric-label">Solo-Tier Preis</span>
+      <span class="metric-sub">249 €/Jahr · Paddle MoR</span>
+    </div>
+  </div>
+
+  <h2>Die zehn wichtigsten Erkenntnisse</h2>
+  <ol>
+    <li><strong>Markt groß, Lücke real.</strong> Der deutsche NPL-Markt wächst auf 60 Mrd. EUR (2026). Das Kleinforderungssegment (&lt; 25.000 EUR) ist von keiner bestehenden Plattform adressiert.</li>
+    <li><strong>Richtiges Free Tier:</strong> „Kein Speichern + kein Export" — nicht ein Limit auf N Fälle. Erzeugt Upgrade-Druck genau im Moment des höchsten Nutzens.</li>
+    <li><strong>Paddle statt Stripe</strong> — als Merchant of Record übernimmt Paddle alle USt-Compliance-Pflichten. Spart 10–20 Stunden/Monat Steueradministration.</li>
+    <li><strong>Architektur-Umbau in 2–3 Wochen</strong> via Storage-Abstraktionsschicht. Nur ~4 Funktionen brauchen Feature-Gates.</li>
+    <li><strong>Marktplatz rechtlich machbar, aber komplex.</strong> Direkter Launch ohne Rechtsberatung wäre fahrlässig.</li>
+    <li><strong>Fordify wird DSGVO-Verantwortlicher</strong> mit Account-Modell. Supabase RLS muss vor Launch korrekt konfiguriert sein; AVV mit Kanzleien ist Pflicht.</li>
+    <li><strong>Marktplatz startet als Schwarzes Brett</strong> (Modell A) — kein Matching, keine Zahlungsabwicklung, minimales regulatorisches Risiko.</li>
+    <li><strong>Preise:</strong> Solo 29 €/Monat (249 €/Jahr), Kanzlei 79 €/Monat (669 €/Jahr).</li>
+    <li><strong>5.000 € MRR-Ziel</strong> bei 4 % Conversion erreichbar mit ~3.500 Free-Nutzern — realistische 18-Monats-Perspektive.</li>
+    <li><strong>Alleinstellungsmerkmal:</strong> Kein Anbieter verbindet § 367 BGB-konforme Berechnung und Forderungsverkauf in einem Workflow.</li>
+  </ol>
+
+  <div class="callout callout--warning break-avoid">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <p class="callout-title">Sofort-Empfehlung</p>
+      <p class="callout-text">Den vollständigen Marktplatz <strong>nicht sofort</strong> bauen — zuerst regulatorische Klärung, dann Freemium-Launch, dann Marktplatz als Feature des Paid-Tiers. Parallel: Anwaltliche Prüfung (RDG, KWG, DSGVO) beauftragen.</p>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-brand">Fordify</span>
+    <span>Machbarkeitsstudie V2.0 · April 2026 · Vertraulich</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     2. KONZEPT
+     ============================================================ -->
+<div class="content break-before">
+  <div class="page-header">
+    <span class="page-header-brand">Fordify · Machbarkeitsstudie</span>
+    <span class="page-header-title">2 · Das Konzept</span>
+  </div>
+
+  <div class="chapter-num">Kapitel 2</div>
+  <h1>Das Konzept:<br>Forderungsabtretungs-Marktplatz</h1>
+  <div class="chapter-line"></div>
+
+  <h2>2.1 Die Idee</h2>
+  <p>Nutzer, die in Fordify eine Forderungsaufstellung erstellt haben, sollen die Möglichkeit erhalten, ihre Forderung auf einem integrierten Marktplatz abzutreten. Professionelle Käufer (Inkassounternehmen, Fonds) erwerben die Forderungen und setzen sie auf eigene Rechnung durch.</p>
+
+  <div class="flow break-avoid">
+    <div class="flow-step">Forderung<br>berechnen</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step flow-step--accent">Forderung<br>listen</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">Forderung<br>verkaufen</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step flow-step--accent">Provision<br>für Fordify</div>
+  </div>
+
+  <p><strong>Rechtliche Grundlage:</strong> Forderungsabtretung nach §§ 398 ff. BGB — formlos möglich, Schuldner muss nicht zustimmen.</p>
+
+  <h2>2.2 Strategischer Vorteil</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Dimension</th><th>Wettbewerb</th><th>Fordify</th></tr></thead>
+      <tbody>
+        <tr><td>Workflow</td><td>Forderungsverkauf losgelöst von Berechnung</td><td><strong>Nahtlos: Berechnen → Verkaufen in einem Tool</strong></td></tr>
+        <tr><td>Datenqualität</td><td>Käufer prüfen Qualität selbst</td><td>§ 367 BGB-konforme Strukturdaten bereits vorhanden</td></tr>
+        <tr><td>Zielgruppe</td><td>Banken, Großunternehmen, institutionell</td><td><strong>Anwaltskanzleien &amp; KMU — bisher unversorgt</strong></td></tr>
+        <tr><td>Forderungsgröße</td><td>Portfolios (&gt; 1 Mio. EUR)</td><td>Einzelforderungen (100 – 25.000 EUR)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>2.3 Die drei Modellvarianten</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Modell</th><th>Beschreibung</th><th>Regulatorisches Risiko</th><th>Empfehlung</th></tr></thead>
+      <tbody>
+        <tr class="tr-highlight"><td><strong>Modell A</strong> — Schwarzes Brett</td><td>Kontaktvermittlung; Vertrag direkt zwischen Parteien; keine Zahlungsabwicklung durch Fordify</td><td><span class="risk-low">Niedrig</span></td><td><span class="badge badge--success">✓ Jetzt starten</span></td></tr>
+        <tr><td><strong>Modell B</strong> — Strukturierter Marktplatz</td><td>Fordify stellt Mustervertrag &amp; digitale Signatur bereit; Zahlung über Payment-Provider</td><td><span class="risk-mid">Mittel</span></td><td><span class="badge badge--warning">Nach Rechtsklärung</span></td></tr>
+        <tr><td><strong>Modell C</strong> — Aktiver Marktplatz</td><td>Scoring, algorithmisches Matching, Treuhandrolle</td><td><span class="risk-high">Hoch</span></td><td><span class="badge badge--danger">BaFin-Abstimmung zwingend</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-brand">Fordify</span>
+    <span>Machbarkeitsstudie V2.0 · April 2026 · Vertraulich</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     3. RECHTSANALYSE
+     ============================================================ -->
+<div class="content break-before">
+  <div class="page-header">
+    <span class="page-header-brand">Fordify · Machbarkeitsstudie</span>
+    <span class="page-header-title">3 · Rechtsanalyse</span>
+  </div>
+
+  <div class="chapter-num">Kapitel 3</div>
+  <h1>Rechtsanalyse</h1>
+  <div class="chapter-line"></div>
+
+  <div class="callout callout--info break-avoid">
+    <span class="callout-icon">ℹ️</span>
+    <div class="callout-body">
+      <p class="callout-title">Hinweis</p>
+      <p class="callout-text">Alle Einschätzungen sind Orientierungshilfen und ersetzen keine verbindliche anwaltliche Rechtsauskunft.</p>
+    </div>
+  </div>
+
+  <h2>3.1 BGB-Grundlagen (§§ 398 ff.)</h2>
+  <ul>
+    <li><strong>Formfreiheit:</strong> Abtretung nach § 398 BGB formlos gültig. Für die Plattform wird Textform (§ 126b BGB) empfohlen.</li>
+    <li><strong>Bestimmtheitsgrundsatz:</strong> Fordify-Daten (Hauptforderung, Zinsen, Kosten, Datum) erfüllen das Erfordernis.</li>
+    <li><strong>Abtretungsverbote (§ 399 BGB):</strong> <em>pactum de non cedendo</em> macht Abtretung unwirksam — Offenbarungspflicht in AGB.</li>
+    <li><strong>Schuldnerbenachrichtigung (§ 409 BGB):</strong> Keine gesetzliche Pflicht, aber ohne Benachrichtigung kann Schuldner befreiend an Altgläubiger leisten (§ 407 BGB).</li>
+  </ul>
+
+  <h2>3.2 Rechtsdienstleistungsgesetz (RDG)</h2>
+  <div class="callout callout--success break-avoid">
+    <span class="callout-icon">✅</span>
+    <div class="callout-body">
+      <p class="callout-title">Ergebnis: Keine RDG-Registrierung für Fordify erforderlich</p>
+      <p class="callout-text">Solange Fordify nur eine technische Plattform bereitstellt, keine Einschätzung zur Werthaltigkeit abgibt, keine Kaufempfehlung ausspricht und keine Vertretung der Parteien übernimmt, fällt der Betrieb nicht unter § 2 RDG. <em>Käufer</em>, die als Inkassounternehmen agieren, benötigen jedoch eine Registrierung nach § 10 RDG.</p>
+    </div>
+  </div>
+
+  <h2>3.3 Regulierung: KWG und BaFin</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Regulierungsbereich</th><th>Risiko</th><th>Bedingung</th></tr></thead>
+      <tbody>
+        <tr><td>§ 32 KWG (Bankgeschäft)</td><td><span class="risk-low">Gering</span></td><td>Nur wenn Fordify selbst Forderungen kauft oder hält</td></tr>
+        <tr><td>§ 1 Abs. 1a Nr. 2 KWG (Abschlussvermittlung)</td><td><span class="risk-mid">Mittel–Hoch</span></td><td>Wenn Fordify aktiv in Vertragsschluss eingebunden ist</td></tr>
+        <tr><td>§ 10 ZAG (Zahlungsdienste)</td><td><span class="risk-high">Kritisch</span></td><td>Wenn Fordify Gelder zwischen Parteien transferiert</td></tr>
+        <tr><td>KrZwMG</td><td><span class="risk-low">Gering</span></td><td>Gilt nur für Bankkredite, nicht private Forderungen</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>Wichtigste Maßnahme:</strong> Zahlungsabwicklung vollständig an zugelassenen Payment-Provider auslagern. Fordify darf zu keinem Zeitpunkt Zahlungsmittel auf eigenem Konto halten.</p>
+
+  <h2>3.4 Risikomatrix nach Modell</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Rechtsgebiet</th><th>Modell A</th><th>Modell B</th><th>Modell C</th></tr></thead>
+      <tbody>
+        <tr><td>RDG</td><td><span class="risk-low">Niedrig</span></td><td><span class="risk-low">Niedrig–Mittel</span></td><td><span class="risk-high">Hoch</span></td></tr>
+        <tr><td>KWG / BaFin</td><td><span class="risk-low">Niedrig</span></td><td><span class="risk-mid">Mittel</span></td><td><span class="risk-high">Hoch</span></td></tr>
+        <tr><td>ZAG (Zahlungsdienste)</td><td><span class="risk-low">Keins</span></td><td><span class="risk-low">Keins (Provider)</span></td><td><span class="risk-high">Hoch</span></td></tr>
+        <tr><td>DSGVO / Schuldnerdaten</td><td><span class="risk-mid">Mittel</span></td><td><span class="risk-high">Hoch</span></td><td><span class="risk-high">Sehr hoch</span></td></tr>
+        <tr><td>GwG / Geldwäsche</td><td><span class="risk-low">Niedrig</span></td><td><span class="risk-low">Niedrig</span></td><td><span class="risk-mid">Mittel</span></td></tr>
+        <tr class="tr-highlight"><td><strong>Gesamt</strong></td><td><strong>Beherrschbar</strong></td><td><strong>Mit Vorbereitung</strong></td><td><strong>Extern prüfen</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-brand">Fordify</span>
+    <span>Machbarkeitsstudie V2.0 · April 2026 · Vertraulich</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     4. MARKTANALYSE
+     ============================================================ -->
+<div class="content break-before">
+  <div class="page-header">
+    <span class="page-header-brand">Fordify · Machbarkeitsstudie</span>
+    <span class="page-header-title">4 · Markt- und Wettbewerbsanalyse</span>
+  </div>
+
+  <div class="chapter-num">Kapitel 4</div>
+  <h1>Markt- und<br>Wettbewerbsanalyse</h1>
+  <div class="chapter-line"></div>
+
+  <h2>4.1 Marktgröße</h2>
+  <div class="metrics-grid break-avoid">
+    <div class="metric-card">
+      <span class="metric-value">46,6 Mrd.</span>
+      <span class="metric-label">Deutscher NPL-Markt 2024</span>
+      <span class="metric-sub">+23 % ggü. 2023</span>
+    </div>
+    <div class="metric-card">
+      <span class="metric-value">60 Mrd.</span>
+      <span class="metric-label">Prognose NPL 2026</span>
+      <span class="metric-sub">Steigend</span>
+    </div>
+    <div class="metric-card">
+      <span class="metric-value">398,8 Mrd.</span>
+      <span class="metric-label">Factoring-Markt 2024</span>
+      <span class="metric-sub">+3,7 % p.a.</span>
+    </div>
+  </div>
+
+  <h2>4.2 Wettbewerber</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Anbieter</th><th>Fokus</th><th>Gebühren</th><th>Schwäche</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Debitos</strong> (Marktführer)</td><td>Portfolios &gt; 100K EUR; institutionell</td><td>15 € + 1–9 %</td><td>Kleinforderungen ignoriert</td></tr>
+        <tr><td><strong>Debexpert</strong></td><td>Auktionen, NPL-Portfolios</td><td>—</td><td>Schwache DE-Präsenz</td></tr>
+        <tr><td><strong>Creditreform</strong></td><td>Direktankauf (kein Marktplatz)</td><td>Festpreis 10–40 %</td><td>Kein Käufer-Wettbewerb</td></tr>
+        <tr><td><strong>Inkasso 24 / Dr. Duve</strong></td><td>Direktankauf Einzelforderungen</td><td>Festpreis</td><td>Kein offener Marktplatz</td></tr>
+        <tr class="tr-highlight"><td><strong>Fordify</strong></td><td>Anwaltskanzleien, Einzelforderungen 100–25K EUR</td><td>geplant: 9,90 €/Listing + CPA</td><td><em>Käufernetzwerk noch aufzubauen</em></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>4.3 Die Marktlücke</h2>
+  <div class="callout callout--success break-avoid">
+    <span class="callout-icon">🎯</span>
+    <div class="callout-body">
+      <p class="callout-title">Niemand bedient Anwaltskanzleien mit Einzelforderungen</p>
+      <p class="callout-text">Debitos ist ab ~100.000 EUR interessant; darunter ist der Markt nicht organisiert. Fordify sitzt genau an dieser Quelle: § 367 BGB-konforme Strukturdaten direkt aus Kanzleien sind ein einzigartiges Vertrauenssignal für Käufer.</p>
+    </div>
+  </div>
+
+  <h2>4.4 Dreistufiger Marktansatz</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Stufe</th><th>Zeitpunkt</th><th>Modell</th><th>Regulatorisches Risiko</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Stufe 1</strong></td><td>Sofort</td><td>„Forderung verkaufen"-Button → mailto an 2–3 kuratierte Käufer; Affiliate/CPA</td><td><span class="risk-low">Kein Risiko</span></td></tr>
+        <tr><td><strong>Stufe 2</strong></td><td>6–12 Monate</td><td>White-Label-Anbindung Debitos / Revenue-Share</td><td><span class="risk-low">Sehr niedrig</span></td></tr>
+        <tr><td><strong>Stufe 3</strong></td><td>Langfristig</td><td>Eigener Mikro-Marktplatz (Auktionsmechanismus 100–25K EUR)</td><td><span class="risk-mid">Mittel — BaFin-Abstimmung</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-brand">Fordify</span>
+    <span>Machbarkeitsstudie V2.0 · April 2026 · Vertraulich</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     5–6. MONETARISIERUNG & PRICING
+     ============================================================ -->
+<div class="content break-before">
+  <div class="page-header">
+    <span class="page-header-brand">Fordify · Machbarkeitsstudie</span>
+    <span class="page-header-title">5–6 · Monetarisierung &amp; Pricing</span>
+  </div>
+
+  <div class="chapter-num">Kapitel 5 &amp; 6</div>
+  <h1>Monetarisierungskonzept<br>und Preisstruktur</h1>
+  <div class="chapter-line"></div>
+
+  <h2>5.1 Das Design-Prinzip des Free Tiers</h2>
+  <p>Das Free Tier muss Anwälte die Qualität von Fordify erleben lassen — aber im entscheidenden Moment (Export) einen Upgrade-Anreiz setzen. <strong>Der Anwalt hat 20 Minuten gearbeitet, sieht das perfekte Ergebnis — dann das Gate.</strong></p>
+
+  <div class="callout callout--info break-avoid">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <p class="callout-title">Warum „kein Speichern + kein Export" und nicht „max. 3 Fälle"</p>
+      <p class="callout-text">Ein Fall-Limit frustriert früh und fühlt sich willkürlich an. Das Export-Gate trifft den Nutzer am emotionalsten Punkt — wenn die Arbeit fertig ist und er das Ergebnis verwenden möchte. Das erzeugt den stärksten Upgrade-Druck.</p>
+    </div>
+  </div>
+
+  <h2>5.2 Tier-Vergleich</h2>
+  <div class="tier-grid break-avoid">
+    <div class="tier-card">
+      <div class="tier-header tier-header--free">
+        <span class="tier-name" style="color:#374151">Free</span>
+        <span class="tier-price" style="color:#374151">0 €</span>
+        <span class="tier-price-sub" style="color:#9ca3af">sessionStorage — kein Export</span>
+      </div>
+      <div class="tier-features">
+        <div class="tier-feature"><span class="check">✓</span> Forderungsaufstellung § 367</div>
+        <div class="tier-feature"><span class="check">✓</span> Zinsen, RVG, GKG vollständig</div>
+        <div class="tier-feature"><span class="check">✓</span> Vorschau (kein Wasserzeichen)</div>
+        <div class="tier-feature"><span class="cross">✗</span> <em>Speicherung (Session only)</em></div>
+        <div class="tier-feature"><span class="cross">✗</span> <em>PDF / Drucken</em></div>
+        <div class="tier-feature"><span class="cross">✗</span> <em>Excel- / JSON-Export</em></div>
+        <div class="tier-feature"><span class="cross">✗</span> <em>Kanzlei-Profil dauerhaft</em></div>
+      </div>
+    </div>
+    <div class="tier-card tier-card--pro">
+      <div class="tier-header tier-header--pro">
+        <span class="tier-name">Solo / Pro</span>
+        <span class="tier-price">29 €</span>
+        <span class="tier-price-sub">249 €/Jahr · spart 99 €</span>
+      </div>
+      <div class="tier-features">
+        <div class="tier-feature"><span class="check">✓</span> Alles aus Free</div>
+        <div class="tier-feature"><span class="check">✓</span> Cloud-Speicherung (Supabase)</div>
+        <div class="tier-feature"><span class="check">✓</span> PDF-Export / Drucken</div>
+        <div class="tier-feature"><span class="check">✓</span> Excel- / JSON-Export</div>
+        <div class="tier-feature"><span class="check">✓</span> Kanzlei-Profil &amp; Logo dauerhaft</div>
+        <div class="tier-feature"><span class="check">✓</span> Marktplatz-Listings</div>
+        <div class="tier-feature"><span class="cross">✗</span> <em>Mehrere Nutzer</em></div>
+      </div>
+    </div>
+    <div class="tier-card">
+      <div class="tier-header tier-header--kanzlei">
+        <span class="tier-name">Kanzlei / Team</span>
+        <span class="tier-price">79 €</span>
+        <span class="tier-price-sub">669 €/Jahr · 15,80 €/Nutzer</span>
+      </div>
+      <div class="tier-features">
+        <div class="tier-feature"><span class="check">✓</span> Alles aus Solo</div>
+        <div class="tier-feature"><span class="check">✓</span> Bis zu 5 Nutzer</div>
+        <div class="tier-feature"><span class="check">✓</span> Kontaktverwaltung</div>
+        <div class="tier-feature"><span class="check">✓</span> Fallvorlagen teamweit</div>
+        <div class="tier-feature"><span class="check">✓</span> Prioritäts-Support</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>6.1 Marktkontext &amp; Positionierung</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Wettbewerber</th><th>Preis</th><th>Typ</th></tr></thead>
+      <tbody>
+        <tr><td>XForderung</td><td>~116 €/Jahr</td><td>Einmalig, Desktop</td></tr>
+        <tr><td>KanzLaw</td><td>ab 24,90 €/Monat</td><td>Cloud-Kanzleisoftware</td></tr>
+        <tr><td>RA-MICRO Essentials</td><td>ab 25 €/Monat/AP</td><td>Desktop</td></tr>
+        <tr><td>LAWgistic</td><td>29,90 €/Monat/Modul</td><td>Cloud</td></tr>
+        <tr class="tr-highlight"><td><strong>Fordify Solo</strong></td><td><strong>29 €/Monat · 249 €/Jahr</strong></td><td>Browser, fokussiert, API-aktuell</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>6.2 Psychologische Begründung</h2>
+  <ul>
+    <li><strong>29 €:</strong> „Weniger als eine Stunde Anwaltshonorar" — unter der psychologischen B2B-Kaufschwelle von 30 €.</li>
+    <li><strong>Jahres-Kommunikation:</strong> „Spart 99 €" — konkrete Euro-Zahl, keine %-Angabe (Anwälte denken in Beträgen).</li>
+    <li><strong>Abo-Modell, kein Einmalkauf:</strong> Fordify erfordert laufende Updates (Basiszinssätze, RVG, GKG). Anwälte sind Abo-gewohnt (beA, Juris, Beck Online).</li>
+    <li><strong>14-Tage-Pro-Trial ohne Kreditkarte:</strong> Senkt Einstiegshürde erheblich (Trial-Conversion: 15–25 % vs. 2–5 % Freemium).</li>
+  </ul>
+
+  <div class="page-footer">
+    <span class="page-footer-brand">Fordify</span>
+    <span>Machbarkeitsstudie V2.0 · April 2026 · Vertraulich</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     7. PAYMENT PROVIDER
+     ============================================================ -->
+<div class="content break-before">
+  <div class="page-header">
+    <span class="page-header-brand">Fordify · Machbarkeitsstudie</span>
+    <span class="page-header-title">7 · Payment Provider</span>
+  </div>
+
+  <div class="chapter-num">Kapitel 7</div>
+  <h1>Payment Provider</h1>
+  <div class="chapter-line"></div>
+
+  <h2>7.1 Anbietervergleich</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Anbieter</th><th>Typ</th><th>Gebühren</th><th>USt-Pflicht</th><th>SEPA</th><th>Empfehlung</th></tr></thead>
+      <tbody>
+        <tr class="tr-highlight"><td><strong>Paddle</strong></td><td>Merchant of Record</td><td>5 % + 0,50 $</td><td>Paddle übernimmt komplett</td><td>✓</td><td><span class="badge badge--success">Empfohlen</span></td></tr>
+        <tr><td><strong>Stripe</strong></td><td>Payment Processor</td><td>1,4 % + 0,25 € + Billing</td><td>Fordify verantwortlich</td><td>✓</td><td><span class="badge badge--neutral">Ab ~50K MRR</span></td></tr>
+        <tr><td>FastSpring</td><td>Merchant of Record</td><td>5–9 %</td><td>FastSpring</td><td>Eingeschränkt</td><td><span class="badge badge--danger">Zu komplex</span></td></tr>
+        <tr><td>Digistore24</td><td>Platform</td><td>7,9 % + 1 €</td><td>Eingeschränkt</td><td>Nein</td><td><span class="badge badge--danger">Nicht geeignet</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>7.2 Warum Paddle?</h2>
+  <div class="callout callout--success break-avoid">
+    <span class="callout-icon">🏆</span>
+    <div class="callout-body">
+      <p class="callout-title">Paddle als Merchant of Record eliminiert alle USt-Pflichten</p>
+      <p class="callout-text">Paddle kauft das Produkt von Fordify und verkauft es weiter an den Endkunden. Damit liegt alle USt-Compliance (EU-weite USt, MOSS-Verfahren, Reverse Charge) bei Paddle. Fordify stellt nur eine Rechnung an Paddle — kein eigenes Steuer-Setup nötig.</p>
+    </div>
+  </div>
+
+  <h2>7.3 Kostenkalkulation bei 5.000 € MRR</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Anbieter</th><th>Transaktionsgebühren/Monat</th><th>Steuerberater/Monat</th><th>Gesamt</th></tr></thead>
+      <tbody>
+        <tr class="tr-highlight"><td><strong>Paddle</strong></td><td>~275 €</td><td>0 € (Paddle übernimmt)</td><td><strong>~275 €</strong></td></tr>
+        <tr><td>Stripe</td><td>~140 €</td><td>~200–400 €</td><td><strong>~340–540 €</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Paddle ist bei kleinem MRR trotz höherer Transaktionsgebühr günstiger — und spart 10–20 Stunden/Monat Steueradministration. <strong>Ab ~50.000 € MRR lohnt Stripe.</strong></p>
+
+  <h2>7.4 Integration (kein Backend nötig)</h2>
+  <pre><span class="cm">// Paddle-Checkout — reines Frontend, kein Backend-Endpoint</span>
+Paddle.Setup({ token: <span class="str">"live_xxxx"</span> });
+
+Paddle.Checkout.open({
+  items: [{ priceId: <span class="str">'pri_solo_monthly'</span>, quantity: 1 }],
+  customer: { email: fordifyAuth.user?.email }
+});
+
+<span class="cm">// Webhook: Paddle → Supabase Edge Function → subscriptions-Tabelle</span></pre>
+
+  <div class="page-footer">
+    <span class="page-footer-brand">Fordify</span>
+    <span>Machbarkeitsstudie V2.0 · April 2026 · Vertraulich</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     8. TECHNISCHE ARCHITEKTUR
+     ============================================================ -->
+<div class="content break-before">
+  <div class="page-header">
+    <span class="page-header-brand">Fordify · Machbarkeitsstudie</span>
+    <span class="page-header-title">8 · Technische Architektur</span>
+  </div>
+
+  <div class="chapter-num">Kapitel 8</div>
+  <h1>Technische Architektur</h1>
+  <div class="chapter-line"></div>
+
+  <h2>8.1 Storage-Abstraktionsschicht (Free/Paid)</h2>
+  <p>Die bestehende SPA verwendet <code>localStorage</code> an ~12 Stellen in <code>app.js</code>. Der Umbau führt eine Storage-Abstraktionsschicht ein:</p>
+
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Tier</th><th>Storage-Backend</th><th>Verhalten</th></tr></thead>
+      <tbody>
+        <tr><td>Free (kein Account)</td><td><code>sessionStorage</code></td><td>Geht beim Tab-Schließen verloren · überlebt F5</td></tr>
+        <tr class="tr-highlight"><td><strong>Paid (eingeloggt)</strong></td><td><code>localStorage</code> + Supabase Cloud</td><td>Persistent · 2s debounced Cloud-Sync</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <pre><span class="kw">const</span> StorageBackend = {
+  init(authState) {
+    <span class="kw">if</span> (authState.isAuthenticated &amp;&amp; authState.hasSubscription) {
+      this._backend = localStorage;      <span class="cm">// Paid: localStorage als Cache</span>
+      this._cloudSync = <span class="kw">new</span> CloudSync(); <span class="cm">// + Supabase-Sync</span>
+    } <span class="kw">else</span> {
+      this._backend = sessionStorage;    <span class="cm">// Free: Session-only</span>
+    }
+  },
+  setItem(key, value) {
+    this._backend.setItem(key, value);
+    <span class="kw">if</span> (this._cloudSync) this._cloudSync.enqueue(key, value);
+  }
+};</pre>
+
+  <h2>8.2 Feature-Gates (nur 4 Funktionen)</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Funktion</th><th>Gate</th><th>Sichtbar für Free?</th></tr></thead>
+      <tbody>
+        <tr><td><code>drucken()</code></td><td><code>requiresPaid("drucken")</code></td><td>Ja — mit PRO-Badge</td></tr>
+        <tr><td><code>fallExportieren()</code></td><td><code>requiresPaid("export")</code></td><td>Ja — mit PRO-Badge</td></tr>
+        <tr><td><code>falTeilen()</code></td><td><code>requiresPaid("teilen")</code></td><td>Ja — mit PRO-Badge</td></tr>
+        <tr><td><code>einstellungenExport()</code></td><td><code>requiresPaid("export")</code></td><td>Ja — mit PRO-Badge</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>Soft-Gate:</strong> Buttons bleiben sichtbar mit orangem PRO-Badge — stärkerer Upgrade-Anreiz als ausgeblendete Buttons.</p>
+
+  <h2>8.3 Supabase-Backend-Stack</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Komponente</th><th>Lösung</th><th>Begründung</th></tr></thead>
+      <tbody>
+        <tr><td>Datenbank</td><td>Supabase PostgreSQL (EU Frankfurt)</td><td>RLS, DSGVO-konform, keine Drittstaaten-Übermittlung</td></tr>
+        <tr><td>Auth</td><td>Magic Link via Supabase Auth</td><td>Kein Passwort-Management; professionell für Anwälte</td></tr>
+        <tr><td>API</td><td>Supabase Auto-REST</td><td>Kein eigenes Backend erforderlich</td></tr>
+        <tr><td>Client</td><td><code>@supabase/supabase-js</code> via CDN</td><td>Kompatibel mit aktuellem Stack (kein Build-Step)</td></tr>
+        <tr><td>Kosten MVP</td><td>Free Tier</td><td>Kostenlos bis 500 MB / 50.000 MAU</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>8.4 Implementierungsaufwand Free/Paid MVP</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Phase</th><th>Inhalt</th><th>Aufwand</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>StorageBackend + sessionStorage für Free</td><td>2–3 Tage</td></tr>
+        <tr><td>2</td><td>Supabase Auth + Login-Modal</td><td>2–3 Tage</td></tr>
+        <tr><td>3</td><td>Cloud-Speicherung Cases + Settings</td><td>3–4 Tage</td></tr>
+        <tr><td>4</td><td>Feature-Gates + Upgrade-Modal</td><td>1–2 Tage</td></tr>
+        <tr><td>5</td><td>Paddle-Webhook → Supabase Edge Function</td><td>2–3 Tage</td></tr>
+        <tr><td>6</td><td>Bestandsnutzer-Migration + Edge Cases</td><td>2–3 Tage</td></tr>
+        <tr class="tr-highlight"><td><strong>Gesamt</strong></td><td><strong>MVP Free/Paid</strong></td><td><strong>~2–3 Wochen</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-brand">Fordify</span>
+    <span>Machbarkeitsstudie V2.0 · April 2026 · Vertraulich</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     9. DSGVO
+     ============================================================ -->
+<div class="content break-before">
+  <div class="page-header">
+    <span class="page-header-brand">Fordify · Machbarkeitsstudie</span>
+    <span class="page-header-title">9 · DSGVO und Datenschutz</span>
+  </div>
+
+  <div class="chapter-num">Kapitel 9</div>
+  <h1>DSGVO und Datenschutz</h1>
+  <div class="chapter-line"></div>
+
+  <div class="callout callout--danger break-avoid">
+    <span class="callout-icon">🔴</span>
+    <div class="callout-body">
+      <p class="callout-title">Statusänderung: Fordify wird Verantwortlicher</p>
+      <p class="callout-text">Aktuell verlassen keine Daten den Browser — Fordify ist kein DSGVO-Verantwortlicher. Mit dem Account-Modell und Supabase-Speicherung wird Fordify zum Verantwortlichen nach Art. 4 Nr. 7 DSGVO. Das ist eine fundamentale Statusänderung mit konkreten Pflichten.</p>
+    </div>
+  </div>
+
+  <h2>9.1 Schuldnerdaten — Fordify als Auftragsverarbeiter</h2>
+  <p>Schuldner-Namen und -Adressen in Falldaten sind personenbezogene Daten. Der Schuldner ist kein Vertragspartner von Fordify. <strong>Empfohlene Konstruktion:</strong></p>
+  <pre>Schuldner ← betroffen von → Anwalt (Verantwortlicher)
+                                   ↓ erteilt Weisungen
+                              Fordify (Auftragsverarbeiter)
+                                   ↓ nutzt
+                              Supabase (Sub-Auftragsverarbeiter)</pre>
+  <p>Konsequenz: Fordify muss einen <strong>AVV mit jeder Kanzlei</strong> abschließen (Art. 28 DSGVO). Schuldnerdaten dürfen ausschließlich weisungsgebunden verwendet werden — kein KI-Training, keine Weitergabe.</p>
+
+  <h2>9.2 Kritischste TOM: Row-Level Security</h2>
+  <pre><span class="cm">-- Jeder Nutzer sieht ausschließlich eigene Daten</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"own_data"</span> <span class="kw">ON</span> cases
+  <span class="kw">FOR ALL USING</span> (auth.uid() = user_id);
+
+<span class="kw">CREATE POLICY</span> <span class="str">"own_data"</span> <span class="kw">ON</span> settings
+  <span class="kw">FOR ALL USING</span> (auth.uid() = user_id);</pre>
+
+  <div class="callout callout--warning break-avoid">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <p class="callout-title">RLS muss vor Launch mit zwei Test-Accounts getestet sein</p>
+      <p class="callout-text">Ohne korrekte RLS-Konfiguration könnten Nutzer Daten anderer Nutzer sehen — das wäre eine DSGVO-Datenpanne mit Meldepflicht (Art. 33 DSGVO, 72-Stunden-Frist).</p>
+    </div>
+  </div>
+
+  <h2>9.3 Löschkonzept</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Datentyp</th><th>Löschfrist nach Kündigung</th></tr></thead>
+      <tbody>
+        <tr><td>Falldaten, Einstellungen, Kontakte</td><td>Unverzüglich (max. 30 Tage)</td></tr>
+        <tr><td>Account-E-Mail</td><td>Unverzüglich</td></tr>
+        <tr><td>Zahlungsbelege</td><td>10 Jahre (§ 147 AO)</td></tr>
+        <tr><td>Supabase-Backup-Daten</td><td>Retention ≤ 30 Tage konfigurieren</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-brand">Fordify</span>
+    <span>Machbarkeitsstudie V2.0 · April 2026 · Vertraulich</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     10–11. FEATURES & MARKTPLATZ MODELL A
+     ============================================================ -->
+<div class="content break-before">
+  <div class="page-header">
+    <span class="page-header-brand">Fordify · Machbarkeitsstudie</span>
+    <span class="page-header-title">10–11 · Features &amp; Marktplatz Modell A</span>
+  </div>
+
+  <div class="chapter-num">Kapitel 10 &amp; 11</div>
+  <h1>Feature-Expansion &amp;<br>Marktplatz Modell A</h1>
+  <div class="chapter-line"></div>
+
+  <h2>10.1 Top-Features Priorisierungsmatrix</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Rang</th><th>Feature</th><th>Impact</th><th>Revenue</th><th>Aufwand</th><th>Score</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Excel/CSV-Export (SheetJS)</td><td>4</td><td>4</td><td>2</td><td><strong>+6</strong></td></tr>
+        <tr><td>2</td><td>Vorlagen-System</td><td>4</td><td>3</td><td>1</td><td><strong>+6</strong></td></tr>
+        <tr><td>3</td><td>Fristenmanagement / Verjährungskalender</td><td>4</td><td>3</td><td>2</td><td><strong>+5</strong></td></tr>
+        <tr><td>4</td><td>Mahnschreiben-Generator</td><td>4</td><td>4</td><td>3</td><td><strong>+5</strong></td></tr>
+        <tr><td>5</td><td>Zahlungsplan-Generator</td><td>4</td><td>3</td><td>3</td><td><strong>+4</strong></td></tr>
+        <tr><td>6</td><td>Cloud-Sync / Account-Modell</td><td>4</td><td>5</td><td>5</td><td><strong>+4</strong> (strategisch)</td></tr>
+        <tr><td>7</td><td>Marktplatz</td><td>2</td><td>5</td><td>5</td><td><strong>+2</strong> (Risiko)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>11.1 Marktplatz Modell A — Das Flohmarkt-Prinzip</h2>
+  <ul>
+    <li>Anbieter stellen <strong>anonymisierte</strong> Forderungsmetadaten als Listing ein</li>
+    <li>Käufer können browsen und eine Kontaktanfrage stellen</li>
+    <li>Fordify übermittelt E-Mail des Anbieters nach Anfrage</li>
+    <li>Vertrag kommt <strong>direkt zwischen Parteien</strong> zustande</li>
+    <li><strong>Keine Zahlungsabwicklung durch Fordify</strong></li>
+  </ul>
+
+  <h2>11.2 Anonymisierungsregeln</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Datenelement</th><th>Erlaubt im Listing?</th><th>Form</th></tr></thead>
+      <tbody>
+        <tr><td>Nennwert</td><td><span class="badge badge--success">Ja</span></td><td>Betragsklasse (z.B. 10.000–50.000 €)</td></tr>
+        <tr><td>Region</td><td><span class="badge badge--success">Ja</span></td><td>Bundesland / Landkreis</td></tr>
+        <tr><td>Forderungstyp</td><td><span class="badge badge--success">Ja</span></td><td>Kategorie-Dropdown (kein Freitext)</td></tr>
+        <tr><td>Titulierungsstatus</td><td><span class="badge badge--success">Ja</span></td><td>Binär (Ja / Nein)</td></tr>
+        <tr><td>Schuldner-Name</td><td><span class="badge badge--danger">Niemals</span></td><td>—</td></tr>
+        <tr><td>Aktenzeichen / Adresse</td><td><span class="badge badge--danger">Niemals</span></td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>11.3 Monetarisierung Modell A</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Modell</th><th>Gebühr</th><th>Regulatorisches Risiko</th><th>Empfehlung</th></tr></thead>
+      <tbody>
+        <tr class="tr-highlight"><td><strong>Listing-Gebühr</strong></td><td>9,90 € / Listing</td><td><span class="risk-low">Sehr niedrig</span></td><td><span class="badge badge--success">Start-Empfehlung</span></td></tr>
+        <tr class="tr-highlight"><td><strong>CPA (Cost per Acquisition)</strong></td><td>100–300 € / Kontakt</td><td><span class="risk-low">Sehr niedrig</span></td><td><span class="badge badge--success">Phase 1</span></td></tr>
+        <tr><td>Käufer-Abo</td><td>49–99 €/Monat für Listing-Zugang</td><td><span class="risk-low">Niedrig</span></td><td><span class="badge badge--accent">Mittelfristig</span></td></tr>
+        <tr><td>Success-Fee</td><td>3–5 % des Transaktionsvolumens</td><td><span class="risk-mid">Mittel</span></td><td><span class="badge badge--warning">Erst nach Rechtsberatung</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-brand">Fordify</span>
+    <span>Machbarkeitsstudie V2.0 · April 2026 · Vertraulich</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     12–13. UMSATZ & GESAMTBEWERTUNG
+     ============================================================ -->
+<div class="content break-before">
+  <div class="page-header">
+    <span class="page-header-brand">Fordify · Machbarkeitsstudie</span>
+    <span class="page-header-title">12–13 · Umsatz &amp; Gesamtbewertung</span>
+  </div>
+
+  <div class="chapter-num">Kapitel 12 &amp; 13</div>
+  <h1>Umsatzpotenzial &amp;<br>Gesamtbewertung</h1>
+  <div class="chapter-line"></div>
+
+  <h2>12.1 Wachstumspfad (bei 4 % Conversion)</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Monat</th><th>Free-Nutzer</th><th>Paid (4 %)</th><th>MRR (Ø 30 €)</th></tr></thead>
+      <tbody>
+        <tr><td>6</td><td>500</td><td>20</td><td>~600 €</td></tr>
+        <tr><td>12</td><td>2.000</td><td>80</td><td>~2.400 €</td></tr>
+        <tr class="tr-highlight"><td><strong>18</strong></td><td><strong>5.000</strong></td><td><strong>200</strong></td><td><strong>~6.000 €</strong></td></tr>
+        <tr><td>24</td><td>9.000</td><td>360</td><td>~10.800 €</td></tr>
+        <tr><td>30</td><td>15.000</td><td>600</td><td>~18.000 €</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>5.000 € MRR benötigt:</strong> ~173 Solo-Accounts bei Solo-only (29 €) oder ~139 Accounts bei Mix 70 % Solo / 30 % Team. Free-Nutzer-Basis: ~3.500 (bei 4 % Conversion) — erreichbar in 18 Monaten bei aktivem Marketing.</p>
+
+  <h2>13.1 Strategische Reihenfolge</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Phase</th><th>Zeitpunkt</th><th>Was passiert</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Werkzeug</strong></td><td>Jetzt</td><td>Beste kostenlose Forderungsaufstellung im Web</td></tr>
+        <tr><td><strong>Produkt</strong></td><td>Monat 6–12</td><td>Freemium-Launch: Free ohne Speicherung, Paid mit Cloud</td></tr>
+        <tr><td><strong>Plattform</strong></td><td>Monat 18–36</td><td>Marktplatz, Multi-User, API</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>13.2 Entscheidungsmatrix</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Entscheidung</th><th>Option A</th><th>Option B</th><th>Empfehlung</th></tr></thead>
+      <tbody>
+        <tr><td>Free Tier Design</td><td>Kein Speichern + kein Export</td><td>Max. 3 Fälle</td><td><span class="badge badge--success">Option A</span></td></tr>
+        <tr><td>Payment Provider</td><td>Paddle</td><td>Stripe</td><td><span class="badge badge--success">Paddle bis 50K MRR</span></td></tr>
+        <tr><td>Marktplatz Start</td><td>Modell A (Flohmarkt)</td><td>Modell B (Vollmarktplatz)</td><td><span class="badge badge--success">Modell A</span></td></tr>
+        <tr><td>Marktplatz Timing</td><td>Mit Freemium-Launch</td><td>Nach Cloud-Infrastruktur</td><td><span class="badge badge--success">Nach Cloud</span></td></tr>
+        <tr><td>Auth-Methode</td><td>Magic Link</td><td>Passwort</td><td><span class="badge badge--success">Magic Link</span></td></tr>
+        <tr><td>Cloud-Region</td><td>Supabase EU Frankfurt</td><td>Supabase US</td><td><span class="badge badge--success">EU Frankfurt</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-brand">Fordify</span>
+    <span>Machbarkeitsstudie V2.0 · April 2026 · Vertraulich</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     14. ROADMAP
+     ============================================================ -->
+<div class="content break-before">
+  <div class="page-header">
+    <span class="page-header-brand">Fordify · Machbarkeitsstudie</span>
+    <span class="page-header-title">14 · Roadmap</span>
+  </div>
+
+  <div class="chapter-num">Kapitel 14</div>
+  <h1>Roadmap</h1>
+  <div class="chapter-line"></div>
+
+  <div class="roadmap-phase break-avoid">
+    <div class="roadmap-phase-header phase-a">
+      <span class="phase-label">Phase A</span>
+      <span class="phase-title">Werkzeug-Vervollständigung</span>
+      <span class="phase-period">Monate 1–6 · 2026</span>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Monat</th><th>Feature</th></tr></thead>
+        <tbody>
+          <tr><td>M1</td><td>Mehrere Zinsmethoden (act/365, 30/360)</td></tr>
+          <tr><td>M1–2</td><td>Excel/CSV-Export (SheetJS via CDN)</td></tr>
+          <tr><td>M2</td><td>Vorlagen-System</td></tr>
+          <tr><td>M3–4</td><td>Zahlungsplan-Generator</td></tr>
+          <tr><td>M4–5</td><td>Mahnschreiben-Generator</td></tr>
+          <tr><td>M5–6</td><td>Fristenmanagement / Verjährungskalender</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="roadmap-phase break-avoid">
+    <div class="roadmap-phase-header phase-b">
+      <span class="phase-label">Phase B</span>
+      <span class="phase-title">Freemium-Launch</span>
+      <span class="phase-period">Monate 7–12 · 2026</span>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Monat</th><th>Feature</th></tr></thead>
+        <tbody>
+          <tr><td>M7–8</td><td>StorageBackend + sessionStorage für Free Tier</td></tr>
+          <tr><td>M8–9</td><td>Supabase Auth (Magic Link) + Login-Modal</td></tr>
+          <tr><td>M9–10</td><td>Cloud-Speicherung Cases + Settings + Feature-Gates</td></tr>
+          <tr><td>M10–11</td><td>Paddle-Integration + Subscription-Gating</td></tr>
+          <tr><td>M11–12</td><td>Bestandsnutzer-Kommunikation + Migration</td></tr>
+          <tr class="tr-highlight"><td><strong>M12</strong></td><td><strong>🚀 Freemium-Launch (Free + Solo Pro 29 €/Monat)</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="roadmap-phase break-avoid">
+    <div class="roadmap-phase-header phase-c">
+      <span class="phase-label">Phase C</span>
+      <span class="phase-title">Kanzlei-Tier + Marktplatz Modell A</span>
+      <span class="phase-period">Monate 13–18 · 2027</span>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Monat</th><th>Feature</th></tr></thead>
+        <tbody>
+          <tr><td>M13–14</td><td>Team-Workspace (Multi-User, RBAC) → Kanzlei-Tier 79 €/Monat</td></tr>
+          <tr><td>M14–15</td><td>Kontaktverwaltung (Schuldner-Adressbuch)</td></tr>
+          <tr><td>M15–16</td><td>Marktplatz Modell A: Listing-Feature für Paid-Nutzer</td></tr>
+          <tr><td>M16–17</td><td>Käufer-Netzwerk (5 verifizierte Käufer)</td></tr>
+          <tr><td>M17–18</td><td>ZV-Auftrag-Generierung (ZwVollstrFormV 2024)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="roadmap-phase break-avoid">
+    <div class="roadmap-phase-header phase-d">
+      <span class="phase-label">Phase D</span>
+      <span class="phase-title">Plattform</span>
+      <span class="phase-period">Monate 19–36 · 2027/2028</span>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Zeitraum</th><th>Feature</th></tr></thead>
+        <tbody>
+          <tr><td>M22–24</td><td>Juristische Prüfung Marktplatz Modell B/C · BaFin-Anfrage</td></tr>
+          <tr><td>M24–28</td><td>Marktplatz MVP: Transaktionsmanagement, Dokument-Upload</td></tr>
+          <tr><td>M28–32</td><td>Marktplatz v2: Payment-Provider, Vollauktionsmechanismus</td></tr>
+          <tr><td>M32–36</td><td>API v1, offenes Käufer-Onboarding, White-Label</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-footer-brand">Fordify</span>
+    <span>Machbarkeitsstudie V2.0 · April 2026 · Vertraulich</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     15–16. CHECKLISTE & OFFENE FRAGEN
+     ============================================================ -->
+<div class="content break-before">
+  <div class="page-header">
+    <span class="page-header-brand">Fordify · Machbarkeitsstudie</span>
+    <span class="page-header-title">15–16 · Launch-Checkliste &amp; Offene Fragen</span>
+  </div>
+
+  <div class="chapter-num">Kapitel 15 &amp; 16</div>
+  <h1>Launch-Checkliste &amp;<br>Nächste Schritte</h1>
+  <div class="chapter-line"></div>
+
+  <h2>15.1 Blocker vor dem Freemium-Launch</h2>
+  <p class="check-category">Rechtlich / Vertraglich</p>
+  <ul class="checklist">
+    <li><div class="check-box check-box--blocker"></div><span class="check-label">AVV mit Supabase abgeschlossen und dokumentiert</span></li>
+    <li><div class="check-box check-box--blocker"></div><span class="check-label">Nutzungsbedingungen / AGB erstellt (inkl. AVV-Klauseln für Schuldnerdaten)</span></li>
+    <li><div class="check-box check-box--blocker"></div><span class="check-label">Datenschutzerklärung aktualisiert: Account, Supabase, Paddle als Drittanbieter</span></li>
+    <li><div class="check-box check-box--blocker"></div><span class="check-label">Paddle-DPA abgeschlossen</span></li>
+    <li><div class="check-box check-box--blocker"></div><span class="check-label">Verzeichnis von Verarbeitungstätigkeiten (VVT) angelegt</span></li>
+  </ul>
+  <p class="check-category">Technisch</p>
+  <ul class="checklist">
+    <li><div class="check-box check-box--blocker"></div><span class="check-label">Supabase RLS für alle Tabellen aktiviert und mit zwei Test-Accounts getestet</span></li>
+    <li><div class="check-box check-box--blocker"></div><span class="check-label">Kein <code>service_role</code> Key im Frontend-Code</span></li>
+    <li><div class="check-box check-box--blocker"></div><span class="check-label">Account-Löschfunktion implementiert (kaskadierendes Löschen)</span></li>
+    <li><div class="check-box check-box--blocker"></div><span class="check-label">Paddle-Checkout getestet: Kauf → Webhook → Feature-Unlock</span></li>
+    <li><div class="check-box check-box--blocker"></div><span class="check-label">sessionStorage-Verhalten getestet: Tab schließen → Daten weg</span></li>
+  </ul>
+  <p class="check-category">Betrieb</p>
+  <ul class="checklist">
+    <li><div class="check-box check-box--blocker"></div><span class="check-label">Datenpannen-Verfahren dokumentiert (zuständige Behörde: HmbBfDI)</span></li>
+    <li><div class="check-box check-box--blocker"></div><span class="check-label">Bestandsnutzer mindestens 4 Wochen vor Launch informiert</span></li>
+  </ul>
+
+  <h2>16.1 Sofortiger Handlungsbedarf</h2>
+  <div class="table-wrapper break-avoid">
+    <table>
+      <thead><tr><th>Priorität</th><th>Aktion</th><th>Verantwortlich</th><th>Deadline</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge badge--danger">Kritisch</span></td><td>Anwaltliche Erstberatung: Vermittlungsmodell ohne BaFin-Lizenz zulässig?</td><td>Jens / Andreas</td><td>Q2 2026</td></tr>
+        <tr><td><span class="badge badge--warning">Hoch</span></td><td>Freemium-Launch-Zeitplan + Pro-Features finalisieren</td><td>Jens</td><td>Q2 2026</td></tr>
+        <tr><td><span class="badge badge--warning">Hoch</span></td><td>Excel/CSV-Export implementieren (ersten Pro-Feature-Kandidat)</td><td>Entwicklung</td><td>Q2 2026</td></tr>
+        <tr><td><span class="badge badge--neutral">Mittel</span></td><td>Erstkontakt 2–3 potenzielle Inkasso-Partner für Marktplatz Stufe 1</td><td>Andreas</td><td>Q3 2026</td></tr>
+        <tr><td><span class="badge badge--neutral">Mittel</span></td><td>DSGVO-Risikoabschätzung beauftragen (vor Cloud-Einführung)</td><td>Jens / Andreas</td><td>Q3 2026</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>16.2 Offene Rechtsfragen</h2>
+  <ol>
+    <li>Fällt das Vermittlungsmodell (Stufe 1) unter § 32 KWG oder § 1 Abs. 1a Nr. 2 KWG?</li>
+    <li>Genügt Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse) für anonymisierte Listing-Metadaten?</li>
+    <li>Welche AGB-Mindestanforderungen gelten für das B2B-Vermittlungsmodell?</li>
+    <li>Greift das GwG bei reiner Vermittlung ohne eigene Zahlungsabwicklung?</li>
+    <li>Reicht ein AVV-Standard-Template in den AGB oder braucht es individuelle Vereinbarungen?</li>
+  </ol>
+
+  <hr class="section-divider">
+
+  <div class="chapter-num">Kapitel 17</div>
+  <h2 style="border-bottom:none;margin-top:8px">Quellenverweise</h2>
+  <ul style="font-size:8.5pt; color:var(--text-muted)">
+    <li>Debitos German NPL Outlook 2025 — debitos.com</li>
+    <li>BKS NPL-Barometer 2025 — bks-ev.de</li>
+    <li>Deutscher Factoring Verband: Markt 2024 — factoring.de</li>
+    <li>BDIU: Inkasso und Forderungsmanagement — inkasso.de</li>
+    <li>BaFin: Kreditzweitmarktgesetz 2024 — bafin.de</li>
+    <li>BRAK: Statistik Zulassungen 2024 — brak.de</li>
+    <li>Paddle: Merchant of Record Documentation 2024 — paddle.com</li>
+    <li>Supabase: GDPR &amp; Data Processing Agreements — supabase.com</li>
+  </ul>
+
+  <div class="page-footer">
+    <span class="page-footer-brand">Fordify</span>
+    <span>Machbarkeitsstudie V2.0 · April 2026 · Vertraulich — Legal Advisor · Market Research · Architecture · Pricing · DSGVO</span>
+  </div>
+</div>
+
+</body>
+</html>
