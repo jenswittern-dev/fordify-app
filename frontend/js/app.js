@@ -1459,9 +1459,7 @@ function rendereVorschau() {
         <div class="pdf-header__subtitle">gem\u00e4\u00df \u00a7\u00a0367\u00a0BGB</div>
       </div>
       <div class="pdf-header__meta">
-        Aufgestellt am: ${formatDate(new Date())}<br>
-        Basiszinssatz: ${aktBasisSatz ? aktBasisSatz.toFixed(2).replace(".", ",") + "\u00a0%" : "\u2014"} (\u00a7\u00a0247\u00a0BGB)<br>
-        Verzugszinsaufschlag: ${aufschlagPP}\u00a0Prozentpunkte (\u00a7\u00a0288\u00a0BGB)
+        Aufgestellt am: ${formatDate(new Date())}
         ${insoDatum ? `<br>InsO-Er\u00f6ffnung: ${formatDate(insoDatum)}` : ""}
       </div>
     </div>
@@ -1469,11 +1467,7 @@ function rendereVorschau() {
     <!-- Screen-Kopf (kein Print) -->
     <div class="no-print mb-4">
       <h2 style="font-size:var(--text-xl);font-weight:700;margin:0 0 0.25rem">Forderungsaufstellung</h2>
-      <p style="font-size:var(--text-sm);color:var(--color-text-muted);margin:0">
-        Basiszinssatz ${aktBasisSatz ? aktBasisSatz.toFixed(2).replace(".", ",") + "\u00a0%" : "\u2014"} +
-        ${aufschlagPP}\u00a0PP = <strong>${aktZinssatzStr}</strong>
-        ${insoDatum ? " \u00b7 InsO: " + formatDate(insoDatum) : ""}
-      </p>
+      ${insoDatum ? `<p style="font-size:var(--text-sm);color:var(--color-text-muted);margin:0">InsO: ${formatDate(insoDatum)}</p>` : ""}
     </div>
 
     <!-- Parteien -->
@@ -1505,7 +1499,7 @@ function rendereVorschau() {
 
     <!-- Fu\u00dfnote -->
     <div class="vorschau-footer">
-      ${hatTageszins ? `(*)\u00a0${aufschlagPP}\u00a0Prozentpunkte\u00a0p.\u00a0a. \u00fcber dem Basiszinssatz gem\u00e4\u00df \u00a7\u00a0247\u00a0BGB.<br>` : ""}
+      ${hatTageszins ? `(*)\u00a0` : ""}${aufschlagPP}\u00a0Prozentpunkte\u00a0p.\u00a0a. \u00fcber dem Basiszinssatz gem\u00e4\u00df \u00a7\u00a0247\u00a0BGB. Basiszinssatz am ${formatDate(new Date())} = ${aktBasisSatz ? aktBasisSatz.toFixed(2).replace(".", ",") + "\u00a0%" : "\u2014"}.<br>
       Verrechnung gem.\u00a0\u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB.
       ${insoDatum ? " Zinslauf endet gem.\u00a0\u00a7\u00a041\u00a0InsO am " + formatDate(insoDatum) + "." : ""}
       ${fall.positionen.some(p => verjährungsWarnungHtml(p)) ? "<br><span style=\"color:var(--color-warning)\">\u26a0 Hinweis: Mindestens eine Zinsforderung ist m\u00f6glicherweise gem.\u00a0\u00a7\u00a0197\u00a0BGB verj\u00e4hrt (3-Jahres-Frist). Bitte pr\u00fcfen Sie die Durchsetzbarkeit.</span>" : ""}
@@ -1628,7 +1622,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   const kostenEntries = kostenPos.map(k => {
     const b = kostenBrutto(k);
     return {
-      id: k.id, bezeichnung: k.beschreibung || AKTIONSTYPEN[k.typ] || k.typ,
+      id: k.id, typ: k.typ, bezeichnung: k.beschreibung || AKTIONSTYPEN[k.typ] || k.typ,
       datum: k.datum || null, betrag: b, rest: b.plus(ZERO), payAllocs: []
     };
   });
@@ -1815,35 +1809,13 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
 
   const rowsHtml = [];
 
-  // Abschnitt 1: Initiale Zinsen (zt + hfZinsen phase 0)
-  // – Datum links = Zinsperiode VON – BIS, Restforderung = aktueller Endstand
-  for (const e of zinsenEntries.filter(en => !en.isNew)) {
-    const datumSpalte = e.vonStr
-      ? datumRangeCell(e.vonStr, e.bisDate)
-      : datumCell(null);
-    rowsHtml.push(`<tr>
-      ${datumSpalte}
-      <td>${e.bezeichnung}</td>
-      ${amtCell(e.betrag)}
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-      ${amtCell(e.rest)}
-    </tr>`);
-    for (const alloc of e.payAllocs) rowsHtml.push(payAllocRow(alloc));
-  }
+  // Kosten-Priorität: Anwaltsvergütung zuerst, dann Gerichtskosten, dann Rest
+  const kostenPrio = { anwaltsverguetung: 0, gerichtskosten: 1 };
+  const sortedKosten = [...kostenEntries].sort((a, b) =>
+    (kostenPrio[a.typ] ?? 2) - (kostenPrio[b.typ] ?? 2)
+  );
 
-  // Abschnitt 2: Kosten – Restforderung = aktueller Endstand
-  for (const e of kostenEntries) {
-    rowsHtml.push(`<tr>
-      ${datumCell(e.datum)}
-      <td>${e.bezeichnung}</td>
-      ${amtCell(e.betrag)}
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-      ${amtCell(e.rest)}
-    </tr>`);
-    for (const alloc of e.payAllocs) rowsHtml.push(payAllocRow(alloc));
-  }
-
-  // Abschnitt 3: HF – nach payIdx iterieren, damit neue Zinsen auch ohne HF-Alloc korrekt erscheinen
+  // Abschnitt 1: Für jede HF: HF-Zeile, dann initiale Zinsen, dann neue Zinsen nach Zahlungen
   for (const hfEntry of hfEntries) {
     rowsHtml.push(`<tr>
       ${datumCell(hfEntry.datum)}
@@ -1853,20 +1825,61 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
       ${amtCell(hfEntry.rest)}
     </tr>`);
 
-    for (let payIdx = 0; payIdx < zahlungen.length; payIdx++) {
-      // Zahlungs-Alloc auf diese HF (falls vorhanden)
-      const alloc = hfEntry.payAllocs.find(a => a.zahlIdx === payIdx);
-      if (alloc) rowsHtml.push(payAllocRow(alloc));
+    // Initiale Zinsen dieser HF (Phase 0)
+    for (const e of zinsenEntries.filter(en => !en.isNew && en.hfId === hfEntry.hfId)) {
+      const datumSpalte = e.vonStr ? datumRangeCell(e.vonStr, e.bisDate) : datumCell(null);
+      rowsHtml.push(`<tr>
+        ${datumSpalte}
+        <td>${e.bezeichnung}</td>
+        ${amtCell(e.betrag)}
+        <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+        ${amtCell(e.rest)}
+      </tr>`);
+    }
 
-      // Neue Zinsen, die nach dieser Zahlung für diese HF beginnen (unabhängig von Alloc)
-      const newZinsen = zinsenEntries.filter(e =>
+    // Neue Zinsen nach jeder Zahlung (für diese HF)
+    for (let payIdx = 0; payIdx < zahlungen.length; payIdx++) {
+      for (const nz of zinsenEntries.filter(e =>
         e.isNew && e.hfId === hfEntry.hfId && e.afterPayIdx === payIdx
-      );
-      for (const nz of newZinsen) {
+      )) {
         rowsHtml.push(zinsenNeuRow(nz));
-        for (const subAlloc of nz.payAllocs) rowsHtml.push(payAllocRow(subAlloc));
       }
     }
+  }
+
+  // Titulierte Zinsen (zinsforderung_titel – keiner HF zugeordnet)
+  for (const e of zinsenEntries.filter(en => !en.isNew && en.hfId === null)) {
+    const datumSpalte = e.vonStr ? datumRangeCell(e.vonStr, e.bisDate) : datumCell(null);
+    rowsHtml.push(`<tr>
+      ${datumSpalte}
+      <td>${e.bezeichnung}</td>
+      ${amtCell(e.betrag)}
+      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      ${amtCell(e.rest)}
+    </tr>`);
+  }
+
+  // Abschnitt 2: Kosten (Anwaltsvergütung → Gerichtskosten → sonstige)
+  for (const e of sortedKosten) {
+    rowsHtml.push(`<tr>
+      ${datumCell(e.datum)}
+      <td>${e.bezeichnung}</td>
+      ${amtCell(e.betrag)}
+      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      ${amtCell(e.rest)}
+    </tr>`);
+  }
+
+  // Abschnitt 3: Zahlungen (immer explizit am Ende, sortiert nach Datum)
+  for (const z of zahlungen) {
+    const zBetrag = new Decimal(z.betrag || 0);
+    rowsHtml.push(`<tr class="summary-row--zahlung-explicit">
+      ${datumCell(z.datum)}
+      <td>${z.beschreibung || "Zahlung"}</td>
+      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      ${amtCell(zBetrag.negated(), "amount--negative")}
+      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+    </tr>`);
   }
 
   const gesamtRow = `<tr class="summary-row--gesamt">
