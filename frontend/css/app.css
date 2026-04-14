@@ -1336,17 +1336,17 @@ body {
     display: block !important;
   }
 
-  /* Typografie: Serifen für gedruckte Dokumente */
+  /* Typografie: gleiche Schriften wie im Screen */
   body {
-    font-family: 'Times New Roman', Times, Georgia, serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-size: 10pt;
     color: #000;
     background: #fff;
   }
 
   .amount {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 9.5pt;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 9pt;
   }
 
   .container {
@@ -1428,6 +1428,11 @@ body {
     border-top: 2pt solid #000 !important;
     border-bottom: 2pt solid #000 !important;
     font-weight: bold;
+  }
+
+  .summary-row--gesamt .amount {
+    color: #000 !important;
+    font-size: 9pt;
   }
 
   .summary-row--tageszins td {

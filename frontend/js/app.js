@@ -1819,26 +1819,30 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     (kostenPrio[a.typ] ?? 2) - (kostenPrio[b.typ] ?? 2)
   );
 
-  // Hilfsfunktion: Zeile + PayAlloc-Sub-Rows rendern
-  function claimRow(datumSpalte, bezeichnung, betrag, rest) {
+  // Hilfsfunktion: Forderungszeile rendern
+  // Hat die Position PayAllocs, bleibt Restforderung leer (steht in der letzten Sub-Row).
+  function claimRow(datumSpalte, bezeichnung, betrag, rest, payAllocs) {
+    const restCell = (payAllocs && payAllocs.length > 0)
+      ? `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`
+      : amtCell(rest);
     return `<tr>
       ${datumSpalte}
       <td>${bezeichnung}</td>
       ${amtCell(betrag)}
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-      ${amtCell(rest)}
+      ${restCell}
     </tr>`;
   }
 
   // Abschnitt 1: Für jede HF: HF-Zeile + PayAllocs, dann Zinsen (init + neu) + PayAllocs
   for (const hfEntry of hfEntries) {
-    rowsHtml.push(claimRow(datumCell(hfEntry.datum), hfEntry.bezeichnung, hfEntry.betrag, hfEntry.rest));
+    rowsHtml.push(claimRow(datumCell(hfEntry.datum), hfEntry.bezeichnung, hfEntry.betrag, hfEntry.rest, hfEntry.payAllocs));
     for (const alloc of hfEntry.payAllocs) rowsHtml.push(payAllocRow(alloc));
 
     // Initiale Zinsen dieser HF (Phase 0) + zugehörige PayAllocs
     for (const e of zinsenEntries.filter(en => !en.isNew && en.hfId === hfEntry.hfId)) {
       const datumSpalte = e.vonStr ? datumRangeCell(e.vonStr, e.bisDate) : datumCell(null);
-      rowsHtml.push(claimRow(datumSpalte, e.bezeichnung, e.betrag, e.rest));
+      rowsHtml.push(claimRow(datumSpalte, e.bezeichnung, e.betrag, e.rest, e.payAllocs));
       for (const alloc of e.payAllocs) rowsHtml.push(payAllocRow(alloc));
     }
 
@@ -1856,13 +1860,13 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   // Titulierte Zinsen (zinsforderung_titel – keiner HF zugeordnet) + PayAllocs
   for (const e of zinsenEntries.filter(en => !en.isNew && en.hfId === null)) {
     const datumSpalte = e.vonStr ? datumRangeCell(e.vonStr, e.bisDate) : datumCell(null);
-    rowsHtml.push(claimRow(datumSpalte, e.bezeichnung, e.betrag, e.rest));
+    rowsHtml.push(claimRow(datumSpalte, e.bezeichnung, e.betrag, e.rest, e.payAllocs));
     for (const alloc of e.payAllocs) rowsHtml.push(payAllocRow(alloc));
   }
 
   // Abschnitt 2: Kosten (Anwaltsvergütung → Gerichtskosten → sonstige) + PayAllocs
   for (const e of sortedKosten) {
-    rowsHtml.push(claimRow(datumCell(e.datum), e.bezeichnung, e.betrag, e.rest));
+    rowsHtml.push(claimRow(datumCell(e.datum), e.bezeichnung, e.betrag, e.rest, e.payAllocs));
     for (const alloc of e.payAllocs) rowsHtml.push(payAllocRow(alloc));
   }
 
