@@ -1870,8 +1870,24 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     </tr>`);
   }
 
-  // Abschnitt 3: Zahlungen (immer explizit am Ende, sortiert nach Datum)
-  for (const z of zahlungen) {
+  // Allokations-Map aufbauen: zahlIdx → [{bezeichnung, amount, hasTilgung}]
+  // Reihenfolge entspricht §367 BGB: Zinsen → Kosten → HF
+  const zahlAllocMap = {};
+  function collectAllocs(entries) {
+    for (const e of entries) {
+      for (const alloc of e.payAllocs) {
+        if (!zahlAllocMap[alloc.zahlIdx]) zahlAllocMap[alloc.zahlIdx] = [];
+        zahlAllocMap[alloc.zahlIdx].push({ bezeichnung: e.bezeichnung, amount: alloc.amount, hasTilgung: alloc.hasTilgung });
+      }
+    }
+  }
+  collectAllocs([...zinsenEntries.filter(e => !e.isNew), ...zinsenEntries.filter(e => e.isNew)]);
+  collectAllocs(kostenEntries);
+  collectAllocs(hfEntries);
+
+  // Abschnitt 3: Zahlungen (immer explizit am Ende, sortiert nach Datum, mit Allokations-Detail)
+  for (let zahlIdx = 0; zahlIdx < zahlungen.length; zahlIdx++) {
+    const z = zahlungen[zahlIdx];
     const zBetrag = new Decimal(z.betrag || 0);
     rowsHtml.push(`<tr class="summary-row--zahlung-explicit">
       ${datumCell(z.datum)}
@@ -1880,6 +1896,16 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
       ${amtCell(zBetrag.negated(), "amount--negative")}
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
     </tr>`);
+    for (const alloc of (zahlAllocMap[zahlIdx] || [])) {
+      const badge = alloc.hasTilgung ? ` <span class="badge-tilgung">Tilgungsbestimmung</span>` : "";
+      rowsHtml.push(`<tr class="summary-row--zahl-detail">
+        <td class="summary-datum"></td>
+        <td class="zahl-detail-label">\u2514\u00a0${alloc.bezeichnung}${badge}</td>
+        <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+        ${amtCell(alloc.amount.negated(), "amount--negative")}
+        <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      </tr>`);
+    }
   }
 
   const gesamtRow = `<tr class="summary-row--gesamt">
