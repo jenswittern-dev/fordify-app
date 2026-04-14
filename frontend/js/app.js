@@ -1490,7 +1490,7 @@ function rendereVorschau() {
     ${fgBlock}
 
     <!-- Zusammenfassung -->
-    <div class="pdf-section">
+    <div class="pdf-section pdf-section--summary">
       <div class="pdf-section__label">Zusammenfassung</div>
       <div class="table-scroll">
       ${summaryHtml}
@@ -1499,7 +1499,7 @@ function rendereVorschau() {
 
     <!-- Fu\u00dfnote -->
     <div class="vorschau-footer">
-      ${hatTageszins ? `(*)\u00a0` : ""}${aufschlagPP}\u00a0Prozentpunkte\u00a0p.\u00a0a. \u00fcber dem Basiszinssatz gem\u00e4\u00df \u00a7\u00a0247\u00a0BGB. Basiszinssatz am ${formatDate(new Date())} = ${aktBasisSatz ? aktBasisSatz.toFixed(2).replace(".", ",") + "\u00a0%" : "\u2014"}.<br>
+      ${hatTageszins ? `(*)\u00a0` : ""}${aufschlagPP}\u00a0Prozentpunkte\u00a0p.\u00a0a. \u00fcber dem Basiszinssatz gem\u00e4\u00df \u00a7\u00a0247\u00a0BGB${aktBasisSatz ? ` (Basiszinssatz am ${formatDate(new Date())} = ${aktBasisSatz.toFixed(2).replace(".", ",")}\u00a0%\u00a0+\u00a0${aufschlagPP}\u00a0PP\u00a0=\u00a0${aktZinssatzStr})` : ""}.<br>
       Verrechnung gem.\u00a0\u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB.
       ${insoDatum ? " Zinslauf endet gem.\u00a0\u00a7\u00a041\u00a0InsO am " + formatDate(insoDatum) + "." : ""}
       ${fall.positionen.some(p => verjährungsWarnungHtml(p)) ? "<br><span style=\"color:var(--color-warning)\">\u26a0 Hinweis: Mindestens eine Zinsforderung ist m\u00f6glicherweise gem.\u00a0\u00a7\u00a0197\u00a0BGB verj\u00e4hrt (3-Jahres-Frist). Bitte pr\u00fcfen Sie die Durchsetzbarkeit.</span>" : ""}
@@ -1780,7 +1780,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     const bisFmt = bisDate ? formatDate(bisDate instanceof Date ? bisDate : parseDate(bisDate)) : "heute";
     return `<td class="summary-datum summary-datum--range">${vonFmt}\u00a0\u2013\u00a0${bisFmt}</td>`;
   }
-  // Sub-Row: nur Betrag der Zahlung, kein Restforderungs-Zwischenstand
+  // Sub-Row: Teilzahlung unter der jeweiligen Forderungsposition
   function payAllocRow(alloc) {
     const base = alloc.beschreibung
       ? `\u2514\u00a0${formatDate(parseDate(alloc.datum))}\u00a0${alloc.beschreibung}`
@@ -1788,12 +1788,16 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     const badge = alloc.hasTilgung
       ? `\u00a0<span class="badge-tilgung">Tilgungsbestimmung</span>`
       : "";
+    // restAfter: Restbetrag dieser Position nach der Teilzahlung
+    const restAfterCell = (alloc.restAfter && alloc.restAfter.gt(0))
+      ? amtCell(alloc.restAfter)
+      : `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
     return `<tr class="summary-row--pay-alloc">
       <td class="summary-datum"></td>
       <td class="pay-alloc-label">${base}${badge}</td>
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
       ${amtCell(alloc.amount.negated())}
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      ${restAfterCell}
     </tr>`;
   }
   // Neue Zinsen: Datum links als Periode VON – BIS
@@ -1815,94 +1819,73 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     (kostenPrio[a.typ] ?? 2) - (kostenPrio[b.typ] ?? 2)
   );
 
-  // Abschnitt 1: Für jede HF: HF-Zeile, dann initiale Zinsen, dann neue Zinsen nach Zahlungen
-  for (const hfEntry of hfEntries) {
-    rowsHtml.push(`<tr>
-      ${datumCell(hfEntry.datum)}
-      <td>${hfEntry.bezeichnung}</td>
-      ${amtCell(hfEntry.betrag)}
+  // Hilfsfunktion: Zeile + PayAlloc-Sub-Rows rendern
+  function claimRow(datumSpalte, bezeichnung, betrag, rest) {
+    return `<tr>
+      ${datumSpalte}
+      <td>${bezeichnung}</td>
+      ${amtCell(betrag)}
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-      ${amtCell(hfEntry.rest)}
-    </tr>`);
+      ${amtCell(rest)}
+    </tr>`;
+  }
 
-    // Initiale Zinsen dieser HF (Phase 0)
+  // Abschnitt 1: Für jede HF: HF-Zeile + PayAllocs, dann Zinsen (init + neu) + PayAllocs
+  for (const hfEntry of hfEntries) {
+    rowsHtml.push(claimRow(datumCell(hfEntry.datum), hfEntry.bezeichnung, hfEntry.betrag, hfEntry.rest));
+    for (const alloc of hfEntry.payAllocs) rowsHtml.push(payAllocRow(alloc));
+
+    // Initiale Zinsen dieser HF (Phase 0) + zugehörige PayAllocs
     for (const e of zinsenEntries.filter(en => !en.isNew && en.hfId === hfEntry.hfId)) {
       const datumSpalte = e.vonStr ? datumRangeCell(e.vonStr, e.bisDate) : datumCell(null);
-      rowsHtml.push(`<tr>
-        ${datumSpalte}
-        <td>${e.bezeichnung}</td>
-        ${amtCell(e.betrag)}
-        <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-        ${amtCell(e.rest)}
-      </tr>`);
+      rowsHtml.push(claimRow(datumSpalte, e.bezeichnung, e.betrag, e.rest));
+      for (const alloc of e.payAllocs) rowsHtml.push(payAllocRow(alloc));
     }
 
-    // Neue Zinsen nach jeder Zahlung (für diese HF)
+    // Neue Zinsen nach jeder Zahlung (für diese HF) + zugehörige PayAllocs
     for (let payIdx = 0; payIdx < zahlungen.length; payIdx++) {
       for (const nz of zinsenEntries.filter(e =>
         e.isNew && e.hfId === hfEntry.hfId && e.afterPayIdx === payIdx
       )) {
         rowsHtml.push(zinsenNeuRow(nz));
+        for (const alloc of nz.payAllocs) rowsHtml.push(payAllocRow(alloc));
       }
     }
   }
 
-  // Titulierte Zinsen (zinsforderung_titel – keiner HF zugeordnet)
+  // Titulierte Zinsen (zinsforderung_titel – keiner HF zugeordnet) + PayAllocs
   for (const e of zinsenEntries.filter(en => !en.isNew && en.hfId === null)) {
     const datumSpalte = e.vonStr ? datumRangeCell(e.vonStr, e.bisDate) : datumCell(null);
-    rowsHtml.push(`<tr>
-      ${datumSpalte}
-      <td>${e.bezeichnung}</td>
-      ${amtCell(e.betrag)}
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-      ${amtCell(e.rest)}
-    </tr>`);
+    rowsHtml.push(claimRow(datumSpalte, e.bezeichnung, e.betrag, e.rest));
+    for (const alloc of e.payAllocs) rowsHtml.push(payAllocRow(alloc));
   }
 
-  // Abschnitt 2: Kosten (Anwaltsvergütung → Gerichtskosten → sonstige)
+  // Abschnitt 2: Kosten (Anwaltsvergütung → Gerichtskosten → sonstige) + PayAllocs
   for (const e of sortedKosten) {
-    rowsHtml.push(`<tr>
-      ${datumCell(e.datum)}
-      <td>${e.bezeichnung}</td>
-      ${amtCell(e.betrag)}
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-      ${amtCell(e.rest)}
-    </tr>`);
+    rowsHtml.push(claimRow(datumCell(e.datum), e.bezeichnung, e.betrag, e.rest));
+    for (const alloc of e.payAllocs) rowsHtml.push(payAllocRow(alloc));
   }
 
-  // Allokations-Map aufbauen: zahlIdx → [{bezeichnung, amount, hasTilgung}]
-  // Reihenfolge entspricht §367 BGB: Zinsen → Kosten → HF
-  const zahlAllocMap = {};
-  function collectAllocs(entries) {
+  // Abschnitt 3: Zahlungen ohne Allokation (Kantfall: Überzahlung oder vollständig abgedeckt)
+  const allokierteBetrage = new Map(zahlungen.map((_, i) => [i, new Decimal(0)]));
+  for (const entries of [zinsenEntries, kostenEntries, hfEntries]) {
     for (const e of entries) {
       for (const alloc of e.payAllocs) {
-        if (!zahlAllocMap[alloc.zahlIdx]) zahlAllocMap[alloc.zahlIdx] = [];
-        zahlAllocMap[alloc.zahlIdx].push({ bezeichnung: e.bezeichnung, amount: alloc.amount, hasTilgung: alloc.hasTilgung });
+        allokierteBetrage.set(alloc.zahlIdx, (allokierteBetrage.get(alloc.zahlIdx) || new Decimal(0)).plus(alloc.amount));
       }
     }
   }
-  collectAllocs([...zinsenEntries.filter(e => !e.isNew), ...zinsenEntries.filter(e => e.isNew)]);
-  collectAllocs(kostenEntries);
-  collectAllocs(hfEntries);
-
-  // Abschnitt 3: Zahlungen (immer explizit am Ende, sortiert nach Datum, mit Allokations-Detail)
   for (let zahlIdx = 0; zahlIdx < zahlungen.length; zahlIdx++) {
     const z = zahlungen[zahlIdx];
     const zBetrag = new Decimal(z.betrag || 0);
-    rowsHtml.push(`<tr class="summary-row--zahlung-explicit">
-      ${datumCell(z.datum)}
-      <td>${z.beschreibung || "Zahlung"}</td>
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-      ${amtCell(zBetrag.negated(), "amount--negative")}
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-    </tr>`);
-    for (const alloc of (zahlAllocMap[zahlIdx] || [])) {
-      const badge = alloc.hasTilgung ? ` <span class="badge-tilgung">Tilgungsbestimmung</span>` : "";
-      rowsHtml.push(`<tr class="summary-row--zahl-detail">
-        <td class="summary-datum"></td>
-        <td class="zahl-detail-label">\u2514\u00a0${alloc.bezeichnung}${badge}</td>
+    const allokiert = allokierteBetrage.get(zahlIdx) || new Decimal(0);
+    if (allokiert.lt(zBetrag)) {
+      // Zahlung ganz oder teilweise nicht allokiert → explizit anzeigen
+      rowsHtml.push(`<tr class="summary-row--zahlung-explicit">
+        ${datumCell(z.datum)}
+        <td>${z.beschreibung || "Zahlung"}</td>
         <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-        ${amtCell(alloc.amount.negated(), "amount--negative")}
+        ${amtCell(zBetrag.negated(), "amount--negative")}
         <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
       </tr>`);
     }

@@ -583,19 +583,6 @@ body {
   border-top: 1px solid var(--color-border);
 }
 
-.summary-row--zahl-detail td {
-  color: var(--color-zahlung);
-  background: var(--color-zahlung-bg);
-  font-size: var(--text-xs);
-  padding-top: 0.2rem;
-  padding-bottom: 0.2rem;
-  border-bottom: none;
-}
-
-.zahl-detail-label {
-  padding-left: 1.25rem;
-}
-
 .summary-row--restsaldo td {
   font-size: var(--text-xs);
   color: var(--color-text-muted);
@@ -1455,12 +1442,6 @@ body {
     border-top: 0.5pt solid #999 !important;
   }
 
-  .summary-row--zahl-detail td {
-    background: transparent !important;
-    color: #555 !important;
-    font-size: 7pt;
-    border-bottom: none !important;
-  }
 
   .summary-row--abzug td {
     color: #000 !important;
@@ -1547,9 +1528,13 @@ body {
     color: #333;
   }
 
-  /* Abschnitte */
+  /* Abschnitte – Zusammenfassung darf über Seitengrenzen gehen */
   .pdf-section {
     margin-bottom: 0.6cm;
+  }
+
+  /* Kleine Abschnitte (Parteien, Forderungsgrund) nicht umbrechen */
+  .pdf-section:not(:last-of-type):not(.pdf-section--summary) {
     page-break-inside: avoid;
   }
 
@@ -1584,11 +1569,27 @@ body {
     font-size: 9pt;
   }
 
-  /* Zusammenfassungs-Tabelle: kein Zeilenumbruch in Parteizellen */
+  /* Zusammenfassungs-Tabelle */
+  .summary-table {
+    width: 100%;
+    table-layout: auto;
+  }
+
   .summary-table td,
   .summary-table th {
-    white-space: nowrap;
+    white-space: normal;
     font-size: 8.5pt;
+  }
+
+  /* Betrag-Spalten nicht umbrechen */
+  .summary-table .amount,
+  .summary-table .text-end {
+    white-space: nowrap;
+  }
+
+  /* Scrollcontainer im Print deaktivieren */
+  .table-scroll {
+    overflow: visible !important;
   }
 
   /* PDF-Haupttabelle */
