@@ -1262,9 +1262,9 @@ function tplZahlung(pos) {
         <label class="form-label mb-1">Betrag (Tilgungsbestimmung)</label>
         <input type="number" class="form-control form-control-sm" id="mf-tilgung-betrag"
           step="0.01" min="0"
-          placeholder="Leer = gesamter Zahlbetrag"
+          placeholder="Leer = bis zur Höhe der Restforderung"
           value="${tilgungAktiv && pos?.tilgungsBetrag ? pos.tilgungsBetrag : ""}">
-        <div class="form-text">Leer lassen, um den gesamten Zahlbetrag der genannten Forderung zuzuordnen. Bei Teilbetrag wird der Rest gem.\u00a0\u00a7\u00a0367\u00a0BGB verrechnet.</div>
+        <div class="form-text">Leer lassen: Zahlung wird bis zur H\u00f6he der (Rest-)Forderung der genannten Position angerechnet. Ein dar\u00fcber hinausgehender Betrag wird gem.\u00a0\u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB auf Kosten, Zinsen und die n\u00e4chst j\u00fcngere Hauptforderung angerechnet. Teilbetrag eingeben, wenn der Schuldner explizit nur einen bestimmten Betrag zugeordnet hat.</div>
       </div>
     </div>` : "";
 
