@@ -922,10 +922,16 @@ function modalDatenLesen() {
       const tilgungsGruppeId = tilgungsbestimmung
         ? (document.getElementById("mf-tilgung-gruppeId")?.value || null)
         : null;
+      const tilgungsBetragRaw = tilgungsbestimmung
+        ? (document.getElementById("mf-tilgung-betrag")?.value?.trim() || "")
+        : "";
+      const tilgungsBetrag = tilgungsBetragRaw && parseFloat(tilgungsBetragRaw) > 0
+        ? tilgungsBetragRaw
+        : null;
       return {
         ...basis,
         betrag: v("mf-betrag"),
-        ...(tilgungsbestimmung ? { tilgungsbestimmung: true, tilgungsGruppeId } : {}),
+        ...(tilgungsbestimmung ? { tilgungsbestimmung: true, tilgungsGruppeId, ...(tilgungsBetrag ? { tilgungsBetrag } : {}) } : {}),
         ...(verrAnw ? { verrechnungsanweisung: verrAnw } : {})
       };
     }
@@ -1247,12 +1253,19 @@ function tplZahlung(pos) {
 
   const tilgungDetails = gruppen.length > 0 ? `
     <div id="mf-tilgung-details" class="${tilgungAktiv ? "" : "d-none"} mt-2">
-      ${hatMehrereHFs ? `<label class="form-label mb-1">Zahlung zugeordnet auf</label>` : ""}
+      ${hatMehrereHFs ? `<label class="form-label mb-1">Forderungsposition</label>` : ""}
       ${hatMehrereHFs
         ? `<select class="form-select form-select-sm" id="mf-tilgung-gruppeId">${gruppenOptionen}</select>`
         : `<input type="hidden" id="mf-tilgung-gruppeId" value="${gruppen[0].gruppeId}">`
       }
-      <div class="form-text">Zahlung wird zuerst auf Zinsen, dann auf die genannte Hauptforderung angerechnet.</div>
+      <div class="mt-2">
+        <label class="form-label mb-1">Betrag (Tilgungsbestimmung)</label>
+        <input type="number" class="form-control form-control-sm" id="mf-tilgung-betrag"
+          step="0.01" min="0"
+          placeholder="Leer = gesamter Zahlbetrag"
+          value="${tilgungAktiv && pos?.tilgungsBetrag ? pos.tilgungsBetrag : ""}">
+        <div class="form-text">Leer lassen, um den gesamten Zahlbetrag der genannten Forderung zuzuordnen. Bei Teilbetrag wird der Rest gem.\u00a0\u00a7\u00a0367\u00a0BGB verrechnet.</div>
+      </div>
     </div>` : "";
 
   return `
@@ -1691,13 +1704,26 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     const zahlLabel = zahlung.beschreibung || "";
 
     if (zahlung.tilgungsbestimmung && zahlung.tilgungsGruppeId) {
-      // Tilgungsbestimmung: Zahlung zuerst auf Zinsen + HF der Ziel-Gruppe, dann Rest nach § 367
+      // Tilgungsbestimmung: bestimmter Betrag (Standard: gesamter Zahlbetrag) gegen Ziel-HF,
+      // verbleibender Rest nach § 367 BGB
       const zielHF = hfs.find(h => h.gruppeId === zahlung.tilgungsGruppeId);
       if (zielHF) {
+        // Tilgungsbudget: explizit angegeben oder voller Zahlbetrag
+        const tilgungsBudget = zahlung.tilgungsBetrag
+          ? Decimal.min(new Decimal(zahlung.tilgungsBetrag), restZahlung)
+          : restZahlung;
+
+        const restVorTilgung = restZahlung;
+        restZahlung = tilgungsBudget;
+
         // 1a. Zinsen der Ziel-HF
         verrechneAufEntry(zinsenGeordnet.filter(e => e.hfId === zielHF.id), zahlLabel);
         // 1b. HF der Ziel-Gruppe
         verrechneAufEntry(hfEntries.filter(e => e.hfId === zielHF.id), zahlLabel);
+
+        // Restbetrag wiederherstellen: Original minus tatsächlich gegen Ziel verwendet
+        const fuerZielVerwendet = tilgungsBudget.minus(restZahlung);
+        restZahlung = restVorTilgung.minus(fuerZielVerwendet);
       }
       // 2. Restbetrag nach § 367: alle verbleibenden Zinsen → Kosten → übrige HFs
       verrechneAufEntry(zinsenGeordnet, zahlLabel);
