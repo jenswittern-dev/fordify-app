@@ -1259,38 +1259,40 @@ function tplZahlung(pos) {
         : `<input type="hidden" id="mf-tilgung-gruppeId" value="${gruppen[0].gruppeId}">`
       }
       <div class="mt-2">
-        <label class="form-label mb-1">Betrag (Tilgungsbestimmung)</label>
+        <label class="form-label mb-1">Betrag <span class="text-muted fw-normal">(optional)</span></label>
         <input type="number" class="form-control form-control-sm" id="mf-tilgung-betrag"
           step="0.01" min="0"
-          placeholder="Leer = bis zur Höhe der Restforderung"
+          placeholder="Leer = bis zur H\u00f6he der Restforderung"
           value="${tilgungAktiv && pos?.tilgungsBetrag ? pos.tilgungsBetrag : ""}">
-        <div class="form-text">Leer lassen: Zahlung wird bis zur H\u00f6he der (Rest-)Forderung der genannten Position angerechnet. Ein dar\u00fcber hinausgehender Betrag wird gem.\u00a0\u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB auf Kosten, Zinsen und die n\u00e4chst j\u00fcngere Hauptforderung angerechnet. Teilbetrag eingeben, wenn der Schuldner explizit nur einen bestimmten Betrag zugeordnet hat.</div>
+        <div class="form-text">Leer lassen: Zahlung wird bis zur H\u00f6he der (Rest-)Forderung angerechnet, \u00fcberschie\u00dfender Betrag nach \u00a7\u00a7\u00a0366/367\u00a0BGB. Teilbetrag nur eintragen, wenn der Schuldner explizit nur einen bestimmten Betrag zugeordnet hat.</div>
+      </div>
+      <div class="mt-2">
+        <label class="form-label mb-1">Wortlaut / Verwendungszweck <span class="text-muted fw-normal">(optional)</span></label>
+        <textarea class="form-control form-control-sm" id="mf-verrechnungsanweisung" rows="2"
+          placeholder="z.B. genauen Wortlaut der Tilgungsbestimmung aus dem Verwendungszweck eintragen">${pos?.verrechnungsanweisung || ""}</textarea>
+        <div class="form-text">Wird als Vermerk im PDF angezeigt.</div>
       </div>
     </div>` : "";
 
   return `
     ${datumFeld("mf-datum", pos?.datum, "Zahlungsdatum")}
     <div class="mb-3">
-      <label class="form-label">Beschreibung</label>
-      <input type="text" class="form-control" id="mf-beschreibung" value="${pos?.beschreibung || ""}" placeholder="z.B. Überweisung vom \u2026">
+      <label class="form-label">Bezeichnung <span class="text-muted fw-normal">(erscheint in der Tabelle)</span></label>
+      <input type="text" class="form-control" id="mf-beschreibung" value="${pos?.beschreibung || ""}" placeholder="z.B. \u00dcberweisung vom \u2026">
     </div>
     ${betragFeld("mf-betrag", pos?.betrag, "Zahlbetrag (\u20ac)")}
-    <div class="mb-3">
+    <div class="mb-3 p-3 rounded" style="border:1px solid var(--color-border);background:var(--color-surface)">
+      <div class="fw-semibold mb-2" style="font-size:var(--text-sm)">Tilgungsbestimmung</div>
       <div class="form-check">
         <input class="form-check-input" type="checkbox" id="mf-tilgungsbestimmung"
           ${tilgungAktiv ? "checked" : ""}
           onchange="document.getElementById('mf-tilgung-details')?.classList.toggle('d-none', !this.checked); document.getElementById('mf-no-tilgung-text')?.classList.toggle('d-none', this.checked)">
         <label class="form-check-label" for="mf-tilgungsbestimmung">
-          Tilgungsbestimmung vorhanden
-          <span class="text-muted small">(Schuldner hat Zahlung explizit einer Forderung zugeordnet)</span>
+          Schuldner hat eine Tilgungsbestimmung getroffen
         </label>
       </div>
-      <div id="mf-no-tilgung-text" class="form-text${tilgungAktiv ? " d-none" : ""}">Ohne Tilgungsbestimmung wird die Zahlung gem\u00e4\u00df \u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB zun\u00e4chst auf Kosten, dann auf Zinsen und schlie\u00dflich auf die \u00e4lteste Hauptforderung angerechnet.</div>
+      <div id="mf-no-tilgung-text" class="form-text mt-1${tilgungAktiv ? " d-none" : ""}">Ohne Tilgungsbestimmung wird die Zahlung gem\u00e4\u00df \u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB zun\u00e4chst auf Kosten, dann auf Zinsen und schlie\u00dflich auf die \u00e4lteste Hauptforderung angerechnet.</div>
       ${tilgungDetails}
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Notiz <span class="text-muted">(optional)</span></label>
-      <textarea class="form-control" id="mf-verrechnungsanweisung" rows="1" placeholder="z.B. Wortlaut des Verwendungszwecks">${pos?.verrechnungsanweisung || ""}</textarea>
     </div>
   `;
 }
