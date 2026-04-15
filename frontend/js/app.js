@@ -1774,7 +1774,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   // Totals
   // ----------------------------------------------------------------
   const totForderung = [
-    ...zinsenEntries.filter(e => !e.isNew),
+    ...zinsenEntries,   // alle Zinsen inkl. neue nach Zahlung
     ...kostenEntries,
     ...hfEntries
   ].reduce((s, e) => s.plus(e.betrag), ZERO);
@@ -1828,14 +1828,19 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
       ${restAfterCell}
     </tr>`;
   }
-  // Neue Zinsen: Datum links als Periode VON – BIS
+  // Neue Zinsen (nach Zahlung): Betrag in Forderung-Spalte damit Totals balancieren.
+  // Forderung − Teilzahlung = Restforderung gilt dann auch arithmetisch.
   function zinsenNeuRow(e) {
-    return `<tr>
+    const hasAllocs = e.payAllocs && e.payAllocs.length > 0;
+    const restCell = hasAllocs
+      ? `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`
+      : amtCell(e.rest);
+    return `<tr class="summary-row--zinsen-neu${hasAllocs ? " summary-row--has-allocs" : ""}">
       ${datumRangeCell(e.vonStr, e.bisDate)}
       <td>${e.bezeichnung}</td>
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
       ${amtCell(e.betrag)}
+      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      ${restCell}
     </tr>`;
   }
 
