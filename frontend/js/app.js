@@ -1253,20 +1253,24 @@ function tplZahlung(pos) {
 
   const tilgungDetails = gruppen.length > 0 ? `
     <div id="mf-tilgung-details" class="${tilgungAktiv ? "" : "d-none"} mt-2">
-      ${hatMehrereHFs ? `<label class="form-label mb-1">Forderungsposition</label>` : ""}
-      ${hatMehrereHFs
-        ? `<select class="form-select form-select-sm" id="mf-tilgung-gruppeId">${gruppenOptionen}</select>`
-        : `<input type="hidden" id="mf-tilgung-gruppeId" value="${gruppen[0].gruppeId}">`
-      }
-      <div class="mt-2">
-        <label class="form-label mb-1">Betrag <span class="text-muted fw-normal">(optional)</span></label>
+      <div class="mb-2">
+        <label class="form-label mb-1">Zahlung verrechnen auf</label>
+        ${hatMehrereHFs
+          ? `<select class="form-select form-select-sm" id="mf-tilgung-gruppeId">${gruppenOptionen}</select>
+             <div class="form-text">Die Zahlung wird zun\u00e4chst auf diese Hauptforderung (inkl. zugeh\u00f6riger Zinsen) angerechnet, der Rest nach \u00a7\u00a7\u00a0366/367\u00a0BGB.</div>`
+          : `<input type="hidden" id="mf-tilgung-gruppeId" value="${gruppen[0].gruppeId}">
+             <div class="form-text">Die Zahlung wird auf die Hauptforderung (inkl. zugeh\u00f6riger Zinsen) angerechnet.</div>`
+        }
+      </div>
+      <div class="mb-2">
+        <label class="form-label mb-1">Zugeordneter Betrag <span class="text-muted fw-normal">(optional)</span></label>
         <input type="number" class="form-control form-control-sm" id="mf-tilgung-betrag"
           step="0.01" min="0"
           placeholder="Leer = bis zur H\u00f6he der Restforderung"
           value="${tilgungAktiv && pos?.tilgungsBetrag ? pos.tilgungsBetrag : ""}">
-        <div class="form-text">Leer lassen: Zahlung wird bis zur H\u00f6he der (Rest-)Forderung angerechnet, \u00fcberschie\u00dfender Betrag nach \u00a7\u00a7\u00a0366/367\u00a0BGB. Teilbetrag nur eintragen, wenn der Schuldner explizit nur einen bestimmten Betrag zugeordnet hat.</div>
+        <div class="form-text">Nur ausf\u00fcllen, wenn der Schuldner explizit nur einen Teilbetrag zugeordnet hat. Leer lassen = gesamte Restforderung.</div>
       </div>
-      <div class="mt-2">
+      <div>
         <label class="form-label mb-1">Wortlaut / Verwendungszweck <span class="text-muted fw-normal">(optional)</span></label>
         <textarea class="form-control form-control-sm" id="mf-verrechnungsanweisung" rows="2"
           placeholder="z.B. genauen Wortlaut der Tilgungsbestimmung aus dem Verwendungszweck eintragen">${pos?.verrechnungsanweisung || ""}</textarea>
