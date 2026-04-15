@@ -919,19 +919,27 @@ function modalDatenLesen() {
     case "zahlung": {
       const verrAnw = document.getElementById("mf-verrechnungsanweisung")?.value?.trim() || "";
       const tilgungsbestimmung = document.getElementById("mf-tilgungsbestimmung")?.checked || false;
-      const tilgungsGruppeId = tilgungsbestimmung
-        ? (document.getElementById("mf-tilgung-gruppeId")?.value || null)
-        : null;
+      const zielRaw = tilgungsbestimmung
+        ? (document.getElementById("mf-tilgung-zielId")?.value || "")
+        : "";
+      const tilgungsGruppeId = zielRaw.startsWith("hf:") ? zielRaw.slice(3) : null;
+      const tilgungsKostenId = zielRaw.startsWith("k:") ? zielRaw.slice(2) : null;
       const tilgungsBetragRaw = tilgungsbestimmung
         ? (document.getElementById("mf-tilgung-betrag")?.value?.trim() || "")
         : "";
       const tilgungsBetrag = tilgungsBetragRaw && parseFloat(tilgungsBetragRaw) > 0
         ? tilgungsBetragRaw
         : null;
+      const hatZiel = tilgungsGruppeId || tilgungsKostenId;
       return {
         ...basis,
         betrag: v("mf-betrag"),
-        ...(tilgungsbestimmung ? { tilgungsbestimmung: true, tilgungsGruppeId, ...(tilgungsBetrag ? { tilgungsBetrag } : {}) } : {}),
+        ...(tilgungsbestimmung && hatZiel ? {
+          tilgungsbestimmung: true,
+          ...(tilgungsGruppeId ? { tilgungsGruppeId } : {}),
+          ...(tilgungsKostenId ? { tilgungsKostenId } : {}),
+          ...(tilgungsBetrag ? { tilgungsBetrag } : {})
+        } : tilgungsbestimmung ? { tilgungsbestimmung: true } : {}),
         ...(verrAnw ? { verrechnungsanweisung: verrAnw } : {})
       };
     }
@@ -1236,31 +1244,64 @@ function tplZinsperiode(pos) {
 
 function tplZahlung(pos) {
   const gruppen = holeGruppen();
-  const hatMehrereHFs = gruppen.length > 1;
+  const kostenTypen = ["anwaltsverguetung","gv_kosten","gerichtskosten","zahlungsverbot",
+    "auskunftskosten","mahnkosten","inkassopauschale","sonstige_kosten"];
+  const kostenPos = state.fall.positionen.filter(p => kostenTypen.includes(p.typ));
+  const hatZiele = gruppen.length > 0 || kostenPos.length > 0;
+  const hatMehrereZiele = gruppen.length + kostenPos.length > 1;
   const tilgungAktiv = pos?.tilgungsbestimmung || false;
 
-  let gruppenOptionen = "";
+  // Aktuell ausgewähltes Ziel (beim Bearbeiten)
+  let selectedZiel = "";
+  if (tilgungAktiv) {
+    if (pos?.tilgungsGruppeId) selectedZiel = `hf:${pos.tilgungsGruppeId}`;
+    else if (pos?.tilgungsKostenId) selectedZiel = `k:${pos.tilgungsKostenId}`;
+  }
+
+  // Optionen aufbauen
+  let zielOptionen = "";
   if (gruppen.length > 0) {
-    gruppenOptionen = gruppen.map((hf, i) => {
+    const useGroup = kostenPos.length > 0;
+    if (useGroup) zielOptionen += `<optgroup label="Hauptforderung(en)">`;
+    gruppen.forEach((hf, i) => {
       const label = hf.beschreibung
         ? `HF\u00a0${i + 1}: ${hf.beschreibung}`
         : `Hauptforderung\u00a0${i + 1}`;
       const betragStr = hf.betrag ? ` (${formatEUR(new Decimal(hf.betrag))})` : "";
-      const sel = tilgungAktiv && pos?.tilgungsGruppeId === hf.gruppeId ? " selected" : "";
-      return `<option value="${hf.gruppeId}"${sel}>${label}${betragStr}</option>`;
-    }).join("");
+      const sel = selectedZiel === `hf:${hf.gruppeId}` ? " selected" : "";
+      zielOptionen += `<option value="hf:${hf.gruppeId}"${sel}>${label}${betragStr} \u2013 inkl. Zinsen</option>`;
+    });
+    if (useGroup) zielOptionen += `</optgroup>`;
+  }
+  if (kostenPos.length > 0) {
+    const useGroup = gruppen.length > 0;
+    if (useGroup) zielOptionen += `<optgroup label="Kosten">`;
+    kostenPos.forEach(k => {
+      const label = k.beschreibung || AKTIONSTYPEN[k.typ] || k.typ;
+      const sel = selectedZiel === `k:${k.id}` ? " selected" : "";
+      zielOptionen += `<option value="k:${k.id}"${sel}>${label}</option>`;
+    });
+    if (useGroup) zielOptionen += `</optgroup>`;
   }
 
-  const tilgungDetails = gruppen.length > 0 ? `
+  // Automatisch erstes Ziel vorauswählen (nur bei neuer Zahlung)
+  if (!tilgungAktiv && !selectedZiel && gruppen.length > 0) {
+    zielOptionen = zielOptionen.replace(`value="hf:${gruppen[0].gruppeId}"`, `value="hf:${gruppen[0].gruppeId}" selected`);
+  }
+
+  const tilgungDetails = hatZiele ? `
     <div id="mf-tilgung-details" class="${tilgungAktiv ? "" : "d-none"} mt-2">
       <div class="mb-2">
         <label class="form-label mb-1">Zahlung verrechnen auf</label>
-        ${hatMehrereHFs
-          ? `<select class="form-select form-select-sm" id="mf-tilgung-gruppeId">${gruppenOptionen}</select>
-             <div class="form-text">Die Zahlung wird zun\u00e4chst auf diese Hauptforderung (inkl. zugeh\u00f6riger Zinsen) angerechnet, der Rest nach \u00a7\u00a7\u00a0366/367\u00a0BGB.</div>`
-          : `<input type="hidden" id="mf-tilgung-gruppeId" value="${gruppen[0].gruppeId}">
-             <div class="form-text">Die Zahlung wird auf die Hauptforderung (inkl. zugeh\u00f6riger Zinsen) angerechnet.</div>`
+        ${hatMehrereZiele
+          ? `<select class="form-select form-select-sm" id="mf-tilgung-zielId">${zielOptionen}</select>`
+          : gruppen.length === 1
+            ? `<input type="hidden" id="mf-tilgung-zielId" value="hf:${gruppen[0].gruppeId}">
+               <div class="form-text">Die Zahlung wird auf die Hauptforderung (inkl. zugeh\u00f6riger Zinsen) angerechnet.</div>`
+            : `<input type="hidden" id="mf-tilgung-zielId" value="k:${kostenPos[0].id}">
+               <div class="form-text">Die Zahlung wird auf die Kostenposition angerechnet.</div>`
         }
+        ${hatMehrereZiele ? `<div class="form-text">Hauptforderungen werden inkl. zugeh\u00f6riger Zinsen verrechnet. Der verbleibende Rest nach \u00a7\u00a7\u00a0366/367\u00a0BGB.</div>` : ""}
       </div>
       <div class="mb-2">
         <label class="form-label mb-1">Zugeordneter Betrag <span class="text-muted fw-normal">(optional)</span></label>
@@ -1268,7 +1309,7 @@ function tplZahlung(pos) {
           step="0.01" min="0"
           placeholder="Leer = bis zur H\u00f6he der Restforderung"
           value="${tilgungAktiv && pos?.tilgungsBetrag ? pos.tilgungsBetrag : ""}">
-        <div class="form-text">Nur ausf\u00fcllen, wenn der Schuldner explizit nur einen Teilbetrag zugeordnet hat. Leer lassen = gesamte Restforderung.</div>
+        <div class="form-text">Nur ausf\u00fcllen, wenn der Schuldner explizit nur einen Teilbetrag zugeordnet hat.</div>
       </div>
       <div>
         <label class="form-label mb-1">Wortlaut / Verwendungszweck <span class="text-muted fw-normal">(optional)</span></label>
@@ -1709,29 +1750,29 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
 
     const zahlLabel = zahlung.beschreibung || "";
 
-    if (zahlung.tilgungsbestimmung && zahlung.tilgungsGruppeId) {
-      // Tilgungsbestimmung: bestimmter Betrag (Standard: gesamter Zahlbetrag) gegen Ziel-HF,
-      // verbleibender Rest nach § 367 BGB
-      const zielHF = hfs.find(h => h.gruppeId === zahlung.tilgungsGruppeId);
-      if (zielHF) {
-        // Tilgungsbudget: explizit angegeben oder voller Zahlbetrag
-        const tilgungsBudget = zahlung.tilgungsBetrag
-          ? Decimal.min(new Decimal(zahlung.tilgungsBetrag), restZahlung)
-          : restZahlung;
+    if (zahlung.tilgungsbestimmung && (zahlung.tilgungsGruppeId || zahlung.tilgungsKostenId)) {
+      const tilgungsBudget = zahlung.tilgungsBetrag
+        ? Decimal.min(new Decimal(zahlung.tilgungsBetrag), restZahlung)
+        : restZahlung;
+      const restVorTilgung = restZahlung;
+      restZahlung = tilgungsBudget;
 
-        const restVorTilgung = restZahlung;
-        restZahlung = tilgungsBudget;
-
-        // 1a. Zinsen der Ziel-HF
-        verrechneAufEntry(zinsenGeordnet.filter(e => e.hfId === zielHF.id), zahlLabel);
-        // 1b. HF der Ziel-Gruppe
-        verrechneAufEntry(hfEntries.filter(e => e.hfId === zielHF.id), zahlLabel);
-
-        // Restbetrag wiederherstellen: Original minus tatsächlich gegen Ziel verwendet
-        const fuerZielVerwendet = tilgungsBudget.minus(restZahlung);
-        restZahlung = restVorTilgung.minus(fuerZielVerwendet);
+      if (zahlung.tilgungsGruppeId) {
+        // Tilgungsbestimmung auf Hauptforderung (inkl. zugehöriger Zinsen)
+        const zielHF = hfs.find(h => h.gruppeId === zahlung.tilgungsGruppeId);
+        if (zielHF) {
+          verrechneAufEntry(zinsenGeordnet.filter(e => e.hfId === zielHF.id), zahlLabel);
+          verrechneAufEntry(hfEntries.filter(e => e.hfId === zielHF.id), zahlLabel);
+        }
+      } else if (zahlung.tilgungsKostenId) {
+        // Tilgungsbestimmung auf spezifische Kostenposition
+        const zielKosten = kostenEntries.find(e => e.id === zahlung.tilgungsKostenId);
+        if (zielKosten) verrechneAufEntry([zielKosten], zahlLabel);
       }
-      // 2. Restbetrag nach § 367: alle verbleibenden Zinsen → Kosten → übrige HFs
+
+      // Restbetrag wiederherstellen, dann Rest nach § 367
+      const fuerZielVerwendet = tilgungsBudget.minus(restZahlung);
+      restZahlung = restVorTilgung.minus(fuerZielVerwendet);
       verrechneAufEntry(zinsenGeordnet, zahlLabel);
       verrechneAufEntry(kostenEntries, zahlLabel);
       verrechneAufEntry(hfEntries, zahlLabel);
