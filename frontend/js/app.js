@@ -2033,7 +2033,7 @@ function zeigeEinstellungenModal() {
   if (posEl) posEl.value = einst.logoPosition || "links";
 
   const imp = einst.imp || {};
-  const IMP_FIELDS = ["name","rechtsform","strasse","plz","ort","tel","fax","email",
+  const IMP_FIELDS = ["name","strasse","plz","ort","tel","fax","email",
                       "website","kammer","register","vertreten","ustid","bhv","iban","bic","bank",
                       "impressum-url","datenschutz-url"];
   for (const f of IMP_FIELDS) {
@@ -2062,7 +2062,6 @@ function leseImpFelder() {
   function v(id) { return document.getElementById(id)?.value?.trim() || ""; }
   return {
     name:           v("einst-imp-name"),
-    rechtsform:     v("einst-imp-rechtsform"),
     strasse:        v("einst-imp-strasse"),
     plz:            v("einst-imp-plz"),
     ort:            v("einst-imp-ort"),
@@ -2101,38 +2100,46 @@ function generiereImpressumFooterHtml(imp) {
   if (!imp.name) return "";
 
   function e(s) { return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  const DOT = " &nbsp;\u00b7&nbsp; ";
 
-  const teile = [];
-  teile.push(e(imp.name) + (imp.rechtsform ? ` ${e(imp.rechtsform)}` : ""));
+  // Zeile 1: Firmenname · Vertreten durch · Adresse · E-Mail · Website
+  const zeile1 = [];
+  zeile1.push(e(imp.name));
+  if (imp.vertreten) zeile1.push(`Vertreten durch: ${e(imp.vertreten)}`);
   if (imp.strasse) {
     let adr = e(imp.strasse);
-    if (imp.plz || imp.ort) adr += ` \u00b7 ${e(imp.plz)} ${e(imp.ort)}`.trim();
-    teile.push(adr);
+    if (imp.plz || imp.ort) adr += `, ${[e(imp.plz), e(imp.ort)].filter(Boolean).join("\u00a0")}`;
+    zeile1.push(adr);
   }
-  if (imp.tel)  teile.push(`Tel.: ${e(imp.tel)}`);
-  if (imp.fax)  teile.push(`Fax: ${e(imp.fax)}`);
-  if (imp.email) teile.push(`E-Mail: <a href="mailto:${e(imp.email)}" class="imp-link">${e(imp.email)}</a>`);
-  if (imp.website) teile.push(`<a href="${e(imp.website)}" target="_blank" rel="noopener noreferrer" class="imp-link">${e(imp.website.replace(/^https?:\/\//, ""))}</a>`);
-  if (imp.kammer)   teile.push(e(imp.kammer));
-  if (imp.register) teile.push(`Reg.-Nr.: ${e(imp.register)}`);
-  if (imp.vertreten) teile.push(`Vertreten durch: ${e(imp.vertreten)}`);
-  if (imp.ustid)    teile.push(`USt-ID: ${e(imp.ustid)}`);
-  if (imp.bhv)      teile.push(`BHV: ${e(imp.bhv)}`);
+  if (imp.email)   zeile1.push(`E-Mail: <a href="mailto:${e(imp.email)}" class="imp-link">${e(imp.email)}</a>`);
+  if (imp.website) zeile1.push(`<a href="${e(imp.website)}" target="_blank" rel="noopener noreferrer" class="imp-link">${e(imp.website.replace(/^https?:\/\//, ""))}</a>`);
+
+  // Zeile 2: Tel · Fax · Kammer · Reg.-Nr. · USt-ID · BHV · Bankdaten
+  const zeile2 = [];
+  if (imp.tel)      zeile2.push(`Tel.: ${e(imp.tel)}`);
+  if (imp.fax)      zeile2.push(`Fax: ${e(imp.fax)}`);
+  if (imp.kammer)   zeile2.push(e(imp.kammer));
+  if (imp.register) zeile2.push(`Reg.-Nr.: ${e(imp.register)}`);
+  if (imp.ustid)    zeile2.push(`USt-ID: ${e(imp.ustid)}`);
+  if (imp.bhv)      zeile2.push(`BHV: ${e(imp.bhv)}`);
   if (imp.iban) {
     let b = `IBAN: ${e(imp.iban)}`;
     if (imp.bic)  b += ` \u00b7 BIC: ${e(imp.bic)}`;
     if (imp.bank) b += ` (${e(imp.bank)})`;
-    teile.push(b);
+    zeile2.push(b);
   }
-  if (!teile.length) return "";
 
-  let html = `<div class="pdf-impressum-footer">${teile.join(" &nbsp;\u00b7&nbsp; ")}`;
+  if (!zeile1.length && !zeile2.length) return "";
+
+  let content = zeile1.join(DOT);
+  if (zeile2.length) content += `<br>${zeile2.join(DOT)}`;
 
   const links = [];
   if (imp.impressumUrl)   links.push(`<a href="${e(imp.impressumUrl)}" target="_blank" rel="noopener noreferrer" class="imp-link">Impressum</a>`);
   if (imp.datenschutzUrl) links.push(`<a href="${e(imp.datenschutzUrl)}" target="_blank" rel="noopener noreferrer" class="imp-link">Datenschutz</a>`);
-  if (links.length) html += `<span class="no-print" style="margin-left:0.75em;font-size:0.85em"> \u00b7 ${links.join(" \u00b7 ")}</span>`;
 
+  let html = `<div class="pdf-impressum-footer">${content}`;
+  if (links.length) html += `<span class="no-print" style="margin-left:0.75em;font-size:0.85em"> \u00b7 ${links.join(" \u00b7 ")}</span>`;
   html += `</div>`;
   return html;
 }
@@ -2234,21 +2241,34 @@ function einstellungenImportieren(input) {
   const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function(ev) {
     try {
-      const parsed = JSON.parse(e.target.result);
+      const parsed = JSON.parse(ev.target.result);
       if (!parsed.fordify_settings) {
         alert("Import fehlgeschlagen: Dies ist keine fordify-Einstellungsdatei.\nBitte verwenden Sie eine zuvor \u00fcber \u201eExport\u201c heruntergeladene Datei.");
         input.value = "";
         return;
       }
-      speichereEinstellungen(parsed.fordify_settings);
-      // Modal-Felder neu befüllen
-      zeigeEinstellungenModal();
-      // Datei-Input zurücksetzen
+      const einst = parsed.fordify_settings;
+      speichereEinstellungen(einst);
+
+      // Felder direkt befüllen (Modal ist bereits offen – kein erneutes .show())
+      const imp = einst.imp || {};
+      const posEl = document.getElementById("einst-logo-position");
+      if (posEl) posEl.value = einst.logoPosition || "links";
+      const IMP_FIELDS = ["name","strasse","plz","ort","tel","fax","email",
+                          "website","kammer","register","vertreten","ustid","bhv","iban","bic","bank",
+                          "impressum-url","datenschutz-url"];
+      for (const f of IMP_FIELDS) {
+        const el = document.getElementById("einst-imp-" + f);
+        const key = f.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+        if (el) el.value = imp[key] || "";
+      }
+      aktualisiereLogoVorschau(einst.logo || null);
+      aktualisiereFussVorschau();
       input.value = "";
     } catch (err) {
-      alert("Import fehlgeschlagen: Ungültige JSON-Datei.\n" + err.message);
+      alert("Import fehlgeschlagen: Ung\u00fcltige JSON-Datei.\n" + err.message);
     }
   };
   reader.readAsText(file);
