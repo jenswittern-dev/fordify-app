@@ -1809,19 +1809,23 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     return `<td class="summary-datum summary-datum--range">${vonFmt}\u00a0\u2013\u00a0${bisFmt}</td>`;
   }
   // Sub-Row: Teilzahlung unter der jeweiligen Forderungsposition
-  function payAllocRow(alloc) {
+  // isLast=true: letzte Sub-Row einer Position → zeigt aktuelle Restforderung (fett/schwarz)
+  function payAllocRow(alloc, isLast = false) {
     const base = alloc.beschreibung
       ? `\u2514\u00a0${formatDate(parseDate(alloc.datum))}\u00a0${alloc.beschreibung}`
       : `\u2514\u00a0${formatDate(parseDate(alloc.datum))}\u00a0Zahlung`;
     const badge = alloc.hasTilgung
       ? `\u00a0<span class="badge-tilgung">Tilgungsbestimmung</span>`
       : "";
+    const restAfterCell = isLast && alloc.restAfter && alloc.restAfter.gt(0)
+      ? amtCell(alloc.restAfter, "amount--restforderung")
+      : `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
     return `<tr class="summary-row--pay-alloc">
       <td class="summary-datum"></td>
       <td class="pay-alloc-label">${base}${badge}</td>
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
       ${amtCell(alloc.amount.negated())}
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      ${restAfterCell}
     </tr>`;
   }
   // Neue Zinsen: Datum links als Periode VON – BIS
@@ -1844,11 +1848,10 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   );
 
   // Hilfsfunktion: Forderungszeile rendern
-  // Hat die Position PayAllocs, wird die finale Restforderung fett/schwarz in der Hauptzeile angezeigt.
+  // Hat die Position PayAllocs, bleibt Restforderung in der Hauptzeile leer (steht in der letzten Sub-Row).
   function claimRow(datumSpalte, bezeichnung, betrag, rest, payAllocs) {
-    const hasAllocs = payAllocs && payAllocs.length > 0;
-    const restCell = hasAllocs
-      ? amtCell(rest, "amount--restforderung")
+    const restCell = (payAllocs && payAllocs.length > 0)
+      ? `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`
       : amtCell(rest);
     return `<tr>
       ${datumSpalte}
@@ -1859,16 +1862,21 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     </tr>`;
   }
 
+  // Hilfsfunktion: PayAllocs einer Position rendern, letzte zeigt Restforderung
+  function renderPayAllocs(allocs) {
+    allocs.forEach((alloc, i) => rowsHtml.push(payAllocRow(alloc, i === allocs.length - 1)));
+  }
+
   // Abschnitt 1: Für jede HF: HF-Zeile + PayAllocs, dann Zinsen (init + neu) + PayAllocs
   for (const hfEntry of hfEntries) {
     rowsHtml.push(claimRow(datumCell(hfEntry.datum), hfEntry.bezeichnung, hfEntry.betrag, hfEntry.rest, hfEntry.payAllocs));
-    for (const alloc of hfEntry.payAllocs) rowsHtml.push(payAllocRow(alloc));
+    renderPayAllocs(hfEntry.payAllocs);
 
     // Initiale Zinsen dieser HF (Phase 0) + zugehörige PayAllocs
     for (const e of zinsenEntries.filter(en => !en.isNew && en.hfId === hfEntry.hfId)) {
       const datumSpalte = e.vonStr ? datumRangeCell(e.vonStr, e.bisDate) : datumCell(null);
       rowsHtml.push(claimRow(datumSpalte, e.bezeichnung, e.betrag, e.rest, e.payAllocs));
-      for (const alloc of e.payAllocs) rowsHtml.push(payAllocRow(alloc));
+      renderPayAllocs(e.payAllocs);
     }
 
     // Neue Zinsen nach jeder Zahlung (für diese HF) + zugehörige PayAllocs
@@ -1877,7 +1885,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
         e.isNew && e.hfId === hfEntry.hfId && e.afterPayIdx === payIdx
       )) {
         rowsHtml.push(zinsenNeuRow(nz));
-        for (const alloc of nz.payAllocs) rowsHtml.push(payAllocRow(alloc));
+        renderPayAllocs(nz.payAllocs);
       }
     }
   }
@@ -1886,13 +1894,13 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   for (const e of zinsenEntries.filter(en => !en.isNew && en.hfId === null)) {
     const datumSpalte = e.vonStr ? datumRangeCell(e.vonStr, e.bisDate) : datumCell(null);
     rowsHtml.push(claimRow(datumSpalte, e.bezeichnung, e.betrag, e.rest, e.payAllocs));
-    for (const alloc of e.payAllocs) rowsHtml.push(payAllocRow(alloc));
+    renderPayAllocs(e.payAllocs);
   }
 
   // Abschnitt 2: Kosten (Anwaltsvergütung → Gerichtskosten → sonstige) + PayAllocs
   for (const e of sortedKosten) {
     rowsHtml.push(claimRow(datumCell(e.datum), e.bezeichnung, e.betrag, e.rest, e.payAllocs));
-    for (const alloc of e.payAllocs) rowsHtml.push(payAllocRow(alloc));
+    renderPayAllocs(e.payAllocs);
   }
 
   // Abschnitt 3: Zahlungen ohne Allokation (Kantfall: Überzahlung oder vollständig abgedeckt)
