@@ -2114,7 +2114,7 @@ function generiereImpressumFooterHtml(imp) {
   if (imp.email)   zeile1.push(`E-Mail: <a href="mailto:${e(imp.email)}" class="imp-link">${e(imp.email)}</a>`);
   if (imp.website) zeile1.push(`<a href="${e(imp.website)}" target="_blank" rel="noopener noreferrer" class="imp-link">${e(imp.website.replace(/^https?:\/\//, ""))}</a>`);
 
-  // Zeile 2: Tel · Fax · Kammer · Reg.-Nr. · USt-ID · BHV · Bankdaten
+  // Zeile 2: Tel · Fax · Kammer · Reg.-Nr. · USt-ID · BHV
   const zeile2 = [];
   if (imp.tel)      zeile2.push(`Tel.: ${e(imp.tel)}`);
   if (imp.fax)      zeile2.push(`Fax: ${e(imp.fax)}`);
@@ -2122,26 +2122,29 @@ function generiereImpressumFooterHtml(imp) {
   if (imp.register) zeile2.push(`Reg.-Nr.: ${e(imp.register)}`);
   if (imp.ustid)    zeile2.push(`USt-ID: ${e(imp.ustid)}`);
   if (imp.bhv)      zeile2.push(`BHV: ${e(imp.bhv)}`);
+
+  // Zeile 3: Bankdaten (nur wenn vorhanden)
+  const zeile3 = [];
   if (imp.iban) {
     let b = `IBAN: ${e(imp.iban)}`;
-    if (imp.bic)  b += ` \u00b7 BIC: ${e(imp.bic)}`;
+    if (imp.bic)  b += `${DOT}BIC: ${e(imp.bic)}`;
     if (imp.bank) b += ` (${e(imp.bank)})`;
-    zeile2.push(b);
+    zeile3.push(b);
   }
 
-  if (!zeile1.length && !zeile2.length) return "";
+  // Zeile 4: Impressum · Datenschutz (klickbar in Web-Vorschau und PDF)
+  const zeile4 = [];
+  if (imp.impressumUrl)   zeile4.push(`<a href="${e(imp.impressumUrl)}" target="_blank" rel="noopener noreferrer" class="imp-link">Impressum</a>`);
+  if (imp.datenschutzUrl) zeile4.push(`<a href="${e(imp.datenschutzUrl)}" target="_blank" rel="noopener noreferrer" class="imp-link">Datenschutz</a>`);
+
+  if (!zeile1.length) return "";
 
   let content = zeile1.join(DOT);
   if (zeile2.length) content += `<br>${zeile2.join(DOT)}`;
+  if (zeile3.length) content += `<br>${zeile3.join(DOT)}`;
+  if (zeile4.length) content += `<br>${zeile4.join(DOT)}`;
 
-  const links = [];
-  if (imp.impressumUrl)   links.push(`<a href="${e(imp.impressumUrl)}" target="_blank" rel="noopener noreferrer" class="imp-link">Impressum</a>`);
-  if (imp.datenschutzUrl) links.push(`<a href="${e(imp.datenschutzUrl)}" target="_blank" rel="noopener noreferrer" class="imp-link">Datenschutz</a>`);
-
-  let html = `<div class="pdf-impressum-footer">${content}`;
-  if (links.length) html += `<span class="no-print" style="margin-left:0.75em;font-size:0.85em"> \u00b7 ${links.join(" \u00b7 ")}</span>`;
-  html += `</div>`;
-  return html;
+  return `<div class="pdf-impressum-footer">${content}</div>`;
 }
 
 function logoHochladen(input) {
