@@ -60,7 +60,7 @@ fordify-app/
 │   ├── index.html          ← einzige HTML-Seite (SPA)
 │   ├── impressum.html      ← statische Impressumsseite
 │   ├── datenschutz.html    ← statische Datenschutzerklärung
-│   ├── sw.js               ← Service Worker (aktuell fordify-v29)
+│   ├── sw.js               ← Service Worker (aktuell fordify-v30)
 │   ├── manifest.json       ← PWA-Manifest
 │   ├── css/app.css         ← gesamtes Styling inkl. Print-CSS (@media print)
   ├── css/themes.css      ← Theme-Overrides (brand/dark/clean via [data-theme])

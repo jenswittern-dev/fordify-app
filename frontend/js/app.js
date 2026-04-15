@@ -1518,7 +1518,7 @@ function rendereVorschau() {
       ${hatTilgungsbestimmung ? "" : "Ohne Tilgungsbestimmung wird die Zahlung gem\u00e4\u00df \u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB zun\u00e4chst auf Kosten, dann auf Zinsen und schlie\u00dflich auf die \u00e4lteste Hauptforderung angerechnet.<br>"}
       ${insoDatum ? " Zinslauf endet gem.\u00a0\u00a7\u00a041\u00a0InsO am " + formatDate(insoDatum) + "." : ""}
       ${fall.positionen.some(p => verjährungsWarnungHtml(p)) ? "<br><span style=\"color:var(--color-warning)\">\u26a0 Hinweis: Mindestens eine Zinsforderung ist m\u00f6glicherweise gem.\u00a0\u00a7\u00a0197\u00a0BGB verj\u00e4hrt (3-Jahres-Frist). Bitte pr\u00fcfen Sie die Durchsetzbarkeit.</span>" : ""}
-      <br><span style="opacity:0.75">Erstellt mit fordify.de \u00b7 Alle Angaben ohne Gew\u00e4hr \u2013 keine Rechtsberatung.</span>
+      <br><span style="opacity:0.75">Erstellt mit fordify.de \u00b7 Alle Berechnungen ohne Gew\u00e4hr \u2013 keine Rechtsberatung.</span>
     </div>
 
     ${impressumHtml}
