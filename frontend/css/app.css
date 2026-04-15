@@ -528,6 +528,11 @@ body {
   font-weight: 700;
 }
 
+.amount--restforderung {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
 /* ---- 9. Zusammenfassungstabelle ---- */
 
 .summary-table {

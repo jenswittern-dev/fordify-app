@@ -1266,12 +1266,13 @@ function tplZahlung(pos) {
       <div class="form-check">
         <input class="form-check-input" type="checkbox" id="mf-tilgungsbestimmung"
           ${tilgungAktiv ? "checked" : ""}
-          onchange="document.getElementById('mf-tilgung-details')?.classList.toggle('d-none', !this.checked)">
+          onchange="document.getElementById('mf-tilgung-details')?.classList.toggle('d-none', !this.checked); document.getElementById('mf-no-tilgung-text')?.classList.toggle('d-none', this.checked)">
         <label class="form-check-label" for="mf-tilgungsbestimmung">
           Tilgungsbestimmung vorhanden
           <span class="text-muted small">(Schuldner hat Zahlung explizit einer Forderung zugeordnet)</span>
         </label>
       </div>
+      <div id="mf-no-tilgung-text" class="form-text${tilgungAktiv ? " d-none" : ""}">Ohne Tilgungsbestimmung wird die Zahlung gem\u00e4\u00df \u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB zun\u00e4chst auf Kosten, dann auf Zinsen und schlie\u00dflich auf die \u00e4lteste Hauptforderung angerechnet.</div>
       ${tilgungDetails}
     </div>
     <div class="mb-3">
@@ -1449,6 +1450,7 @@ function rendereVorschau() {
     </div>` : "";
 
   const { html: summaryHtml, hatTageszins } = baueSummaryTabelle(fall, BASISZINSSAETZE, aufschlagPP);
+  const hatTilgungsbestimmung = (fall.positionen || []).some(p => p.typ === "zahlung" && p.tilgungsbestimmung);
 
   try { el.innerHTML = `
     ${logoHtml}
@@ -1499,8 +1501,8 @@ function rendereVorschau() {
 
     <!-- Fu\u00dfnote -->
     <div class="vorschau-footer">
-      ${hatTageszins ? `(*)\u00a0` : ""}${aufschlagPP}\u00a0Prozentpunkte\u00a0p.\u00a0a. \u00fcber dem Basiszinssatz gem\u00e4\u00df \u00a7\u00a0247\u00a0BGB${aktBasisSatz ? ` (Basiszinssatz am ${formatDate(new Date())} = ${aktBasisSatz.toFixed(2).replace(".", ",")}\u00a0%\u00a0+\u00a0${aufschlagPP}\u00a0PP\u00a0=\u00a0${aktZinssatzStr})` : ""}.<br>
-      Verrechnung gem.\u00a0\u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB.
+      ${hatTageszins ? `(*)\u00a0` : ""}${aufschlagPP}\u00a0Prozentpunkte\u00a0p.\u00a0a. \u00fcber dem Basiszinssatz gem\u00e4\u00df \u00a7\u00a0247\u00a0BGB${aktBasisSatz ? ` (Basiszinssatz am ${formatDate(new Date())}: ${aktBasisSatz.toFixed(2).replace(".", ",")}\u00a0%)` : ""}.<br>
+      ${hatTilgungsbestimmung ? "" : "Ohne Tilgungsbestimmung wird die Zahlung gem\u00e4\u00df \u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB zun\u00e4chst auf Kosten, dann auf Zinsen und schlie\u00dflich auf die \u00e4lteste Hauptforderung angerechnet.<br>"}
       ${insoDatum ? " Zinslauf endet gem.\u00a0\u00a7\u00a041\u00a0InsO am " + formatDate(insoDatum) + "." : ""}
       ${fall.positionen.some(p => verjährungsWarnungHtml(p)) ? "<br><span style=\"color:var(--color-warning)\">\u26a0 Hinweis: Mindestens eine Zinsforderung ist m\u00f6glicherweise gem.\u00a0\u00a7\u00a0197\u00a0BGB verj\u00e4hrt (3-Jahres-Frist). Bitte pr\u00fcfen Sie die Durchsetzbarkeit.</span>" : ""}
       <br><span style="opacity:0.75">Erstellt mit fordify.de \u00b7 Alle Angaben ohne Gew\u00e4hr \u2013 keine Rechtsberatung.</span>
@@ -1788,16 +1790,12 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     const badge = alloc.hasTilgung
       ? `\u00a0<span class="badge-tilgung">Tilgungsbestimmung</span>`
       : "";
-    // restAfter: Restbetrag dieser Position nach der Teilzahlung
-    const restAfterCell = (alloc.restAfter && alloc.restAfter.gt(0))
-      ? amtCell(alloc.restAfter)
-      : `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
     return `<tr class="summary-row--pay-alloc">
       <td class="summary-datum"></td>
       <td class="pay-alloc-label">${base}${badge}</td>
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
       ${amtCell(alloc.amount.negated())}
-      ${restAfterCell}
+      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
     </tr>`;
   }
   // Neue Zinsen: Datum links als Periode VON – BIS
@@ -1820,10 +1818,11 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   );
 
   // Hilfsfunktion: Forderungszeile rendern
-  // Hat die Position PayAllocs, bleibt Restforderung leer (steht in der letzten Sub-Row).
+  // Hat die Position PayAllocs, wird die finale Restforderung fett/schwarz in der Hauptzeile angezeigt.
   function claimRow(datumSpalte, bezeichnung, betrag, rest, payAllocs) {
-    const restCell = (payAllocs && payAllocs.length > 0)
-      ? `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`
+    const hasAllocs = payAllocs && payAllocs.length > 0;
+    const restCell = hasAllocs
+      ? amtCell(rest, "amount--restforderung")
       : amtCell(rest);
     return `<tr>
       ${datumSpalte}
