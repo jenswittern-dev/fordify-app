@@ -597,6 +597,11 @@ body {
   padding-bottom: 0.25rem;
 }
 
+/* Hauptzeile mit Teilzahlungs-Sub-Rows: kein border-bottom, fließt visuell zusammen */
+.summary-row--has-allocs td {
+  border-bottom: none;
+}
+
 .summary-row--pay-alloc td {
   color: var(--color-zahlung);
   background: var(--color-zahlung-bg);
@@ -605,6 +610,11 @@ body {
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
   border-bottom: none;
+}
+
+/* Letzte Sub-Row einer Gruppe: Abgrenzungslinie zur nächsten Position */
+.summary-row--pay-alloc-last td {
+  border-bottom: 1px solid var(--color-border);
 }
 
 .summary-row--pay-alloc .pay-alloc-label {
@@ -1476,13 +1486,26 @@ body {
     padding-bottom: 0.1rem;
   }
 
+  /* Hauptzeile mit Sub-Rows: kein border-bottom im Print */
+  .summary-row--has-allocs td {
+    border-bottom: none !important;
+  }
+
   .summary-row--pay-alloc td {
-    background: transparent !important;
+    background: #f0f0f0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
     color: #333 !important;
     font-style: italic;
     font-size: 7pt;
     padding-top: 0.1rem;
     padding-bottom: 0.1rem;
+    border-bottom: none !important;
+  }
+
+  /* Letzte Sub-Row: Trennlinie zur nächsten Position */
+  .summary-row--pay-alloc-last td {
+    border-bottom: 0.5pt solid #bbb !important;
   }
 
   .summary-datum,

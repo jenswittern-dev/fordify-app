@@ -1809,7 +1809,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     return `<td class="summary-datum summary-datum--range">${vonFmt}\u00a0\u2013\u00a0${bisFmt}</td>`;
   }
   // Sub-Row: Teilzahlung unter der jeweiligen Forderungsposition
-  // isLast=true: letzte Sub-Row einer Position → zeigt aktuelle Restforderung (fett/schwarz)
+  // isLast=true: letzte Sub-Row einer Position → zeigt aktuelle Restforderung + Abgrenzungslinie
   function payAllocRow(alloc, isLast = false) {
     const base = alloc.beschreibung
       ? `\u2514\u00a0${formatDate(parseDate(alloc.datum))}\u00a0${alloc.beschreibung}`
@@ -1820,7 +1820,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     const restAfterCell = isLast && alloc.restAfter && alloc.restAfter.gt(0)
       ? amtCell(alloc.restAfter, "amount--restforderung")
       : `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`;
-    return `<tr class="summary-row--pay-alloc">
+    return `<tr class="summary-row--pay-alloc${isLast ? ' summary-row--pay-alloc-last' : ''}">
       <td class="summary-datum"></td>
       <td class="pay-alloc-label">${base}${badge}</td>
       <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
@@ -1850,10 +1850,11 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   // Hilfsfunktion: Forderungszeile rendern
   // Hat die Position PayAllocs, bleibt Restforderung in der Hauptzeile leer (steht in der letzten Sub-Row).
   function claimRow(datumSpalte, bezeichnung, betrag, rest, payAllocs) {
-    const restCell = (payAllocs && payAllocs.length > 0)
+    const hasAllocs = payAllocs && payAllocs.length > 0;
+    const restCell = hasAllocs
       ? `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`
       : amtCell(rest);
-    return `<tr>
+    return `<tr${hasAllocs ? ' class="summary-row--has-allocs"' : ''}>
       ${datumSpalte}
       <td>${bezeichnung}</td>
       ${amtCell(betrag)}
