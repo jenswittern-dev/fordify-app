@@ -181,11 +181,14 @@ Funktion: `berechneVerrechnung(positionen, stichtag, basiszinssaetze, aufschlagP
 ### 3.5 Zusammenfassung (`js/app.js: baueSummaryTabelle()`)
 
 - Aktive Funktion ist `baueSummaryTabelle()` in `app.js` (NICHT `erstelleZusammenfassung()` in `zusammenfassung.js` — deprecated)
-- Spalten: Datum / Bezeichnung / Forderung / (Teil-)Zahlung / Restforderung
+- Spalten: Datum / Bezeichnung / Forderung / **Teilzahlung** / **Anrechnung** / Restforderung
+  - „Teilzahlung": zeigt die eingegangene Zahlung selbst (positiv, in eigener Zeile am Ende)
+  - „Anrechnung" (§ 367 BGB): zeigt wie die Zahlung auf die Forderungspositionen verrechnet wurde (negativ, als Sub-Rows)
+  - Sub-Rows zeigen immer explizit die Restforderung nach Anrechnung – auch `0,00 €` wenn vollständig beglichen
 - Ordnet Zinsperioden per `gruppeId` der jeweiligen Hauptforderung zu
 - Fallback-Heuristik: Betragsvergleich für Legacy-Daten ohne `gruppeId`
 - Zinsperioden-Datumsspalte: zeigt „VON – BIS" als Range statt nur Startdatum (`datumRangeCell()`)
-- **Tilgungsbestimmung:** Wenn `zahlung.tilgungsbestimmung === true` und `zahlung.tilgungsGruppeId` gesetzt: Zahlung wird zuerst auf Zinsen + HF der Ziel-Gruppe verrechnet, dann Rest nach § 367 BGB (Zinsen → Kosten → HF). Abweichung von Standard ist in Sub-Rows mit Badge „Tilgungsbestimmung" sichtbar.
+- **Tilgungsbestimmung:** Wenn `zahlung.tilgungsbestimmung === true` und `zahlung.tilgungsHFId` gesetzt: Zahlung wird zuerst auf Zinsen + diese spezifische HF verrechnet, dann Rest nach § 367 BGB. Legacy-Feld `tilgungsGruppeId` wird als Fallback unterstützt. Abweichung ist in Sub-Rows mit Badge „Tilgungsbestimmung" sichtbar.
 
 ---
 
