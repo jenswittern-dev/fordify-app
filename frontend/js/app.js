@@ -1875,9 +1875,12 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     const badge = alloc.hasTilgung
       ? `\u00a0<span class="badge-tilgung">Tilgungsbestimmung</span>`
       : "";
-    // Restforderung nach Anrechnung immer explizit zeigen (0,00 € wenn vollständig beglichen)
+    // Restforderung nach Anrechnung: nur beim letzten Sub-Row anzeigen (Zwischenstände weglassen).
+    // Ist die Position vollständig beglichen, explizit 0,00 € zeigen statt leer.
     const restAfterAmt = alloc.restAfter || new Decimal(0);
-    const restAfterCell = `<td class="text-end"><span class="amount amount--restforderung">${formatEUR(restAfterAmt)}</span></td>`;
+    const restAfterCell = isLast
+      ? `<td class="text-end"><span class="amount amount--restforderung">${formatEUR(restAfterAmt)}</span></td>`
+      : `<td class="text-end"></td>`;
     return `<tr class="summary-row--pay-alloc${isLast ? ' summary-row--pay-alloc-last' : ''}">
       <td class="summary-datum"></td>
       <td class="pay-alloc-label">${base}${badge}</td>
