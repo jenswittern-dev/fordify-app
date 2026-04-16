@@ -1341,7 +1341,7 @@ function tplZahlung(pos) {
           Schuldner hat eine Tilgungsbestimmung getroffen
         </label>
       </div>
-      <div id="mf-no-tilgung-text" class="form-text mt-1${tilgungAktiv ? " d-none" : ""}">Ohne Tilgungsbestimmung wird die Zahlung gem\u00e4\u00df \u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB zun\u00e4chst auf Kosten, dann auf Zinsen und schlie\u00dflich auf die \u00e4lteste Hauptforderung angerechnet.</div>
+      <div id="mf-no-tilgung-text" class="form-text mt-1${tilgungAktiv ? " d-none" : ""}">Ohne Tilgungsbestimmung wird eine Zahlung gem\u00e4\u00df \u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB zun\u00e4chst auf Kosten, dann auf Zinsen und schlie\u00dflich auf die \u00e4lteste Hauptforderung angerechnet.</div>
       ${tilgungDetails}
     </div>
   `;
@@ -1567,7 +1567,7 @@ function rendereVorschau() {
     <!-- Fu\u00dfnote -->
     <div class="vorschau-footer">
       ${hatTageszins ? `(*)\u00a0` : ""}${aufschlagPP}\u00a0Prozentpunkte\u00a0p.\u00a0a. \u00fcber dem Basiszinssatz gem\u00e4\u00df \u00a7\u00a0247\u00a0BGB${aktBasisSatz ? ` (Basiszinssatz am ${formatDate(new Date())}: ${aktBasisSatz.toFixed(2).replace(".", ",")}\u00a0%)` : ""}.<br>
-      ${hatTilgungsbestimmung ? "" : "Ohne Tilgungsbestimmung wird die Zahlung gem\u00e4\u00df \u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB zun\u00e4chst auf Kosten, dann auf Zinsen und schlie\u00dflich auf die \u00e4lteste Hauptforderung angerechnet.<br>"}
+      ${hatTilgungsbestimmung ? "" : "Ohne Tilgungsbestimmung wird eine Zahlung gem\u00e4\u00df \u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB zun\u00e4chst auf Kosten, dann auf Zinsen und schlie\u00dflich auf die \u00e4lteste Hauptforderung angerechnet.<br>"}
       ${insoDatum ? " Zinslauf endet gem.\u00a0\u00a7\u00a041\u00a0InsO am " + formatDate(insoDatum) + "." : ""}
       ${fall.positionen.some(p => verjährungsWarnungHtml(p)) ? "<br><span style=\"color:var(--color-warning)\">\u26a0 Hinweis: Mindestens eine Zinsforderung ist m\u00f6glicherweise gem.\u00a0\u00a7\u00a0197\u00a0BGB verj\u00e4hrt (3-Jahres-Frist). Bitte pr\u00fcfen Sie die Durchsetzbarkeit.</span>" : ""}
       <br><span style="opacity:0.75">Erstellt mit fordify.de \u00b7 Alle Berechnungen ohne Gew\u00e4hr \u2013 keine Rechtsberatung.</span>
@@ -1882,8 +1882,8 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     return `<tr class="summary-row--pay-alloc${isLast ? ' summary-row--pay-alloc-last' : ''}">
       <td class="summary-datum"></td>
       <td class="pay-alloc-label">${base}${badge}</td>
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      <td class="text-end"></td>
+      <td class="text-end"></td>
       ${amtCell(alloc.amount.negated())}
       ${restAfterCell}
     </tr>`;
@@ -1892,15 +1892,13 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   // Forderung − Anrechnung = Restforderung gilt dann auch arithmetisch.
   function zinsenNeuRow(e) {
     const hasAllocs = e.payAllocs && e.payAllocs.length > 0;
-    const restCell = hasAllocs
-      ? `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`
-      : amtCell(e.rest);
+    const restCell = hasAllocs ? `<td class="text-end"></td>` : amtCell(e.rest);
     return `<tr class="summary-row--zinsen-neu${hasAllocs ? " summary-row--has-allocs" : ""}">
       ${datumRangeCell(e.vonStr, e.bisDate)}
       <td>${e.bezeichnung}</td>
       ${amtCell(e.betrag)}
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      <td class="text-end"></td>
+      <td class="text-end"></td>
       ${restCell}
     </tr>`;
   }
@@ -1917,15 +1915,13 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   // Hat die Position PayAllocs, bleibt Restforderung in der Hauptzeile leer (steht in der letzten Sub-Row).
   function claimRow(datumSpalte, bezeichnung, betrag, rest, payAllocs) {
     const hasAllocs = payAllocs && payAllocs.length > 0;
-    const restCell = hasAllocs
-      ? `<td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>`
-      : amtCell(rest);
+    const restCell = hasAllocs ? `<td class="text-end"></td>` : amtCell(rest);
     return `<tr${hasAllocs ? ' class="summary-row--has-allocs"' : ''}>
       ${datumSpalte}
       <td>${bezeichnung}</td>
       ${amtCell(betrag)}
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      <td class="text-end"></td>
+      <td class="text-end"></td>
       ${restCell}
     </tr>`;
   }
@@ -1978,10 +1974,10 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     rowsHtml.push(`<tr class="summary-row--zahlung-explicit">
       ${datumCell(z.datum)}
       <td>${z.beschreibung || "Zahlung"}</td>
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      <td class="text-end"></td>
       ${amtCell(zBetrag)}
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-      <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+      <td class="text-end"></td>
+      <td class="text-end"></td>
     </tr>`);
   }
 
@@ -1990,16 +1986,16 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     <td>Offene Forderung</td>
     ${amtCell(totForderung, "amount--gesamt")}
     ${amtCell(totZahlung.negated(), "amount--gesamt")}
-    <td class="text-end" style="color:#fff">${dash}</td>
+    <td class="text-end"></td>
     ${amtCell(totRest, "amount--gesamt")}
   </tr>`;
 
   const tageszinsRow = tageszinsZeile ? `<tr class="summary-row--tageszins">
     <td></td>
     <td>${tageszinsZeile.bezeichnung}</td>
-    <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-    <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
-    <td class="text-end" style="color:var(--color-text-subtle)">${dash}</td>
+    <td class="text-end"></td>
+    <td class="text-end"></td>
+    <td class="text-end"></td>
     ${amtCell(tageszinsZeile.betrag)}
   </tr>` : "";
 

@@ -1,5 +1,5 @@
 // fordify Service Worker
-const CACHE = "fordify-v34";
+const CACHE = "fordify-v35";
 const ASSETS = [
   "/",
   "/index.html",
