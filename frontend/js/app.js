@@ -1274,7 +1274,7 @@ function tplZahlung(pos) {
         : `Hauptforderung\u00a0${i + 1}`;
       const betragStr = hf.betrag ? ` (${formatEUR(new Decimal(hf.betrag))})` : "";
       const sel = selectedZiel === `hf-id:${hf.id}` ? " selected" : "";
-      zielOptionen += `<option value="hf-id:${hf.id}"${sel}>${label}${betragStr} \u2013 inkl. Zinsen</option>`;
+      zielOptionen += `<option value="hf-id:${hf.id}"${sel}>${label}${betragStr}</option>`;
     });
     if (useGroup) zielOptionen += `</optgroup>`;
   }
@@ -1302,11 +1302,11 @@ function tplZahlung(pos) {
           ? `<select class="form-select form-select-sm" id="mf-tilgung-zielId">${zielOptionen}</select>`
           : hfsAlle.length === 1
             ? `<input type="hidden" id="mf-tilgung-zielId" value="hf-id:${hfsAlle[0].id}">
-               <div class="form-text">Die Zahlung wird auf die Hauptforderung (inkl. zugeh\u00f6riger Zinsen) angerechnet.</div>`
+               <div class="form-text">Die Zahlung wird direkt auf den Hauptbetrag angerechnet (Zinsen bleiben als separate Forderung bestehen).</div>`
             : `<input type="hidden" id="mf-tilgung-zielId" value="k:${kostenPos[0].id}">
                <div class="form-text">Die Zahlung wird auf die Kostenposition angerechnet.</div>`
         }
-        ${hatMehrereZiele ? `<div class="form-text">Hauptforderungen werden inkl. zugeh\u00f6riger Zinsen verrechnet. Der verbleibende Rest nach \u00a7\u00a7\u00a0366/367\u00a0BGB.</div>` : ""}
+        ${hatMehrereZiele ? `<div class="form-text">Die Zahlung wird direkt auf den gew\u00e4hlten Hauptbetrag angerechnet (Zinsen bleiben separat). Ein verbleibender Rest wird gem.\u00a0\u00a7\u00a7\u00a0366/367\u00a0BGB verrechnet.</div>` : ""}
       </div>
       <div class="mb-2">
         <label class="form-label mb-1">Zugeordneter Betrag <span class="text-muted fw-normal">(optional)</span></label>
@@ -1762,19 +1762,14 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
       restZahlung = tilgungsBudget;
 
       if (zahlung.tilgungsHFId) {
-        // Tilgungsbestimmung auf spezifische HF (per id)
+        // Tilgungsbestimmung auf spezifische HF (§ 366 BGB): direkt auf Hauptbetrag,
+        // keine vorrangige Zinsenverrechnung (Zinsen bleiben als separate Forderung bestehen).
         const zielEntry = hfEntries.find(e => e.hfId === zahlung.tilgungsHFId);
-        if (zielEntry) {
-          verrechneAufEntry(zinsenGeordnet.filter(e => e.hfId === zahlung.tilgungsHFId), zahlLabel);
-          verrechneAufEntry([zielEntry], zahlLabel);
-        }
+        if (zielEntry) verrechneAufEntry([zielEntry], zahlLabel);
       } else if (zahlung.tilgungsGruppeId) {
-        // Legacy: Tilgungsbestimmung per gruppeId (ältere Datensätze)
+        // Legacy: Tilgungsbestimmung per gruppeId (ältere Datensätze), ebenfalls direkt auf HF.
         const zielHF = hfs.find(h => h.gruppeId === zahlung.tilgungsGruppeId);
-        if (zielHF) {
-          verrechneAufEntry(zinsenGeordnet.filter(e => e.hfId === zielHF.id), zahlLabel);
-          verrechneAufEntry(hfEntries.filter(e => e.hfId === zielHF.id), zahlLabel);
-        }
+        if (zielHF) verrechneAufEntry(hfEntries.filter(e => e.hfId === zielHF.id), zahlLabel);
       } else if (zahlung.tilgungsKostenId) {
         // Tilgungsbestimmung auf spezifische Kostenposition
         const zielKosten = kostenEntries.find(e => e.id === zahlung.tilgungsKostenId);
