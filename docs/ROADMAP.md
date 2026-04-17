@@ -100,6 +100,10 @@
 | 4.10 | Tilgungsbestimmung: Fix auf id-basierte Zuordnung (tilgungsHFId statt tilgungsGruppeId) | ✅ | 2026-04-16 |
 | 4.11 | Zusammenfassungstabelle: neue Spalte „Teilzahlung" + Umbenennung „Anrechnung" (§ 367 BGB) | ✅ | 2026-04-16 |
 | 4.12 | payAllocRow zeigt Restforderung nach Anrechnung immer explizit (auch 0,00 €) | ✅ | 2026-04-16 |
+| 4.13 | Tilgungsbestimmung: Zinsen als Ziel wählbar (Zinsen HF n + titulierte Zinsforderungen) | ✅ | 2026-04-17 |
+| 4.14 | Zahlungszeile in Chronologie erhält Badge „Tilgungsbestimmung" wenn gesetzt | ✅ | 2026-04-17 |
+| 4.15 | Bezeichnung Zahlung: maxlength=80 | ✅ | 2026-04-17 |
+| 4.16 | Gegenderung: Schuldner*in / Gläubiger*in in UI und PDF | ✅ | 2026-04-17 |
 
 > Quelle: Anwaltsgespräch (transcript.md, feedback-4, feedback-6) – Zinsperioden-Enddatum, Tilgungsbestimmung, Spaltenstruktur
 

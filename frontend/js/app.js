@@ -924,13 +924,15 @@ function modalDatenLesen() {
         : "";
       const tilgungsHFId = zielRaw.startsWith("hf-id:") ? parseInt(zielRaw.slice(6)) : null;
       const tilgungsKostenId = zielRaw.startsWith("k:") ? zielRaw.slice(2) : null;
+      const tilgungsZinsHFId = zielRaw.startsWith("z-hf:") ? parseInt(zielRaw.slice(5)) : null;
+      const tilgungsZtId = zielRaw.startsWith("zt:") ? parseInt(zielRaw.slice(3)) : null;
       const tilgungsBetragRaw = tilgungsbestimmung
         ? (document.getElementById("mf-tilgung-betrag")?.value?.trim() || "")
         : "";
       const tilgungsBetrag = tilgungsBetragRaw && parseFloat(tilgungsBetragRaw) > 0
         ? tilgungsBetragRaw
         : null;
-      const hatZiel = tilgungsHFId || tilgungsKostenId;
+      const hatZiel = tilgungsHFId || tilgungsKostenId || tilgungsZinsHFId || tilgungsZtId;
       return {
         ...basis,
         betrag: v("mf-betrag"),
@@ -938,6 +940,8 @@ function modalDatenLesen() {
           tilgungsbestimmung: true,
           ...(tilgungsHFId ? { tilgungsHFId } : {}),
           ...(tilgungsKostenId ? { tilgungsKostenId } : {}),
+          ...(tilgungsZinsHFId ? { tilgungsZinsHFId } : {}),
+          ...(tilgungsZtId ? { tilgungsZtId } : {}),
           ...(tilgungsBetrag ? { tilgungsBetrag } : {})
         } : tilgungsbestimmung ? { tilgungsbestimmung: true } : {}),
         ...(verrAnw ? { verrechnungsanweisung: verrAnw } : {})
@@ -1247,8 +1251,13 @@ function tplZahlung(pos) {
   const kostenTypen = ["anwaltsverguetung","gv_kosten","gerichtskosten","zahlungsverbot",
     "auskunftskosten","mahnkosten","inkassopauschale","sonstige_kosten"];
   const kostenPos = state.fall.positionen.filter(p => kostenTypen.includes(p.typ));
-  const hatZiele = hfsAlle.length > 0 || kostenPos.length > 0;
-  const hatMehrereZiele = hfsAlle.length + kostenPos.length > 1;
+  // Zinsen-Ziele: HFs mit Zinsperioden + titulierte Zinsforderungen
+  const zpPos = state.fall.positionen.filter(p => p.typ === "zinsperiode");
+  const ztPos = state.fall.positionen.filter(p => p.typ === "zinsforderung_titel");
+  const hfsWithZinsen = hfsAlle.filter(hf => zpPos.some(z => z.gruppeId === hf.gruppeId));
+  const zinsenZielCount = hfsWithZinsen.length + ztPos.length;
+  const hatZiele = hfsAlle.length > 0 || kostenPos.length > 0 || zinsenZielCount > 0;
+  const hatMehrereZiele = hfsAlle.length + kostenPos.length + zinsenZielCount > 1;
   const tilgungAktiv = pos?.tilgungsbestimmung || false;
 
   // Aktuell ausgewähltes Ziel (beim Bearbeiten)
@@ -1261,13 +1270,15 @@ function tplZahlung(pos) {
       if (matchHF) selectedZiel = `hf-id:${matchHF.id}`;
     }
     else if (pos?.tilgungsKostenId) selectedZiel = `k:${pos.tilgungsKostenId}`;
+    else if (pos?.tilgungsZinsHFId) selectedZiel = `z-hf:${pos.tilgungsZinsHFId}`;
+    else if (pos?.tilgungsZtId) selectedZiel = `zt:${pos.tilgungsZtId}`;
   }
 
   // Optionen aufbauen
   let zielOptionen = "";
+  const hatGruppen = [hfsAlle.length > 0, kostenPos.length > 0, zinsenZielCount > 0].filter(Boolean).length > 1;
   if (hfsAlle.length > 0) {
-    const useGroup = kostenPos.length > 0;
-    if (useGroup) zielOptionen += `<optgroup label="Hauptforderung(en)">`;
+    if (hatGruppen) zielOptionen += `<optgroup label="Hauptforderung(en)">`;
     hfsAlle.forEach((hf, i) => {
       const label = hf.beschreibung
         ? `HF\u00a0${i + 1}: ${hf.beschreibung}`
@@ -1276,17 +1287,31 @@ function tplZahlung(pos) {
       const sel = selectedZiel === `hf-id:${hf.id}` ? " selected" : "";
       zielOptionen += `<option value="hf-id:${hf.id}"${sel}>${label}${betragStr}</option>`;
     });
-    if (useGroup) zielOptionen += `</optgroup>`;
+    if (hatGruppen) zielOptionen += `</optgroup>`;
   }
   if (kostenPos.length > 0) {
-    const useGroup = hfsAlle.length > 0;
-    if (useGroup) zielOptionen += `<optgroup label="Kosten">`;
+    if (hatGruppen) zielOptionen += `<optgroup label="Kosten">`;
     kostenPos.forEach(k => {
       const label = k.beschreibung || AKTIONSTYPEN[k.typ] || k.typ;
       const sel = selectedZiel === `k:${k.id}` ? " selected" : "";
       zielOptionen += `<option value="k:${k.id}"${sel}>${label}</option>`;
     });
-    if (useGroup) zielOptionen += `</optgroup>`;
+    if (hatGruppen) zielOptionen += `</optgroup>`;
+  }
+  if (zinsenZielCount > 0) {
+    if (hatGruppen) zielOptionen += `<optgroup label="Zinsen">`;
+    hfsWithZinsen.forEach(hf => {
+      const hfIdx = hfsAlle.indexOf(hf);
+      const label = hfsAlle.length > 1 ? `Zinsen HF\u00a0${hfIdx + 1}` : "Zinsen";
+      const sel = selectedZiel === `z-hf:${hf.id}` ? " selected" : "";
+      zielOptionen += `<option value="z-hf:${hf.id}"${sel}>${label}</option>`;
+    });
+    ztPos.forEach(zt => {
+      const label = zt.beschreibung || "Titulierte Zinsen";
+      const sel = selectedZiel === `zt:${zt.id}` ? " selected" : "";
+      zielOptionen += `<option value="zt:${zt.id}"${sel}>${label}</option>`;
+    });
+    if (hatGruppen) zielOptionen += `</optgroup>`;
   }
 
   // Automatisch erstes Ziel vorauswählen (nur bei neuer Zahlung)
@@ -1314,7 +1339,7 @@ function tplZahlung(pos) {
           step="0.01" min="0"
           placeholder="Leer = bis zur H\u00f6he der Restforderung"
           value="${tilgungAktiv && pos?.tilgungsBetrag ? pos.tilgungsBetrag : ""}">
-        <div class="form-text">Nur ausf\u00fcllen, wenn der Schuldner explizit nur einen Teilbetrag zugeordnet hat.</div>
+        <div class="form-text">Nur ausf\u00fcllen, wenn die Schuldner*in explizit nur einen Teilbetrag zugeordnet hat.</div>
       </div>
       <div>
         <label class="form-label mb-1">Wortlaut / Verwendungszweck <span class="text-muted fw-normal">(optional)</span></label>
@@ -1328,7 +1353,7 @@ function tplZahlung(pos) {
     ${datumFeld("mf-datum", pos?.datum, "Zahlungsdatum")}
     <div class="mb-3">
       <label class="form-label">Bezeichnung <span class="text-muted fw-normal">(erscheint in der Tabelle)</span></label>
-      <input type="text" class="form-control" id="mf-beschreibung" value="${pos?.beschreibung || ""}" placeholder="z.B. \u00dcberweisung vom \u2026">
+      <input type="text" class="form-control" id="mf-beschreibung" maxlength="80" value="${pos?.beschreibung || ""}" placeholder="z.B. \u00dcberweisung vom \u2026">
     </div>
     ${betragFeld("mf-betrag", pos?.betrag, "Zahlbetrag (\u20ac)")}
     <div class="mb-3 p-3 rounded" style="border:1px solid var(--color-border);background:var(--color-surface)">
@@ -1338,7 +1363,7 @@ function tplZahlung(pos) {
           ${tilgungAktiv ? "checked" : ""}
           onchange="document.getElementById('mf-tilgung-details')?.classList.toggle('d-none', !this.checked); document.getElementById('mf-no-tilgung-text')?.classList.toggle('d-none', this.checked)">
         <label class="form-check-label" for="mf-tilgungsbestimmung">
-          Schuldner hat eine Tilgungsbestimmung getroffen
+          Schuldner*in hat eine Tilgungsbestimmung getroffen
         </label>
       </div>
       <div id="mf-no-tilgung-text" class="form-text mt-1${tilgungAktiv ? " d-none" : ""}">Ohne Tilgungsbestimmung wird eine Zahlung gem\u00e4\u00df \u00a7\u00a7\u00a0366\u00a0Abs.\u00a02, 367\u00a0Abs.\u00a01\u00a0BGB zun\u00e4chst auf Kosten, dann auf Zinsen und schlie\u00dflich auf die \u00e4lteste Hauptforderung angerechnet.</div>
@@ -1461,7 +1486,7 @@ function tplInkassopauschale(pos) {
     ${betragFeld("mf-betrag", pos?.betrag || STANDARDKOSTEN.inkassopauschale, "Pauschalbetrag (€)")}
     <div class="alert alert-info py-2 px-3 small mb-3" style="font-size:var(--text-xs)">
       Die Inkassopauschale von 40\u00a0€ steht nur bei <strong>unternehmerischen Forderungen</strong>
-      zu (§\u00a0288\u00a0Abs.\u00a05\u00a0BGB, B2B). Nicht anwendbar bei Verbrauchern als Schuldner.
+      zu (§\u00a0288\u00a0Abs.\u00a05\u00a0BGB, B2B). Nicht anwendbar bei Verbrauchern als Schuldner*in.
     </div>
     ${tituliertFeld(pos?.tituliert)}
   `;
@@ -1542,12 +1567,12 @@ function rendereVorschau() {
       <div class="pdf-section__label">Parteien</div>
       <div class="pdf-parties">
         <div class="pdf-party">
-          <span class="pdf-party__role">Gl\u00e4ubiger</span>
+          <span class="pdf-party__role">Gl\u00e4ubiger*in</span>
           <span class="pdf-party__name">${fall.mandant || "\u2014"}</span>
         </div>
         <div class="pdf-party__sep">./.</div>
         <div class="pdf-party">
-          <span class="pdf-party__role">Schuldner</span>
+          <span class="pdf-party__role">Schuldner*in</span>
           <span class="pdf-party__name">${fall.gegner || "\u2014"}</span>
         </div>
         ${fall.aktenzeichen ? `<div class="pdf-party__az">GZ.: ${fall.aktenzeichen}</div>` : ""}
@@ -1754,7 +1779,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
 
     const zahlLabel = zahlung.beschreibung || "";
 
-    if (zahlung.tilgungsbestimmung && (zahlung.tilgungsHFId || zahlung.tilgungsGruppeId || zahlung.tilgungsKostenId)) {
+    if (zahlung.tilgungsbestimmung && (zahlung.tilgungsHFId || zahlung.tilgungsGruppeId || zahlung.tilgungsKostenId || zahlung.tilgungsZinsHFId || zahlung.tilgungsZtId)) {
       const tilgungsBudget = zahlung.tilgungsBetrag
         ? Decimal.min(new Decimal(zahlung.tilgungsBetrag), restZahlung)
         : restZahlung;
@@ -1774,6 +1799,13 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
         // Tilgungsbestimmung auf spezifische Kostenposition
         const zielKosten = kostenEntries.find(e => e.id === zahlung.tilgungsKostenId);
         if (zielKosten) verrechneAufEntry([zielKosten], zahlLabel);
+      } else if (zahlung.tilgungsZinsHFId) {
+        // Tilgungsbestimmung auf Zinsen einer spezifischen HF
+        verrechneAufEntry(zinsenGeordnet.filter(e => e.hfId === zahlung.tilgungsZinsHFId), zahlLabel);
+      } else if (zahlung.tilgungsZtId) {
+        // Tilgungsbestimmung auf titulierte Zinsforderung
+        const zielZt = zinsenEntries.find(e => e.id === `zt_${zahlung.tilgungsZtId}`);
+        if (zielZt) verrechneAufEntry([zielZt], zahlLabel);
       }
 
       // Restbetrag wiederherstellen, dann Rest nach § 367
@@ -1968,9 +2000,12 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   for (let zahlIdx = 0; zahlIdx < zahlungen.length; zahlIdx++) {
     const z = zahlungen[zahlIdx];
     const zBetrag = new Decimal(z.betrag || 0);
+    const tilgBadge = z.tilgungsbestimmung
+      ? ` <span class="badge-tilgung">Tilgungsbestimmung</span>`
+      : "";
     rowsHtml.push(`<tr class="summary-row--zahlung-explicit">
       ${datumCell(z.datum)}
-      <td>${z.beschreibung || "Zahlung"}</td>
+      <td>${z.beschreibung || "Zahlung"}${tilgBadge}</td>
       <td class="text-end"></td>
       ${amtCell(zBetrag)}
       <td class="text-end"></td>
