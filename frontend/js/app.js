@@ -2193,7 +2193,7 @@ function generiereImpressumFooterHtml(imp) {
   // Zeile 1: Firmenname · Vertreten durch · Adresse · E-Mail · Website
   const zeile1 = [];
   zeile1.push(e(imp.name));
-  if (imp.vertreten) zeile1.push(`Vertreten durch: ${e(imp.vertreten)}`);
+  if (imp.vertreten) zeile1.push(`vertreten durch: ${e(imp.vertreten)}`);
   if (imp.strasse) {
     let adr = e(imp.strasse);
     if (imp.plz || imp.ort) adr += `, ${[e(imp.plz), e(imp.ort)].filter(Boolean).join("\u00a0")}`;
