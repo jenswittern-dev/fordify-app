@@ -1351,10 +1351,6 @@ function tplZahlung(pos) {
 
   return `
     ${datumFeld("mf-datum", pos?.datum, "Zahlungsdatum")}
-    <div class="mb-3">
-      <label class="form-label">Bezeichnung <span class="text-muted fw-normal">(erscheint in der Tabelle)</span></label>
-      <input type="text" class="form-control" id="mf-beschreibung" maxlength="80" value="${pos?.beschreibung || ""}" placeholder="z.B. \u00dcberweisung vom \u2026">
-    </div>
     ${betragFeld("mf-betrag", pos?.betrag, "Zahlbetrag (\u20ac)")}
     <div class="mb-3 p-3 rounded" style="border:1px solid var(--color-border);background:var(--color-surface)">
       <div class="fw-semibold mb-2" style="font-size:var(--text-sm)">Tilgungsbestimmung</div>
