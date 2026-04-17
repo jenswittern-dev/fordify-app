@@ -496,7 +496,6 @@ body {
 /* ---- 8. Geldbeträge ---- */
 
 .amount {
-  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   font-size: var(--text-sm);
@@ -571,9 +570,7 @@ body {
 }
 
 .summary-row--zahlung td {
-  color: var(--color-zahlung);
-  background: var(--color-zahlung-bg);
-  font-style: italic;
+  color: var(--color-text);
   font-size: var(--text-sm);
   border-top: 1px solid var(--color-border-strong);
 }
@@ -583,8 +580,7 @@ body {
 }
 
 .summary-row--zahlung-explicit td {
-  color: var(--color-zahlung);
-  background: var(--color-zahlung-bg);
+  color: var(--color-text);
   border-top: 1px solid var(--color-border);
 }
 
@@ -603,9 +599,7 @@ body {
 }
 
 .summary-row--pay-alloc td {
-  color: var(--color-zahlung);
-  background: var(--color-zahlung-bg);
-  font-style: italic;
+  color: var(--color-text-muted);
   font-size: var(--text-xs);
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
@@ -656,9 +650,7 @@ body {
 }
 
 .summary-row--tageszins td {
-  color: var(--color-zinsen);
-  font-style: italic;
-  background: var(--color-zinsen-bg);
+  color: var(--color-text-muted);
   font-size: var(--text-xs);
 }
 
@@ -1360,7 +1352,6 @@ body {
   }
 
   .amount {
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 9pt;
   }
 
@@ -1452,8 +1443,7 @@ body {
 
   .summary-row--tageszins td {
     background: transparent !important;
-    color: #333 !important;
-    font-style: italic;
+    color: #555 !important;
   }
 
   .summary-row--zahlung-explicit td {
@@ -1469,8 +1459,7 @@ body {
 
   .summary-row--zahlung td {
     background: transparent !important;
-    color: #333 !important;
-    font-style: italic;
+    color: #1a1d23 !important;
     border-top: 0.5pt solid #888 !important;
   }
 
@@ -1492,11 +1481,8 @@ body {
   }
 
   .summary-row--pay-alloc td {
-    background: #f0f0f0 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-    color: #333 !important;
-    font-style: italic;
+    background: transparent !important;
+    color: #555 !important;
     font-size: 7pt;
     padding-top: 0.1rem;
     padding-bottom: 0.1rem;
