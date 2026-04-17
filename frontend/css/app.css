@@ -599,10 +599,14 @@ body {
 
 .summary-row--pay-alloc td {
   color: var(--color-text-muted);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
   border-bottom: none;
+}
+
+.summary-row--pay-alloc .amount--negative {
+  color: var(--color-text-muted);
 }
 
 /* Letzte Sub-Row einer Gruppe: Abgrenzungslinie zur nächsten Position */
@@ -1482,10 +1486,14 @@ body {
   .summary-row--pay-alloc td {
     background: transparent !important;
     color: #555 !important;
-    font-size: 7pt;
+    font-size: 9.5pt;
     padding-top: 0.1rem;
     padding-bottom: 0.1rem;
     border-bottom: none !important;
+  }
+
+  .summary-row--pay-alloc .amount--negative {
+    color: #555 !important;
   }
 
   /* Letzte Sub-Row: Trennlinie zur nächsten Position */

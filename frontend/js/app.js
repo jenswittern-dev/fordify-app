@@ -654,7 +654,7 @@ function renderePositionsliste() {
     const typLabel = AKTIONSTYPEN[pos.typ] || pos.typ;
     const istZahlung = pos.typ === "zahlung";
     const betragStr = pos.typ === "zinsperiode"
-      ? '<span style="font-style:italic;color:var(--color-text-muted);font-size:var(--text-sm)">lfd.</span>'
+      ? '<span style="color:var(--color-text-muted);font-size:var(--text-sm)">lfd.</span>'
       : pos.betrag ? formatEUR(pos.betrag) : "—";
     const datumStr = pos.datum ? formatDate(parseDate(pos.datum)) : "—";
     const beschrStr = positionKurzbeschreibung(pos);
@@ -669,7 +669,7 @@ function renderePositionsliste() {
       <td style="color:var(--color-text-muted);font-size:var(--text-sm)">${datumStr}</td>
       <td style="font-size:var(--text-sm)">${beschrStr}${warnHtml}</td>
       <td class="text-end">
-        <span class="amount${istZahlung ? " amount--negative" : ""}">${istZahlung ? "− " : ""}${betragStr}</span>
+        <span class="amount">${betragStr}</span>
       </td>
       <td class="text-end" style="white-space:nowrap">
         <button class="icon-btn" onclick="positionNachOben(${pos.id})" ${idx === 0 ? "disabled" : ""} title="Nach oben" aria-label="Nach oben">${ICON.up}</button>
@@ -1544,11 +1544,9 @@ function rendereVorschau() {
     <div class="pdf-header">
       <div>
         <div class="pdf-header__title">Forderungsaufstellung</div>
+        <div class="pdf-header__subtitle">vom ${formatDate(new Date())}</div>
       </div>
-      <div class="pdf-header__meta">
-        Aufgestellt am: ${formatDate(new Date())}
-        ${insoDatum ? `<br>InsO-Er\u00f6ffnung: ${formatDate(insoDatum)}` : ""}
-      </div>
+      ${insoDatum ? `<div class="pdf-header__meta">InsO-Er\u00f6ffnung: ${formatDate(insoDatum)}</div>` : ""}
     </div>
 
     <!-- Screen-Kopf (kein Print) -->
