@@ -1544,7 +1544,6 @@ function rendereVorschau() {
     <div class="pdf-header">
       <div>
         <div class="pdf-header__title">Forderungsaufstellung</div>
-        <div class="pdf-header__subtitle">gem\u00e4\u00df \u00a7\u00a0367\u00a0BGB</div>
       </div>
       <div class="pdf-header__meta">
         Aufgestellt am: ${formatDate(new Date())}
