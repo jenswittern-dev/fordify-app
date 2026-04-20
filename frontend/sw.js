@@ -1,5 +1,8 @@
 // fordify Service Worker
-const CACHE = "fordify-v45";
+const IS_STAGING_SW = self.location.hostname.includes('staging') ||
+                      self.location.hostname === 'localhost' ||
+                      self.location.hostname === '127.0.0.1';
+const CACHE = IS_STAGING_SW ? "fordify-staging-v1" : "fordify-v46";
 const ASSETS = [
   "/",
   "/index.html",
