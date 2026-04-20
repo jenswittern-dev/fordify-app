@@ -1,375 +1,518 @@
 # Machbarkeitsstudie – Review & Konkretisierung
 
 **Datum:** 2026-04-20  
-**Status:** Entwurf – offene Entscheidungen markiert mit ⚠️  
+**Letzte Aktualisierung:** 2026-04-20 (v2 – Entscheidungen eingearbeitet)  
+**Status:** Arbeitsdokument – offene Punkte mit ⚠️ markiert  
 **Basis:** docs/machbarkeitsstudie.md (Version 2.0, April 2026)
 
 ---
 
 ## Gesamtbewertung
 
-Die Machbarkeitsstudie ist fundiert. Stack-Entscheidungen (Supabase, Paddle, Magic Link), Rechtsanalyse, Datenbankschema und die Drei-Stufen-Strategie (Werkzeug → Produkt → Plattform) sind tragfähig und können direkt in die Umsetzung überführt werden.
+Die Machbarkeitsstudie ist fundiert. Stack-Entscheidungen (Supabase, Paddle, Magic Link), Rechtsanalyse, Datenbankschema und die Drei-Stufen-Strategie (Werkzeug → Produkt → Plattform) sind tragfähig.
 
-**Offene Punkte dieses Reviews:**
-1. Freemium-Abgrenzung (PDF-Export: kostenlos oder Gate?)
-2. Zahlungsabwicklung – Paddle konkret
-3. Transaktionale E-Mails (fehlt in der Studie)
-4. N8N-Automatisierungen
-5. Analytics (GoatCounter / Plausible)
-6. Pricing-Seite
-7. Vollständige Account- und Setup-Liste
+**Änderungen gegenüber der ursprünglichen Studie:**
+1. Freemium-Modell: PDF-Export bleibt kostenlos (inkl. Logo) – entschieden
+2. Gesellschaftsform: GbR ausgeschlossen, UG (haftungsbeschränkt) empfohlen – ⚠️ zu entscheiden
+3. Infrastruktur: All-Inkl (Webhosting) + bestehendes Hostinger-N8N nutzen – kein Zusatzaufwand
+4. Kostenphilosophie: bis Proof of Concept möglichst 0 € laufende Zusatzkosten
 
 ---
 
-## 1. ⚠️ Freemium-Abgrenzung – Entscheidung offen
+## 1. Freemium-Modell – ENTSCHIEDEN
 
-### Ausgangslage (Machbarkeitsstudie)
+### Entscheidung
 
-Die Studie empfahl den **Export als härtesten Gate:**  
-> "Nutzer hat 20 Minuten gearbeitet, sieht das perfekte Ergebnis – dann blockiert ein Gate."  
-→ Free = kein Speichern + kein Export (PDF, Excel, JSON)
+> **PDF-Export ist kostenlos – inklusive Kanzlei-Logo und vollem Funktionsumfang.**  
+> Der Gate ist ausschließlich die **Speicherung** (Cloud-Konto) und die **Wiederholbarkeit** (Impressum, Kanzlei-Profil, Fälle dauerhaft verfügbar).
 
-### Neue Überlegung
+### Strategische Begründung
 
-Jens möchte den **PDF-Export kostenlos lassen.** Paid beginnt erst bei Speicherung, Adressdatenbank und der Members Area (Cloud-Konto).
+Das Ziel ist, dass potenzielle Kunden den vollen Funktionsumfang erleben – Qualität und Beeindruckung kommen vor Conversion-Optimierung. Der Schmerz entsteht nicht beim ersten Export, sondern beim zweiten Mal:
 
-### Auswirkungsanalyse
+- Der Fall ist weg (sessionStorage → Tab schließen → Datenverlust)
+- Das Impressum muss wieder eingetippt werden
+- Das Logo muss wieder hochgeladen werden
+- Die Kanzlei-Einstellungen sind nicht gespeichert
 
-| Aspekt | Export als Gate (Studie) | PDF kostenlos (neue Überlegung) |
-|---|---|---|
-| Conversion-Druck | Sehr stark – maximaler Schmerz im Moment des höchsten Nutzens | Geringer – Haupttrigger entfällt |
-| Marketing-Effekt | Neutral | Positiv – jedes PDF ist Fordify-Werbung |
-| Gelegenheitsnutzer | Upgraden (wenn sie exportieren wollen) | Bleiben dauerhaft Free ohne Upgrade-Druck |
-| Upgrade-Trigger | Export-Gate + Datenverlust | Nur Datenverlust (kein Cloud-Speicher) |
-| Markenimage | Kein Wasserzeichen → professionell | Kein Wasserzeichen → professionell |
+Das ist ein **weicherer, aber nachhaltigerer Upgrade-Druck** als ein Export-Gate. Es erzeugt keine Frustration im Moment der Nutzung – stattdessen wächst der Wunsch nach Komfort mit jeder Wiederholung.
 
-### Vorgeschlagenes Modell (wenn PDF kostenlos)
+**Zusatzeffekt:** Jedes exportierte PDF ist ein kostenloser Marketing-Kanal. Mandanten, Gegenseite, Gericht – alle sehen „erstellt mit fordify.de".
 
-**Kniff:** PDF-Export kostenlos, aber **ohne dauerhaften Kanzlei-Logo-Header** (kein Wasserzeichen – das wäre inakzeptabel – aber ein subtiler Professionalisierungs-Pull).
+### Feature-Matrix (final)
 
-| Feature | Free | Pro (29 €/M) | Kanzlei (79 €/M) |
+| Feature | Free (Session) | Pro (29 €/M) | Kanzlei (79 €/M) |
 |---|---|---|---|
 | Alle Berechnungen (Zinsen, RVG, GKG) | ✅ | ✅ | ✅ |
-| Forderungsaufstellung – Vorschau + PDF | ✅ ohne Logo | ✅ mit Logo | ✅ mit Logo |
-| Speicherung (Cloud, dauerhaft) | ❌ sessionStorage | ✅ | ✅ |
-| Kanzlei-Profil + Logo dauerhaft | ❌ | ✅ | ✅ |
-| Excel / CSV-Export | ❌ | ✅ | ✅ |
-| JSON-Import / -Export | ❌ | ✅ | ✅ |
-| Fallvorlagen | ❌ | ✅ | ✅ |
-| Schuldner-Adressdatenbank | ❌ | ❌ | ✅ |
-| Mehrere Nutzer (bis 5) | ❌ | ❌ | ✅ |
-| Marktplatz: Listing einstellen | ❌ | ✅ | ✅ |
+| Forderungsaufstellung (vollständig) | ✅ | ✅ | ✅ |
+| PDF-Export mit Logo | ✅ voll | ✅ voll | ✅ voll |
+| Drucken | ✅ | ✅ | ✅ |
+| **Speicherung (Cloud, dauerhaft)** | ❌ sessionStorage | ✅ | ✅ |
+| **Kanzlei-Profil + Logo dauerhaft** | ❌ neu eingeben | ✅ gespeichert | ✅ gespeichert |
+| **Impressum dauerhaft gespeichert** | ❌ neu eingeben | ✅ gespeichert | ✅ gespeichert |
+| **Excel / CSV-Export** | ❌ | ✅ | ✅ |
+| **JSON-Import / -Export** | ❌ | ✅ | ✅ |
+| **Fallvorlagen** | ❌ | ✅ | ✅ |
+| **Schuldner-Adressdatenbank** | ❌ | ❌ | ✅ |
+| **Mehrere Nutzer (bis 5)** | ❌ | ❌ | ✅ |
+| **Teamweit geteilte Vorlagen** | ❌ | ❌ | ✅ |
+| **Marktplatz: Listing einstellen** | ❌ | ✅ | ✅ |
 | Support | Community | E-Mail | Priority |
 
-### ⚠️ Offene Entscheidung
+### Free-Tier-Kommunikation in der App
 
-> **Frage:** PDF-Export kostenlos lassen – ja oder nein?  
-> Das ist die wichtigste Weichenstellung für den gesamten Implementierungsplan.
+Ein dezenter, dauerhafter Banner beim App-Start (kein Modal, keine Störung):
+
+> *„Testversion – Daten werden beim Schließen des Tabs gelöscht. [Kostenloses Konto erstellen] oder [14 Tage Pro testen]"*
+
+Wichtig: keine versteckte Friction, keine Überraschung. Der Nutzer weiß von Anfang an, was er hat.
 
 ---
 
-## 2. Zahlungsabwicklung – Paddle konkret
+## 2. ⚠️ Gesellschaftsform – Entscheidung offen
 
-### Bestätigung der Studienempfehlung
+### Ausgangslage
 
-Paddle bleibt die richtige Wahl bis ~50.000 € MRR:
-- Merchant of Record → alle USt-Pflichten bei Paddle
-- Kein eigenes Backend für Checkout nötig
-- B2B-Rechnungen mit Reverse Charge automatisch
-- SEPA-Lastschrift verfügbar
+- GbR ist ausgeschlossen (unbeschränkte persönliche Haftung beider Gesellschafter)
+- Ziel: beschränkte Haftung, minimale Gründungskosten, keine großen Anfangsinvestitionen
+- Zwei Gründer: Jens (Tech) + Andreas (Recht / Anwalt)
 
-### Konkrete Umsetzungsschritte
+### Überblick relevanter Rechtsformen
 
-**Account-Setup (1–2 Wochen Vorlaufzeit einplanen):**
-1. Paddle-Account anlegen (paddle.com) – als Unternehmen, nicht "individual"
-2. Unterlagen bereitstellen: Gewerbeanmeldung/GbR, Bankverbindung, USt-ID
-3. Vier Produkte anlegen:
-   - `fordify_pro_monthly` → 29 €/Monat
-   - `fordify_pro_yearly` → 249 €/Jahr
-   - `fordify_team_monthly` → 79 €/Monat
-   - `fordify_team_yearly` → 669 €/Jahr
-4. Paddle Sandbox für Entwicklung/Tests (eigene Test-Credentials)
-5. Webhook-Endpoint konfigurieren → Supabase Edge Function URL
+#### Option A: UG (haftungsbeschränkt) – Empfehlung
 
-### Webhook-Flow
+Die Unternehmergesellschaft ist die „Mini-GmbH" mit beschränkter Haftung.
+
+**Vorteile:**
+- Beschränkte Haftung (wie GmbH) – kein privates Risiko
+- Stammkapital: theoretisch ab 1 €, praktisch empfohlen 500–1.000 € (je 250–500 € pro Gründer)
+- Gründungskosten: ~500–1.200 € (Notargebühren ~300–500 €, Handelsregistereintragung ~150–300 €)
+- Schnelle Gründung: 2–4 Wochen bis Eintragung
+- Alle Business-Dienste (Paddle, Supabase, Resend) akzeptieren UG problemlos
+- Kann später in GmbH umgewandelt werden, wenn Rücklagen 25.000 € erreichen
+
+**Nachteile / Pflichten:**
+- **25%-Rücklagenpflicht:** 25 % des Jahresgewinns müssen zurückgelegt werden, bis 25.000 € Rücklage erreicht (für spätere GmbH-Umwandlung)
+- Buchführungspflicht (EÜR oder Bilanz je nach Größe)
+- Handelsregistereintragung → öffentlich einsehbar
+- Kein Gewerbeschein nötig (Handelsregister ersetzt ihn), aber Gewerbeanmeldung beim Ordnungsamt erforderlich
+- Körperschaftsteuer (15 %) + Gewerbesteuer + Solidaritätszuschlag auf Gewinne
+
+**Typische Gründungskosten UG:**
+| Position | Kosten |
+|---|---|
+| Notargebühren (Musterprotokoll möglich) | ~200–500 € |
+| Handelsregistereintragung (Amtsgericht) | ~150–300 € |
+| Stammkapital (Einlage) | 500–1.000 € (verbleibt im Unternehmen) |
+| Steuerberater Erstberatung (empfohlen) | ~200–400 € |
+| **Gesamt** | **~1.000–2.200 €** |
+
+#### Option B: GmbH
+
+**Nicht empfohlen für den Start.**
+- 25.000 € Stammkapital (mind. 12.500 € bei Gründung einzuzahlen)
+- Notarkosten ~1.000–2.000 €
+- Gesamtgründungskosten ~3.000–5.000 €
+- Zu hohe Einstiegshürde ohne Proof of Concept
+
+#### Option C: PartG mbB (Partnerschaftsgesellschaft mit beschränkter Berufshaftung)
+
+**Eingeschränkt geeignet.**
+- Speziell für freie Berufe (Rechtsanwälte qualifizieren sich)
+- Kein Stammkapital nötig, günstige Gründung (~200–400 €)
+- Beschränkte Haftung für berufliche Fehler (nicht für alle Verbindlichkeiten)
+- **Problem:** Nur Angehörige freier Berufe können Partner sein. Jens als Softwareentwickler qualifiziert sich möglicherweise nicht als freiberuflicher Partner – Klärung nötig
+- **Problem:** Erfordert Berufshaftpflichtversicherung (erhöhte laufende Kosten)
+- Würde das Geschäftsmodell auf „Rechtsdienstleistungen" eingrenzen – unpassend für ein Softwareprodukt
+
+#### Option D: Einzelunternehmen / Freiberufler
+
+**Nicht geeignet** für eine Zusammenarbeit zweier Gründer als Gesellschaft. Nur für Solobetrieb.
+
+### Empfehlung: UG (haftungsbeschränkt)
+
+**Begründung:**
+1. Geringste Gründungskosten bei echter Haftungsbeschränkung
+2. Flexibel für Softwareprodukt (keine Beschränkung auf freie Berufe)
+3. Alle benötigten Business-Services (Paddle, Supabase, Bankverbindung) funktionieren problemlos
+4. Paddle-Onboarding: UG wird als Unternehmen akzeptiert (Handelsregisternummer + USt-ID genügen)
+5. Upgrade zu GmbH möglich, sobald wirtschaftlich sinnvoll
+
+**Aufteilung:** 50/50 Gesellschafterstruktur (je 50 % Stammkapital) – einfachste Lösung für zwei gleichberechtigte Gründer.
+
+**Achtung:** Andreas als Rechtsanwalt (BRAO) darf Gesellschafter einer UG sein, die Software vertreibt – das ist kein Problem. Eine anwaltliche Tätigkeit über die UG wäre jedoch nur unter bestimmten Voraussetzungen möglich (ggf. separate Abrechnung als Freiberufler). Für Fordify als Softwareprodukt ist das irrelevant.
+
+### ⚠️ Offene Entscheidungen zur Gesellschaftsform
+
+- [ ] UG bestätigen als gewählte Rechtsform
+- [ ] Gesellschafteraufteilung klären (50/50 empfohlen)
+- [ ] Firmensitz festlegen (Adresse eines Gründers oder virtuelles Büro)
+- [ ] Steuerberater für Gründungsberatung beauftragen (1x ~200–400 €)
+- [ ] Notar beauftragen (Musterprotokoll für UG-Gründung mit zwei Gesellschaftern möglich)
+- [ ] Gewerbeanmeldung nach Eintragung ins Handelsregister
+- [ ] Geschäftskonto eröffnen (DKB Business, Commerzbank Business – kostenlos oder günstig)
+- [ ] USt-ID beim Finanzamt beantragen (für Paddle Pflicht)
+
+---
+
+## 3. Infrastruktur & Kosten – Kostenoptimiert
+
+### Prinzip: Bestehende Infrastruktur nutzen
+
+| Dienst | Zweck | Bestehend? | Zusatzkosten/M |
+|---|---|---|---|
+| **All-Inkl** | Webhosting fordify.de | ✅ läuft | 0 € |
+| **Hostinger VPS** | N8N bereits installiert | ✅ läuft | 0 € |
+| **N8N** | Automatisierungen | ✅ auf Hostinger | 0 € |
+| **Supabase** | DB + Auth (Free Tier) | ❌ neu anlegen | 0 € |
+| **Resend** | Transaktionale E-Mails (Free: 3k/M) | ❌ neu anlegen | 0 € |
+| **GoatCounter** | Analytics (self-hosted auf Hostinger) | ❌ installieren | 0 € |
+| **Paddle** | Payment | ❌ UG-Gründung zuerst | % vom Umsatz |
+
+**Laufende Zusatzkosten bis zum ersten Umsatz: 0 €/Monat**
+
+Paddle verursacht erst Kosten, wenn Umsatz fließt (~5 % + 0,50 $ je Transaktion). Supabase Free Tier reicht für 500 MB Daten und 50.000 monatliche Aktive Nutzer – mehr als ausreichend für den MVP.
+
+### Wann werden Upgrades nötig?
+
+| Trigger | Upgrade | Kosten |
+|---|---|---|
+| >500 MB Datenbankgröße | Supabase Pro | 25 €/M |
+| >3.000 E-Mails/Monat | Resend Starter | 20 €/M |
+| >500k Seitenaufrufe/M | GoatCounter bleibt kostenlos | 0 € |
+| >50.000 MAU | Supabase Pro | 25 €/M |
+
+Diese Trigger werden erst bei signifikantem Wachstum (hunderte zahlende Nutzer) erreicht.
+
+### N8N auf Hostinger – Hinweis
+
+Da N8N bereits auf Hostinger läuft, entfällt der ursprünglich angedachte Hetzner-Server. GoatCounter kann auf dem gleichen Hostinger-Server installiert werden (Docker oder Binary).
+
+**Voraussetzung prüfen:** Hat der Hostinger-Server eine feste IP und öffentlich erreichbare Webhook-URLs? Das ist zwingend für Paddle-Webhooks und Supabase-Webhooks an N8N.
+
+---
+
+## 4. Zahlungsabwicklung – Paddle konkret
+
+### Voraussetzung: Gesellschaftsgründung zuerst
+
+Paddle erfordert eine registrierte Geschäftsadresse, Handelsregisternummer und USt-ID. Der Paddle-Account kann erst nach UG-Eintragung vollständig verifiziert werden.
+
+**Zeitplan:**
+1. UG gründen → Handelsregisternummer + USt-ID erhalten (~4–6 Wochen)
+2. Paddle-Account anlegen + Unternehmensverifikation (~1–2 Wochen)
+3. Parallel: technische Integration entwickeln (Sandbox-Modus)
+
+### Produkte in Paddle
+
+| Produkt-ID | Beschreibung | Preis |
+|---|---|---|
+| `fordify_pro_monthly` | Pro Monatlich | 29 €/M |
+| `fordify_pro_yearly` | Pro Jährlich | 249 €/J |
+| `fordify_team_monthly` | Kanzlei Monatlich | 79 €/M |
+| `fordify_team_yearly` | Kanzlei Jährlich | 669 €/J |
+
+### Webhook-Flow (technisch)
 
 ```
 Paddle Event: subscription_created / updated / cancelled
-  → Supabase Edge Function
-    → Paddle-Signatur validieren
+  → Supabase Edge Function (Signatur-Validierung mit Paddle-Secret)
     → subscriptions-Tabelle updaten
-    → N8N-Trigger (für E-Mail-Versand)
+    → N8N Webhook aufrufen (für E-Mail-Versand via Resend)
 ```
 
-**Wichtig:** Fordify darf zu keinem Zeitpunkt Zahlungsmittel auf eigenem Konto halten (§ 10 ZAG). Paddle ist der alleinige Zahlungsabwickler.
+**Kritisch:** Paddle-Webhooks müssen mit dem Paddle-Webhook-Secret signaturgeprüft werden, bevor die Edge Function etwas schreibt. Andernfalls ist die Subscription-Tabelle von außen manipulierbar.
 
 ---
 
-## 3. Transaktionale E-Mails (fehlt in der Studie)
+## 5. Transaktionale E-Mails – Resend
 
-Supabase Auth übernimmt nur den Magic-Link-Versand. Für alle anderen transaktionalen E-Mails ist ein separater Dienst nötig.
+Supabase Auth übernimmt nur den Magic-Link-Versand. Alle anderen transaktionalen E-Mails laufen über Resend + N8N.
 
-### Empfehlung: Resend
+### Setup
 
-- 3.000 E-Mails/Monat kostenlos
-- Beste Developer Experience
-- Native N8N-Integration (eigener Node)
-- Eigene Domain (noreply@fordify.de) einfach verifizierbar
-- EU-DSGVO-konform
+1. Resend-Account anlegen (kostenlos, 3.000 E-Mails/Monat im Free Tier)
+2. Domain `fordify.de` in Resend verifizieren (SPF + DKIM DNS-Einträge bei All-Inkl)
+3. Absender: `noreply@fordify.de`
+4. Supabase Auth SMTP auf Resend umstellen (eigene Magic-Link-E-Mails mit fordify-Branding)
 
 ### E-Mail-Matrix
 
-| Trigger | E-Mail | Versand via |
+| Trigger | Betreff | Via |
 |---|---|---|
-| Registrierung | Magic Link (Login) | Supabase Auth (eigener SMTP konfigurieren) |
-| Trial-Start | "14 Tage Pro – was dich erwartet" | N8N → Resend |
-| Trial läuft in 3 Tagen ab | Erinnerung | N8N Cron → Resend |
-| Zahlung erfolgreich | Bestätigung + Rechnungshinweis | Paddle Webhook → N8N → Resend |
-| Zahlung fehlgeschlagen | Dunning-Sequenz (Tag 1, 3, 7) | Paddle Webhook → N8N → Resend |
-| Abo-Kündigung | Off-boarding + Daten-Export-Hinweis | Paddle Webhook → N8N → Resend |
-| Konto-Löschung | Bestätigung + Löschdatum | N8N → Resend |
-| Wöchentlicher Digest (intern) | Analytics-Zusammenfassung für Jens | N8N Cron → Resend / Slack |
+| Neue Registrierung | Magic Link – Jetzt bei fordify einloggen | Supabase Auth → Resend SMTP |
+| Erster Login | Willkommen bei fordify | N8N → Resend |
+| Trial-Start | Deine 14 Tage Pro haben begonnen | N8N → Resend |
+| Trial läuft in 3 Tagen ab | Noch 3 Tage – danach zurück zu Free | N8N Cron → Resend |
+| Trial abgelaufen (kein Upgrade) | Dein Test ist abgelaufen | N8N Cron → Resend |
+| Zahlung erfolgreich | fordify Pro – Danke für dein Vertrauen | Paddle → N8N → Resend |
+| Zahlung fehlgeschlagen | Zahlung fehlgeschlagen – bitte aktualisieren | Paddle → N8N → Resend |
+| Dunning Tag 3 | Erinnerung: Zahlung noch offen | N8N Cron → Resend |
+| Dunning Tag 7 | Zugang wird gesperrt | N8N Cron → Resend |
+| Kündigung | Kündigung bestätigt – Daten bis [Datum] verfügbar | Paddle → N8N → Resend |
+| Konto-Löschung | Alle Daten wurden gelöscht | N8N → Resend |
+| Wöchentlicher Digest (intern) | fordify Woche: [X] neue Nutzer | N8N Cron → E-Mail an Jens |
 
-### E-Mail-Templates (Pflicht vor Launch)
+### Templates (Pflicht vor Launch)
 
-- [ ] Magic Link (Supabase-Standard anpassen, fordify-Branding)
-- [ ] Willkommen (nach erster Registrierung)
-- [ ] Trial-Start
-- [ ] Trial-Erinnerung (3 Tage vor Ablauf)
+- [ ] Magic Link (Supabase-Vorlage anpassen mit fordify-Branding)
+- [ ] Willkommen
+- [ ] Trial-Start + Was ist Pro?
+- [ ] Trial-Erinnerung (3 Tage)
+- [ ] Trial-Ablauf
 - [ ] Zahlungsbestätigung
-- [ ] Zahlungsfehlschlag / Dunning
-- [ ] Kündigungsbestätigung
+- [ ] Zahlungsfehlschlag / Dunning (3 Versionen)
+- [ ] Kündigung + Offboarding
+- [ ] Konto-Löschungsbestätigung
 
 ---
 
-## 4. N8N-Automatisierungen
-
-### Hosting
-
-**Option A (empfohlen für Start):** Hetzner CX22 (4 €/Monat) mit Docker – N8N + GoatCounter auf einem Server  
-**Option B:** n8n.cloud (20 €/Monat) – kein Setup-Aufwand, aber teurer
+## 6. N8N-Automatisierungen (auf bestehendem Hostinger-Server)
 
 ### Kernworkflows
 
-**Workflow 1: Paddle → DB + E-Mail**
+**Workflow 1: Paddle → Supabase + E-Mail**
 ```
-Paddle Webhook → Supabase Edge Function (Signatur-Validierung)
-  → Supabase: subscriptions updaten
-  → N8N: E-Mail-Trigger (Resend)
+Paddle Webhook → Supabase Edge Function
+  → Subscriptions-Tabelle updaten
+  → N8N Webhook: Trigger E-Mail-Versand (Resend)
 ```
 
-**Workflow 2: Neuer User-Onboarding**
+**Workflow 2: Neuer User (Onboarding)**
 ```
-Supabase Webhook: neuer User in auth.users
+Supabase DB Webhook: INSERT in auth.users
   → N8N: Willkommens-E-Mail (Resend)
-  → N8N: Interne Benachrichtigung (Slack / E-Mail an Jens)
-    "Neue Registrierung: [E-Mail], [Kanzlei wenn angegeben]"
+  → N8N: Interne Benachrichtigung an Jens + Andreas
+    „Neue Registrierung: [E-Mail], [Kanzlei-Name wenn angegeben]"
 ```
 
-**Workflow 3: Trial-Management (Cron täglich)**
+**Workflow 3: Trial-Management (Cron täglich 08:00)**
 ```
-N8N Cron 08:00 täglich
-  → Supabase Query: Wer hat Trial der heute in 3 Tagen abläuft?
+Supabase Query: subscription.status = 'trialing' AND trial_end = HEUTE + 3 Tage
   → Resend: Trial-Erinnerung
-  → Supabase Query: Wessen Trial läuft heute ab?
-  → Resend: Trial-Ablauf + Upgrade-CTA
+
+Supabase Query: subscription.status = 'trialing' AND trial_end = HEUTE
+  → Resend: Trial abgelaufen
+  → Supabase: status auf 'expired' setzen → Feature-Gates aktiv
 ```
 
 **Workflow 4: Dunning (Cron täglich)**
 ```
-N8N Cron
-  → Supabase Query: subscriptions mit status = 'past_due'
-  → Resend: Dunning-E-Mail (gestaffelt nach Tagen seit Fehlschlag)
+Supabase Query: subscription.status = 'past_due'
+  → Berechne Tage seit Fehlschlag
+  → Tag 1: Zahlungsfehlschlag-E-Mail
+  → Tag 3: Erinnerung
+  → Tag 7: Sperrankündigung
+  → Tag 14: Konto pausiert (status = 'suspended')
 ```
 
-**Workflow 5: Wöchentlicher interner Digest**
+**Workflow 5: Wöchentlicher interner Digest (Montag 08:00)**
 ```
-N8N Cron Montag 08:00
-  → GoatCounter API: Seitenaufrufe letzte Woche
-  → Supabase: neue Registrierungen, neue Paid-Accounts
-  → Resend / Slack: Zusammenfassung an Jens
+Supabase Query: neue Registrierungen + neue Paid-Accounts letzte 7 Tage
+GoatCounter API: Seitenaufrufe letzte Woche, Top-Seiten
+  → Resend: Zusammenfassung an Jens + Andreas
 ```
 
 ---
 
-## 5. Analytics
+## 7. Analytics – GoatCounter auf Hostinger
 
-### Vergleich
+### Entscheidung
 
-| Tool | Preis | Hosting | Cookie-Banner | DSGVO |
-|---|---|---|---|---|
-| **GoatCounter** | 0 € (self-host) / 5 $/M SaaS | Self-host oder SaaS | Nein | ✅ |
-| **Plausible** | 9 €/M | EU-Server (Cloudflare) | Nein | ✅ |
-| **Umami** | 0 € (self-host) | Self-host | Nein | ✅ |
-| **Pirsch** | ab 6 €/M | DE-Server | Nein | ✅ |
-| Google Analytics 4 | 0 € | US-Server | Ja | ⚠️ |
+GoatCounter selbst-gehosted auf dem bestehenden Hostinger-Server (0 € Zusatzkosten).
 
-### Empfehlung
+**Vorteile gegenüber Plausible:**
+- Kostenlos (kein 9 €/M)
+- Nutzt bestehende Infrastruktur
+- Datenschutzkonform ohne Cookie-Banner
+- Einfache Installation (Single Binary oder Docker)
 
-- **GoatCounter self-hosted** wenn ohnehin ein Hetzner-Server für N8N vorhanden ist → kein zusätzlicher Kostenpunkt
-- **Plausible** wenn kein eigener Server gewünscht → schönstes Dashboard, 9 €/M
+### Installation auf Hostinger
 
-Kein Cookie-Banner nötig bei beiden – wichtig für ein professionelles B2B-Tool.
+```bash
+# GoatCounter als Docker-Container
+docker run -d --name goatcounter \
+  -p 8080:8080 \
+  -v goatcounter_data:/data \
+  goatcounter/goatcounter:latest \
+  serve -listen :8080 -db sqlite+/data/goatcounter.sqlite3
+```
 
-### Was gemessen werden soll
+Dann Nginx-Reverse-Proxy auf analytics.fordify.de oder intern.
 
-- Seitenaufrufe pro Seite (welcher Rechner wird wie häufig genutzt?)
-- Conversion-Funnel: Rechner → Registrierung → Paid
-- Woher kommen Nutzer (Referrer: SEO, direkt, LinkedIn)
-- Registrierungen über Zeit
-- Upgrade-Ereignisse (via Paddle-Daten)
-
----
-
-## 6. Pricing-Seite (`/preise.html`)
-
-### Pflichtinhalt
-
-- **Preis-Toggle:** Monatlich / Jährlich (Jahres-Preise als Default anzeigen)
-- **Feature-Vergleichstabelle** (drei Spalten: Free / Pro / Kanzlei)
-- **Paddle-Checkout-Buttons** direkt eingebunden (kein Redirect)
-- **Trust-Signale:**
-  - "14 Tage kostenlos testen – keine Kreditkarte"
-  - "Jederzeit monatlich kündbar"
-  - "Alle Daten DSGVO-konform in der EU gespeichert"
-  - "Von Anwälten entwickelt"
-- **FAQ-Block** (mind. 5 Fragen):
-  - Was passiert mit meinen Daten bei Kündigung?
-  - Kann ich von Pro auf Kanzlei wechseln?
-  - Gibt es einen Rabatt für größere Kanzleien?
-  - Ist die Rechnung umsatzsteuerpflichtig? (Paddle stellt Rechnung)
-  - Welche Zahlungsmethoden werden akzeptiert?
-
-### Technische Integration
+### Tracking-Integration
 
 ```html
-<!-- Paddle nur auf /preise.html laden -->
+<!-- In alle HTML-Seiten einfügen, kein Cookie-Banner nötig -->
+<script data-goatcounter="https://analytics.fordify.de/count"
+        async src="//analytics.fordify.de/count.js"></script>
+```
+
+### Was gemessen wird
+
+- Seitenaufrufe pro Seite (welcher Rechner am häufigsten?)
+- Referrer (SEO, direkt, LinkedIn, Anwaltsforen)
+- Conversion-Events: Registrierung, Trial-Start, Upgrade (als Custom Events)
+- Wochen- und Monatstrends
+
+---
+
+## 8. Pricing-Seite (`/preise.html`)
+
+### Inhalt
+
+- **Preis-Toggle:** Jährlich / Monatlich (Jährlich als Standard → zeigt günstigeren Preis)
+- **Feature-Vergleichstabelle** (Free / Pro / Kanzlei)
+- **Paddle-Checkout-Buttons** direkt auf der Seite
+- **Trust-Signale:**
+  - „14 Tage Pro kostenlos testen – keine Kreditkarte nötig"
+  - „Jederzeit kündbar"
+  - „Daten DSGVO-konform in der EU (Frankfurt)"
+  - „Von Anwälten entwickelt"
+  - „Kein Login für den Einstieg nötig"
+- **FAQ-Block** (mind. 5 Fragen):
+  - Was passiert mit meinen Daten, wenn ich Free bleibe?
+  - Was passiert bei Kündigung mit meinen gespeicherten Fällen?
+  - Kann ich von Pro auf Kanzlei wechseln?
+  - Welche Zahlungsmethoden werden akzeptiert?
+  - Wer stellt die Rechnung aus? (Paddle – mit USt. bzw. Reverse Charge für EU-Unternehmen)
+
+### Technische Integration (Paddle Inline Checkout)
+
+```html
+<!-- Nur auf /preise.html laden -->
 <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <script>Paddle.Setup({ token: "live_xxxx" });</script>
 
-<button onclick="Paddle.Checkout.open({
+<!-- Pro monatlich -->
+<button class="btn btn-primary" onclick="Paddle.Checkout.open({
   items: [{ priceId: 'pri_fordify_pro_monthly', quantity: 1 }]
 })">Pro starten – 29 €/Monat</button>
+
+<!-- Pro jährlich -->
+<button class="btn btn-outline-primary" onclick="Paddle.Checkout.open({
+  items: [{ priceId: 'pri_fordify_pro_yearly', quantity: 1 }]
+})">Pro Jährlich – 249 €/Jahr</button>
 ```
 
 ---
 
-## 7. Vollständige Account- und Setup-Liste
-
-### Benötigte Accounts (vor Implementierungsstart anlegen)
-
-| Dienst | Zweck | Kosten/Monat | Priorität | Account unter |
-|---|---|---|---|---|
-| **Supabase** | Datenbank + Auth + Storage | 0 € → 25 € (Pro bei >500 MB) | Kritisch | jenswittern@gmail.com |
-| **Paddle** | Payment + Rechnungen + USt | % Umsatz (~5 % + 0,50 $/Tx) | Kritisch | Unternehmens-E-Mail |
-| **Resend** | Transaktionale E-Mails | 0 € (bis 3.000/M) | Hoch | jenswittern@gmail.com |
-| **Hetzner CX22** | VPS für N8N + Analytics | ~4 €/M | Hoch | bestehend? |
-| **N8N** (self-host) | Automatisierungen | 0 € | Hoch | auf Hetzner |
-| **GoatCounter** (self-host) | Analytics | 0 € | Mittel | auf Hetzner |
-| **Custom E-Mail** | noreply@fordify.de | im Hosting enthalten? | Hoch | Jens |
-
-### Technische Voraussetzungen vor Launch
-
-**Supabase:**
-- [ ] Projekt erstellen (Region: EU Frankfurt)
-- [ ] Supabase DPA akzeptieren (Settings → Legal) + Screenshot dokumentieren
-- [ ] Datenbankschema anlegen (siehe Machbarkeitsstudie Kap. 8.6)
-- [ ] RLS für alle Tabellen aktivieren + mit zwei Test-Accounts testen
-- [ ] `service_role` Key niemals im Frontend verwenden (nur `anon` Key)
-- [ ] AVV-DPA Link für Kanzlei-AGB vorbereiten
-
-**Paddle:**
-- [ ] Account anlegen + Unternehmensverifikation (Gewerbeanmeldung, Bankverbindung, USt-ID)
-- [ ] Vier Produkte/Preise anlegen
-- [ ] Sandbox-Modus für Entwicklung konfigurieren
-- [ ] Webhook-Endpoint registrieren
-- [ ] Paddle-DPA abschließen (in Paddle-Dashboard)
-
-**Resend:**
-- [ ] Account anlegen
-- [ ] Domain `fordify.de` verifizieren (DNS-Einträge)
-- [ ] Absender-Adresse `noreply@fordify.de` einrichten
-- [ ] E-Mail-Templates anlegen
-
-**N8N:**
-- [ ] Hetzner VPS aufsetzen (Docker)
-- [ ] N8N installieren und absichern (Basic Auth / HTTPS via Nginx)
-- [ ] Webhook-URLs für Paddle-Events konfigurieren
-
-**Analytics:**
-- [ ] GoatCounter / Plausible aufsetzen
-- [ ] Tracking-Script in alle HTML-Seiten einbinden (kein Cookie-Banner nötig)
-- [ ] Conversion-Ziele definieren: Registrierung, Checkout-Start, Checkout-Abschluss
-
----
-
-## 8. Rechtliches – Offene Punkte vor Launch
-
-Aus der Machbarkeitsstudie übernommen, priorisiert:
+## 9. Rechtliches – Checkliste vor Launch
 
 **Blocker (muss vor Freemium-Launch erledigt sein):**
-- [ ] AVV mit Supabase abgeschlossen und dokumentiert
-- [ ] Nutzungsbedingungen / AGB mit AVV-Klauseln für Schuldnerdaten (Anwalt prüfen lassen)
-- [ ] Datenschutzerklärung aktualisiert: Account, Supabase, Paddle, Resend als Drittanbieter
+- [ ] UG gegründet, im Handelsregister eingetragen
+- [ ] USt-ID vorhanden (Paddle Pflicht)
+- [ ] Geschäftskonto eröffnet
+- [ ] AVV mit Supabase abgeschlossen (Supabase Dashboard → Settings → Legal)
+- [ ] Nutzungsbedingungen / AGB mit AVV-Klauseln (Anwalt prüfen lassen – nicht Andreas, Interessenkonflikt)
+- [ ] Datenschutzerklärung: Account, Supabase, Paddle, Resend, GoatCounter als Drittanbieter
 - [ ] Paddle-DPA abgeschlossen
-- [ ] Impressum: USt-ID eintragen (bei gewerblicher Tätigkeit Pflicht)
+- [ ] Impressum: USt-ID, Handelsregisternummer, vertretungsberechtigter Geschäftsführer
 - [ ] Verzeichnis von Verarbeitungstätigkeiten (VVT) anlegen
-- [ ] E-Mail-Adresse datenschutz@fordify.de einrichten
+- [ ] E-Mail-Adresse `datenschutz@fordify.de` einrichten
 
-**Empfohlen vor Launch:**
-- [ ] Anwaltliche Kurzprüfung der AGB (ein Anwalt der nicht Andreas ist – Interessenkonflikt?)
+**Empfohlen (innerhalb 30 Tage nach Launch):**
+- [ ] Datenexport-Funktion (Art. 20 DSGVO)
+- [ ] Session-Timeout konfigurieren (Supabase JWT-Expiry)
+- [ ] Backup-Retention-Policy (≤ 30 Tage in Supabase)
 - [ ] Bestandsnutzer mind. 4 Wochen vor Launch über Modellwechsel informieren
 
 ---
 
-## 9. Implementierungsreihenfolge (Vorschlag)
+## 10. Implementierungsreihenfolge
+
+### Voraussetzungen (parallel zur Entwicklung)
+- UG-Gründung anstoßen
+- Paddle-Account vorbereiten (Sandbox schon heute möglich, live erst nach UG)
+- Resend-Account anlegen + Domain verifizieren
+- GoatCounter auf Hostinger installieren
 
 ### Phase 1: Infrastruktur (1–2 Wochen)
-1. Supabase-Projekt anlegen, Schema deployen, RLS testen
-2. Resend-Account, Domain verifizieren, Magic-Link-SMTP konfigurieren
-3. Paddle-Account anlegen (Verifikation kann parallel laufen)
-4. Hetzner VPS: N8N + GoatCounter aufsetzen
+1. Supabase-Projekt anlegen (Region: EU Frankfurt)
+2. Datenbankschema deployen + RLS testen (zwei Test-Accounts!)
+3. Resend SMTP für Supabase Magic Link konfigurieren
+4. GoatCounter auf Hostinger aufsetzen + in alle Seiten einbinden
 
 ### Phase 2: Auth + Storage-Abstraktion (2–3 Wochen)
-1. `storage.js` – StorageBackend-Abstraktion (sessionStorage für Free, localStorage + Cloud für Paid)
-2. `auth.js` – Supabase Magic Link, onAuthStateChange, UI-Updates
-3. Bestandsnutzer-Migration (Legacy-localStorage → Cloud beim ersten Login)
+1. `storage.js` – StorageBackend: sessionStorage (Free) vs. localStorage + Supabase (Paid)
+2. `auth.js` – Magic Link Login, onAuthStateChange, Session-Management
+3. Bestandsnutzer-Migration: Legacy-localStorage → Cloud beim ersten Login
 
-### Phase 3: Feature-Gates + Upgrade-Flow (1–2 Wochen)
-1. `requiresPaid()`-Funktion + Soft-Gate CSS (PRO-Badge auf gesperrten Buttons)
-2. Upgrade-Modal (Preisübersicht + Paddle-Checkout-Button)
-3. Trial-Flow (14 Tage, kein Kreditkarte nötig)
+### Phase 3: Feature-Gates + Upgrade-Modal (1–2 Wochen)
+1. `requiresPaid()` + Soft-Gate-CSS (PRO-Badge auf gesperrten Features)
+2. Upgrade-Modal (Preisübersicht + Paddle-Checkout direkt eingebunden)
+3. 14-Tage-Trial-Flow (kein Kreditkarte nötig)
+4. Free-Tier-Banner (dezent, dauerhaft sichtbar)
 
 ### Phase 4: Paddle-Integration (1–2 Wochen)
-1. Supabase Edge Function für Paddle-Webhooks
-2. subscriptions-Tabelle wird via Webhook befüllt
-3. Feature-Unlock nach Zahlung testen (End-to-End)
+1. Supabase Edge Function für Paddle-Webhooks (mit Signatur-Validierung)
+2. subscriptions-Tabelle via Webhook befüllen
+3. Feature-Unlock nach Zahlung End-to-End testen
+4. (Erst live möglich nach UG-Gründung + Paddle-Verifikation)
 
-### Phase 5: N8N-Workflows + E-Mails (1 Woche)
-1. Onboarding-E-Mail-Sequenz
-2. Trial-Erinnerungs-Cron
-3. Dunning-Sequenz
-4. Interner Weekly-Digest
+### Phase 5: N8N-Workflows + E-Mail-Templates (1 Woche)
+1. E-Mail-Templates in Resend anlegen (alle aus der E-Mail-Matrix)
+2. Onboarding-Workflow (Willkommen, Trial-Start)
+3. Trial-Management-Cron
+4. Dunning-Sequenz
+5. Interner Wochendigest
 
 ### Phase 6: Pricing-Seite + Launch-Vorbereitung (1 Woche)
-1. `/preise.html` mit Feature-Vergleich + Paddle-Checkout
-2. Bestandsnutzer-Kommunikation (E-Mail an alle bestehenden localStorage-Nutzer)
+1. `/preise.html` mit Vergleichstabelle + Paddle-Checkout
+2. Bestandsnutzer-E-Mail über Modellwechsel
 3. End-to-End-Test: Free → Trial → Paid → Kündigung → Datenlöschung
+4. Impressum + Datenschutz aktualisieren (UG-Daten, Drittanbieter)
 
-**Gesamt: ~8–11 Wochen bis zum Freemium-Launch**
+**Gesamt Entwicklung: ~8–11 Wochen**  
+**Blockierender Faktor:** UG-Gründung (4–6 Wochen) – parallel anstoßen
 
 ---
 
-## 10. Offene Entscheidungen (Zusammenfassung)
+## 11. Kostenübersicht (Gesamtbild)
 
-| # | Frage | Optionen | Status |
+### Einmalige Gründungskosten
+
+| Position | Kosten |
+|---|---|
+| Notar (UG-Gründung) | ~300–500 € |
+| Handelsregistereintragung | ~150–300 € |
+| Steuerberater Erstberatung | ~200–400 € |
+| Stammkapital (verbleibt im Unternehmen) | 500–1.000 € |
+| Anwalt AGB-Prüfung | ~300–600 € |
+| **Gesamt Einmalig** | **~1.450–2.800 €** |
+
+### Laufende Kosten (bis zu ersten Einnahmen)
+
+| Dienst | Kosten/M |
+|---|---|
+| All-Inkl (Webhosting) | bereits bezahlt |
+| Hostinger VPS (N8N + GoatCounter) | bereits bezahlt |
+| Supabase Free Tier | 0 € |
+| Resend Free Tier | 0 € |
+| Paddle | 0 € (nur % auf Umsatz) |
+| **Gesamt laufend zusätzlich** | **0 €** |
+
+### Kosten bei Wachstum
+
+| MRR | Zusätzliche Kosten/M |
+|---|---|
+| 0–1.000 € | 0 € (alles Free Tier) |
+| 1.000–5.000 € | ~50–75 € (Paddle-Fees ~250 €, ggf. Supabase Pro 25 €) |
+| 5.000–20.000 € | ~300–1.000 € (Supabase Pro, Resend Paid, ggf. Steuerberater) |
+
+---
+
+## 12. Offene Entscheidungen (Zusammenfassung)
+
+| # | Frage | Empfehlung | Status |
 |---|---|---|---|
-| 1 | **PDF-Export: kostenlos oder Gate?** | Kostenlos (schwächerer Upgrade-Druck, stärkere Verbreitung) vs. Gate (stärkster Trigger) | ⚠️ Offen |
-| 2 | Analytics: GoatCounter oder Plausible? | GoatCounter (self-host, kostenlos) vs. Plausible (9 €/M, schöneres Dashboard) | ⚠️ Offen |
-| 3 | N8N: self-host oder n8n.cloud? | Self-host auf Hetzner (~4 €/M) vs. n8n.cloud (20 €/M) | ⚠️ Offen |
-| 4 | Freemium-Launch-Termin | Q4 2026 (Studie) – realistisch? | ⚠️ Offen |
-| 5 | Wer prüft die AGB? | Anwalt extern (Andreas als Interessenkonflikt?) | ⚠️ Offen |
+| 1 | Gesellschaftsform | UG (haftungsbeschränkt) | ⚠️ Entscheiden |
+| 2 | Gesellschafteraufteilung | 50/50 | ⚠️ Entscheiden |
+| 3 | Firmensitz | Adresse Jens oder Andreas | ⚠️ Entscheiden |
+| 4 | AGB-Prüfung: wer? | Externer Anwalt (nicht Andreas) | ⚠️ Organisieren |
+| 5 | Freemium-Launch-Termin | Q4 2026 – realistisch nach UG-Gründung | ⚠️ Festlegen |
+| 6 | Hostinger: öffentliche Webhook-URL verfügbar? | Prüfen (Pflicht für Paddle + Supabase → N8N) | ⚠️ Prüfen |
 
 ---
 
-*Erstellt 2026-04-20 | Fordify Review & Konkretisierung | Vertraulich*
+*Erstellt 2026-04-20 | Aktualisiert 2026-04-20 (v2) | Fordify Interne Planung | Vertraulich*
