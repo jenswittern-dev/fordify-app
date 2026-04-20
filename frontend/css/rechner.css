@@ -5,29 +5,33 @@
 
 /* ---- Hero ---- */
 .fordify-hero {
-  padding: 4rem 0 3rem;
+  padding: 5.5rem 0 4rem;
   background: linear-gradient(135deg, var(--color-primary) 0%, #1e40af 100%);
   color: #fff;
 }
 .fordify-hero h1 {
-  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-size: clamp(1.9rem, 4.5vw, 2.75rem);
   font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 1rem;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.02em;
 }
 .fordify-hero .lead {
-  font-size: 1.05rem;
-  opacity: 0.88;
-  max-width: 600px;
+  font-size: 1.1rem;
+  opacity: 0.9;
+  max-width: 620px;
+  line-height: 1.65;
 }
 
 /* ---- Tool-Grid ---- */
 .tool-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.25rem;
   margin: 2.5rem 0;
 }
+@media (max-width: 575px) { .tool-grid { grid-template-columns: 1fr; } }
+@media (min-width: 1024px) { .tool-grid { grid-template-columns: repeat(4, 1fr); } }
 .tool-card {
   background: var(--color-card);
   border: 1.5px solid var(--color-border);
@@ -50,8 +54,23 @@
   background: var(--color-primary-light);
 }
 .tool-card__icon {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   margin-bottom: 0.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-light);
+  border-radius: 0.5rem;
+  color: var(--color-primary);
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.tool-card--primary .tool-card__icon {
+  background: rgba(30,58,138,0.15);
+  color: #fff;
 }
 .tool-card__title {
   font-weight: 700;
@@ -72,39 +91,27 @@
 }
 
 /* ---- Vorteile ---- */
-.vorteil-item {
-  text-align: center;
-  padding: 1.5rem 1rem;
-}
+.vorteil-item { text-align: center; padding: 2rem 1.5rem; }
 .vorteil-item__icon {
-  font-size: 2rem;
-  margin-bottom: 0.75rem;
-  display: block;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  background: var(--color-primary-light);
+  border-radius: 50%;
+  margin-left: auto;
+  margin-right: auto;
 }
-.vorteil-item__title {
-  font-weight: 700;
-  margin-bottom: 0.25rem;
-}
+.vorteil-item__title { font-weight: 700; margin-bottom: 0.25rem; }
 
 /* ---- SEO-Textblock ---- */
-.seo-text-block {
-  background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-  padding: 3rem 0;
-}
-.seo-text-block h2 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  margin-top: 1.75rem;
-  margin-bottom: 0.5rem;
-}
+.seo-text-block { background: var(--color-surface); border-radius: 0.75rem; padding: 2rem; margin-top: 3rem; }
+.seo-text-block h2 { font-size: 1.1rem; font-weight: 700; color: var(--color-primary); margin-top: 1.5rem; margin-bottom: 0.5rem; }
 .seo-text-block h2:first-child { margin-top: 0; }
-.seo-text-block p {
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-  line-height: 1.7;
-}
+.seo-text-block p { color: var(--color-text); font-size: var(--text-base); line-height: 1.75; margin-bottom: 1rem; }
 
 /* ---- Breadcrumb ---- */
 .fordify-breadcrumb {
@@ -118,20 +125,22 @@
 
 /* ---- Rechner-Seiten ---- */
 .rechner-header {
-  padding: 2.5rem 0 2rem;
+  padding: 3rem 0 2.5rem;
   border-bottom: 1px solid var(--color-border);
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 .rechner-header h1 {
-  font-size: clamp(1.3rem, 3vw, 1.9rem);
+  font-size: clamp(1.5rem, 3.5vw, 2.2rem);
   font-weight: 700;
   color: var(--color-primary);
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.875rem;
+  letter-spacing: -0.015em;
 }
 .rechner-header .intro {
+  font-size: var(--text-base);
+  line-height: 1.7;
   color: var(--color-text-muted);
-  max-width: 680px;
-  line-height: 1.65;
+  max-width: 700px;
 }
 .rechner-form-card {
   background: var(--color-card);
@@ -158,6 +167,8 @@
   color: var(--color-text-muted);
   margin-bottom: 1rem;
 }
+.rechner-cta-box { transition: box-shadow 0.2s ease; }
+.rechner-cta-box:hover { box-shadow: 0 4px 20px rgba(30,58,138,0.1); }
 
 /* ---- FAQ ---- */
 .faq-section { margin-top: 3rem; }
@@ -172,8 +183,12 @@
   border-radius: 0.5rem;
   margin-bottom: 0.5rem;
   padding: 0.75rem 1rem;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
-.faq-section details[open] { border-color: var(--color-primary); }
+.faq-section details[open] {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
 .faq-section summary {
   font-weight: 600;
   cursor: pointer;
@@ -185,9 +200,9 @@
 .faq-section details p {
   margin-top: 0.75rem;
   margin-bottom: 0;
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  line-height: 1.65;
+  font-size: var(--text-base);
+  color: var(--color-text);
+  line-height: 1.7;
 }
 
 /* ---- Shared Footer ---- */
@@ -205,6 +220,23 @@
 .navbar-fa .nav-link { color: var(--color-nav-text-muted); }
 .navbar-fa .nav-link:hover,
 .navbar-fa .nav-link.fw-semibold { color: var(--color-nav-text); }
+
+/* ---- Focus-visible ---- */
+.tool-card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.faq-section summary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.rechner-cta-box .btn:focus-visible,
+.fordify-footer a:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
 
 /* ---- Utility ---- */
 .font-mono { font-family: var(--font-mono); }
