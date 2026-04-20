@@ -1,0 +1,49 @@
+# fordify
+
+> Kostenlose, browserbasierte Rechner und Forderungsaufstellungen für Anwaltskanzleien, Syndikusanwälte, Inkassounternehmen und Finanzabteilungen
+
+fordify.de bietet spezialisierte Berechnungswerkzeuge für deutsches Forderungsmanagement. Alle Berechnungen erfolgen lokal im Browser – keine Daten verlassen das Gerät (DSGVO-konform).
+
+## Werkzeuge
+
+- **Forderungsaufstellung nach § 367 BGB** – vollständige Forderungsaufstellung mit automatischer Zahlungsverrechnung (Tilgungsreihenfolge: Kosten → Zinsen → Hauptforderung), Verzugszinsberechnung und PDF-Export
+- **Verzugszinsrechner nach § 288 BGB** – tagesgenaue Berechnung mit aktuellem Basiszinssatz; B2B: Basiszinssatz + 9 Prozentpunkte, B2C: Basiszinssatz + 5 Prozentpunkte; aufgeteilt nach Basiszinssatz-Perioden (01.01. und 01.07.)
+- **RVG-Rechner** – Anwaltsgebühren nach RVG BGBl. 2025 I Nr. 109; Geschäftsgebühr (VV 2300, 1,3×), Mahnverfahren (VV 3309, 0,5×), Klageverfahren (VV 3100, 1,3×); Auslagenpauschale VV 7002 (20 %, max. 20 €), Umsatzsteuer optional
+- **Gerichtskostenrechner nach GKG** – Gerichtsgebühren nach GKG Anlage 2; AG/LG: 3,0 Gebühren, OLG (Berufung): 4,0 Gebühren, BGH (Revision): 5,0 Gebühren
+
+## Rechtlicher Kontext
+
+### § 367 BGB – Tilgungsreihenfolge
+Zahlungseingänge werden zwingend in dieser Reihenfolge verrechnet: zuerst die Kosten (z. B. Anwaltskosten), dann die Zinsen, zuletzt die Hauptforderung. fordify berechnet diese Verrechnung automatisch.
+
+### § 288 BGB – Verzugszinsen
+- B2B (Unternehmer): Basiszinssatz + 9 Prozentpunkte (§ 288 Abs. 2 BGB)
+- B2C (Verbraucher): Basiszinssatz + 5 Prozentpunkte (§ 288 Abs. 1 BGB)
+- Basiszinssatz ab 01.01.2026: 1,27 % (aktuell bis 01.07.2026)
+- Formel: Betrag × Zinssatz × Tage ÷ 365
+
+### RVG 2025 – Anwaltsgebühren
+- Einfache Gebühr aus Anlage 2 zu § 13 RVG nach Gegenstandswert
+- Geschäftsgebühr VV 2300: Faktor 1,3 (außergerichtlich)
+- Verfahrensgebühr VV 3100: Faktor 1,3 (Klageverfahren)
+- Verfahrensgebühr VV 3309: Faktor 0,5 (Mahnverfahren)
+- Auslagenpauschale VV 7002: 20 % der Netto-Gebühren, max. 20 €
+
+### GKG – Gerichtskosten
+- Einfache Gebühr aus GKG Anlage 2 nach Streitwert
+- Amtsgericht (1. Instanz): 3,0 Gebühren; zuständig bis 5.000 € Streitwert
+- Landgericht (1. Instanz): 3,0 Gebühren; zuständig ab 5.001 € Streitwert
+- Oberlandesgericht (Berufung): 4,0 Gebühren
+- Bundesgerichtshof (Revision): 5,0 Gebühren
+
+## Technologie
+
+Vollständig browserbasiert (Vanilla JS, Bootstrap 5.3.3, decimal.js für exakte Dezimalrechnung). Progressive Web App (PWA). Keine Cookies, kein Server, keine Cloud-Datenspeicherung.
+
+## URLs
+
+- https://fordify.de/ – Startseite mit Übersicht aller Werkzeuge
+- https://fordify.de/forderungsaufstellung – Forderungsaufstellung nach § 367 BGB (BETA)
+- https://fordify.de/zinsrechner – Verzugszinsrechner nach § 288 BGB
+- https://fordify.de/rvg-rechner – RVG-Rechner (Anwaltsgebühren 2025)
+- https://fordify.de/gerichtskostenrechner – Gerichtskostenrechner (GKG)
