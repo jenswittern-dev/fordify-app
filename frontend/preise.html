@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Preise – fordify Pro für Kanzleien und Unternehmen</title>
-  <meta name="description" content="fordify Pro: Professionelle Forderungsaufstellungen, Cloud-Speicherung und Excel-Export. 19 €/Monat oder 149 €/Jahr. 14 Tage kostenlos testen.">
+  <meta name="description" content="fordify Pro: Professionelle Forderungsaufstellungen, Cloud-Speicherung und Excel-Export. 19 €/Monat oder 149 €/Jahr. Monatlich kündbar.">
   <link rel="canonical" href="https://fordify.de/preise">
   <link rel="icon" type="image/svg+xml" href="img/logo.svg">
   <link rel="stylesheet" href="css/fonts.css">
@@ -22,7 +22,7 @@
 
     .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; max-width: 900px; margin: 0 auto; padding: 2.5rem 1rem 3rem; }
 
-    .pricing-card { background: var(--color-surface); border: 1.5px solid var(--color-border); border-radius: 14px; padding: 2rem 1.75rem; position: relative; transition: box-shadow 0.2s; }
+    .pricing-card { background: var(--color-surface); border: 1.5px solid var(--color-border); border-radius: 14px; padding: 2rem 1.75rem; position: relative; transition: box-shadow 0.2s; display: flex; flex-direction: column; }
     .pricing-card:hover { box-shadow: 0 4px 24px rgba(30,58,138,0.1); }
     .pricing-card.featured { border-color: var(--color-primary); border-width: 2px; }
     .pricing-card.featured::before { content: "Beliebteste Wahl"; position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--color-primary); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.85rem; border-radius: 999px; white-space: nowrap; letter-spacing: .04em; }
@@ -31,9 +31,9 @@
     .plan-price { font-size: 2.25rem; font-weight: 800; color: var(--color-primary); line-height: 1; margin-bottom: 0.25rem; }
     .plan-price span { font-size: 1rem; font-weight: 400; color: var(--color-text-muted); }
     .plan-price-alt { font-size: 0.8125rem; color: var(--color-text-muted); margin-bottom: 1.25rem; min-height: 1.2rem; }
-    .plan-desc { font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1.5rem; line-height: 1.5; }
+    .plan-desc { font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1.5rem; line-height: 1.5; min-height: 4.5rem; }
 
-    .feature-list { list-style: none; padding: 0; margin: 0 0 1.75rem; }
+    .feature-list { list-style: none; padding: 0; margin: 0 0 1.75rem; flex: 1; }
     .feature-list li { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.9rem; color: var(--color-text); margin-bottom: 0.6rem; line-height: 1.4; }
     .feature-list li .icon-check { color: #16a34a; flex-shrink: 0; margin-top: 1px; }
     .feature-list li .icon-lock { color: var(--color-text-muted); flex-shrink: 0; margin-top: 1px; }
@@ -141,10 +141,9 @@
       <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Kanzlei-Profil dauerhaft speichern</li>
       <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Schuldner-Adressbuch</li>
       <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> E-Mail-Support</li>
-      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 14 Tage Geld-zurück-Garantie</li>
     </ul>
-    <button class="btn btn-primary w-100 price-monthly" onclick="startCheckout('monthly')">14 Tage kostenlos testen</button>
-    <button class="btn btn-primary w-100 price-yearly d-none" onclick="startCheckout('yearly')">14 Tage kostenlos testen</button>
+    <button class="btn btn-primary w-100 price-monthly" onclick="startCheckout('monthly')">Pro abonnieren – 19 €/Monat</button>
+    <button class="btn btn-primary w-100 price-yearly d-none" onclick="startCheckout('yearly')">Pro abonnieren – 149 €/Jahr</button>
   </div>
 
   <!-- Kanzlei -->
@@ -161,10 +160,9 @@
       <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Gemeinsame Fallverwaltung</li>
       <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Kanzlei-Branding im PDF</li>
       <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Prioritäts-Support</li>
-      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 14 Tage Geld-zurück-Garantie</li>
     </ul>
-    <button class="btn btn-outline-primary w-100 price-monthly" onclick="startCheckout('kanzlei-monthly')">Kanzlei-Plan starten</button>
-    <button class="btn btn-outline-primary w-100 price-yearly d-none" onclick="startCheckout('kanzlei-yearly')">Kanzlei-Plan starten</button>
+    <button class="btn btn-outline-primary w-100 price-monthly" onclick="startCheckout('kanzlei-monthly')">Kanzlei abonnieren – 49 €/Monat</button>
+    <button class="btn btn-outline-primary w-100 price-yearly d-none" onclick="startCheckout('kanzlei-yearly')">Kanzlei abonnieren – 399 €/Jahr</button>
   </div>
 
 </div>
@@ -206,8 +204,7 @@
 <div class="trust-section">
   <div class="container">
     <p>
-      <strong>Keine Kreditkarte für den Start nötig.</strong> 14 Tage Geld-zurück-Garantie. Monatlich kündbar.
-      Daten sicher in der EU (Frankfurt). DSGVO-konform. Kein Cookie-Banner.
+      Monatlich kündbar. Daten sicher in der EU (Frankfurt). DSGVO-konform. Kein Cookie-Banner.
     </p>
   </div>
 </div>
@@ -222,10 +219,6 @@
   <details>
     <summary>Was passiert mit meinen Daten, wenn ich kündige?</summary>
     <p>Nach der Kündigung bleiben deine Daten noch 30 Tage erhalten, damit du alles exportieren kannst. Danach werden sie unwiderruflich gelöscht. Du kannst deine Fälle jederzeit als Excel oder JSON exportieren.</p>
-  </details>
-  <details>
-    <summary>Wie läuft die 14-Tage-Geld-zurück-Garantie ab?</summary>
-    <p>Wenn du innerhalb von 14 Tagen nach der ersten Buchung nicht zufrieden bist, erhältst du auf Anfrage (mail@fordify.de) den vollen Betrag zurück – ohne Wenn und Aber. Die Garantie gilt einmalig pro Kunde.</p>
   </details>
   <details>
     <summary>Ist fordify DSGVO-konform?</summary>
