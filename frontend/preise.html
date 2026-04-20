@@ -266,18 +266,35 @@
   </div>
 </footer>
 
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>
 <script src="js/config.js"></script>
 <script>
+  if (CONFIG.paddle.environment === 'sandbox') {
+    Paddle.Environment.set('sandbox');
+  }
+  Paddle.Initialize({ token: CONFIG.paddle.token });
+
   const toggle = document.getElementById('billing-toggle');
   toggle.addEventListener('change', () => {
     document.querySelectorAll('.price-monthly').forEach(el => el.classList.toggle('d-none', toggle.checked));
     document.querySelectorAll('.price-yearly').forEach(el => el.classList.toggle('d-none', !toggle.checked));
   });
 
+  const PRICE_MAP = {
+    'monthly':        () => CONFIG.paddle.prices.proMonthly,
+    'yearly':         () => CONFIG.paddle.prices.proYearly,
+    'kanzlei-monthly': () => CONFIG.paddle.prices.businessMonthly,
+    'kanzlei-yearly':  () => CONFIG.paddle.prices.businessYearly,
+  };
+
   function startCheckout(interval) {
-    // Paddle-Integration folgt nach Account-Setup
-    alert('Checkout wird in Kürze freigeschaltet. Bei Fragen: mail@fordify.de');
+    const priceId = PRICE_MAP[interval]?.();
+    if (!priceId) return;
+    Paddle.Checkout.open({
+      items: [{ priceId, quantity: 1 }],
+      customData: { user_id: (typeof fordifyAuth !== 'undefined' && fordifyAuth.user?.id) || null }
+    });
   }
 </script>
 <script data-goatcounter="https://fordify.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
