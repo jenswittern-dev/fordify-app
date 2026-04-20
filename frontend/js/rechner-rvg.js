@@ -58,12 +58,20 @@
     }
   }
 
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
   function renderErgebnis(positionen, netto, ust, gesamt, ustProzent) {
     let rows = '';
     for (const p of positionen) {
       rows += `<tr>
-        <td>VV ${p.vvNummer}</td>
-        <td>${p.beschreibung}</td>
+        <td>VV ${escapeHtml(p.vvNummer)}</td>
+        <td>${escapeHtml(p.beschreibung)}</td>
         <td class="text-end">${p.faktor !== null ? p.faktor.toFixed(1) : '–'}</td>
         <td class="text-end font-mono">${p.gebuehrGesamt.toFixed(2)} €</td>
       </tr>`;
