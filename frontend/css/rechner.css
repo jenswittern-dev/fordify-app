@@ -1,0 +1,194 @@
+/* ============================================================
+   rechner.css – Styles für Homepage + Rechner-Seiten
+   Setzt app.css (CSS Custom Properties) voraus
+   ============================================================ */
+
+/* ---- Hero ---- */
+.fordify-hero {
+  padding: 4rem 0 3rem;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #1e40af 100%);
+  color: #fff;
+}
+.fordify-hero h1 {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+.fordify-hero .lead {
+  font-size: 1.05rem;
+  opacity: 0.88;
+  max-width: 600px;
+}
+
+/* ---- Tool-Grid ---- */
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin: 2.5rem 0;
+}
+.tool-card {
+  background: var(--color-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s, border-color 0.15s, transform 0.15s;
+  display: flex;
+  flex-direction: column;
+}
+.tool-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 16px rgba(30,58,138,.12);
+  transform: translateY(-2px);
+  color: inherit;
+}
+.tool-card.tool-card--primary {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+.tool-card__icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+.tool-card__title {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
+  color: var(--color-primary);
+}
+.tool-card__desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  flex-grow: 1;
+  margin-bottom: 1rem;
+}
+.tool-card__cta {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* ---- Vorteile ---- */
+.vorteil-item {
+  text-align: center;
+  padding: 1.5rem 1rem;
+}
+.vorteil-item__icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+.vorteil-item__title {
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+/* ---- SEO-Textblock ---- */
+.seo-text-block {
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  padding: 3rem 0;
+}
+.seo-text-block h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.seo-text-block h2:first-child { margin-top: 0; }
+.seo-text-block p {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+}
+
+/* ---- Rechner-Seiten ---- */
+.rechner-header {
+  padding: 2.5rem 0 2rem;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 2rem;
+}
+.rechner-header h1 {
+  font-size: clamp(1.3rem, 3vw, 1.9rem);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.75rem;
+}
+.rechner-header .intro {
+  color: var(--color-text-muted);
+  max-width: 680px;
+  line-height: 1.65;
+}
+.rechner-form-card {
+  background: var(--color-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: 0.75rem;
+  padding: 1.75rem;
+}
+.rechner-result {
+  margin-top: 1.5rem;
+}
+.rechner-cta-box {
+  background: var(--color-primary-light);
+  border: 1.5px solid var(--color-primary);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+.rechner-cta-box__title {
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+.rechner-cta-box__sub {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+}
+
+/* ---- FAQ ---- */
+.faq-section { margin-top: 3rem; }
+.faq-section h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+}
+.faq-section details {
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+.faq-section details[open] { border-color: var(--color-primary); }
+.faq-section summary {
+  font-weight: 600;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  list-style: none;
+}
+.faq-section summary::before { content: '+ '; color: var(--color-primary); }
+.faq-section details[open] summary::before { content: '− '; }
+.faq-section details p {
+  margin-top: 0.75rem;
+  margin-bottom: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: 1.65;
+}
+
+/* ---- Shared Footer ---- */
+.fordify-footer {
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  padding: 2rem 0;
+  margin-top: 4rem;
+}
+.fordify-footer a { color: var(--color-text-muted); text-decoration: none; font-size: var(--text-sm); }
+.fordify-footer a:hover { color: var(--color-primary); }
+
+/* ---- Utility ---- */
+.font-mono { font-family: var(--font-mono); }
