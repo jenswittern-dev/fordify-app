@@ -65,19 +65,19 @@
         <form id="form-zins">
           <div class="mb-3">
             <label for="zins-betrag" class="form-label fw-semibold">Hauptforderung (€)</label>
-            <input type="text" class="form-control" id="zins-betrag" placeholder="z. B. 5000,00" required>
+            <input type="text" class="form-control" id="zins-betrag" placeholder="z. B. 5000,00" required data-bs-toggle="tooltip" data-bs-placement="right" title="Geben Sie den offenen Forderungsbetrag in Euro ein, z. B. 5000,00">
           </div>
           <div class="mb-3">
             <label for="zins-von" class="form-label fw-semibold">Zinsbeginn</label>
-            <input type="date" class="form-control" id="zins-von" required>
+            <input type="date" class="form-control" id="zins-von" required data-bs-toggle="tooltip" data-bs-placement="right" title="Datum des Verzugseintritts – in der Regel der Tag nach Ablauf der Zahlungsfrist">
           </div>
           <div class="mb-3">
             <label for="zins-bis" class="form-label fw-semibold">Zinsende</label>
-            <input type="date" class="form-control" id="zins-bis" required>
+            <input type="date" class="form-control" id="zins-bis" required data-bs-toggle="tooltip" data-bs-placement="right" title="Datum bis zu dem Zinsen berechnet werden sollen, z. B. heute">
           </div>
           <div class="mb-4">
             <label for="zins-typ" class="form-label fw-semibold">Schuldner-Typ</label>
-            <select class="form-select" id="zins-typ">
+            <select class="form-select" id="zins-typ" data-bs-toggle="tooltip" data-bs-placement="right" title="B2B: Basiszinssatz + 9 PP (§ 288 Abs. 2 BGB) | B2C: Basiszinssatz + 5 PP (§ 288 Abs. 1 BGB)">
               <option value="b2b">Unternehmen (B2B) – Basiszinssatz + 9 PP</option>
               <option value="b2c">Verbraucher (B2C) – Basiszinssatz + 5 PP</option>
             </select>

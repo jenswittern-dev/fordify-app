@@ -65,11 +65,11 @@
         <form id="form-gkg">
           <div class="mb-3">
             <label for="gkg-streitwert" class="form-label fw-semibold">Streitwert (€)</label>
-            <input type="text" inputmode="decimal" class="form-control" id="gkg-streitwert" placeholder="z. B. 15000" required>
+            <input type="text" inputmode="decimal" class="form-control" id="gkg-streitwert" placeholder="z. B. 15000" required data-bs-toggle="tooltip" data-bs-placement="right" title="Wirtschaftlicher Wert des Rechtsstreits – wird vom Gericht festgesetzt (§ 3 ZPO)">
           </div>
           <div class="mb-4">
             <label for="gkg-instanz" class="form-label fw-semibold">Instanz</label>
-            <select class="form-select" id="gkg-instanz">
+            <select class="form-select" id="gkg-instanz" data-bs-toggle="tooltip" data-bs-placement="right" title="AG: bis 5.000 € | LG: ab 5.001 € | OLG: Berufung | BGH: Revision">
               <option value="ag">Amtsgericht (bis 5.000 € Streitwert)</option>
               <option value="lg" selected>Landgericht (ab 5.001 € Streitwert)</option>
               <option value="olg">Oberlandesgericht (Berufung)</option>
