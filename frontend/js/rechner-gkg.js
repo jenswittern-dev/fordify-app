@@ -19,17 +19,27 @@
       if (streitwert <= zeile.bis) return zeile.gebuehr;
     }
     const letzte = GKG_TABELLE[GKG_TABELLE.length - 1];
-    const stufen = Math.ceil((streitwert - letzte.bis) / 10000);
-    return letzte.gebuehr + stufen * 10;
+    const stufen = Math.ceil((streitwert - letzte.bis) / 30000);
+    return letzte.gebuehr + stufen * 108;
   }
 
   const MULTIPLIKATOREN = { ag: 3.0, lg: 3.0, olg: 4.0, bgh: 5.0 };
   const INSTANZ_LABEL   = { ag: 'Amtsgericht', lg: 'Landgericht', olg: 'Oberlandesgericht', bgh: 'Bundesgerichtshof' };
 
   function berechne() {
-    const streitwertRaw = document.getElementById('gkg-streitwert').value.replace(',', '.');
+    const streitwertRaw = document.getElementById('gkg-streitwert').value
+      .replace(/\./g, '')
+      .replace(',', '.');
     const instanz       = document.getElementById('gkg-instanz').value;
     const ergebnisEl    = document.getElementById('gkg-ergebnis');
+
+    if (!MULTIPLIKATOREN[instanz]) {
+      const d = document.createElement('div');
+      d.className = 'alert alert-warning';
+      d.textContent = 'Ungültige Instanzauswahl.';
+      ergebnisEl.replaceChildren(d);
+      return;
+    }
 
     if (!streitwertRaw || streitwertRaw === '.') {
       const d = document.createElement('div');
