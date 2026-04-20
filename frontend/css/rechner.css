@@ -340,7 +340,7 @@
 
 /* ---- Shared Footer ---- */
 .fordify-footer {
-  background: #eff6ff;
+  background: var(--color-primary-light);
   border-top: 1px solid #bfdbfe;
   padding: 2.5rem 0;
   margin-top: 4rem;
