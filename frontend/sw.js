@@ -2,7 +2,7 @@
 const IS_STAGING_SW = self.location.hostname.includes('staging') ||
                       self.location.hostname === 'localhost' ||
                       self.location.hostname === '127.0.0.1';
-const CACHE = IS_STAGING_SW ? "fordify-staging-v6" : "fordify-v52";
+const CACHE = IS_STAGING_SW ? "fordify-staging-v7" : "fordify-v53";
 const ASSETS = [
   "/",
   "/index.html",

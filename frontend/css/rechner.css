@@ -311,6 +311,37 @@
 .fordify-breadcrumb .breadcrumb-item a:hover { text-decoration: underline; }
 .fordify-breadcrumb .breadcrumb-item.active { color: var(--color-text-muted); }
 
+/* ---- Rechner-Hero-Band ---- */
+.rechner-hero-band {
+  background: var(--color-primary-light);
+  border-bottom: 1px solid #bfdbfe;
+  padding: 0 0 2.5rem;
+  margin-bottom: 2.5rem;
+}
+.rechner-hero-band .rechner-header {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* ---- Fact-Chips ---- */
+.rechner-fact-bar {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+.rechner-fact-chip {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid #bfdbfe;
+  white-space: nowrap;
+}
+
 /* ---- Rechner-Seiten ---- */
 .rechner-header {
   padding: 3rem 0 2.5rem;
@@ -333,8 +364,14 @@
 .rechner-form-card {
   background: var(--color-card);
   border: 1.5px solid var(--color-border);
+  border-top: 3px solid var(--color-primary);
   border-radius: 0.75rem;
   padding: 1.75rem;
+}
+.rechner-form-card .form-control:focus,
+.rechner-form-card .form-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.12);
 }
 .rechner-result {
   margin-top: 1.5rem;
@@ -361,7 +398,7 @@
 /* ---- FAQ ---- */
 .faq-section { margin-top: 3rem; }
 .faq-section h2 {
-  font-size: 1.15rem;
+  font-size: 1.375rem;
   font-weight: 700;
   color: var(--color-primary);
   margin-bottom: 1rem;
@@ -428,3 +465,17 @@
 
 /* ---- Utility ---- */
 .font-mono { font-family: var(--font-mono); }
+
+/* ---- Pill Badge (NEU) ---- */
+.pill-badge {
+  display: inline-block;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  letter-spacing: .04em;
+  vertical-align: middle;
+  line-height: 1.4;
+}

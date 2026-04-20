@@ -114,13 +114,15 @@
         <li class="nav-item"><a class="nav-link" href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
       </ul>
       <a href="/forderungsaufstellung" class="btn btn-sm btn-light fw-semibold">
-        Forderungsaufstellung <span class="badge ms-1 fw-normal" style="background:rgba(255,255,255,0.2);color:inherit;font-size:0.65rem;letter-spacing:.04em;vertical-align:middle">NEU</span>
+        Forderungsaufstellung <span class="pill-badge ms-1">NEU</span>
       </a>
     </div>
   </div>
 </nav>
 
-<main class="container">
+<main>
+<div class="rechner-hero-band">
+  <div class="container">
   <nav aria-label="Breadcrumb" class="fordify-breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="/">fordify</a></li>
@@ -129,12 +131,20 @@
   </nav>
   <header class="rechner-header">
     <h1>RVG-Rechner 2025/2026 – Anwaltsgebühren nach Rechtsanwaltsvergütungsgesetz berechnen</h1>
-    <p class="intro">Berechnen Sie Anwaltsgebühren nach dem aktuellen RVG (BGBl. 2025 I Nr. 109) kostenlos und ohne Registrierung. Bei einem Streitwert von 10.000 € beträgt die Geschäftsgebühr (VV 2300, Faktor 1,3) beispielsweise 847,60 € netto zzgl. Auslagenpauschale (max. 20 €) und Umsatzsteuer. Geben Sie Streitwert, Verfahrensart und Umsatzsteuersatz ein – das Ergebnis zeigt alle Positionen einzeln.</p>
+    <p class="intro">Berechnen Sie Anwaltsgebühren nach dem aktuellen RVG (BGBl. 2025 I Nr. 109) kostenlos und ohne Registrierung. Bei 10.000 € Streitwert beträgt die Geschäftsgebühr (VV 2300, 1,3-fach) 847,60 € netto. Das Ergebnis zeigt alle Positionen einzeln ausgewiesen.</p>
   </header>
+  </div>
+</div>
 
+<div class="container">
   <div class="row g-4">
     <div class="col-lg-5">
       <div class="rechner-form-card">
+        <div class="rechner-fact-bar">
+          <span class="rechner-fact-chip">RVG 2025 (BGBl. I Nr. 109)</span>
+          <span class="rechner-fact-chip">VV 2300: 1,3-fach</span>
+          <span class="rechner-fact-chip">Auslagen max. 20 €</span>
+        </div>
         <form id="form-rvg">
           <div class="mb-3">
             <label for="rvg-streitwert" class="form-label fw-semibold">Gegenstandswert / Streitwert (€)</label>
@@ -155,16 +165,25 @@
               <option value="0">0 % (steuerbefreit)</option>
             </select>
           </div>
-          <button type="submit" class="btn btn-primary w-100">Gebühren berechnen</button>
+          <button type="submit" class="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Gebühren berechnen
+          </button>
         </form>
       </div>
     </div>
     <div class="col-lg-7">
       <div id="rvg-ergebnis"></div>
+      <div class="rechner-cta-box mt-4">
+        <div class="rechner-cta-box__title">Anwaltskosten in der Forderungsaufstellung verrechnen</div>
+        <p class="rechner-cta-box__sub">RVG-Kosten, Zinsen und Zahlungen automatisch nach § 367 BGB verrechnen – als professionelles PDF exportierbar.</p>
+        <a href="/forderungsaufstellung" class="btn btn-primary btn-sm">Zur Forderungsaufstellung →</a>
+      </div>
     </div>
   </div>
 
   <section class="faq-section">
+    <p class="section-overline mb-1">FAQ</p>
     <h2>Häufige Fragen zum RVG-Rechner</h2>
     <details>
       <summary>Wie werden Anwaltsgebühren nach RVG berechnet?</summary>
@@ -191,6 +210,7 @@
       <p>Ja. Außergerichtliche Anwaltskosten (VV 2300, Faktor 1,3) können bei Verzug als Schadensersatz vom Schuldner verlangt werden (§ 280 Abs. 1, 2 BGB i.V.m. § 286 BGB). Der übliche Regelgebührensatz von 1,3 wird dabei als erstattungsfähig angesehen. In der <a href="/forderungsaufstellung">Forderungsaufstellung von fordify</a> werden diese Kosten automatisch in der Tilgungsreihenfolge nach § 367 BGB verrechnet.</p>
     </details>
   </section>
+</div>
 </main>
 
 <footer class="fordify-footer">

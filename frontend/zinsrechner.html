@@ -114,13 +114,15 @@
         <li class="nav-item"><a class="nav-link" href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
       </ul>
       <a href="/forderungsaufstellung" class="btn btn-sm btn-light fw-semibold">
-        Forderungsaufstellung <span class="badge ms-1 fw-normal" style="background:rgba(255,255,255,0.2);color:inherit;font-size:0.65rem;letter-spacing:.04em;vertical-align:middle">NEU</span>
+        Forderungsaufstellung <span class="pill-badge ms-1">NEU</span>
       </a>
     </div>
   </div>
 </nav>
 
-<main class="container">
+<main>
+<div class="rechner-hero-band">
+  <div class="container">
   <nav aria-label="Breadcrumb" class="fordify-breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="/">fordify</a></li>
@@ -129,12 +131,20 @@
   </nav>
   <header class="rechner-header">
     <h1>Verzugszinsrechner – kostenlos &amp; aktuell (§ 288 BGB)</h1>
-    <p class="intro">Berechnen Sie Verzugszinsen nach § 288 BGB tagesgenau – mit dem aktuellen Basiszinssatz der Deutschen Bundesbank (seit 01.01.2026: 1,27 %). Für B2B-Forderungen gilt Basiszinssatz + 9 Prozentpunkte (aktuell 10,27 % p.a.), für Verbraucherforderungen Basiszinssatz + 5 Prozentpunkte (aktuell 6,27 % p.a.). Das Ergebnis wird nach Basiszinssatz-Perioden (01.01. und 01.07.) automatisch aufgeteilt – ideal für Anwaltskanzleien und Inkassobüros.</p>
+    <p class="intro">Berechnen Sie Verzugszinsen nach § 288 BGB tagesgenau. Das Ergebnis wird nach Basiszinssatz-Perioden (01.01. und 01.07.) automatisch aufgeteilt – ideal für Anwaltskanzleien und Inkassobüros.</p>
   </header>
+  </div>
+</div>
 
+<div class="container">
   <div class="row g-4">
     <div class="col-lg-5">
       <div class="rechner-form-card">
+        <div class="rechner-fact-bar">
+          <span class="rechner-fact-chip">Basiszins: 1,27 % (ab 01.01.2026)</span>
+          <span class="rechner-fact-chip">B2B: 10,27 % p.a.</span>
+          <span class="rechner-fact-chip">B2C: 6,27 % p.a.</span>
+        </div>
         <form id="form-zins">
           <div class="mb-3">
             <label for="zins-betrag" class="form-label fw-semibold">Hauptforderung (€)</label>
@@ -155,16 +165,25 @@
               <option value="b2c">Verbraucher (B2C) – Basiszinssatz + 5 PP</option>
             </select>
           </div>
-          <button type="submit" class="btn btn-primary w-100">Zinsen berechnen</button>
+          <button type="submit" class="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Zinsen berechnen
+          </button>
         </form>
       </div>
     </div>
     <div class="col-lg-7">
       <div id="zins-ergebnis"></div>
+      <div class="rechner-cta-box mt-4">
+        <div class="rechner-cta-box__title">Vollständige Forderungsaufstellung erstellen</div>
+        <p class="rechner-cta-box__sub">Zinsen, RVG-Kosten und Zahlungen automatisch nach § 367 BGB verrechnen – als professionelles PDF exportierbar.</p>
+        <a href="/forderungsaufstellung" class="btn btn-primary btn-sm">Zur Forderungsaufstellung →</a>
+      </div>
     </div>
   </div>
 
   <section class="faq-section">
+    <p class="section-overline mb-1">FAQ</p>
     <h2>Häufige Fragen zum Verzugszinsrechner</h2>
     <details>
       <summary>Wie werden Verzugszinsen nach § 288 BGB berechnet?</summary>
@@ -191,6 +210,7 @@
       <p>Beispiel: Hauptforderung 10.000 €, Verzugsbeginn 15.03.2026, Verzugsende 30.06.2026 (107 Tage), B2B (Basiszinssatz 1,27 % + 9 PP = 10,27 % p.a.). Berechnung: 10.000 € × 10,27 % × 107 / 365 = 301,04 €. fordify berechnet dies automatisch und teilt den Zeitraum bei jedem Basiszinssatz-Wechsel auf. Für die vollständige Forderungsaufstellung nach <a href="/forderungsaufstellung">§ 367 BGB</a> – mit Zahlungsverrechnung und PDF-Export – nutzen Sie die <a href="/forderungsaufstellung">Forderungsaufstellung</a>.</p>
     </details>
   </section>
+</div>
 </main>
 
 <footer class="fordify-footer">
