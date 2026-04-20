@@ -18,15 +18,7 @@ serve(async (req) => {
   const { event_type, data } = event
 
   if (['subscription.created', 'subscription.updated', 'subscription.activated'].includes(event_type)) {
-    let userId = data.custom_data?.user_id
-    if (!userId) {
-      // Fallback: User per E-Mail suchen
-      const email = data.customer?.email
-      if (email) {
-        const { data: profile } = await supabase.from('profiles').select('id').eq('email', email).single()
-        userId = profile?.id
-      }
-    }
+    const userId = data.custom_data?.user_id
     if (!userId) return new Response('Missing user_id', { status: 400 })
 
     const plan = data.items?.[0]?.price?.custom_data?.plan || 'pro'
