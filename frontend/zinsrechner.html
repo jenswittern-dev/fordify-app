@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verzugszinsrechner kostenlos – § 288 BGB | fordify</title>
+  <meta name="description" content="Verzugszinsen nach § 288 BGB kostenlos berechnen. Aktueller Basiszinssatz, B2B (9 PP) und B2C (5 PP), tagesgenaue Periodenaufstellung. Kein Login erforderlich.">
+  <link rel="canonical" href="https://fordify.de/zinsrechner">
+  <meta property="og:title" content="Verzugszinsrechner kostenlos – § 288 BGB | fordify">
+  <meta property="og:description" content="Verzugszinsen nach § 288 BGB kostenlos berechnen. Aktueller Basiszinssatz, B2B und B2C.">
+  <meta property="og:url" content="https://fordify.de/zinsrechner">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#1e3a8a">
+  <link rel="icon" type="image/svg+xml" href="img/logo.svg">
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/rechner.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Verzugszinsrechner",
+    "url": "https://fordify.de/zinsrechner",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+    "description": "Verzugszinsen nach § 288 BGB kostenlos berechnen"
+  }
+  </script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md" style="background:var(--color-nav-bg)">
+  <div class="container">
+    <a class="navbar-brand fw-bold" style="color:var(--color-nav-text)" href="/">fordify</a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Navigation öffnen">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav me-auto gap-1">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" style="color:var(--color-nav-text-muted)" href="#" data-bs-toggle="dropdown">Rechner</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item fw-semibold" href="/zinsrechner">Verzugszinsrechner</a></li>
+            <li><a class="dropdown-item" href="/rvg-rechner">RVG-Rechner</a></li>
+            <li><a class="dropdown-item" href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
+          </ul>
+        </li>
+      </ul>
+      <a href="/forderungsaufstellung" class="btn btn-sm btn-light fw-semibold">
+        Forderungsaufstellung <span class="badge bg-warning text-dark ms-1 fw-normal">Beta</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+  <header class="rechner-header">
+    <h1>Verzugszinsrechner – kostenlos &amp; aktuell (§ 288 BGB)</h1>
+    <p class="intro">Berechnen Sie Verzugszinsen nach § 288 BGB tagesgenau – mit aktuellem Basiszinssatz der Deutschen Bundesbank. Für B2B-Forderungen gilt Basiszinssatz + 9 Prozentpunkte, für Verbraucherforderungen Basiszinssatz + 5 Prozentpunkte. Das Ergebnis wird nach Basiszinssatz-Perioden (01.01. und 01.07.) aufgeteilt.</p>
+  </header>
+
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="rechner-form-card">
+        <form id="form-zins" novalidate>
+          <div class="mb-3">
+            <label for="zins-betrag" class="form-label fw-semibold">Hauptforderung (€)</label>
+            <input type="text" class="form-control" id="zins-betrag" placeholder="z. B. 5000,00" required>
+          </div>
+          <div class="mb-3">
+            <label for="zins-von" class="form-label fw-semibold">Zinsbeginn</label>
+            <input type="date" class="form-control" id="zins-von" required>
+          </div>
+          <div class="mb-3">
+            <label for="zins-bis" class="form-label fw-semibold">Zinsende</label>
+            <input type="date" class="form-control" id="zins-bis" required>
+          </div>
+          <div class="mb-4">
+            <label for="zins-typ" class="form-label fw-semibold">Schuldner-Typ</label>
+            <select class="form-select" id="zins-typ">
+              <option value="b2b">Unternehmen (B2B) – Basiszinssatz + 9 PP</option>
+              <option value="b2c">Verbraucher (B2C) – Basiszinssatz + 5 PP</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Zinsen berechnen</button>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div id="zins-ergebnis"></div>
+    </div>
+  </div>
+
+  <section class="faq-section">
+    <h2>Häufige Fragen zum Verzugszinsrechner</h2>
+    <details>
+      <summary>Wie werden Verzugszinsen nach § 288 BGB berechnet?</summary>
+      <p>Verzugszinsen berechnen sich als Jahresprozentsatz auf den offenen Forderungsbetrag: Betrag × Zinssatz × Tage ÷ 365. Der Zinssatz setzt sich zusammen aus dem Basiszinssatz nach § 247 BGB zuzüglich des gesetzlichen Aufschlags (9 PP bei B2B, 5 PP bei B2C). Da der Basiszinssatz halbjährlich wechselt, wird der Zeitraum an den Wechselgrenzen (01.01. und 01.07.) aufgeteilt.</p>
+    </details>
+    <details>
+      <summary>Was ist der aktuelle Basiszinssatz?</summary>
+      <p>Der Basiszinssatz wird von der Deutschen Bundesbank gemäß § 247 BGB zum 1. Januar und 1. Juli eines jeden Jahres neu festgesetzt. Seit dem 01.01.2026 beträgt er 1,27 %. fordify verwendet stets den aktuellen Basiszinssatz und ist bis zum 01.07.2026 aktuell gepflegt.</p>
+    </details>
+    <details>
+      <summary>Ab wann laufen Verzugszinsen?</summary>
+      <p>Verzugszinsen entstehen ab dem Zeitpunkt des Verzugseintritts. Bei einer Rechnung mit Fälligkeitsdatum tritt Verzug am nächsten Tag nach Ablauf der Zahlungsfrist ein. Bei Mahnungen tritt Verzug mit Zugang der Mahnung ein. Ohne Fälligkeitsvereinbarung beginnt der Verzug bei Verbrauchern erst nach einer Mahnung, bei Unternehmern ggf. bereits 30 Tage nach Fälligkeit und Zugang der Rechnung (§ 286 Abs. 3 BGB).</p>
+    </details>
+    <details>
+      <summary>Was ist der Unterschied zwischen B2B und B2C?</summary>
+      <p>Bei Forderungen zwischen Unternehmern (B2B) beträgt der Aufschlag auf den Basiszinssatz 9 Prozentpunkte (§ 288 Abs. 2 BGB). Bei Forderungen gegen Verbraucher (B2C) beträgt der Aufschlag nur 5 Prozentpunkte (§ 288 Abs. 1 BGB). Unternehmer im Sinne des BGB ist, wer in Ausübung einer gewerblichen oder selbständigen beruflichen Tätigkeit handelt.</p>
+    </details>
+    <details>
+      <summary>Wann verjähren Zinsansprüche?</summary>
+      <p>Zinsansprüche verjähren gemäß § 197 Abs. 2 BGB in der regelmäßigen Verjährungsfrist von 3 Jahren (§ 195 BGB), beginnend am Ende des Jahres, in dem der Anspruch entstanden ist. Bei titulierten Zinsen gilt die 30-jährige Verjährungsfrist des § 197 Abs. 1 Nr. 3 BGB. fordify weist in der Forderungsaufstellung auf drohende Verjährung hin.</p>
+    </details>
+  </section>
+</main>
+
+<footer class="fordify-footer">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-4 mb-2 mb-md-0">
+        <span class="fw-bold" style="color:var(--color-primary)">fordify</span>
+        <span class="text-muted ms-2" style="font-size:var(--text-sm)">Professionelle Forderungsberechnungen</span>
+      </div>
+      <div class="col-md-4 text-md-center mb-2 mb-md-0">
+        <a href="/zinsrechner" class="me-3">Zinsrechner</a>
+        <a href="/rvg-rechner" class="me-3">RVG-Rechner</a>
+        <a href="/gerichtskostenrechner">Gerichtskostenrechner</a>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <a href="/impressum.html" class="me-3">Impressum</a>
+        <a href="/datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/decimal.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/zinsen.js"></script>
+<script src="js/rechner-zins.js"></script>
+</body>
+</html>
