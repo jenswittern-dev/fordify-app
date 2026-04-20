@@ -13,6 +13,15 @@ const fordifyAuth = {
   plan: 'free'
 };
 
+function _emailRedirectTo() {
+  const params = new URLSearchParams(window.location.search);
+  const checkout = params.get('checkout');
+  if (checkout && typeof VALID_CHECKOUT_PARAMS !== 'undefined' && VALID_CHECKOUT_PARAMS.includes(checkout)) {
+    return window.location.origin + '/preise?' + params.toString();
+  }
+  return window.location.origin + '/forderungsaufstellung';
+}
+
 async function ladeSubscriptionStatus() {
   if (!fordifyAuth.user) return;
   const { data } = await supabaseClient
@@ -38,13 +47,13 @@ async function loginMitEmail(email) {
   _loginStatus('Link wird gesendet…', 'info');
   const { error } = await supabaseClient.auth.signInWithOtp({
     email,
-    options: { emailRedirectTo: window.location.origin + '/forderungsaufstellung' }
+    options: { emailRedirectTo: _emailRedirectTo() }
   });
 
   if (error) {
     _loginStatus('Fehler: ' + error.message, 'danger');
   } else {
-    _loginStatus('Link gesendet – prüfe dein Postfach.', 'success');
+    _loginStatus('Link gesendet – bitte E-Mail prüfen und Link in diesem Browser öffnen.', 'success');
     trackEvent('login-link-gesendet');
   }
 }
@@ -126,6 +135,7 @@ if (supabaseClient) supabaseClient.auth.onAuthStateChange(async (event, session)
     StorageBackend.init(fordifyAuth);
     await ladeCloudDaten();
     aktualisiereUIFuerAuth();
+    checkAutoCheckout();
     // Login-Modal schließen falls offen
     const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
     if (modal) modal.hide();
@@ -140,24 +150,6 @@ if (supabaseClient) supabaseClient.auth.onAuthStateChange(async (event, session)
     aktualisiereUIFuerAuth();
   }
 });
-
-function aktualisiereUIFuerAuth() {
-  const isAuth = fordifyAuth.isAuthenticated;
-  const isPaid = fordifyAuth.hasSubscription;
-
-  document.querySelectorAll('[data-auth-show="guest"]').forEach(el =>
-    el.classList.toggle('d-none', isAuth));
-  document.querySelectorAll('[data-auth-show="user"]').forEach(el =>
-    el.classList.toggle('d-none', !isAuth));
-
-  // User-E-Mail in Navbar anzeigen
-  const emailEl = document.getElementById('nav-user-email');
-  if (emailEl && fordifyAuth.user) emailEl.textContent = fordifyAuth.user.email;
-
-  // Free-Tier-Banner
-  const banner = document.getElementById('free-tier-banner');
-  if (banner) banner.classList.toggle('d-none', isPaid);
-}
 
 function _loginStatus(msg, type) {
   const el = document.getElementById('login-status');
