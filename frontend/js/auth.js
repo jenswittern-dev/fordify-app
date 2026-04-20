@@ -80,6 +80,40 @@ async function migrateSessionToCloud() {
   sessionStorage.removeItem(STORAGE_KEY_SETTINGS);
 }
 
+async function ladeCloudDaten() {
+  if (!fordifyAuth.hasSubscription) return;
+
+  const { data: cases } = await supabaseClient
+    .from('cases')
+    .select('*')
+    .eq('user_id', fordifyAuth.user.id);
+
+  if (cases && cases.length > 0) {
+    const reg = { cases: {}, naechsteId: 1 };
+    cases.forEach(c => {
+      reg.cases[c.id] = {
+        id: c.id, name: c.name,
+        fall: c.data, naechsteId: c.naechste_id,
+        updatedAt: c.updated_at
+      };
+    });
+    StorageBackend.setItem(STORAGE_KEY_CASES, JSON.stringify(reg));
+  }
+
+  const { data: settings } = await supabaseClient
+    .from('settings')
+    .select('data')
+    .eq('user_id', fordifyAuth.user.id)
+    .single();
+
+  if (settings) {
+    StorageBackend.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings.data));
+  }
+
+  // App mit geladenen Cloud-Daten neu initialisieren
+  if (typeof laden === 'function') laden();
+}
+
 // Auth-State-Listener
 supabaseClient.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_IN') {
@@ -88,6 +122,7 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
     await ladeSubscriptionStatus();
     await migrateSessionToCloud();
     StorageBackend.init(fordifyAuth);
+    await ladeCloudDaten();
     aktualisiereUIFuerAuth();
     // Login-Modal schließen falls offen
     const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
