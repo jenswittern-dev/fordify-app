@@ -43,53 +43,108 @@
   background: rgba(255,255,255,0.1);
   border: 1px solid rgba(255,255,255,0.2);
   border-radius: 1rem;
-  padding: 1.5rem;
-  min-width: 280px;
+  padding: 1.25rem 1.5rem;
+  min-width: 300px;
+  max-width: 340px;
   backdrop-filter: blur(8px);
+}
+.hero-mockup__titlebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.875rem;
 }
 .hero-mockup__header {
   font-weight: 700;
   font-size: 0.7rem;
   color: rgba(255,255,255,0.6);
-  margin-bottom: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
+}
+.hero-mockup__export-pill {
+  font-size: 0.6rem;
+  background: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.8);
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
 }
 .hero-mockup__row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  font-size: 0.8125rem;
-  color: rgba(255,255,255,0.85);
-  gap: 1.5rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-size: 0.775rem;
+  color: rgba(255,255,255,0.82);
+  gap: 1rem;
 }
 .hero-mockup__row:last-of-type {
   border-bottom: none;
 }
+.hero-mockup__auto-badge {
+  font-size: 0.55rem;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.65);
+  padding: 0.1rem 0.3rem;
+  border-radius: 999px;
+  margin-left: 0.25rem;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.hero-mockup__row--payment {
+  color: rgba(253, 186, 116, 0.9);
+}
+.hero-mockup__verrechnung {
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.38);
+  padding: 0.1rem 0 0.3rem 0.25rem;
+}
 .hero-mockup__divider {
   height: 1px;
-  background: rgba(255,255,255,0.25);
-  margin: 0.25rem 0;
+  background: rgba(255,255,255,0.2);
+  margin: 0.3rem 0;
 }
 .hero-mockup__row--total {
   font-weight: 700;
-  font-size: 0.9375rem;
+  font-size: 0.8125rem;
   color: #fff;
   border-bottom: none;
-  padding-top: 0.75rem;
+  padding-top: 0.5rem;
+}
+.hero-mockup__row--rest {
+  font-weight: 700;
+  font-size: 0.8125rem;
+  color: #fff;
+  border-bottom: none;
+  padding-top: 0.35rem;
+}
+.hero-mockup__footer {
+  margin-top: 0.875rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.hero-mockup__pdf-btn {
+  font-size: 0.65rem;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.85);
+  padding: 0.3rem 0.65rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 .hero-mockup__badge {
-  margin-top: 1rem;
-  display: inline-block;
-  background: rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.85);
-  font-size: 0.65rem;
-  font-weight: 600;
-  padding: 0.25rem 0.65rem;
+  font-size: 0.6rem;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.75);
+  padding: 0.2rem 0.5rem;
   border-radius: 999px;
-  letter-spacing: 0.04em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
 }
 
 /* ---- Trust-Bar ---- */
