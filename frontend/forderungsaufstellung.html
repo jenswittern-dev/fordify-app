@@ -56,10 +56,26 @@
           <button class="btn btn-sm btn-nav-primary" onclick="drucken()">Drucken / PDF</button>
           <button class="btn btn-sm btn-outline-light" data-auth-show="guest"
                   data-bs-toggle="modal" data-bs-target="#loginModal">Anmelden</button>
-          <span class="d-none" data-auth-show="user" style="font-size:0.75rem;color:rgba(255,255,255,0.8)">
-            <span id="nav-user-email"></span>
-            <button class="btn btn-sm btn-link text-white p-0 ms-2" onclick="logout()" style="font-size:0.75rem">Abmelden</button>
-          </span>
+          <div class="dropdown d-none" data-auth-show="user">
+            <button class="nav-avatar dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false" title="Mein Konto" aria-label="Konto-Menü">
+              <span class="nav-avatar-initials">?</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end nav-account-dropdown">
+              <li><div class="dropdown-header-info">
+                <div class="nav-user-email-display dropdown-email"></div>
+                <div class="nav-plan-badge"></div>
+              </div></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="/preise">Pläne &amp; Preise</a></li>
+              <li><a class="dropdown-item" href="#"
+                     onclick="openCustomerPortal(); return false;">
+                Abo verwalten ↗</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="#"
+                     onclick="logout(); return false;">Abmelden</a></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -663,7 +679,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body pt-2">
-        <p class="text-muted small mb-3">Gib deine E-Mail ein – wir senden dir einen Magic Link.</p>
+        <p class="text-muted small mb-3">Wir senden dir einen sicheren Login-Link per E-Mail – kein Passwort nötig. Bitte öffne den Link in diesem Browser-Fenster.</p>
         <div class="mb-3">
           <input type="email" class="form-control" id="login-email"
                  placeholder="deine@kanzlei.de" autocomplete="email">
@@ -709,6 +725,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="js/config.js"></script>
 <script src="js/storage.js"></script>
+<script src="js/auth-ui.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/gates.js"></script>
 <script src="js/decimal.min.js"></script>
