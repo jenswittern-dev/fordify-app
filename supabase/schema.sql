@@ -1,0 +1,65 @@
+-- fordify Supabase Schema
+-- Ausführen im Supabase Dashboard: SQL Editor → New Query → Run
+
+-- Profiles (erweitert auth.users)
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  email TEXT NOT NULL,
+  firma TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Subscriptions (via Paddle-Webhook befüllt)
+CREATE TABLE subscriptions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  paddle_subscription_id TEXT,
+  paddle_customer_id TEXT,
+  status TEXT DEFAULT 'inactive',  -- 'active', 'canceled', 'past_due', 'suspended'
+  plan TEXT DEFAULT 'pro',         -- 'pro', 'business'
+  billing_cycle TEXT DEFAULT 'monthly',  -- 'monthly', 'yearly'
+  current_period_end TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Fälle (JSONB – Fall-Objekt komplett, keine Normalisierung)
+CREATE TABLE cases (
+  id TEXT NOT NULL,
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  name TEXT,
+  data JSONB NOT NULL,
+  naechste_id INTEGER DEFAULT 1,
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  PRIMARY KEY (id, user_id)
+);
+
+-- Einstellungen (Kanzlei-Profil, Logo-URL)
+CREATE TABLE settings (
+  user_id UUID PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
+  data JSONB NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Kontakte / Schuldner-Adressbuch (Business-Tier)
+CREATE TABLE contacts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  strasse TEXT, plz TEXT, ort TEXT,
+  email TEXT, telefon TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Trigger: neues auth.user → Profile anlegen
+CREATE OR REPLACE FUNCTION handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO profiles (id, email)
+  VALUES (NEW.id, NEW.email);
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
