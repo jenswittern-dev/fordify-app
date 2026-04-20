@@ -82,10 +82,26 @@
         <li class="nav-item"><a class="nav-link fw-semibold" href="/preise">Preise</a></li>
       </ul>
       <div class="d-flex align-items-center gap-2">
-        <span class="d-none small" data-auth-show="user" style="color:rgba(255,255,255,0.8);font-size:0.75rem" id="nav-user-email"></span>
-        <button class="btn btn-sm btn-outline-light" data-auth-show="user" onclick="openCustomerPortal()">Abo verwalten</button>
-        <button class="btn btn-sm btn-outline-light" data-auth-show="user" onclick="logout()">Abmelden</button>
-        <button class="btn btn-sm btn-outline-light" data-auth-show="guest" data-bs-toggle="modal" data-bs-target="#loginModal">Anmelden</button>
+        <button class="btn btn-sm btn-outline-light" data-auth-show="guest"
+                data-bs-toggle="modal" data-bs-target="#loginModal">Anmelden</button>
+        <div class="dropdown d-none" data-auth-show="user">
+          <button class="nav-avatar dropdown-toggle" data-bs-toggle="dropdown"
+                  aria-expanded="false" title="Mein Konto" aria-label="Konto-Menü">
+            <span class="nav-avatar-initials">?</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end nav-account-dropdown">
+            <li><div class="dropdown-header-info">
+              <div class="nav-user-email-display dropdown-email"></div>
+              <div class="nav-plan-badge"></div>
+            </div></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#"
+                   onclick="openCustomerPortal(); return false;">Abo verwalten ↗</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#"
+                   onclick="logout(); return false;">Abmelden</a></li>
+          </ul>
+        </div>
         <a href="/forderungsaufstellung" class="btn btn-sm btn-light fw-semibold">
           Forderungsaufstellung <span class="pill-badge ms-1">NEU</span>
         </a>
@@ -281,7 +297,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body pt-2">
-        <p class="text-muted small mb-3">Melde dich an, um ein Abonnement abzuschließen. Wir senden dir einen Magic Link per E-Mail.</p>
+        <p class="text-muted small mb-3">Wir senden dir einen sicheren Login-Link per E-Mail – kein Passwort nötig. Bitte öffne den Link in diesem Browser-Fenster.</p>
         <input type="email" id="login-email" class="form-control mb-2" placeholder="deine@email.de" autocomplete="email">
         <button class="btn btn-primary w-100" onclick="loginMitEmail(document.getElementById('login-email').value)">Magic Link senden</button>
         <div id="login-status" class="d-none mt-2"></div>
@@ -295,6 +311,7 @@
 <script src="js/bootstrap.bundle.min.js"></script>
 <script src="js/config.js"></script>
 <script src="js/storage.js"></script>
+<script src="js/auth-ui.js"></script>
 <script src="js/auth.js"></script>
 <script>
   // Toggle – unabhängig von Paddle/Auth
@@ -316,35 +333,26 @@
     console.warn('Paddle Init fehlgeschlagen:', e);
   }
 
-  const PRICE_MAP = {
-    'monthly':         CONFIG.paddle.prices.proMonthly,
-    'yearly':          CONFIG.paddle.prices.proYearly,
-    'kanzlei-monthly': CONFIG.paddle.prices.businessMonthly,
-    'kanzlei-yearly':  CONFIG.paddle.prices.businessYearly,
-  };
-
   function startCheckout(interval) {
-    if (!paddleReady) { alert('Checkout nicht verfügbar. Bitte Seite neu laden.'); return; }
-    const priceId = PRICE_MAP[interval];
-    if (!priceId) return;
-    const userId = (typeof fordifyAuth !== 'undefined' && fordifyAuth.user?.id) || null;
-    if (!userId) {
-      // Nicht eingeloggt – erst Login
-      const modal = new bootstrap.Modal(document.getElementById('loginModal'));
-      modal.show();
+    if (!VALID_CHECKOUT_PARAMS.includes(interval)) return;
+    if (!paddleReady) {
+      alert('Checkout ist auf dieser Umgebung nicht verfügbar (Staging/Test).');
       return;
     }
+    const userId = (typeof fordifyAuth !== 'undefined' && fordifyAuth.user?.id) || null;
+    if (!userId) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('checkout', interval);
+      history.replaceState({}, '', url);
+      new bootstrap.Modal(document.getElementById('loginModal')).show();
+      return;
+    }
+    const priceId = PRICE_MAP[interval]?.();
+    if (!priceId) return;
     Paddle.Checkout.open({
       items: [{ priceId, quantity: 1 }],
       customData: { user_id: userId }
     });
-  }
-
-  function openCustomerPortal() {
-    if (typeof fordifyAuth === 'undefined' || !fordifyAuth.user?.email) return;
-    // Paddle Customer Portal öffnen
-    Paddle.Retain?.initiate?.({ userEmail: fordifyAuth.user.email }) ||
-      window.open('https://customer.paddle.com/', '_blank');
   }
 </script>
 <script data-goatcounter="https://fordify.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
