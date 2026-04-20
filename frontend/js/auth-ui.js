@@ -40,7 +40,10 @@ function _getInitials(email) {
   if (!email) return '?';
   const local = email.split('@')[0];
   const parts = local.split(/[._-]/);
-  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  if (parts.length >= 2) {
+    const initials = [parts[0]?.[0], parts[1]?.[0]].filter(Boolean);
+    if (initials.length === 2) return initials.join('').toUpperCase();
+  }
   return local.slice(0, 2).toUpperCase();
 }
 
@@ -60,6 +63,7 @@ function openCustomerPortal() {
 
 function checkAutoCheckout() {
   if (typeof Paddle === 'undefined') return;
+  if (!fordifyAuth.user) return;
   const params = new URLSearchParams(window.location.search);
   const interval = params.get('checkout');
   if (!VALID_CHECKOUT_PARAMS.includes(interval)) return;
@@ -70,6 +74,7 @@ function checkAutoCheckout() {
   if (!priceId) return;
 
   _zeigeCheckoutToast(() => {
+    if (typeof Paddle === 'undefined') return;
     Paddle.Checkout.open({
       items: [{ priceId, quantity: 1 }],
       customData: { user_id: fordifyAuth.user.id }
