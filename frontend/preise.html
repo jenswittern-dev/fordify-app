@@ -81,9 +81,15 @@
         <li class="nav-item"><a class="nav-link" href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
         <li class="nav-item"><a class="nav-link fw-semibold" href="/preise">Preise</a></li>
       </ul>
-      <a href="/forderungsaufstellung" class="btn btn-sm btn-light fw-semibold">
-        Forderungsaufstellung <span class="pill-badge ms-1">NEU</span>
-      </a>
+      <div class="d-flex align-items-center gap-2">
+        <span class="d-none small" data-auth-show="user" style="color:rgba(255,255,255,0.8);font-size:0.75rem" id="nav-user-email"></span>
+        <button class="btn btn-sm btn-outline-light" data-auth-show="user" onclick="openCustomerPortal()">Abo verwalten</button>
+        <button class="btn btn-sm btn-outline-light" data-auth-show="user" onclick="logout()">Abmelden</button>
+        <button class="btn btn-sm btn-outline-light" data-auth-show="guest" data-bs-toggle="modal" data-bs-target="#loginModal">Anmelden</button>
+        <a href="/forderungsaufstellung" class="btn btn-sm btn-light fw-semibold">
+          Forderungsaufstellung <span class="pill-badge ms-1">NEU</span>
+        </a>
+      </div>
     </div>
   </div>
 </nav>
@@ -266,6 +272,24 @@
   </div>
 </footer>
 
+<!-- Login-Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" id="loginModalLabel">Bei fordify anmelden</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body pt-2">
+        <p class="text-muted small mb-3">Melde dich an, um ein Abonnement abzuschließen. Wir senden dir einen Magic Link per E-Mail.</p>
+        <input type="email" id="login-email" class="form-control mb-2" placeholder="deine@email.de" autocomplete="email">
+        <button class="btn btn-primary w-100" onclick="loginMitEmail(document.getElementById('login-email').value)">Magic Link senden</button>
+        <div id="login-status" class="d-none mt-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>
@@ -273,31 +297,54 @@
 <script src="js/storage.js"></script>
 <script src="js/auth.js"></script>
 <script>
-  if (CONFIG.paddle.environment === 'sandbox') {
-    Paddle.Environment.set('sandbox');
-  }
-  Paddle.Initialize({ token: CONFIG.paddle.token });
-
+  // Toggle – unabhängig von Paddle/Auth
   const toggle = document.getElementById('billing-toggle');
   toggle.addEventListener('change', () => {
     document.querySelectorAll('.price-monthly').forEach(el => el.classList.toggle('d-none', toggle.checked));
     document.querySelectorAll('.price-yearly').forEach(el => el.classList.toggle('d-none', !toggle.checked));
   });
 
+  // Paddle initialisieren
+  let paddleReady = false;
+  try {
+    if (CONFIG.paddle.token) {
+      if (CONFIG.paddle.environment === 'sandbox') Paddle.Environment.set('sandbox');
+      Paddle.Initialize({ token: CONFIG.paddle.token });
+      paddleReady = true;
+    }
+  } catch (e) {
+    console.warn('Paddle Init fehlgeschlagen:', e);
+  }
+
   const PRICE_MAP = {
-    'monthly':        () => CONFIG.paddle.prices.proMonthly,
-    'yearly':         () => CONFIG.paddle.prices.proYearly,
-    'kanzlei-monthly': () => CONFIG.paddle.prices.businessMonthly,
-    'kanzlei-yearly':  () => CONFIG.paddle.prices.businessYearly,
+    'monthly':         CONFIG.paddle.prices.proMonthly,
+    'yearly':          CONFIG.paddle.prices.proYearly,
+    'kanzlei-monthly': CONFIG.paddle.prices.businessMonthly,
+    'kanzlei-yearly':  CONFIG.paddle.prices.businessYearly,
   };
 
   function startCheckout(interval) {
-    const priceId = PRICE_MAP[interval]?.();
+    if (!paddleReady) { alert('Checkout nicht verfügbar. Bitte Seite neu laden.'); return; }
+    const priceId = PRICE_MAP[interval];
     if (!priceId) return;
+    const userId = (typeof fordifyAuth !== 'undefined' && fordifyAuth.user?.id) || null;
+    if (!userId) {
+      // Nicht eingeloggt – erst Login
+      const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+      modal.show();
+      return;
+    }
     Paddle.Checkout.open({
       items: [{ priceId, quantity: 1 }],
-      customData: { user_id: (typeof fordifyAuth !== 'undefined' && fordifyAuth.user?.id) || null }
+      customData: { user_id: userId }
     });
+  }
+
+  function openCustomerPortal() {
+    if (typeof fordifyAuth === 'undefined' || !fordifyAuth.user?.email) return;
+    // Paddle Customer Portal öffnen
+    Paddle.Retain?.initiate?.({ userEmail: fordifyAuth.user.email }) ||
+      window.open('https://customer.paddle.com/', '_blank');
   }
 </script>
 <script data-goatcounter="https://fordify.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>

@@ -1,10 +1,10 @@
 // fordify Auth – Supabase Magic Link
 // Setzt voraus: CONFIG aus config.js, StorageBackend aus storage.js
 
-const supabaseClient = window.supabase.createClient(
-  CONFIG.supabase.url,
-  CONFIG.supabase.anonKey
-);
+let supabaseClient = null;
+if (CONFIG.supabase.url && CONFIG.supabase.anonKey) {
+  supabaseClient = window.supabase.createClient(CONFIG.supabase.url, CONFIG.supabase.anonKey);
+}
 
 const fordifyAuth = {
   isAuthenticated: false,
@@ -31,6 +31,7 @@ async function ladeSubscriptionStatus() {
 }
 
 async function loginMitEmail(email) {
+  if (!supabaseClient) { _loginStatus('Auth nicht konfiguriert.', 'danger'); return; }
   email = (email || '').trim();
   if (!email) { _loginStatus('Bitte E-Mail eingeben.', 'danger'); return; }
 
@@ -49,6 +50,7 @@ async function loginMitEmail(email) {
 }
 
 async function logout() {
+  if (!supabaseClient) return;
   await supabaseClient.auth.signOut();
   trackEvent('logout');
 }
@@ -115,7 +117,7 @@ async function ladeCloudDaten() {
 }
 
 // Auth-State-Listener
-supabaseClient.auth.onAuthStateChange(async (event, session) => {
+if (supabaseClient) supabaseClient.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_IN') {
     fordifyAuth.isAuthenticated = true;
     fordifyAuth.user = session.user;
