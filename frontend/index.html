@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>fordify – Forderungsaufstellung & Rechner für Anwaltskanzleien</title>
+  <meta name="description" content="Professionelle Forderungsaufstellungen nach § 367 BGB, Verzugszinsrechner, RVG-Rechner und Gerichtskostenrechner – kostenlos, browserbasiert, DSGVO-konform.">
+  <link rel="canonical" href="https://fordify.de/">
+  <meta property="og:title" content="fordify – Forderungsaufstellung & Rechner für Anwaltskanzleien">
+  <meta property="og:description" content="Professionelle Forderungsaufstellungen nach § 367 BGB, Verzugszinsrechner, RVG-Rechner und Gerichtskostenrechner – kostenlos, browserbasiert, DSGVO-konform.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fordify.de/">
+  <meta property="og:image" content="https://fordify.de/img/og-image.png">
+  <meta name="theme-color" content="#1e3a8a">
+  <link rel="icon" type="image/svg+xml" href="img/logo.svg">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/rechner.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "fordify",
+    "url": "https://fordify.de",
+    "description": "Professionelle Forderungsaufstellungen und Rechner für Anwaltskanzleien",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://fordify.de/forderungsaufstellung"
+    }
+  }
+  </script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md" style="background:var(--color-nav-bg)">
+  <div class="container">
+    <a class="navbar-brand fw-bold" style="color:var(--color-nav-text)" href="/">fordify</a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Navigation öffnen">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav me-auto gap-1">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" style="color:var(--color-nav-text-muted)" href="#" data-bs-toggle="dropdown" aria-expanded="false">Rechner</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/zinsrechner">Verzugszinsrechner</a></li>
+            <li><a class="dropdown-item" href="/rvg-rechner">RVG-Rechner</a></li>
+            <li><a class="dropdown-item" href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
+          </ul>
+        </li>
+      </ul>
+      <a href="/forderungsaufstellung" class="btn btn-sm btn-light fw-semibold">
+        Forderungsaufstellung <span class="badge bg-warning text-dark ms-1 fw-normal">Beta</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<section class="fordify-hero">
+  <div class="container">
+    <h1>Forderungsaufstellungen &amp; Rechner<br>für Anwaltskanzleien</h1>
+    <p class="lead mb-4">Rechtssichere Forderungsaufstellungen nach § 367 BGB, Verzugszinsberechnung, RVG-Gebühren und Gerichtskosten – kostenlos, direkt im Browser, DSGVO-konform.</p>
+    <a href="/forderungsaufstellung" class="btn btn-light btn-lg fw-semibold">
+      Zur Forderungsaufstellung <span class="badge bg-warning text-dark ms-2 fw-normal">Beta</span>
+    </a>
+  </div>
+</section>
+
+<main class="container">
+  <div class="tool-grid">
+    <a href="/forderungsaufstellung" class="tool-card tool-card--primary">
+      <div class="tool-card__icon">§</div>
+      <div class="tool-card__title">Forderungsaufstellung</div>
+      <p class="tool-card__desc">Vollständige Forderungsaufstellung nach § 367 BGB mit Zinsen, RVG-Gebühren, Zahlungsverrechnung und PDF-Export.</p>
+      <span class="tool-card__cta">Jetzt erstellen →</span>
+    </a>
+    <a href="/zinsrechner" class="tool-card">
+      <div class="tool-card__icon">%</div>
+      <div class="tool-card__title">Verzugszinsrechner</div>
+      <p class="tool-card__desc">Verzugszinsen nach § 288 BGB berechnen – aktueller Basiszinssatz, B2B und B2C, tagesgenaue Periodenaufstellung.</p>
+      <span class="tool-card__cta">Zinsen berechnen →</span>
+    </a>
+    <a href="/rvg-rechner" class="tool-card">
+      <div class="tool-card__icon">⚖</div>
+      <div class="tool-card__title">RVG-Rechner</div>
+      <p class="tool-card__desc">Anwaltsgebühren nach RVG 2025 berechnen – Geschäftsgebühr, Verfahrensgebühr, Auslagenpauschale und Umsatzsteuer.</p>
+      <span class="tool-card__cta">Gebühren berechnen →</span>
+    </a>
+    <a href="/gerichtskostenrechner" class="tool-card">
+      <div class="tool-card__icon">🏛</div>
+      <div class="tool-card__title">Gerichtskostenrechner</div>
+      <p class="tool-card__desc">Gerichtsgebühren nach GKG berechnen – Amtsgericht, Landgericht, OLG und BGH, alle Instanzen.</p>
+      <span class="tool-card__cta">Kosten berechnen →</span>
+    </a>
+  </div>
+
+  <div class="row g-0 my-4 py-4 border-top border-bottom">
+    <div class="col-md-4 vorteil-item">
+      <span class="vorteil-item__icon">🌐</span>
+      <div class="vorteil-item__title">Browserbasiert</div>
+      <p class="text-muted small">Keine Installation, keine App – läuft auf jedem Gerät direkt im Browser.</p>
+    </div>
+    <div class="col-md-4 vorteil-item">
+      <span class="vorteil-item__icon">📅</span>
+      <div class="vorteil-item__title">Immer aktuell</div>
+      <p class="text-muted small">RVG 2025, aktuelle Basiszinssätze (bis 07/2026), GKG Anlage 2.</p>
+    </div>
+    <div class="col-md-4 vorteil-item">
+      <span class="vorteil-item__icon">🔒</span>
+      <div class="vorteil-item__title">DSGVO-konform</div>
+      <p class="text-muted small">Alle Daten bleiben im Browser – kein Server, keine Cloud, keine Weitergabe.</p>
+    </div>
+  </div>
+</main>
+
+<section class="seo-text-block">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8">
+        <h2>Forderungsaufstellung nach § 367 BGB</h2>
+        <p>Eine rechtssichere Forderungsaufstellung zeigt, wie Zahlungseingänge auf eine offene Forderung verrechnet werden. § 367 BGB schreibt die Reihenfolge zwingend vor: zuerst die Kosten, dann die Zinsen, zuletzt die Hauptforderung. fordify berechnet diese Verrechnung automatisch und erstellt ein druckfertiges, professionelles Dokument für Anwaltskanzleien und Unternehmen.</p>
+
+        <h2>Verzugszinsen nach § 288 BGB berechnen</h2>
+        <p>Gerät ein Schuldner in Verzug, entstehen automatisch Verzugszinsen. Der gesetzliche Zinssatz beträgt bei Forderungen zwischen Unternehmen (B2B) Basiszinssatz + 9 Prozentpunkte, bei Verbraucher-Forderungen (B2C) Basiszinssatz + 5 Prozentpunkte. Der Basiszinssatz wird von der Deutschen Bundesbank halbjährlich zum 1. Januar und 1. Juli festgesetzt. Der Verzugszinsrechner von fordify verwendet stets den aktuellen Basiszinssatz und berechnet tagesgenaue Zinsen für jeden Abrechnungszeitraum.</p>
+
+        <h2>Anwaltskosten nach RVG berechnen</h2>
+        <p>Anwaltsgebühren richten sich nach dem Rechtsanwaltsvergütungsgesetz (RVG). Grundlage ist der Gegenstandswert (Streitwert), aus dem die einfache Gebühr nach der RVG-Gebührentabelle (Anlage 2 zu § 13 RVG) ermittelt wird. Der RVG-Rechner von fordify verwendet die aktuelle Tabelle aus dem BGBl. 2025 I Nr. 109 und berechnet Geschäftsgebühr (VV 2300), Verfahrensgebühr (VV 3100, VV 3309) und Auslagenpauschale (VV 7002) inklusive Umsatzsteuer.</p>
+
+        <h2>Gerichtskosten nach GKG berechnen</h2>
+        <p>Die Gerichtsgebühren in Zivilsachen richten sich nach dem Gerichtskostengesetz (GKG). Ausgehend vom Streitwert und der Instanz – Amtsgericht (3 Gebühren), Landgericht (3 Gebühren), Oberlandesgericht (4 Gebühren), Bundesgerichtshof (5 Gebühren) – berechnet der Gerichtskostenrechner die anfallenden Gerichtsgebühren auf Basis der GKG Anlage 2.</p>
+
+        <h2>fordify – Das Tool für Anwaltskanzleien</h2>
+        <p>fordify kombiniert alle Berechnungen in einem einzigen, professionellen Workflow. Die Anwendung läuft vollständig im Browser: keine Installation, keine Registrierung, keine Datenweitergabe. Alle eingegebenen Daten bleiben ausschließlich auf dem Gerät des Nutzers. fordify ist DSGVO-konform konzipiert und richtet sich an Anwaltskanzleien, Inkassounternehmen und Unternehmen mit aktivem Forderungsmanagement.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="fordify-footer">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-4 mb-2 mb-md-0">
+        <span class="fw-bold" style="color:var(--color-primary)">fordify</span>
+        <span class="text-muted ms-2" style="font-size:var(--text-sm)">Professionelle Forderungsberechnungen</span>
+      </div>
+      <div class="col-md-4 text-md-center mb-2 mb-md-0">
+        <a href="/zinsrechner" class="me-3">Zinsrechner</a>
+        <a href="/rvg-rechner" class="me-3">RVG-Rechner</a>
+        <a href="/gerichtskostenrechner">Gerichtskostenrechner</a>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <a href="/impressum.html" class="me-3">Impressum</a>
+        <a href="/datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
