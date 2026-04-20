@@ -92,6 +92,37 @@
   letter-spacing: 0.04em;
 }
 
+/* ---- Trust-Bar ---- */
+.trust-bar {
+  background: var(--color-primary-light);
+  border-bottom: 1px solid #bfdbfe;
+  padding: 0.6rem 0;
+}
+.trust-bar__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem 1.75rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.trust-bar__item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+.trust-bar__icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+  color: var(--color-accent);
+}
+
 /* ---- Tool-Grid ---- */
 .tool-grid {
   display: grid;
