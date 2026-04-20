@@ -33,20 +33,18 @@
 
 <nav class="navbar navbar-expand-md" style="background:var(--color-nav-bg)">
   <div class="container">
-    <a class="navbar-brand fw-bold" style="color:var(--color-nav-text)" href="/">fordify</a>
+    <a class="navbar-brand" href="/">
+      <img src="img/logo.svg" height="30" alt="fordify">
+    </a>
     <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Navigation öffnen">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navMenu">
       <ul class="navbar-nav me-auto gap-1">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" style="color:var(--color-nav-text-muted)" href="#" data-bs-toggle="dropdown">Rechner</a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/zinsrechner">Verzugszinsrechner</a></li>
-            <li><a class="dropdown-item" href="/rvg-rechner">RVG-Rechner</a></li>
-            <li><a class="dropdown-item fw-semibold" href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
-          </ul>
-        </li>
+        <li class="nav-item"><a class="nav-link" style="color:var(--color-nav-text-muted)" href="/">Startseite</a></li>
+        <li class="nav-item"><a class="nav-link" style="color:var(--color-nav-text-muted)" href="/zinsrechner">Zinsrechner</a></li>
+        <li class="nav-item"><a class="nav-link" style="color:var(--color-nav-text-muted)" href="/rvg-rechner">RVG-Rechner</a></li>
+        <li class="nav-item"><a class="nav-link fw-semibold" style="color:var(--color-nav-text)" href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
       </ul>
       <a href="/forderungsaufstellung" class="btn btn-sm btn-light fw-semibold">
         Forderungsaufstellung <span class="badge bg-warning text-dark ms-1 fw-normal">Beta</span>
@@ -114,24 +112,34 @@
 
 <footer class="fordify-footer">
   <div class="container">
-    <div class="row align-items-center">
-      <div class="col-md-4 mb-2 mb-md-0">
-        <span class="fw-bold" style="color:var(--color-primary)">fordify</span>
-        <span class="text-muted ms-2" style="font-size:var(--text-sm)">Professionelle Forderungsberechnungen</span>
+    <div class="row align-items-start g-3">
+      <div class="col-md-4">
+        <a href="/" class="d-inline-block mb-2">
+          <img src="img/logo.svg" height="26" alt="fordify">
+        </a>
+        <p class="small mb-0" style="color:var(--color-text-muted)">Professionelle Forderungsberechnungen für Kanzleien und Unternehmen.</p>
       </div>
-      <div class="col-md-4 text-md-center mb-2 mb-md-0">
-        <a href="/zinsrechner" class="me-3">Zinsrechner</a>
-        <a href="/rvg-rechner" class="me-3">RVG-Rechner</a>
-        <a href="/gerichtskostenrechner">Gerichtskostenrechner</a>
+      <div class="col-md-4">
+        <div class="fw-semibold small mb-2" style="color:var(--color-primary)">Rechner</div>
+        <ul class="list-unstyled mb-0">
+          <li><a href="/zinsrechner">Verzugszinsrechner</a></li>
+          <li><a href="/rvg-rechner">RVG-Rechner</a></li>
+          <li><a href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
+          <li><a href="/forderungsaufstellung" class="fw-semibold">Forderungsaufstellung →</a></li>
+        </ul>
       </div>
-      <div class="col-md-4 text-md-end">
-        <a href="/impressum.html" class="me-3">Impressum</a>
-        <a href="/datenschutz.html">Datenschutz</a>
+      <div class="col-md-4">
+        <div class="fw-semibold small mb-2" style="color:var(--color-primary)">Rechtliches</div>
+        <ul class="list-unstyled mb-0">
+          <li><a href="/impressum.html">Impressum</a></li>
+          <li><a href="/datenschutz.html">Datenschutz</a></li>
+        </ul>
       </div>
     </div>
   </div>
 </footer>
 
+<script src="js/bootstrap.bundle.min.js"></script>
 <script src="js/decimal.min.js"></script>
 <script src="js/config.js"></script>
 <script src="js/data.js"></script>
