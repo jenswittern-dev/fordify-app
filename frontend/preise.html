@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preise – fordify Pro für Kanzleien und Unternehmen</title>
+  <meta name="description" content="fordify Pro: Professionelle Forderungsaufstellungen, Cloud-Speicherung und Excel-Export. 19 €/Monat oder 149 €/Jahr. 14 Tage kostenlos testen.">
+  <link rel="canonical" href="https://fordify.de/preise">
+  <link rel="icon" type="image/svg+xml" href="img/logo.svg">
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/app.css">
+  <style>
+    .preise-hero { background: var(--color-primary-light); border-bottom: 1px solid #bfdbfe; padding: 3rem 0 2.5rem; text-align: center; }
+    .preise-hero h1 { font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 800; color: var(--color-primary); margin-bottom: 0.75rem; }
+    .preise-hero p { color: var(--color-text-muted); font-size: 1.0625rem; max-width: 540px; margin: 0 auto 1.5rem; }
+
+    .billing-toggle-wrap { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-bottom: 2.5rem; font-size: 0.9375rem; }
+    .billing-toggle-wrap .save-badge { background: #dcfce7; color: #166534; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px; }
+    .form-check-input:checked { background-color: var(--color-primary); border-color: var(--color-primary); }
+
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; max-width: 900px; margin: 0 auto; padding: 2.5rem 1rem 3rem; }
+
+    .pricing-card { background: var(--color-surface); border: 1.5px solid var(--color-border); border-radius: 14px; padding: 2rem 1.75rem; position: relative; transition: box-shadow 0.2s; }
+    .pricing-card:hover { box-shadow: 0 4px 24px rgba(30,58,138,0.1); }
+    .pricing-card.featured { border-color: var(--color-primary); border-width: 2px; }
+    .pricing-card.featured::before { content: "Beliebteste Wahl"; position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--color-primary); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.85rem; border-radius: 999px; white-space: nowrap; letter-spacing: .04em; }
+
+    .plan-name { font-size: 0.8125rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--color-text-muted); margin-bottom: 0.5rem; }
+    .plan-price { font-size: 2.25rem; font-weight: 800; color: var(--color-primary); line-height: 1; margin-bottom: 0.25rem; }
+    .plan-price span { font-size: 1rem; font-weight: 400; color: var(--color-text-muted); }
+    .plan-price-alt { font-size: 0.8125rem; color: var(--color-text-muted); margin-bottom: 1.25rem; min-height: 1.2rem; }
+    .plan-desc { font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1.5rem; line-height: 1.5; }
+
+    .feature-list { list-style: none; padding: 0; margin: 0 0 1.75rem; }
+    .feature-list li { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.9rem; color: var(--color-text); margin-bottom: 0.6rem; line-height: 1.4; }
+    .feature-list li .icon-check { color: #16a34a; flex-shrink: 0; margin-top: 1px; }
+    .feature-list li .icon-lock { color: var(--color-text-muted); flex-shrink: 0; margin-top: 1px; }
+    .feature-list li.muted { color: var(--color-text-muted); }
+
+    .comparison-section { max-width: 800px; margin: 0 auto; padding: 0 1rem 3rem; }
+    .comparison-section h2 { font-size: 1.375rem; font-weight: 700; color: var(--color-primary); margin-bottom: 1.5rem; text-align: center; }
+    .comparison-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .comparison-table th { background: var(--color-primary-light); padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); }
+    .comparison-table th:not(:first-child) { text-align: center; }
+    .comparison-table td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--color-border); color: var(--color-text); }
+    .comparison-table td:not(:first-child) { text-align: center; }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .check { color: #16a34a; font-weight: 700; }
+    .cross { color: var(--color-text-muted); }
+
+    .trust-section { background: var(--color-primary-light); padding: 2.5rem 1rem; text-align: center; }
+    .trust-section p { max-width: 540px; margin: 0 auto; color: var(--color-text-muted); font-size: 0.9375rem; }
+
+    .faq-preise { max-width: 700px; margin: 0 auto; padding: 2.5rem 1rem 3rem; }
+    .faq-preise h2 { font-size: 1.375rem; font-weight: 700; color: var(--color-primary); margin-bottom: 1.5rem; text-align: center; }
+    .faq-preise details { border-bottom: 1px solid var(--color-border); }
+    .faq-preise summary { padding: 1rem 0; font-weight: 600; cursor: pointer; font-size: 0.9375rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+    .faq-preise summary::after { content: "+"; font-size: 1.25rem; color: var(--color-text-muted); }
+    .faq-preise details[open] summary::after { content: "−"; }
+    .faq-preise details p { padding: 0 0 1rem; color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.7; margin: 0; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-fa">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <img src="img/logo.svg" height="30" alt="fordify Logo">
+      <span>fordify</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Navigation öffnen">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav me-auto gap-1">
+        <li class="nav-item"><a class="nav-link" href="/">Startseite</a></li>
+        <li class="nav-item"><a class="nav-link" href="/zinsrechner">Zinsrechner</a></li>
+        <li class="nav-item"><a class="nav-link" href="/rvg-rechner">RVG-Rechner</a></li>
+        <li class="nav-item"><a class="nav-link" href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
+        <li class="nav-item"><a class="nav-link fw-semibold" href="/preise">Preise</a></li>
+      </ul>
+      <a href="/forderungsaufstellung" class="btn btn-sm btn-light fw-semibold">
+        Forderungsaufstellung <span class="pill-badge ms-1">NEU</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+<div class="preise-hero">
+  <div class="container">
+    <h1>Einfache, transparente Preise</h1>
+    <p>Alle Werkzeuge kostenlos nutzen. Pro schaltet Cloud-Speicherung, Excel-Export und dauerhaftes Kanzlei-Profil frei.</p>
+
+    <div class="billing-toggle-wrap">
+      <span>Monatlich</span>
+      <div class="form-check form-switch mb-0">
+        <input class="form-check-input" type="checkbox" id="billing-toggle" style="width:2.5rem;height:1.25rem;cursor:pointer">
+      </div>
+      <span>Jährlich <span class="save-badge">2 Monate gratis</span></span>
+    </div>
+  </div>
+</div>
+
+<div class="pricing-grid">
+
+  <!-- Free -->
+  <div class="pricing-card">
+    <div class="plan-name">Free</div>
+    <div class="plan-price">0 €<span>/Monat</span></div>
+    <div class="plan-price-alt">Für immer kostenlos</div>
+    <div class="plan-desc">Alle Rechner kostenlos. Forderungsaufstellungen erstellen und als PDF exportieren – ohne Login.</div>
+    <ul class="feature-list">
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Zinsrechner (§ 288 BGB)</li>
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> RVG-Rechner (2025)</li>
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Gerichtskostenrechner (GKG)</li>
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Forderungsaufstellung erstellen</li>
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> PDF-Export (inkl. Kanzlei-Logo)</li>
+      <li class="muted"><svg class="icon-lock" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Cloud-Speicherung</li>
+      <li class="muted"><svg class="icon-lock" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Excel / CSV-Export</li>
+      <li class="muted"><svg class="icon-lock" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Kanzlei-Profil speichern</li>
+    </ul>
+    <a href="/forderungsaufstellung" class="btn btn-outline-primary w-100">Kostenlos starten</a>
+  </div>
+
+  <!-- Pro -->
+  <div class="pricing-card featured">
+    <div class="plan-name">Pro</div>
+    <div class="plan-price price-monthly">19 €<span>/Monat</span></div>
+    <div class="plan-price price-yearly d-none">12,42 €<span>/Monat</span></div>
+    <div class="plan-price-alt price-monthly">Monatlich kündbar</div>
+    <div class="plan-price-alt price-yearly d-none">149 € pro Jahr – 2 Monate gratis</div>
+    <div class="plan-desc">Für Einzelanwälte und kleinere Kanzleien. Alle Funktionen, Daten sicher in der Cloud.</div>
+    <ul class="feature-list">
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Alles aus Free</li>
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Cloud-Speicherung (alle Fälle)</li>
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Excel / CSV-Export</li>
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Kanzlei-Profil dauerhaft speichern</li>
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Schuldner-Adressbuch</li>
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> E-Mail-Support</li>
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 14 Tage Geld-zurück-Garantie</li>
+    </ul>
+    <button class="btn btn-primary w-100 price-monthly" onclick="startCheckout('monthly')">14 Tage kostenlos testen</button>
+    <button class="btn btn-primary w-100 price-yearly d-none" onclick="startCheckout('yearly')">14 Tage kostenlos testen</button>
+  </div>
+
+  <!-- Kanzlei -->
+  <div class="pricing-card">
+    <div class="plan-name">Kanzlei</div>
+    <div class="plan-price">49 €<span>/Monat</span></div>
+    <div class="plan-price-alt">Für Kanzleien ab 3 Nutzern</div>
+    <div class="plan-desc">Mehrere Nutzer, gemeinsame Fallverwaltung und Kanzlei-Branding für professionellen Außenauftritt.</div>
+    <ul class="feature-list">
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Alles aus Pro</li>
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Mehrere Nutzer (Kanzlei-Team)</li>
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Gemeinsame Fallverwaltung</li>
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Kanzlei-Branding im PDF</li>
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Prioritäts-Support</li>
+    </ul>
+    <a href="mailto:mail@fordify.de?subject=Kanzlei-Plan%20Anfrage" class="btn btn-outline-primary w-100">Kontakt aufnehmen</a>
+  </div>
+
+</div>
+
+<!-- Vergleichstabelle -->
+<div class="comparison-section">
+  <h2>Funktionsvergleich</h2>
+  <div class="table-responsive">
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Funktion</th>
+          <th>Free</th>
+          <th>Pro</th>
+          <th>Kanzlei</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Zinsrechner (§ 288 BGB)</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>RVG-Rechner (2025)</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Gerichtskostenrechner (GKG)</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Forderungsaufstellung erstellen</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>PDF-Export (inkl. Logo)</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Cloud-Speicherung</td><td class="cross">–</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Excel / CSV-Export</td><td class="cross">–</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Kanzlei-Profil dauerhaft speichern</td><td class="cross">–</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Schuldner-Adressbuch</td><td class="cross">–</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Mehrere Nutzer</td><td class="cross">–</td><td class="cross">–</td><td class="check">✓</td></tr>
+        <tr><td>Gemeinsame Fallverwaltung</td><td class="cross">–</td><td class="cross">–</td><td class="check">✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Trust -->
+<div class="trust-section">
+  <div class="container">
+    <p>
+      <strong>Keine Kreditkarte für den Start nötig.</strong> 14 Tage Geld-zurück-Garantie. Monatlich kündbar.
+      Daten sicher in der EU (Frankfurt). DSGVO-konform. Kein Cookie-Banner.
+    </p>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-preise">
+  <h2>Häufige Fragen</h2>
+  <details>
+    <summary>Ist die kostenlose Version wirklich kostenlos?</summary>
+    <p>Ja, dauerhaft und ohne versteckte Kosten. Du kannst alle Rechner und die Forderungsaufstellung inkl. PDF-Export unbegrenzt nutzen. Der Unterschied: Im Free-Tarif werden Daten nur für die aktuelle Browser-Sitzung gespeichert. Nach dem Schließen des Tabs sind sie weg.</p>
+  </details>
+  <details>
+    <summary>Was passiert mit meinen Daten, wenn ich kündige?</summary>
+    <p>Nach der Kündigung bleiben deine Daten noch 30 Tage erhalten, damit du alles exportieren kannst. Danach werden sie unwiderruflich gelöscht. Du kannst deine Fälle jederzeit als Excel oder JSON exportieren.</p>
+  </details>
+  <details>
+    <summary>Wie läuft die 14-Tage-Geld-zurück-Garantie ab?</summary>
+    <p>Wenn du innerhalb von 14 Tagen nach der ersten Buchung nicht zufrieden bist, erhältst du auf Anfrage (mail@fordify.de) den vollen Betrag zurück – ohne Wenn und Aber. Die Garantie gilt einmalig pro Kunde.</p>
+  </details>
+  <details>
+    <summary>Ist fordify DSGVO-konform?</summary>
+    <p>Ja. Alle Daten werden in der EU (Frankfurt) gespeichert. Wir setzen keine Werbe-Tracker ein und benötigen keinen Cookie-Banner. Analytics laufen über GoatCounter (datenschutzkonform, cookielos). Für Kanzleien, die Mandantendaten eingeben, stellen wir auf Anfrage einen Auftragsverarbeitungsvertrag (AVV) bereit.</p>
+  </details>
+  <details>
+    <summary>Welche Zahlungsmethoden werden akzeptiert?</summary>
+    <p>Kreditkarte und weitere gängige Methoden über unseren Zahlungsdienstleister Paddle. Paddle tritt als Merchant of Record auf und stellt die Rechnung aus.</p>
+  </details>
+</div>
+
+</main>
+
+<footer class="fordify-footer">
+  <div class="container">
+    <div class="row align-items-start g-3">
+      <div class="col-md-4">
+        <a href="/" class="d-inline-block mb-2">
+          <img src="img/logo.svg" height="26" alt="fordify">
+        </a>
+        <p class="small mb-0" style="color:var(--color-text-muted)">Professionelle Forderungsberechnungen für Kanzleien und Unternehmen.</p>
+      </div>
+      <div class="col-md-4">
+        <div class="fw-semibold small mb-2" style="color:var(--color-primary)">Rechner</div>
+        <ul class="list-unstyled mb-0">
+          <li><a href="/zinsrechner">Verzugszinsrechner</a></li>
+          <li><a href="/rvg-rechner">RVG-Rechner</a></li>
+          <li><a href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
+          <li><a href="/forderungsaufstellung" class="fw-semibold">Forderungsaufstellung →</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <div class="fw-semibold small mb-2" style="color:var(--color-primary)">Rechtliches</div>
+        <ul class="list-unstyled mb-0">
+          <li><a href="/impressum">Impressum</a></li>
+          <li><a href="/datenschutz">Datenschutz</a></li>
+          <li><a href="/agb">AGB</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/config.js"></script>
+<script>
+  const toggle = document.getElementById('billing-toggle');
+  toggle.addEventListener('change', () => {
+    document.querySelectorAll('.price-monthly').forEach(el => el.classList.toggle('d-none', toggle.checked));
+    document.querySelectorAll('.price-yearly').forEach(el => el.classList.toggle('d-none', !toggle.checked));
+  });
+
+  function startCheckout(interval) {
+    // Paddle-Integration folgt nach Account-Setup
+    alert('Checkout wird in Kürze freigeschaltet. Bei Fragen: mail@fordify.de');
+  }
+</script>
+</body>
+</html>
