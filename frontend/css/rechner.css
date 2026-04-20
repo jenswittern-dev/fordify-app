@@ -32,7 +32,7 @@
 }
 .hero-text {
   flex: 1;
-  max-width: 560px;
+  min-width: 280px;
 }
 @media (max-width: 767px) {
   .hero-visual { display: none; }
@@ -328,7 +328,7 @@
   font-size: var(--text-base);
   line-height: 1.7;
   color: var(--color-text-muted);
-  max-width: 700px;
+  max-width: 900px;
 }
 .rechner-form-card {
   background: var(--color-card);
