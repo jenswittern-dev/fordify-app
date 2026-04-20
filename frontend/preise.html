@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/rechner.css">
   <style>
     .preise-hero { background: var(--color-primary-light); border-bottom: 1px solid #bfdbfe; padding: 3rem 0 2.5rem; text-align: center; }
     .preise-hero h1 { font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 800; color: var(--color-primary); margin-bottom: 0.75rem; }
@@ -149,8 +150,10 @@
   <!-- Kanzlei -->
   <div class="pricing-card">
     <div class="plan-name">Kanzlei</div>
-    <div class="plan-price">49 €<span>/Monat</span></div>
-    <div class="plan-price-alt">Für Kanzleien ab 3 Nutzern</div>
+    <div class="plan-price price-monthly">49 €<span>/Monat</span></div>
+    <div class="plan-price price-yearly d-none">33,25 €<span>/Monat</span></div>
+    <div class="plan-price-alt price-monthly">Für Kanzleien ab 3 Nutzern</div>
+    <div class="plan-price-alt price-yearly d-none">399 € pro Jahr – 2 Monate gratis</div>
     <div class="plan-desc">Mehrere Nutzer, gemeinsame Fallverwaltung und Kanzlei-Branding für professionellen Außenauftritt.</div>
     <ul class="feature-list">
       <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Alles aus Pro</li>
@@ -158,8 +161,10 @@
       <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Gemeinsame Fallverwaltung</li>
       <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Kanzlei-Branding im PDF</li>
       <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Prioritäts-Support</li>
+      <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> 14 Tage Geld-zurück-Garantie</li>
     </ul>
-    <a href="mailto:mail@fordify.de?subject=Kanzlei-Plan%20Anfrage" class="btn btn-outline-primary w-100">Kontakt aufnehmen</a>
+    <button class="btn btn-outline-primary w-100 price-monthly" onclick="startCheckout('kanzlei-monthly')">Kanzlei-Plan starten</button>
+    <button class="btn btn-outline-primary w-100 price-yearly d-none" onclick="startCheckout('kanzlei-yearly')">Kanzlei-Plan starten</button>
   </div>
 
 </div>
@@ -189,6 +194,9 @@
         <tr><td>Schuldner-Adressbuch</td><td class="cross">–</td><td class="check">✓</td><td class="check">✓</td></tr>
         <tr><td>Mehrere Nutzer</td><td class="cross">–</td><td class="cross">–</td><td class="check">✓</td></tr>
         <tr><td>Gemeinsame Fallverwaltung</td><td class="cross">–</td><td class="cross">–</td><td class="check">✓</td></tr>
+        <tr><td>Kanzlei-Branding im PDF</td><td class="cross">–</td><td class="cross">–</td><td class="check">✓</td></tr>
+        <tr><td>Prioritäts-Support</td><td class="cross">–</td><td class="cross">–</td><td class="check">✓</td></tr>
+        <tr><td>Jährliche Abrechnung (2 Monate gratis)</td><td class="cross">–</td><td class="check">✓</td><td class="check">✓</td></tr>
       </tbody>
     </table>
   </div>
@@ -250,8 +258,9 @@
         </ul>
       </div>
       <div class="col-md-4">
-        <div class="fw-semibold small mb-2" style="color:var(--color-primary)">Rechtliches</div>
+        <div class="fw-semibold small mb-2" style="color:var(--color-primary)">Mehr</div>
         <ul class="list-unstyled mb-0">
+          <li><a href="/preise" class="fw-semibold">Preise</a></li>
           <li><a href="/impressum">Impressum</a></li>
           <li><a href="/datenschutz">Datenschutz</a></li>
           <li><a href="/agb">AGB</a></li>

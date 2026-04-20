@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/rechner.css">
   <style>
     .legal-page { max-width: 720px; margin: 2.5rem auto; padding: 0 1rem 4rem; }
     .legal-page h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--color-primary); }
@@ -41,12 +42,27 @@
 </head>
 <body>
 
-<nav class="navbar navbar-fa mb-0">
+<nav class="navbar navbar-expand-md navbar-fa">
   <div class="container">
-    <a class="navbar-brand" href="index.html">
+    <a class="navbar-brand" href="/">
       <img src="img/logo.svg" height="30" alt="fordify Logo">
       <span>fordify</span>
     </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Navigation öffnen">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav me-auto gap-1">
+        <li class="nav-item"><a class="nav-link" href="/">Startseite</a></li>
+        <li class="nav-item"><a class="nav-link" href="/zinsrechner">Zinsrechner</a></li>
+        <li class="nav-item"><a class="nav-link" href="/rvg-rechner">RVG-Rechner</a></li>
+        <li class="nav-item"><a class="nav-link" href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
+        <li class="nav-item"><a class="nav-link" href="/preise">Preise</a></li>
+      </ul>
+      <a href="/forderungsaufstellung" class="btn btn-sm btn-light fw-semibold">
+        Forderungsaufstellung <span class="pill-badge ms-1">NEU</span>
+      </a>
+    </div>
   </div>
 </nav>
 
@@ -321,12 +337,34 @@
   </p>
 </div>
 
-<footer style="padding:1.25rem 0;border-top:1px solid var(--color-border);background:var(--color-surface)">
-  <div class="container d-flex gap-3 justify-content-center" style="font-size:0.8rem;color:var(--color-text-muted)">
-    <span>© 2026 fordify</span>
-    <a href="impressum.html" style="color:var(--color-text-muted);text-decoration:none">Impressum</a>
-    <a href="datenschutz.html" style="color:var(--color-text-muted);text-decoration:none">Datenschutz</a>
-    <a href="agb.html" style="color:var(--color-text-muted);text-decoration:none">AGB</a>
+<footer class="fordify-footer">
+  <div class="container">
+    <div class="row align-items-start g-3">
+      <div class="col-md-4">
+        <a href="/" class="d-inline-block mb-2">
+          <img src="img/logo.svg" height="26" alt="fordify">
+        </a>
+        <p class="small mb-0" style="color:var(--color-text-muted)">Professionelle Forderungsberechnungen für Kanzleien und Unternehmen.</p>
+      </div>
+      <div class="col-md-4">
+        <div class="fw-semibold small mb-2" style="color:var(--color-primary)">Rechner</div>
+        <ul class="list-unstyled mb-0">
+          <li><a href="/zinsrechner">Verzugszinsrechner</a></li>
+          <li><a href="/rvg-rechner">RVG-Rechner</a></li>
+          <li><a href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
+          <li><a href="/forderungsaufstellung" class="fw-semibold">Forderungsaufstellung →</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <div class="fw-semibold small mb-2" style="color:var(--color-primary)">Mehr</div>
+        <ul class="list-unstyled mb-0">
+          <li><a href="/preise" class="fw-semibold">Preise</a></li>
+          <li><a href="/impressum">Impressum</a></li>
+          <li><a href="/datenschutz">Datenschutz</a></li>
+          <li><a href="/agb">AGB</a></li>
+        </ul>
+      </div>
+    </div>
   </div>
 </footer>
 
