@@ -13,8 +13,42 @@
 
   function berechne() {
     const betrag = document.getElementById('zins-betrag').value.replace(',', '.');
-    const von    = parseDate(document.getElementById('zins-von').value);
-    const bis    = parseDate(document.getElementById('zins-bis').value);
+
+    const vonVal = document.getElementById('zins-von').value;
+    const bisVal = document.getElementById('zins-bis').value;
+
+    if (!betrag || betrag === '.') {
+      const d = document.createElement('div');
+      d.className = 'alert alert-warning';
+      d.textContent = 'Bitte einen gültigen Betrag eingeben.';
+      document.getElementById('zins-ergebnis').replaceChildren(d);
+      return;
+    }
+    if (!vonVal || !bisVal) {
+      const d = document.createElement('div');
+      d.className = 'alert alert-warning';
+      d.textContent = 'Bitte Zinsbeginn und Zinsende eingeben.';
+      document.getElementById('zins-ergebnis').replaceChildren(d);
+      return;
+    }
+    let betragD;
+    try { betragD = new Decimal(betrag); } catch (e) {
+      const d = document.createElement('div');
+      d.className = 'alert alert-warning';
+      d.textContent = 'Ungültiger Betrag. Bitte eine Zahl eingeben (z. B. 5000,00).';
+      document.getElementById('zins-ergebnis').replaceChildren(d);
+      return;
+    }
+    if (betragD.lte(0)) {
+      const d = document.createElement('div');
+      d.className = 'alert alert-warning';
+      d.textContent = 'Bitte einen positiven Betrag eingeben.';
+      document.getElementById('zins-ergebnis').replaceChildren(d);
+      return;
+    }
+
+    const von    = parseDate(vonVal);
+    const bis    = parseDate(bisVal);
     const typ    = document.getElementById('zins-typ').value; // 'b2b' | 'b2c'
     const aufschlagPP = typ === 'b2b' ? 9 : 5;
 
@@ -23,7 +57,10 @@
       const perioden = berechneVerzugszinsen(betrag, von, bis, aufschlagPP, BASISZINSSAETZE);
       ergebnisEl.innerHTML = renderPerioden(perioden);
     } catch (err) {
-      ergebnisEl.innerHTML = `<div class="alert alert-danger">${err.message}</div>`;
+      const errDiv = document.createElement('div');
+      errDiv.className = 'alert alert-danger';
+      errDiv.textContent = err.message;
+      ergebnisEl.replaceChildren(errDiv);
     }
   }
 
