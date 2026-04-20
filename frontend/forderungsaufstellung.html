@@ -54,11 +54,25 @@
           <button class="btn btn-sm btn-outline-light" onclick="zeigeEinstellungenModal()">Einstellungen</button>
           <button class="btn btn-sm btn-outline-light" onclick="fallZuruecksetzen()">Neu</button>
           <button class="btn btn-sm btn-nav-primary" onclick="drucken()">Drucken / PDF</button>
+          <button class="btn btn-sm btn-outline-light" data-auth-show="guest"
+                  data-bs-toggle="modal" data-bs-target="#loginModal">Anmelden</button>
+          <span class="d-none" data-auth-show="user" style="font-size:0.75rem;color:rgba(255,255,255,0.8)">
+            <span id="nav-user-email"></span>
+            <button class="btn btn-sm btn-link text-white p-0 ms-2" onclick="logout()" style="font-size:0.75rem">Abmelden</button>
+          </span>
         </div>
       </div>
     </div>
   </div>
 </nav>
+
+<!-- Free-Tier-Banner -->
+<div id="free-tier-banner" class="no-print text-center py-2 small" style="background:#eff6ff;border-bottom:1px solid #bfdbfe;color:#1e40af;">
+  Daten werden beim Schließen des Tabs gelöscht. &nbsp;
+  <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" style="color:#1e3a8a;font-weight:600;">Kostenloses Konto erstellen</a>
+  &nbsp;oder&nbsp;
+  <a href="/preise" style="color:#1e3a8a;font-weight:600;">Pro abonnieren</a>
+</div>
 
 <main id="main-content">
 <h1 class="visually-hidden">fordify – Forderungsaufstellung</h1>
@@ -639,11 +653,40 @@
   </div>
 </footer>
 
+<!-- Login-Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" id="loginModalLabel">Bei fordify anmelden</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body pt-2">
+        <p class="text-muted small mb-3">Gib deine E-Mail ein – wir senden dir einen Magic Link.</p>
+        <div class="mb-3">
+          <input type="email" class="form-control" id="login-email"
+                 placeholder="deine@kanzlei.de" autocomplete="email">
+        </div>
+        <button class="btn btn-primary w-100"
+                onclick="loginMitEmail(document.getElementById('login-email').value)">
+          Link senden
+        </button>
+        <div id="login-status" class="d-none"></div>
+        <p class="text-muted text-center mt-3 mb-0" style="font-size:0.75rem">
+          Kein Passwort – kein Risiko.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ============================================================
      Scripts
      ============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="js/config.js"></script>
 <script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
 <script src="js/decimal.min.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>
 <script src="js/data.js"></script>
