@@ -88,7 +88,7 @@ function neueFallId() {
 
 function ladeRegistry() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY_CASES);
+    const raw = StorageBackend.getItem(STORAGE_KEY_CASES);
     if (raw) return JSON.parse(raw);
   } catch (e) { /* ignore */ }
   return { cases: {}, currentCaseId: null };
@@ -96,7 +96,7 @@ function ladeRegistry() {
 
 function speichereRegistry(reg) {
   try {
-    localStorage.setItem(STORAGE_KEY_CASES, JSON.stringify(reg));
+    StorageBackend.setItem(STORAGE_KEY_CASES, JSON.stringify(reg));
   } catch (e) {
     console.warn("Speichern fehlgeschlagen:", e);
   }
@@ -159,7 +159,7 @@ function laden() {
   try {
     // Migration: alten Key in neue Registry übernehmen
     const legacy = localStorage.getItem(STORAGE_KEY_LEGACY);
-    const regRaw = localStorage.getItem(STORAGE_KEY_CASES);
+    const regRaw = StorageBackend.getItem(STORAGE_KEY_CASES);
     if (!regRaw && legacy) {
       const alt = JSON.parse(legacy);
       const id = neueFallId();
@@ -2093,7 +2093,7 @@ function positionDetailBeschreibung(pos) {
 
 function ladeEinstellungen() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY_SETTINGS);
+    const raw = StorageBackend.getItem(STORAGE_KEY_SETTINGS);
     if (!raw) return { logo: null, logoPosition: "links", imp: {} };
     return JSON.parse(raw);
   } catch (e) {
@@ -2102,7 +2102,7 @@ function ladeEinstellungen() {
 }
 
 function speichereEinstellungen(einst) {
-  localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(einst));
+  StorageBackend.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(einst));
 }
 
 function zeigeEinstellungenModal() {

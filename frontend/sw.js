@@ -2,7 +2,7 @@
 const IS_STAGING_SW = self.location.hostname.includes('staging') ||
                       self.location.hostname === 'localhost' ||
                       self.location.hostname === '127.0.0.1';
-const CACHE = IS_STAGING_SW ? "fordify-staging-v15" : "fordify-v61";
+const CACHE = IS_STAGING_SW ? "fordify-staging-v16" : "fordify-v62";
 const ASSETS = [
   "/",
   "/index.html",
@@ -23,6 +23,7 @@ const ASSETS = [
   "/js/data.js",
   "/js/zinsen.js",
   "/js/rvg.js",
+  "/js/storage.js",
   "/js/verrechnung.js",
   "/js/zusammenfassung.js",
   "/js/rechner-zins.js",
