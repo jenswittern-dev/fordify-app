@@ -150,12 +150,21 @@
   color: inherit;
 }
 .tool-card.tool-card--primary {
+  background: var(--color-primary);
   border-color: var(--color-primary);
-  background: var(--color-primary-light);
+  color: #fff;
+}
+.tool-card--primary .tool-card__title,
+.tool-card--primary .tool-card__desc,
+.tool-card--primary .tool-card__cta {
+  color: #fff;
+}
+.tool-card--primary:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: #fff;
 }
 .tool-card__icon {
-  font-size: 1.5rem;
-  margin-bottom: 0.75rem;
   width: 2.75rem;
   height: 2.75rem;
   display: flex;
@@ -164,12 +173,15 @@
   background: var(--color-primary-light);
   border-radius: 0.5rem;
   color: var(--color-primary);
-  font-weight: 700;
-  line-height: 1;
   flex-shrink: 0;
+  margin-bottom: 0.75rem;
+}
+.tool-card__icon svg {
+  width: 1.125rem;
+  height: 1.125rem;
 }
 .tool-card--primary .tool-card__icon {
-  background: rgba(30,58,138,0.15);
+  background: rgba(255,255,255,0.18);
   color: #fff;
 }
 .tool-card__title {
@@ -188,6 +200,11 @@
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-primary);
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+.tool-card:hover .tool-card__cta {
+  transform: translateX(3px);
 }
 
 /* ---- Vorteile ---- */
