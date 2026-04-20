@@ -191,5 +191,10 @@
 .fordify-footer a:hover { color: var(--color-primary); }
 .fordify-footer ul li { margin-bottom: 0.25rem; }
 
+/* ---- Nav-Links (Farben für SEO-Seiten ohne inline-style) ---- */
+.navbar-fa .nav-link { color: var(--color-nav-text-muted); }
+.navbar-fa .nav-link:hover,
+.navbar-fa .nav-link.fw-semibold { color: var(--color-nav-text); }
+
 /* ---- Utility ---- */
 .font-mono { font-family: var(--font-mono); }
