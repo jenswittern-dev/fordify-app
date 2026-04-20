@@ -23,6 +23,71 @@
   line-height: 1.65;
 }
 
+/* Hero – zweispaltig mit Visual */
+.hero-inner {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+.hero-text {
+  flex: 1;
+  max-width: 560px;
+}
+@media (max-width: 767px) {
+  .hero-visual { display: none; }
+}
+
+/* Hero Mockup Card */
+.hero-mockup__card {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  min-width: 280px;
+  backdrop-filter: blur(8px);
+}
+.hero-mockup__header {
+  font-weight: 700;
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.hero-mockup__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.8125rem;
+  color: rgba(255,255,255,0.85);
+  gap: 1.5rem;
+}
+.hero-mockup__divider {
+  height: 1px;
+  background: rgba(255,255,255,0.25);
+  margin: 0.25rem 0;
+}
+.hero-mockup__row--total {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: #fff;
+  border-bottom: none;
+  padding-top: 0.75rem;
+}
+.hero-mockup__badge {
+  margin-top: 1rem;
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.85);
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+}
+
 /* ---- Tool-Grid ---- */
 .tool-grid {
   display: grid;
