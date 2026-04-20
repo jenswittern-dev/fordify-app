@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerichtskostenrechner kostenlos – Prozesskosten berechnen (GKG) | fordify</title>
+  <meta name="description" content="Gerichtskosten und Prozesskosten kostenlos berechnen. Alle Instanzen (AG, LG, OLG, BGH), aktuell nach GKG Anlage 2. Kein Login erforderlich.">
+  <link rel="canonical" href="https://fordify.de/gerichtskostenrechner">
+  <meta property="og:title" content="Gerichtskostenrechner kostenlos – Prozesskosten berechnen | fordify">
+  <meta property="og:description" content="Gerichtskosten kostenlos berechnen. AG, LG, OLG, BGH – aktuell nach GKG.">
+  <meta property="og:url" content="https://fordify.de/gerichtskostenrechner">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#1e3a8a">
+  <link rel="icon" type="image/svg+xml" href="img/logo.svg">
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/rechner.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Gerichtskostenrechner",
+    "url": "https://fordify.de/gerichtskostenrechner",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+    "description": "Gerichtskosten nach GKG kostenlos berechnen"
+  }
+  </script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md" style="background:var(--color-nav-bg)">
+  <div class="container">
+    <a class="navbar-brand fw-bold" style="color:var(--color-nav-text)" href="/">fordify</a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Navigation öffnen">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav me-auto gap-1">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" style="color:var(--color-nav-text-muted)" href="#" data-bs-toggle="dropdown">Rechner</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/zinsrechner">Verzugszinsrechner</a></li>
+            <li><a class="dropdown-item" href="/rvg-rechner">RVG-Rechner</a></li>
+            <li><a class="dropdown-item fw-semibold" href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
+          </ul>
+        </li>
+      </ul>
+      <a href="/forderungsaufstellung" class="btn btn-sm btn-light fw-semibold">
+        Forderungsaufstellung <span class="badge bg-warning text-dark ms-1 fw-normal">Beta</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+  <header class="rechner-header">
+    <h1>Gerichtskostenrechner – Prozesskosten berechnen (GKG 2025)</h1>
+    <p class="intro">Berechnen Sie Gerichtsgebühren in Zivilsachen kostenlos nach dem Gerichtskostengesetz (GKG, Anlage 2). Wählen Sie Streitwert und Instanz – der Rechner ermittelt die anfallenden Gerichtsgebühren für Amtsgericht, Landgericht, OLG und BGH.</p>
+  </header>
+
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="rechner-form-card">
+        <form id="form-gkg">
+          <div class="mb-3">
+            <label for="gkg-streitwert" class="form-label fw-semibold">Streitwert (€)</label>
+            <input type="text" inputmode="decimal" class="form-control" id="gkg-streitwert" placeholder="z. B. 15000" required>
+          </div>
+          <div class="mb-4">
+            <label for="gkg-instanz" class="form-label fw-semibold">Instanz</label>
+            <select class="form-select" id="gkg-instanz">
+              <option value="ag">Amtsgericht (bis 5.000 € Streitwert)</option>
+              <option value="lg" selected>Landgericht (ab 5.001 € Streitwert)</option>
+              <option value="olg">Oberlandesgericht (Berufung)</option>
+              <option value="bgh">Bundesgerichtshof (Revision)</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Gerichtskosten berechnen</button>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div id="gkg-ergebnis"></div>
+    </div>
+  </div>
+
+  <section class="faq-section">
+    <h2>Häufige Fragen zum Gerichtskostenrechner</h2>
+    <details>
+      <summary>Wie berechnen sich Gerichtskosten in Zivilsachen?</summary>
+      <p>Gerichtskosten setzen sich aus der einfachen Gebühr nach GKG Anlage 2 (abhängig vom Streitwert) multipliziert mit der Gebührenanzahl je nach Instanz zusammen. Im erstinstanzlichen Verfahren vor AG und LG entstehen 3,0 Gebühren, vor dem OLG (Berufung) 4,0 Gebühren, vor dem BGH (Revision) 5,0 Gebühren. Die einfache Gebühr steigt stufenweise mit dem Streitwert.</p>
+    </details>
+    <details>
+      <summary>Wer zahlt die Gerichtskosten?</summary>
+      <p>Die Gerichtskosten werden vom Kläger vorgeschossen und am Ende des Verfahrens von der unterlegenen Partei getragen (§ 91 ZPO). Bei teilweisem Obsiegen werden die Kosten gequotelt. Bei Vergleich trägt jede Partei die Hälfte (§ 98 ZPO), sofern nichts anderes vereinbart wird. Die Gerichtsgebühren ermäßigen sich bei frühzeitiger Einigung auf 1,0 Gebühr.</p>
+    </details>
+    <details>
+      <summary>Welches Gericht ist für meine Klage zuständig?</summary>
+      <p>Das Amtsgericht ist bei einem Streitwert bis 5.000 € zuständig sowie für Familiensachen. Das Landgericht ist bei einem Streitwert über 5.000 € zuständig. Ausnahmen gelten für bestimmte Rechtsmaterien (z. B. Mietsachen immer AG unabhängig vom Streitwert). Das OLG ist die Berufungsinstanz des LG, der BGH ist Revisionsinstanz.</p>
+    </details>
+    <details>
+      <summary>Was kostet ein Prozess insgesamt?</summary>
+      <p>Die Gesamtprozesskosten umfassen Gerichtsgebühren (dieser Rechner), Anwaltskosten beider Seiten (siehe RVG-Rechner), sowie sonstige Auslagen wie Zeugenentschädigung, Sachverständigengebühren und Reisekosten. Als Faustformel: Gesamtprozesskosten = ca. 2–3× die Gerichtsgebühren (inklusive Anwaltskosten beider Parteien).</p>
+    </details>
+    <details>
+      <summary>Kann ich das Kostenrisiko vorab abschätzen?</summary>
+      <p>Ja. Addieren Sie die Gerichtsgebühren aus diesem Rechner mit den Anwaltsgebühren beider Parteien aus dem RVG-Rechner. Bei einem Streitwert von 10.000 € liegen die Gesamtkosten im erstinstanzlichen Verfahren typischerweise zwischen 3.000 € und 5.000 €. fordify bietet beide Rechner kostenlos an.</p>
+    </details>
+  </section>
+</main>
+
+<footer class="fordify-footer">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-4 mb-2 mb-md-0">
+        <span class="fw-bold" style="color:var(--color-primary)">fordify</span>
+        <span class="text-muted ms-2" style="font-size:var(--text-sm)">Professionelle Forderungsberechnungen</span>
+      </div>
+      <div class="col-md-4 text-md-center mb-2 mb-md-0">
+        <a href="/zinsrechner" class="me-3">Zinsrechner</a>
+        <a href="/rvg-rechner" class="me-3">RVG-Rechner</a>
+        <a href="/gerichtskostenrechner">Gerichtskostenrechner</a>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <a href="/impressum.html" class="me-3">Impressum</a>
+        <a href="/datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/decimal.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/rechner-gkg.js"></script>
+</body>
+</html>
