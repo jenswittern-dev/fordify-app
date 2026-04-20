@@ -253,6 +253,69 @@ function fallExportieren() {
   URL.revokeObjectURL(url);
 }
 
+function fallExportierenAlsExcel() {
+  const fall = state.fall;
+  const KOSTEN_TYPEN = ["anwaltsverguetung","gv_kosten","gerichtskosten",
+    "zahlungsverbot","auskunftskosten","mahnkosten","sonstige_kosten"];
+
+  const typLabel = {
+    hauptforderung: "Hauptforderung", zinsperiode: "Zinsen",
+    zinsforderung_titel: "Titulierte Zinsen", zahlung: "Zahlung",
+    anwaltsverguetung: "Anwaltsvergütung", gv_kosten: "GV-Kosten",
+    gerichtskosten: "Gerichtskosten", zahlungsverbot: "Zahlungsverbot",
+    auskunftskosten: "Auskunftskosten", mahnkosten: "Mahnkosten",
+    sonstige_kosten: "Sonstige Kosten"
+  };
+
+  const rows = [["Typ", "Datum", "Bezeichnung", "Betrag (€)"]];
+  let summe = new Decimal(0);
+
+  for (const pos of (fall.positionen || [])) {
+    const label = typLabel[pos.typ] || pos.typ;
+    const datum = pos.datum || "";
+    const bezeichnung = pos.beschreibung || pos.bezeichnung || "";
+    let betrag = new Decimal(0);
+
+    if (pos.typ === "hauptforderung" || pos.typ === "zinsforderung_titel") {
+      betrag = new Decimal(pos.betrag || 0);
+      summe = summe.plus(betrag);
+    } else if (KOSTEN_TYPEN.includes(pos.typ)) {
+      if (pos.typ === "anwaltsverguetung") {
+        const ustSatz = pos.ustSatz ?? (pos.ohneUst ? 0 : 19);
+        betrag = new Decimal(parseFloat(pos.netto || pos.betrag || 0))
+          .plus(ustSatz > 0 ? new Decimal(pos.ust || 0) : new Decimal(0));
+      } else {
+        betrag = new Decimal(pos.betrag || 0);
+      }
+      summe = summe.plus(betrag);
+    } else if (pos.typ === "zahlung") {
+      betrag = new Decimal(pos.betrag || 0).negated();
+      summe = summe.minus(new Decimal(pos.betrag || 0));
+    } else if (pos.typ === "zinsperiode") {
+      continue; // Zinsen werden dynamisch berechnet – nicht einzeln ausgeben
+    }
+
+    rows.push([label, datum, bezeichnung, betrag.toFixed(2).replace(".", ",")]);
+  }
+
+  rows.push([]);
+  rows.push(["", "", "Summe (ohne lfd. Zinsen)", summe.toFixed(2).replace(".", ",")]);
+  rows.push(["", "", "Laufende Zinsen: siehe PDF-Export", ""]);
+
+  const csv = rows.map(r =>
+    r.map(cell => '"' + String(cell).replace(/"/g, '""') + '"').join(";")
+  ).join("\r\n");
+
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = exportBasisname(fall) + ".csv";
+  a.click();
+  URL.revokeObjectURL(url);
+  merkeExportZeitpunkt();
+}
+
 function fallImportierenDatei(input) {
   const file = input.files[0];
   if (!file) return;
