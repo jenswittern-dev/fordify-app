@@ -1008,6 +1008,93 @@ git push
 
 ---
 
+## Task 12: Excel / CSV-Export implementieren (vor Task 6)
+
+> **Voraussetzung:** Muss vor Task 6 erledigt sein, da Task 6 (Feature-Gates) `fallExportierenAlsExcel()` mit einem Gate versieht — die Funktion muss also vorher existieren.
+
+**Files:**
+- Modify: `frontend/js/app.js`
+- Modify: `frontend/forderungsaufstellung.html` (Button für Excel-Export hinzufügen)
+
+**Hintergrund:** Aktuell gibt es nur JSON-Export (`fallExportieren()`) und PDF-Export (`drucken()`). Excel/CSV ist auf der Preisseite versprochen und muss als Pro-Feature implementiert werden.
+
+**Was exportiert werden soll:** Eine Zeile pro Position — Typ, Datum, Bezeichnung, Betrag, Zinsen (falls vorhanden), Gesamtbetrag.
+
+- [ ] **Schritt 1: `fallExportierenAlsExcel()` in `app.js` implementieren**
+
+Da kein Build-Schritt existiert und keine externe Bibliothek geladen werden soll, wird ein CSV-Export mit `.xls`-Endung erzeugt (Excel öffnet diese direkt). Alternativ: reines `.csv`.
+
+```javascript
+function fallExportierenAlsExcel() {
+  // Gate wird in Task 6 vorgelagert — hier noch nicht
+  const fall = state.fall;
+  const rows = [
+    ['Typ', 'Datum', 'Bezeichnung', 'Betrag (€)', 'Zinsen (€)', 'Gesamt (€)']
+  ];
+
+  for (const pos of fall.positionen) {
+    const typ = pos.typ || '';
+    const datum = pos.datum || '';
+    const bezeichnung = pos.bezeichnung || pos.typ || '';
+    const betrag = pos.betrag != null ? String(pos.betrag).replace('.', ',') : '';
+    // Zinsen: wenn verfügbar, aus berechneten Zinsperioden-Positionen
+    const zinsen = (pos.typ === 'zinsperiode' && pos.zinsGesamtEur != null)
+      ? String(pos.zinsGesamtEur).replace('.', ',')
+      : '';
+    const gesamt = ''; // leer – Gesamtsumme steht in Zusammenfassung, nicht je Zeile
+    rows.push([typ, datum, bezeichnung, betrag, zinsen, gesamt]);
+  }
+
+  // Zusammenfassung anhängen
+  rows.push([]);
+  rows.push(['', '', 'Gesamtforderung', '', '', String(berechneGesamtforderung()).replace('.', ',')]);
+
+  const csv = rows.map(r =>
+    r.map(cell => '"' + String(cell).replace(/"/g, '""') + '"').join(';')
+  ).join('\r\n');
+
+  const bom = '\uFEFF'; // UTF-8 BOM für Excel
+  const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = exportBasisname(fall) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+```
+
+> **Hinweis zu `berechneGesamtforderung()`:** Prüfen, ob diese Funktion in app.js existiert oder wie die Gesamtsumme aktuell berechnet wird (ggf. aus `baueSummaryTabelle()` ableiten). Entsprechend anpassen.
+
+- [ ] **Schritt 2: Export-Button in `forderungsaufstellung.html` einfügen**
+
+Den bestehenden JSON-Export-Button suchen und daneben einen Excel-Button setzen:
+
+```html
+<button type="button" class="btn btn-outline-success btn-sm" onclick="fallExportierenAlsExcel()">
+  Excel / CSV
+</button>
+```
+
+- [ ] **Schritt 3: Testen**
+
+```
+Fall mit mind. 3 Positionen anlegen → Excel-Button klicken → .csv öffnet sich in Excel
+→ Umlaute korrekt (UTF-8 BOM) ✓
+→ Semikolon-Trenner (DE-Excel-Standard) ✓
+→ Gesamtsumme in letzter Zeile ✓
+```
+
+- [ ] **Schritt 4: Commit**
+
+```bash
+git add frontend/js/app.js frontend/forderungsaufstellung.html frontend/sw.js
+git commit -m "feat: Excel/CSV-Export als neue Funktion (wird in Task 6 als Pro-Gate versehen)"
+git push
+```
+
+---
+
 ## Übersicht Zeitplan
 
 | Task | Inhalt | Dauer |
@@ -1017,12 +1104,14 @@ git push
 | 3 | Storage-Abstraktion | 1–2 Tage |
 | 4 | Auth + Login-Modal | 1–2 Tage |
 | 5 | Cloud-Laden beim Login | 1 Tag |
-| 6 | Feature-Gates | 1 Tag |
+| **12** | **Excel/CSV-Export implementieren** | **0,5 Tage** |
+| 6 | Feature-Gates (Excel, JSON, Einstellungen) | 1 Tag |
 | 7 | Paddle Edge Function | 1–2 Tage |
 | 8 | Pricing-Seite | 1–2 Tage |
 | 9 | N8N-Workflows | 1 Tag |
 | 10 | Launch-Vorbereitung | 1 Tag |
-| **Gesamt** | | **~9–13 Tage** |
+| 11 | Gestuftes PDF-Branding | 0,5 Tage |
+| **Gesamt** | | **~10–14 Tage** |
 
 ---
 
