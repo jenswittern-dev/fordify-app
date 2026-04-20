@@ -6,4 +6,4 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
 # /forderungsaufstellung → forderungsaufstellung.html etc.
-RewriteRule ^([^.]+)$ $1.html [L]
+RewriteRule ^([^./]+)$ $1.html [L]
