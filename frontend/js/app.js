@@ -243,6 +243,7 @@ function fallLoeschen(id) {
 }
 
 function fallExportieren() {
+  if (typeof requiresPaid === 'function' && requiresPaid('json')) return;
   const data = { fall: state.fall, naechsteId: state.naechsteId, exportDatum: new Date().toISOString() };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -254,6 +255,7 @@ function fallExportieren() {
 }
 
 function fallExportierenAlsExcel() {
+  if (typeof requiresPaid === 'function' && requiresPaid('excel')) return;
   const fall = state.fall;
   const KOSTEN_TYPEN = ["anwaltsverguetung","gv_kosten","gerichtskosten",
     "zahlungsverbot","auskunftskosten","mahnkosten","sonstige_kosten"];
@@ -2348,6 +2350,7 @@ function logoLoeschen() {
 }
 
 function einstellungenSpeichern() {
+  if (typeof requiresPaid === 'function' && requiresPaid('einstellungen')) return;
   const einst = ladeEinstellungen();
 
   const m = document.getElementById("modal-einstellungen");
