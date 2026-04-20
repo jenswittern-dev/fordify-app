@@ -69,9 +69,32 @@
         <li class="nav-item"><a class="nav-link" href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
         <li class="nav-item"><a class="nav-link" href="/preise">Preise</a></li>
       </ul>
-      <a href="/forderungsaufstellung" class="btn btn-sm btn-light fw-semibold">
-        Forderungsaufstellung <span class="pill-badge ms-1">NEU</span>
-      </a>
+      <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-sm btn-outline-light" data-auth-show="guest"
+                data-bs-toggle="modal" data-bs-target="#loginModal">Anmelden</button>
+        <div class="dropdown d-none" data-auth-show="user">
+          <button class="nav-avatar dropdown-toggle" data-bs-toggle="dropdown"
+                  aria-expanded="false" title="Mein Konto" aria-label="Konto-Menü">
+            <span class="nav-avatar-initials">?</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end nav-account-dropdown">
+            <li><div class="dropdown-header-info">
+              <div class="nav-user-email-display dropdown-email"></div>
+              <div class="nav-plan-badge"></div>
+            </div></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/preise">Pläne &amp; Preise</a></li>
+            <li><a class="dropdown-item" href="#"
+                   onclick="openCustomerPortal(); return false;">Abo verwalten ↗</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#"
+                   onclick="logout(); return false;">Abmelden</a></li>
+          </ul>
+        </div>
+        <a href="/forderungsaufstellung" class="btn btn-sm btn-light fw-semibold">
+          Forderungsaufstellung <span class="pill-badge ms-1">NEU</span>
+        </a>
+      </div>
     </div>
   </div>
 </nav>
@@ -264,7 +287,34 @@
   </div>
 </footer>
 
+<!-- Login-Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" id="loginModalLabel">Bei fordify anmelden</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body pt-2">
+        <p class="text-muted small mb-3">Wir senden dir einen sicheren Login-Link per E-Mail – kein Passwort nötig. Bitte öffne den Link in diesem Browser-Fenster.</p>
+        <input type="email" id="login-email" class="form-control mb-2"
+               placeholder="deine@kanzlei.de" autocomplete="email">
+        <button class="btn btn-primary w-100"
+                onclick="loginMitEmail(document.getElementById('login-email').value)">
+          Login-Link senden
+        </button>
+        <div id="login-status" class="d-none mt-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth-ui.js"></script>
+<script src="js/auth.js"></script>
 <script data-goatcounter="https://fordify.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
