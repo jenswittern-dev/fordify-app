@@ -116,10 +116,14 @@ Das Fordify-Team
 - [ ] **Catalog → Products → New Product:**
   - Name: `Fordify Pro`
   - Billing: `Recurring` | Interval: `Monthly` | Currency: `EUR`
-  - Price: `9,00 EUR/Monat` (Netto → Paddle addiert MwSt.)
+  - Price: `19,00 EUR/Monat` (Netto → Paddle addiert MwSt.)
 - [ ] Zweites Produkt anlegen:
   - Name: `Fordify Pro – Jährlich`
-  - Price: `79,00 EUR/Jahr`
+  - Price: `149,00 EUR/Jahr`
+- [ ] Drittes Produkt anlegen:
+  - Name: `Fordify Kanzlei`
+  - Billing: `Recurring` | Interval: `Monthly` | Currency: `EUR`
+  - Price: `49,00 EUR/Monat` (ab 3 Nutzer)
 - [ ] **Checkout → Custom Data:** Feld `user_id` (UUID) hinzufügen → wird vom Frontend befüllt
 
 ### Webhook einrichten (nach Claude Task 7)
