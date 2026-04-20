@@ -2375,6 +2375,16 @@ function drucken() {
   const escHtml = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   const parteien = [state.fall.mandant, state.fall.gegner].filter(Boolean).join(" ./. ");
   const druckTitel = escHtml("Forderungsaufstellung" + (parteien ? " – " + parteien : "") + " – " + new Date().toLocaleDateString("de-DE"));
+  // Branding-Footer: Free = prominent, Pro = dezent, Kanzlei = keins (via fordifyAuth nach Task 4+6)
+  const fordifyBranding = `
+  <div style="margin-top:2.5rem;padding-top:1.25rem;border-top:2px solid #1e3a8a;text-align:center;font-family:sans-serif;">
+    <p style="margin:0 0 0.3rem;font-size:0.9rem;font-weight:700;color:#1e3a8a;letter-spacing:0.01em;">Erstellt mit fordify</p>
+    <p style="margin:0;font-size:0.8rem;color:#64748b;">
+      Professionelle Forderungsaufstellungen nach § 367 BGB kostenlos erstellen und als PDF exportieren
+      &nbsp;·&nbsp; <strong style="color:#1e3a8a;">fordify.de</strong>
+    </p>
+  </div>`;
+
   const fullHtml = `<!DOCTYPE html>
 <html lang="de">
 <head>
@@ -2386,6 +2396,7 @@ function drucken() {
 </head>
 <body>
   <div class="content-card">${cleanHtml}</div>
+  ${fordifyBranding}
   <script>window.onload=function(){setTimeout(function(){window.print();},400);}<\/script>
 </body>
 </html>`;

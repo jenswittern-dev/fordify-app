@@ -947,6 +947,67 @@ git push
 
 ---
 
+## Task 11: Gestuftes PDF-Branding (nach Task 4 + 6)
+
+> **Voraussetzung:** Task 4 (Auth) und Task 6 (Feature-Gates) müssen abgeschlossen sein, damit `fordifyAuth.plan` verfügbar ist.
+
+**Files:**
+- Modify: `frontend/js/app.js` (Funktion `drucken()`)
+
+**Hintergrund:**
+- Step 1 (bereits erledigt): fordify-Branding-Footer prominent im PDF für alle Nutzer
+- Step 2 (dieser Task): Branding abhängig vom Plan-Level machen
+
+**Plan-Level-Logik:**
+- `free` → Prominenter Banner (aktueller Stand, bleibt so)
+- `pro` → Dezenter Einzeiler unten (kleiner, weniger auffällig)
+- `kanzlei` → Kein Branding (white-label)
+
+- [ ] **Schritt 1: `drucken()` in `app.js` anpassen**
+
+Aktuell gibt es eine einzige `fordifyBranding`-Variable. Diese durch eine Funktion ersetzen, die je nach Plan unterschiedliches HTML zurückgibt:
+
+```javascript
+function getFordifyBranding() {
+  const plan = (window.fordifyAuth && window.fordifyAuth.plan) || 'free';
+  if (plan === 'kanzlei') return '';
+  if (plan === 'pro') {
+    return `<div style="margin-top:2rem;text-align:center;font-family:sans-serif;">
+      <p style="margin:0;font-size:0.72rem;color:#94a3b8;">
+        Erstellt mit <a href="https://fordify.de" style="color:#94a3b8;">fordify.de</a>
+      </p>
+    </div>`;
+  }
+  // free: prominenter Banner (bestehender Code)
+  return `<div style="margin-top:2.5rem;padding-top:1.25rem;border-top:2px solid #1e3a8a;text-align:center;font-family:sans-serif;">
+    <p style="margin:0 0 0.3rem;font-size:0.9rem;font-weight:700;color:#1e3a8a;letter-spacing:0.01em;">Erstellt mit fordify</p>
+    <p style="margin:0;font-size:0.8rem;color:#64748b;">
+      Professionelle Forderungsaufstellungen nach § 367 BGB kostenlos erstellen und als PDF exportieren
+      &nbsp;·&nbsp; <strong style="color:#1e3a8a;">fordify.de</strong>
+    </p>
+  </div>`;
+}
+```
+
+In `drucken()` ersetzen:
+```javascript
+// Alt:
+const fordifyBranding = `...`;
+// Neu:
+const fordifyBranding = getFordifyBranding();
+```
+
+- [ ] **Schritt 2: SW-Version bumpen + committen**
+
+```bash
+# sw.js: fordify-vN (um 1 erhöhen)
+git add frontend/js/app.js frontend/sw.js
+git commit -m "feat: gestuftes PDF-Branding – Pro dezent, Kanzlei kein Branding"
+git push
+```
+
+---
+
 ## Übersicht Zeitplan
 
 | Task | Inhalt | Dauer |
