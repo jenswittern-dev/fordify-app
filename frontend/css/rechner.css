@@ -244,6 +244,7 @@
   text-decoration: none;
   color: #fff;
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 2rem;
   transition: transform 0.15s, box-shadow 0.15s;
