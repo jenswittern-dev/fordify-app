@@ -124,12 +124,12 @@ fordify-app/
 | 6 – Feature-Gates | ✅ | |
 | 7 – Paddle-Webhook Edge Function | ✅ | Deployed + Secrets gesetzt; Webhook-URL in Paddle manuell eintragen |
 | 8 – Pricing-Seite | ✅ | |
-| 9 – N8N-Workflows | ⏳ | Wartet auf N8N-Server-Setup |
+| 9 – N8N-Workflows | ✅ | Onboarding-Mail (ID: 7Wkj6aOiBuebZ0Jf, inaktiv bis Supabase-Webhook) + Digest (ID: hJpXXeIuvGQY60iQ, aktiv, montags 08:00) |
 | 10 – Launch-Vorbereitung (AGB etc.) | ✅ | agb.html vorhanden |
 | 11 – Gestuftes PDF-Branding | ✅ | getFordifyBranding() in app.js: free=prominent, pro=dezent, business=keins |
 | 12 – Excel/CSV-Export | ✅ | fallExportierenAlsExcel() in app.js |
 
-**Blockierungen:** Task 9 (N8N fehlt)
+**Blockierungen:** keine — alle Tasks abgeschlossen. Onboarding-Workflow wartet noch auf Supabase-Webhook-Aktivierung (manuell im Supabase Dashboard).
 
 ---
 
@@ -181,6 +181,7 @@ Alle API-Keys und Credentials stehen in `.env` (nicht im Repo — gitignored):
 | `GOATCOUNTER_URL` | GoatCounter Analytics URL (`https://fordify.goatcounter.com/`) |
 | `GOATCOUNTER_API_KEY` | GoatCounter API Token (für N8N Digest-Abfragen) |
 | `HOSTINGER_API_KEY` | Hostinger API Token (MCP-Server in `.mcp.json`) |
+| `N8N_API_KEY` | N8N REST API Key (`https://n8n.srv1063720.hstgr.cloud/api/v1/`) |
 
 Bei CLI-Befehlen (z.B. `supabase functions deploy`) `.env` sourcen oder Werte direkt übergeben.
 
