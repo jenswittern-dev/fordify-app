@@ -13,7 +13,7 @@
 | 8 – Pricing-Seite | ✅ | `frontend/preise.html` mit Paddle-Checkout + 3-Schritt-Modal |
 | 9 – N8N-Workflows | ⏳ | Wartet auf N8N-Server-Setup |
 | 10 – Launch-Vorbereitung (AGB etc.) | ✅ | `agb.html`, `impressum.html`, `datenschutz.html` vorhanden |
-| 11 – Gestuftes PDF-Branding | ⏳ | `getFordifyBranding()` noch nicht implementiert |
+| 11 – Gestuftes PDF-Branding | ✅ | `getFordifyBranding()` in app.js implementiert |
 | 12 – Excel/CSV-Export | ✅ | `fallExportierenAlsExcel()` in app.js implementiert |
 
 **Blockierungen:** Task 7 (klären ob Paddle-Webhook deploybar), Task 9 (N8N fehlt), Task 11 (Code-Änderung nötig).

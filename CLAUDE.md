@@ -126,10 +126,10 @@ fordify-app/
 | 8 – Pricing-Seite | ✅ | |
 | 9 – N8N-Workflows | ⏳ | Wartet auf N8N-Server-Setup |
 | 10 – Launch-Vorbereitung (AGB etc.) | ✅ | agb.html vorhanden |
-| 11 – Gestuftes PDF-Branding | ⏳ | getFordifyBranding() noch nicht implementiert |
+| 11 – Gestuftes PDF-Branding | ✅ | getFordifyBranding() in app.js: free=prominent, pro=dezent, business=keins |
 | 12 – Excel/CSV-Export | ✅ | fallExportierenAlsExcel() in app.js |
 
-**Blockierungen:** Task 9 (N8N fehlt), Task 11 (Code-Änderung nötig)
+**Blockierungen:** Task 9 (N8N fehlt)
 
 ---
 
