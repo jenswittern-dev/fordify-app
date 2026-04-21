@@ -130,6 +130,7 @@
 
 | # | Feature | Status | Datum |
 |---|---|---|---|
+| 6.0 | **Kundenbereich: konto.html** – Tab-basierte Seite für eingeloggte Nutzer (Fallübersicht, Firmendaten, Abo-Verwaltung) | ✅ | 2026-04-22 |
 | 6.1 | **Fälle: JSON-Export und JSON-Import** (Pro + Business) – alle Fälle als einzelne JSON-Datei oder als ZIP-Archiv exportieren; JSON-Datei wieder importieren und bestehende Fälle ergänzen/überschreiben. | 📋 | — |
 | 6.2 | **Fälle: CSV-Export und CSV-Import** (Pro + Business) – Fälle als CSV exportieren (Spalten: FallID, Name, Datum, Gesamtforderung, Restforderung, Status); CSV-Import zum Anlegen oder Aktualisieren von Fällen. | 📋 | — |
 | 6.3 | **Schuldner-/Kundendaten: CSV-Import** (Pro + Business) – Schuldner-Adressbuch per CSV befüllen. Pflichtfelder: Name, Anschrift; optional: IBAN, E-Mail, Aktenzeichen. Im Kundenbereich bereitgestellt: Beispiel-CSV-Datei zum Download + schriftliche Formatierungsanleitung (welche Spalten, Zeichensatz UTF-8, Trennzeichen Semikolon). | 📋 | — |

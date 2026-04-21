@@ -59,6 +59,7 @@ fordify-app/
 ├── frontend/
 │   ├── index.html              ← Landing Page / Homepage
 │   ├── forderungsaufstellung.html ← Haupt-App (SPA)
+│   ├── konto.html                 ← Kundenbereich (eingeloggte Nutzer: Fälle, Firmendaten, Abo)
 │   ├── preise.html             ← Pricing-Seite (Paddle-Checkout)
 │   ├── zinsrechner.html        ← SEO-Unterseite
 │   ├── rvg-rechner.html        ← SEO-Unterseite
@@ -66,7 +67,7 @@ fordify-app/
 │   ├── impressum.html
 │   ├── datenschutz.html
 │   ├── agb.html
-│   ├── sw.js                   ← Service Worker (aktuell fordify-v90 / staging-v44)
+│   ├── sw.js                   ← Service Worker (aktuell fordify-v95 / staging-v49)
 │   ├── manifest.json           ← PWA-Manifest
 │   ├── css/
 │   │   ├── app.css             ← Styling, Print-CSS, Preisseite, Feature-Gates
@@ -74,6 +75,7 @@ fordify-app/
 │   │   └── themes.css          ← Theme-Overrides (brand/dark/clean via [data-theme])
 │   ├── js/
 │   │   ├── app.js              ← Haupt-App (~2100 Zeilen)
+│   │   ├── konto.js               ← Kundenbereich-Logik (konto.html)
 │   │   ├── config.js           ← Supabase-URL/Key, Paddle-Token, PRICE_MAP, trackEvent()
 │   │   ├── auth.js             ← Supabase Auth (Magic Link, Session, Cloud-Laden)
 │   │   ├── auth-ui.js          ← Auth-UI-Steuerung (data-auth-show, Avatar, Plan-Badge)
