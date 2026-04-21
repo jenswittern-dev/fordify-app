@@ -27,11 +27,11 @@
           "parameters": [
             {
               "name": "apikey",
-              "value": "$SUPABASE_ANON_KEY"
+              "value": "$SUPABASE_ANON_KEY_JWT"
             },
             {
               "name": "Authorization",
-              "value": "Bearer $SUPABASE_SERVICE_ROLE_KEY"
+              "value": "Bearer $SUPABASE_SERVICE_ROLE_KEY_JWT"
             }
           ]
         },
@@ -52,11 +52,11 @@
           "parameters": [
             {
               "name": "apikey",
-              "value": "$SUPABASE_ANON_KEY"
+              "value": "$SUPABASE_ANON_KEY_JWT"
             },
             {
               "name": "Authorization",
-              "value": "Bearer $SUPABASE_SERVICE_ROLE_KEY"
+              "value": "Bearer $SUPABASE_SERVICE_ROLE_KEY_JWT"
             }
           ]
         },
@@ -77,11 +77,11 @@
           "parameters": [
             {
               "name": "apikey",
-              "value": "$SUPABASE_ANON_KEY"
+              "value": "$SUPABASE_ANON_KEY_JWT"
             },
             {
               "name": "Authorization",
-              "value": "Bearer $SUPABASE_SERVICE_ROLE_KEY"
+              "value": "Bearer $SUPABASE_SERVICE_ROLE_KEY_JWT"
             }
           ]
         },
