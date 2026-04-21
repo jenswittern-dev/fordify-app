@@ -490,11 +490,13 @@ function kontoRendereAboTab() {
       .select('current_period_end')
       .eq('user_id', fordifyAuth.user.id)
       .single()
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (error) { console.warn('Abo-Laufzeit nicht ladbar:', error.message); return; }
         const laufzeitEl = document.getElementById('konto-abo-laufzeit');
         if (laufzeitEl && data?.current_period_end) {
           laufzeitEl.textContent = new Date(data.current_period_end).toLocaleDateString('de-DE');
         }
-      });
+      })
+      .catch(e => console.warn('Abo-Laufzeit Netzwerkfehler:', e));
   }
 }
