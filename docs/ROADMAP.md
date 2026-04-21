@@ -120,6 +120,21 @@
 | 5.5 | Nutzerkonten / Cloud-Sync (Stufe 2) | 💡 | — |
 | 5.6 | URL-basierter Fall-Import (komprimiertes JSON im Hash) | 💡 | — |
 | 5.7 | ZV-Auftrag-Generierung (ZwVollstrFormV 2024) | 💡 | — |
+| 5.8 | **Free-Version: Export/Import vollständig sperren** – JSON-Import, JSON-Export und CSV-Export der Fälle aus der FA nur für eingeloggte Paid-Nutzer (Pro/Business). Menüpunkte für Gäste ausblenden oder deaktivieren (nicht nur Modal zeigen). | 📋 | — |
+
+---
+
+## Phase 6 – Pro/Business: Kundenbereich & Datenverwaltung
+
+> Voraussetzung: Freemium-Infrastruktur (Phase 5.5 / Freemium-Launch-Plan) ist live.
+
+| # | Feature | Status | Datum |
+|---|---|---|---|
+| 6.1 | **Fälle: JSON-Export und JSON-Import** (Pro + Business) – alle Fälle als einzelne JSON-Datei oder als ZIP-Archiv exportieren; JSON-Datei wieder importieren und bestehende Fälle ergänzen/überschreiben. | 📋 | — |
+| 6.2 | **Fälle: CSV-Export und CSV-Import** (Pro + Business) – Fälle als CSV exportieren (Spalten: FallID, Name, Datum, Gesamtforderung, Restforderung, Status); CSV-Import zum Anlegen oder Aktualisieren von Fällen. | 📋 | — |
+| 6.3 | **Schuldner-/Kundendaten: CSV-Import** (Pro + Business) – Schuldner-Adressbuch per CSV befüllen. Pflichtfelder: Name, Anschrift; optional: IBAN, E-Mail, Aktenzeichen. Im Kundenbereich bereitgestellt: Beispiel-CSV-Datei zum Download + schriftliche Formatierungsanleitung (welche Spalten, Zeichensatz UTF-8, Trennzeichen Semikolon). | 📋 | — |
+| 6.4 | **Kundenbereich: Fallübersicht + Direktbearbeitung** (Pro + Business) – alle Cloud-Fälle in einer Listenansicht (Kundenbereich/Dashboard); von dort direkt öffnen, duplizieren, löschen, exportieren (JSON/CSV). | 📋 | — |
+| 6.5 | **Kundenbereich: Schuldner-Datenbank** (Pro + Business) – zentrale Verwaltung aller Schuldner-Adressen; Schuldner einem neuen Fall zuweisen; Import via CSV (→ 6.3). | 📋 | — |
 
 ---
 

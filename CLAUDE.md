@@ -36,10 +36,12 @@
 | UI | Bootstrap 5.3.3 |
 | Arithmetik | decimal.js (exakte Dezimalrechnung) |
 | Schriften | Inter (UI), JetBrains Mono (Beträge) – selbst gehostet |
-| Datenpersistenz | `localStorage` (kein Server, kein Cloud) |
+| Datenpersistenz | `localStorage` (Free/Gast) + Supabase (Pro/Business, geplant) |
+| Auth | Supabase Magic Link (`frontend/js/auth.js`, `auth-ui.js`) |
+| Zahlungen | Paddle (Merchant of Record, `frontend/js/config.js` → `PRICE_MAP`) |
 | PWA | Service Worker (`frontend/sw.js`) + Manifest (`frontend/manifest.json`) |
-| Hosting | Static (GitHub Pages / Hetzner o.ä.) |
-| Deployment | Push auf `main` → automatisch live |
+| Hosting | Hetzner (main: fordify.de, staging: fordify.de/staging) |
+| Deployment | Push auf `main` → GitHub Actions → live; `staging` → staging-Branch |
 
 ---
 
@@ -60,21 +62,42 @@ fordify-app/
 │   ├── index.html          ← einzige HTML-Seite (SPA)
 │   ├── impressum.html      ← statische Impressumsseite
 │   ├── datenschutz.html    ← statische Datenschutzerklärung
-│   ├── sw.js               ← Service Worker (aktuell fordify-v47)
+│   ├── sw.js               ← Service Worker (aktuell fordify-v86 / staging-v40)
 │   ├── manifest.json       ← PWA-Manifest
-│   ├── css/app.css         ← gesamtes Styling inkl. Print-CSS (@media print)
-  ├── css/themes.css      ← Theme-Overrides (brand/dark/clean via [data-theme])
+│   ├── css/app.css         ← gesamtes Styling inkl. Print-CSS + Preisseite
+│   ├── css/rechner.css     ← Rechner-Unterseiten + Footer + Prefooter
+│   ├── css/themes.css      ← Theme-Overrides (brand/dark/clean via [data-theme])
 │   ├── js/
 │   │   ├── app.js          ← Haupt-App (~2100 Zeilen)
+│   │   ├── config.js       ← Supabase-URL/Key, Paddle-Token, PRICE_MAP, Feature-Flags
+│   │   ├── auth.js         ← Supabase Auth (Magic Link, Session, logout)
+│   │   ├── auth-ui.js      ← Auth-UI-Steuerung (data-auth-show, Avatar, Plan-Badge)
+│   │   ├── gates.js        ← Feature-Gates (requiresPaid, Upgrade-Modal)
+│   │   ├── storage.js      ← Storage-Abstraktion (localStorage ↔ Supabase)
 │   │   ├── data.js         ← Datentabellen (BASISZINSSAETZE, RVG_TABELLE, GKG_TABELLE)
 │   │   ├── zinsen.js       ← Verzugszinsberechnung
 │   │   ├── rvg.js          ← RVG-Berechnung
 │   │   ├── verrechnung.js  ← § 367 BGB Verrechnungslogik
+│   │   ├── rechner-zins.js ← Zinsrechner-Logik (zinsrechner.html)
+│   │   ├── rechner-rvg.js  ← RVG-Rechner-Logik (rvg-rechner.html)
+│   │   ├── rechner-gkg.js  ← GKG-Rechner-Logik (gerichtskostenrechner.html)
 │   │   └── zusammenfassung.js ← (deprecated, nicht mehr direkt genutzt)
 │   ├── data/
 │   │   ├── basiszinssaetze.json ← aktualisierbar (bis 01.07.2026)
 │   │   └── rvg_tabelle.json     ← BGBl. 2025 I Nr. 109
 │   └── fonts/              ← selbst gehostete Schriftarten
+├── docs/
+│   ├── ROADMAP.md          ← Feature-Roadmap (Phase 0–6) mit Status + Datum
+│   ├── SYSTEM.md           ← Technisches Whitepaper
+│   ├── freemium-launch-organisationsplan.md ← Manuelle Schritte für Jens (Accounts, Rechtliches)
+│   ├── machbarkeitsstudie.md / machbarkeitsstudie-review-2026-04-20.md
+│   ├── konkurrenzanalyse.md / feature-analyse.md / customer-personas.md
+│   ├── feedback-2/ … feedback-6/ ← Nutzerfeedback-Transkripte
+│   └── superpowers/
+│       ├── specs/          ← Design-Specs (Brainstorming-Ergebnisse)
+│       └── plans/          ← Implementierungspläne (inkl. freemium-implementation.md)
+├── supabase/
+│   └── schema.sql          ← DB-Schema (profiles, subscriptions, cases)
 ├── tests/                  ← Python-Tests für Berechnungslogik
 └── static/                 ← (legacy)
 ```
@@ -109,9 +132,11 @@ Siehe `docs/SYSTEM.md` für vollständiges Schema. Kurzübersicht:
 ## Dokumentation lesen + pflegen
 
 **Vor neuen Features immer prüfen:**
-1. `docs/ROADMAP.md` — ist das Feature schon geplant/erledigt?
+1. `docs/ROADMAP.md` — ist das Feature schon geplant/erledigt? (Phase 0–6)
 2. `docs/SYSTEM.md` — welche Datenstrukturen und Funktionen sind betroffen?
-3. Aktuelle SW-Cache-Version in `frontend/sw.js` prüfen und nach Änderungen erhöhen
+3. `docs/freemium-launch-organisationsplan.md` — manuelle Schritte + Pflichtenheft-Ergänzungen (Abschnitt 10)
+4. `docs/superpowers/plans/2026-04-20-freemium-implementation.md` — technischer Freemium-Umsetzungsplan
+5. Aktuelle SW-Cache-Version in `frontend/sw.js` prüfen und nach Änderungen erhöhen
 
 **Nach jeder Entscheidung und Umsetzung zwingend aktualisieren:**
 - `docs/ROADMAP.md` — Status ✅ + Datum setzen

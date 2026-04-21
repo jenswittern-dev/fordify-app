@@ -348,4 +348,23 @@ E-Mail-Alarm an jenswittern@gmail.com
 
 ---
 
-*Stand: 2026-04-20 | Technischer Plan: `docs/superpowers/plans/2026-04-20-freemium-implementation.md`*
+---
+
+## 10. Pflichtenheft-Ergänzungen (noch nicht implementiert)
+
+### Free-Version: Export/Import vollständig sperren
+- Aktuell: Gäste können in der Forderungsaufstellung Fälle als JSON/CSV exportieren und JSON importieren
+- **Ziel:** Diese Menüpunkte für nicht eingeloggte / Free-Nutzer vollständig ausblenden (nicht nur mit Upgrade-Modal blockieren)
+- Technisch: Gate-Logik in `app.js`, Menüpunkte via `data-auth-show="user-paid"` o.ä. steuern
+- → Roadmap 5.8
+
+### Pro/Business: Kundenbereich – Datenverwaltung (Phase 6)
+- **Fälle-Import/Export JSON** (alle Fälle als JSON, auch als ZIP; reimportierbar) → Roadmap 6.1
+- **Fälle-Import/Export CSV** (Übersichtsexport; CSV-Import zum Anlegen von Fällen) → Roadmap 6.2
+- **Schuldner-/Kundendaten CSV-Import** → Roadmap 6.3
+  - Beispiel-CSV-Datei im Kundenbereich als Download bereitstellen
+  - Formatierungsanleitung: Spalten, Zeichensatz (UTF-8), Trennzeichen (Semikolon)
+- **Kundenbereich: Fallübersicht** – alle Cloud-Fälle auflisten, öffnen, bearbeiten, exportieren → Roadmap 6.4
+- **Kundenbereich: Schuldner-Datenbank** – zentrale Adressverwaltung, Zuweisung zu Fällen → Roadmap 6.5
+
+*Stand: 2026-04-21 | Technischer Plan: `docs/superpowers/plans/2026-04-20-freemium-implementation.md`*
