@@ -1,0 +1,432 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e4]:
+      - link [ref=e6] [cursor=pointer]:
+        - /url: https://zv-assistent.de/
+        - img [ref=e7]
+      - img [ref=e9]
+  - main [ref=e10]:
+    - generic [ref=e11]:
+      - generic [ref=e13]:
+        - button "Vollstreckungsauftrag" [ref=e14] [cursor=pointer]
+        - button "Forderungsaufstellung" [ref=e15] [cursor=pointer]
+      - generic [ref=e16]:
+        - button "Formulareingaben zurücksetzen" [ref=e18] [cursor=pointer]
+        - generic [ref=e19]:
+          - generic [ref=e20] [cursor=pointer]:
+            - img [ref=e21]
+            - heading "Bevollmächtigte/Ansprechpartner:in" [level=2] [ref=e24]
+          - generic [ref=e27]:
+            - generic [ref=e28]:
+              - generic [ref=e29]:
+                - radio
+                - generic [ref=e32] [cursor=pointer]: Gläubiger:in
+              - generic [ref=e33]:
+                - radio
+                - generic [ref=e36] [cursor=pointer]: gesetzlicher Vertreter/gesetzliche Vertreterin
+              - generic [ref=e37]:
+                - radio
+                - generic [ref=e40] [cursor=pointer]: Bevollmächtigte
+            - generic [ref=e41]:
+              - generic [ref=e42]:
+                - generic [ref=e43]:
+                  - radio
+                  - generic [ref=e46] [cursor=pointer]: Herr
+                - generic [ref=e47]:
+                  - radio
+                  - generic [ref=e50] [cursor=pointer]: Frau
+                - generic [ref=e51]:
+                  - radio
+                  - generic [ref=e54] [cursor=pointer]: Unternehmen
+                - generic [ref=e55]:
+                  - radio
+              - generic [ref=e58]:
+                - textbox "Sonstiges" [ref=e59]
+                - generic [ref=e60]: Sonstiges
+            - generic [ref=e62]:
+              - generic [ref=e63]:
+                - textbox "Name/Firma" [ref=e64]
+                - generic [ref=e65]: Name/Firma
+              - generic [ref=e67]:
+                - textbox "ggf. Vorname(n)" [ref=e68]
+                - generic [ref=e69]: ggf. Vorname(n)
+            - generic [ref=e71]:
+              - generic [ref=e72]:
+                - textbox "Straße" [ref=e73]
+                - generic [ref=e74]: Straße
+              - generic [ref=e76]:
+                - textbox "Hausnummer" [ref=e77]
+                - generic [ref=e78]: Hausnummer
+            - generic [ref=e80]:
+              - generic [ref=e81]:
+                - textbox "PLZ" [ref=e82]
+                - generic [ref=e83]: PLZ
+              - generic [ref=e85]:
+                - textbox "Ort" [ref=e86]
+                - generic [ref=e87]: Ort
+              - generic [ref=e89]:
+                - textbox "Land" [ref=e90]
+                - generic [ref=e91]: Land
+            - generic [ref=e93]:
+              - generic [ref=e94]:
+                - textbox "Telefon" [ref=e95]
+                - generic [ref=e96]: Telefon
+              - generic [ref=e98]:
+                - textbox "E-Mail" [ref=e99]
+                - generic [ref=e100]: E-Mail
+              - generic [ref=e102]:
+                - textbox "Fax" [ref=e103]
+                - generic [ref=e104]: Fax
+            - generic [ref=e107]:
+              - textbox "Geschäftszeichen" [ref=e108]
+              - generic [ref=e109]: Geschäftszeichen
+        - generic [ref=e111]:
+          - generic [ref=e112] [cursor=pointer]:
+            - img [ref=e113]
+            - heading "Bankverbindung" [level=2] [ref=e116]
+          - generic [ref=e119]:
+            - generic [ref=e121]:
+              - generic [ref=e122]:
+                - radio
+                - generic [ref=e125] [cursor=pointer]: Gläubiger:in
+              - generic [ref=e126]:
+                - radio
+                - generic [ref=e129] [cursor=pointer]: gesetzlicher Vertreter/gesetzliche Vertreterin
+              - generic [ref=e130]:
+                - radio
+                - generic [ref=e133] [cursor=pointer]: Bevollmächtigte
+              - generic [ref=e134]:
+                - radio
+                - generic [ref=e137] [cursor=pointer]: abweichender Kontoinhaber/abweichende Kontoinhaberin
+            - generic [ref=e139]:
+              - textbox "Name Kontoinhaber:in" [ref=e140]
+              - generic [ref=e141]: Name Kontoinhaber:in
+            - generic [ref=e143]:
+              - generic [ref=e144]:
+                - textbox "IBAN" [ref=e145]
+                - generic [ref=e146]: IBAN
+              - generic [ref=e148]:
+                - textbox "BIC (Angabe kann entfallen, wenn IBAN mit DE beginnt)" [ref=e149]
+                - generic [ref=e150]: BIC (Angabe kann entfallen, wenn IBAN mit DE beginnt)
+            - generic [ref=e153]:
+              - textbox "Verwendungszweck" [ref=e154]
+              - generic [ref=e155]: Verwendungszweck
+        - generic [ref=e157]:
+          - generic [ref=e158] [cursor=pointer]:
+            - img [ref=e159]
+            - heading "Angaben zum Gläubiger/zur Gläubigerin" [level=2] [ref=e162]
+          - generic [ref=e165]:
+            - generic [ref=e166]:
+              - heading "#1" [level=3] [ref=e168]
+              - generic [ref=e169]:
+                - generic [ref=e170]:
+                  - generic [ref=e171]:
+                    - generic [ref=e172]:
+                      - radio
+                      - generic [ref=e175] [cursor=pointer]: Herr
+                    - generic [ref=e176]:
+                      - radio
+                      - generic [ref=e179] [cursor=pointer]: Frau
+                    - generic [ref=e180]:
+                      - radio
+                      - generic [ref=e183] [cursor=pointer]: Unternehmen
+                    - generic [ref=e184]:
+                      - radio
+                  - generic [ref=e187]:
+                    - textbox "Sonstiges" [ref=e188]
+                    - generic [ref=e189]: Sonstiges
+                - generic [ref=e191]:
+                  - generic [ref=e192]:
+                    - textbox "Name/Firma" [ref=e193]
+                    - generic [ref=e194]: Name/Firma
+                  - generic [ref=e196]:
+                    - textbox "ggf. Vorname(n)" [ref=e197]
+                    - generic [ref=e198]: ggf. Vorname(n)
+                - generic [ref=e200]:
+                  - generic [ref=e201]:
+                    - textbox "Straße" [ref=e202]
+                    - generic [ref=e203]: Straße
+                  - generic [ref=e205]:
+                    - textbox "Hausnummer" [ref=e206]
+                    - generic [ref=e207]: Hausnummer
+                - generic [ref=e209]:
+                  - generic [ref=e210]:
+                    - textbox "Postleitzahl" [ref=e211]
+                    - generic [ref=e212]: Postleitzahl
+                  - generic [ref=e214]:
+                    - textbox "Ort" [ref=e215]
+                    - generic [ref=e216]: Ort
+                - generic [ref=e218]:
+                  - generic [ref=e219]:
+                    - textbox "Land (wenn nicht Deutschland)" [ref=e220]
+                    - generic [ref=e221]: Land (wenn nicht Deutschland)
+                  - generic [ref=e223]:
+                    - textbox "Geschäftszeichen" [ref=e224]
+                    - generic [ref=e225]: Geschäftszeichen
+                - generic [ref=e227]:
+                  - generic [ref=e228]:
+                    - textbox "Registergericht" [ref=e229]
+                    - generic [ref=e230]: Registergericht
+                  - generic [ref=e232]:
+                    - textbox "Registernummer" [ref=e233]
+                    - generic [ref=e234]: Registernummer
+                - generic [ref=e237]:
+                  - checkbox "Der Gläubiger/die Gläubigerin ist vorsteuerabzugsberechtigt."
+                  - img [ref=e239] [cursor=pointer]
+                  - generic [ref=e241]: Der Gläubiger/die Gläubigerin ist vorsteuerabzugsberechtigt.
+                - generic [ref=e242]: Gläubiger vertreten durch
+                - generic [ref=e243]:
+                  - generic [ref=e244]:
+                    - radio
+                    - generic [ref=e247] [cursor=pointer]: den gesetzlichen Vertreter
+                  - generic [ref=e248]:
+                    - radio
+                    - generic [ref=e251] [cursor=pointer]: den gerichtlich bestellten Betreuer
+                  - generic [ref=e252]:
+                    - radio
+                    - generic [ref=e255] [cursor=pointer]: Firma oder Funktion
+            - button "Gläubiger hinzufügen" [ref=e257] [cursor=pointer]:
+              - img [ref=e258]
+              - generic [ref=e260]: Gläubiger hinzufügen
+        - generic [ref=e261]:
+          - generic [ref=e262] [cursor=pointer]:
+            - img [ref=e263]
+            - heading "Angaben zum Schuldner/zur Schuldnerin" [level=2] [ref=e266]
+          - generic [ref=e269]:
+            - generic [ref=e270]:
+              - heading "#1" [level=3] [ref=e272]
+              - generic [ref=e273]:
+                - generic [ref=e274]:
+                  - generic [ref=e275]:
+                    - generic [ref=e276]:
+                      - radio
+                      - generic [ref=e279] [cursor=pointer]: Herr
+                    - generic [ref=e280]:
+                      - radio
+                      - generic [ref=e283] [cursor=pointer]: Frau
+                    - generic [ref=e284]:
+                      - radio
+                      - generic [ref=e287] [cursor=pointer]: Unternehmen
+                    - generic [ref=e288]:
+                      - radio
+                  - generic [ref=e291]:
+                    - textbox "Sonstiges" [ref=e292]
+                    - generic [ref=e293]: Sonstiges
+                - generic [ref=e295]:
+                  - generic [ref=e296]:
+                    - textbox "Name/Firma" [ref=e297]
+                    - generic [ref=e298]: Name/Firma
+                  - generic [ref=e300]:
+                    - textbox "ggf. Vorname(n)" [ref=e301]
+                    - generic [ref=e302]: ggf. Vorname(n)
+                - generic [ref=e304]:
+                  - generic [ref=e305]:
+                    - textbox "Straße" [ref=e306]
+                    - generic [ref=e307]: Straße
+                  - generic [ref=e309]:
+                    - textbox "Hausnummer" [ref=e310]
+                    - generic [ref=e311]: Hausnummer
+                - generic [ref=e313]:
+                  - generic [ref=e314]:
+                    - textbox "Postleitzahl" [ref=e315]
+                    - generic [ref=e316]: Postleitzahl
+                  - generic [ref=e318]:
+                    - textbox "Ort" [ref=e319]
+                    - generic [ref=e320]: Ort
+                - generic [ref=e323]:
+                  - textbox "Land (wenn nicht Deutschland)" [ref=e324]
+                  - generic [ref=e325]: Land (wenn nicht Deutschland)
+                - generic [ref=e327]: Schuldner vertreten durch
+                - generic [ref=e328]:
+                  - generic [ref=e329]:
+                    - radio
+                    - generic [ref=e332] [cursor=pointer]: den gesetzlichen Vertreter
+                  - generic [ref=e333]:
+                    - radio
+                    - generic [ref=e336] [cursor=pointer]: den gerichtlich bestellten Betreuer
+                  - generic [ref=e337]:
+                    - radio
+                    - generic [ref=e340] [cursor=pointer]: Firma oder Funktion
+            - button "Schuldner hinzufügen" [ref=e342] [cursor=pointer]:
+              - img [ref=e343]
+              - generic [ref=e345]: Schuldner hinzufügen
+        - generic [ref=e346]:
+          - generic [ref=e347] [cursor=pointer]:
+            - img [ref=e348]
+            - heading "Vollstreckungstitel" [level=2] [ref=e351]
+          - generic [ref=e354]:
+            - generic [ref=e355]:
+              - heading "#1" [level=3] [ref=e357]
+              - generic [ref=e358]:
+                - generic [ref=e359]:
+                  - generic [ref=e360]:
+                    - textbox "Art" [ref=e361]
+                    - generic [ref=e362]: Art
+                    - img [ref=e365] [cursor=pointer]
+                    - generic:
+                      - generic: Kostenfestsetzungsbeschluss
+                      - generic: Endurteil
+                      - generic: Anerkenntnisurteil
+                      - generic: Versäumnisurteil
+                      - generic: Vergleich
+                      - generic: Beschluss
+                      - generic: Notarurkunde
+                      - generic: Insolvenztabellenauszug
+                      - generic: sonstige (Bitte hier eintragen)
+                  - generic [ref=e367]:
+                    - textbox "Aussteller:in" [ref=e368]
+                    - generic [ref=e369]: Aussteller:in
+                - generic [ref=e371]:
+                  - generic [ref=e372]:
+                    - textbox "Datum" [ref=e373]
+                    - generic [ref=e374]: Datum
+                  - generic [ref=e376]:
+                    - textbox "Geschäftszeichen" [ref=e377]
+                    - generic [ref=e378]: Geschäftszeichen
+                - generic [ref=e381]:
+                  - checkbox "zuzüglich Zustellungsnachweis"
+                  - img [ref=e383] [cursor=pointer]
+                  - generic [ref=e385]: zuzüglich Zustellungsnachweis
+            - button "Vollstreckungstitel hinzufügen" [ref=e387] [cursor=pointer]:
+              - img [ref=e388]
+              - generic [ref=e390]: Vollstreckungstitel hinzufügen
+        - generic [ref=e391]:
+          - generic [ref=e392] [cursor=pointer]:
+            - img [ref=e393]
+            - heading "Vereinfachter Vollstreckungsauftrag" [level=2] [ref=e396]
+          - generic [ref=e399]:
+            - generic [ref=e400]: "Liegen die Voraussetzungen für einen vereinfachten Vollstreckungsauftrag vor? Erklärung: Vollstreckungsbescheid bis 5.000,00 €"
+            - generic [ref=e401]:
+              - generic [ref=e402]:
+                - radio
+                - generic [ref=e405] [cursor=pointer]: Ja
+              - generic [ref=e406]:
+                - radio
+                - generic [ref=e409] [cursor=pointer]: Nein
+        - generic [ref=e410]:
+          - generic [ref=e411] [cursor=pointer]:
+            - img [ref=e412]
+            - heading "Anlagen" [level=2] [ref=e415]
+          - generic [ref=e418]:
+            - generic [ref=e419]: "Es werden folgende weitere Anlagen übermittelt:"
+            - generic [ref=e420]:
+              - checkbox "Beschluss über bewilligte Prozesskosten- oder Verfahrenskostenhilfe"
+              - img [ref=e422] [cursor=pointer]
+              - generic [ref=e424]: Beschluss über bewilligte Prozesskosten- oder Verfahrenskostenhilfe
+            - generic [ref=e425]:
+              - checkbox "Vollmacht"
+              - img [ref=e427] [cursor=pointer]
+              - generic [ref=e429]: Vollmacht
+            - generic [ref=e430]:
+              - checkbox "Geldempfangsvollmacht"
+              - img [ref=e432] [cursor=pointer]
+              - generic [ref=e434]: Geldempfangsvollmacht
+            - generic [ref=e435]:
+              - checkbox "Vorpfändungsbenachrichtigung"
+              - img [ref=e437] [cursor=pointer]
+              - generic [ref=e439]: Vorpfändungsbenachrichtigung
+            - generic [ref=e440]:
+              - checkbox "Aufstellung über die geleisteten Zahlungen"
+              - img [ref=e442] [cursor=pointer]
+              - generic [ref=e444]: Aufstellung über die geleisteten Zahlungen
+            - generic [ref=e445]:
+              - checkbox "Aufstellung der Inkassokosten"
+              - img [ref=e447] [cursor=pointer]
+              - generic [ref=e449]: Aufstellung der Inkassokosten
+            - generic [ref=e450]:
+              - checkbox "Aufstellung der bisherigen Vollstreckungskosten mit Belegen"
+              - img [ref=e452] [cursor=pointer]
+              - generic [ref=e454]: Aufstellung der bisherigen Vollstreckungskosten mit Belegen
+            - generic [ref=e455]:
+              - checkbox "Bescheid nach § 9 Absatz 2 UhVorschG"
+              - img [ref=e457] [cursor=pointer]
+              - generic [ref=e459]: Bescheid nach § 9 Absatz 2 UhVorschG
+            - generic [ref=e460]:
+              - checkbox "Negativauskunft des Einwohnermeldeamtes"
+              - img [ref=e462] [cursor=pointer]
+              - generic [ref=e464]: Negativauskunft des Einwohnermeldeamtes
+            - generic [ref=e465]:
+              - generic [ref=e466]:
+                - checkbox
+                - img [ref=e468] [cursor=pointer]
+              - textbox [ref=e471]
+            - generic [ref=e472]:
+              - generic [ref=e473]:
+                - checkbox
+                - img [ref=e475] [cursor=pointer]
+              - textbox [ref=e478]
+            - generic [ref=e479]:
+              - generic [ref=e480]:
+                - checkbox
+                - img [ref=e482] [cursor=pointer]
+              - textbox [ref=e485]
+        - generic [ref=e486]:
+          - generic [ref=e487] [cursor=pointer]:
+            - img [ref=e488]
+            - heading "Titel zustellen" [level=2] [ref=e491]
+          - generic [ref=e494]:
+            - generic [ref=e495]: Möchten Sie Titel oder Sonstiges zustellen?
+            - generic [ref=e496]:
+              - generic [ref=e497]:
+                - radio
+                - generic [ref=e500] [cursor=pointer]: Ja
+              - generic [ref=e501]:
+                - radio
+                - generic [ref=e504] [cursor=pointer]: Nein
+        - generic [ref=e505]:
+          - generic [ref=e506] [cursor=pointer]:
+            - img [ref=e507]
+            - heading "Gütliche Erledigung" [level=2] [ref=e510]
+          - generic [ref=e513]:
+            - generic [ref=e514]: Wünschen Sie eine gütliche Erledigung?
+            - generic [ref=e515]:
+              - generic [ref=e516]:
+                - radio
+                - generic [ref=e519] [cursor=pointer]: Ja
+              - generic [ref=e520]:
+                - radio
+                - generic [ref=e523] [cursor=pointer]: Nein
+        - generic [ref=e524]:
+          - generic [ref=e525] [cursor=pointer]:
+            - img [ref=e526]
+            - heading "Vollstreckungsziel" [level=2] [ref=e529]
+          - generic [ref=e532]:
+            - generic [ref=e533]: Was ist Ihr Vollstreckungsziel?
+            - generic [ref=e534]:
+              - img [ref=e535]
+              - generic [ref=e538]:
+                - text: Je nach Ihrem ausgewählten Vollstreckungsziel werden im Formular bereits die hierfür erforderlichen Module als Vorschlag ausgewählt. Sie haben im Anschluss die Möglichkeit, im Vollstreckungsformular selbst noch Änderungen/Ergänzungen nach Ihren eigenen Wünschen vorzunehmen.
+                - text: Insbesondere sollten Sie beispielsweise prüfen, ob Sie wirklich sämtliche Drittauskünfte benötigen.
+                - text: Trifft kein vorgegebenes Vollstreckungsziel für Sie zu, dann wählen Sie bitte die letzte Auswahlmöglichkeit für individuelle Eingaben im Formular.
+            - generic [ref=e539]:
+              - generic [ref=e540]:
+                - radio
+                - generic [ref=e543] [cursor=pointer]: "Der Schuldner/die Schuldnerin soll unbedingt die Vermögensauskunft abgeben (Kombi: VAK mit Haftbefehl)"
+              - generic [ref=e544]:
+                - radio
+                - generic [ref=e547] [cursor=pointer]: "Sie möchten schnellstmöglich in die Lohn- oder Kontenpfändung (Kombi: VAK mit Drittauskünften)"
+              - generic [ref=e548]:
+                - radio
+                - generic [ref=e551] [cursor=pointer]: Sie möchten eine reine Sachpfändung
+              - generic [ref=e552]:
+                - radio
+                - generic [ref=e555] [cursor=pointer]: Ihnen liegt ein Haftbefehl vor und Sie möchten die Verhaftung des Schuldners/der Schuldnerin beantragen
+              - generic [ref=e556]:
+                - radio
+                - generic [ref=e559] [cursor=pointer]: Sie möchten indiviuelle die Vollstreckungsmodule am Ende selbst ankreuzen (bitte auch verwenden, wenn A-D nicht zutreffen)
+    - generic [ref=e561]:
+      - img [ref=e562]
+      - generic [ref=e565]: Sie haben die Möglichkeit bei gesamtschuldnerischen Titeln, bei denen die Schuldner an unterschiedlichen Orten ihren Wohnsitz haben, jeweils getrennte Vollstreckungsaufträge (erforderlich wegen unterschiedlicher örtlicher Zuständigkeit des Vollstreckungsorgans) zu erzeugen. Auch können unterschiedliche Forderungsaufstellungen erzeugt werden, da womöglich unterschiedliche Forderungen gegen die jeweiligen Schuldner an den unterschiedlichen Orten vollstreckt werden sollen oder aber sich in Hinblick auf die Gebühren eine Änderung ergibt.
+  - contentinfo [ref=e566]:
+    - generic [ref=e568]:
+      - generic [ref=e569]:
+        - link "Impressum" [ref=e570] [cursor=pointer]:
+          - /url: https://zv-assistent.de/impressum/
+        - link "Datenschutz" [ref=e571] [cursor=pointer]:
+          - /url: https://zv-assistent.de/datenschutzerklaerung/
+      - generic [ref=e572]:
+        - text: Für die optimale Ansicht und Funktionalität des bereitgestellten PDF-Dokuments empfehlen wir die Verwendung von Adobe Acrobat Reader. Dieses Programm können Sie kostenlos herunterladen und installieren.
+        - link "Acrobat Reader herunterladen." [ref=e573] [cursor=pointer]:
+          - /url: https://www.adobe.com/de/acrobat/pdf-reader.html
+          - text: Acrobat Reader herunterladen.
+          - img [ref=e574]

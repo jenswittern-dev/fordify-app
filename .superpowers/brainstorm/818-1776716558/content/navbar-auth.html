@@ -1,0 +1,98 @@
+<h2>Wo und wie soll der Login-Bereich in der Navbar sitzen?</h2>
+<p class="subtitle">Drei gängige Patterns für SaaS-Apps — alle funktionieren mit Magic Link Login</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:1.25rem;background:#f8fafc;border-radius:8px;font-family:system-ui,sans-serif">
+      <div style="display:flex;align-items:center;justify-content:space-between;background:#1e3a8a;padding:0.6rem 1rem;border-radius:6px;color:white;font-size:0.8rem">
+        <span style="font-weight:700">fordify</span>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <span style="opacity:0.7">Forderungsaufstellung</span>
+          <span style="opacity:0.7">Preise</span>
+          <!-- Guest state -->
+          <span style="background:rgba(255,255,255,0.15);padding:0.25rem 0.7rem;border-radius:4px;cursor:pointer">Anmelden</span>
+          <!-- Logged-in state (shown separately) -->
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;display:flex;align-items:center;justify-content:space-between;background:#1e3a8a;padding:0.6rem 1rem;border-radius:6px;color:white;font-size:0.8rem">
+        <span style="font-weight:700">fordify</span>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <span style="opacity:0.7">Forderungsaufstellung</span>
+          <span style="opacity:0.7">Preise</span>
+          <!-- Logged in: Avatar-Kreis mit Dropdown -->
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.7rem;cursor:pointer">JW</div>
+        </div>
+      </div>
+      <p style="font-size:0.7rem;color:#64748b;margin:0.5rem 0 0;text-align:center">Oben: nicht eingeloggt · Unten: eingeloggt (Avatar-Initialen + Dropdown)</p>
+    </div>
+    <div class="card-body">
+      <h3>A – Avatar-Dropdown</h3>
+      <p>Der Standard bei modernen SaaS-Apps (Notion, Linear, Vercel). Guest sieht „Anmelden"-Button, eingeloggte Nutzer sehen Initialen-Avatar. Klick öffnet Dropdown mit E-Mail, Plan-Badge, „Abo verwalten" und „Abmelden".</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:1.25rem;background:#f8fafc;border-radius:8px;font-family:system-ui,sans-serif">
+      <div style="display:flex;align-items:center;justify-content:space-between;background:#1e3a8a;padding:0.6rem 1rem;border-radius:6px;color:white;font-size:0.8rem">
+        <span style="font-weight:700">fordify</span>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <span style="opacity:0.7">Preise</span>
+          <span style="background:rgba(255,255,255,0.15);padding:0.25rem 0.7rem;border-radius:4px">Anmelden</span>
+          <span style="background:white;color:#1e3a8a;padding:0.25rem 0.7rem;border-radius:4px;font-weight:600">Pro abonnieren</span>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;display:flex;align-items:center;justify-content:space-between;background:#1e3a8a;padding:0.6rem 1rem;border-radius:6px;color:white;font-size:0.8rem">
+        <span style="font-weight:700">fordify</span>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <span style="opacity:0.7">Preise</span>
+          <span style="background:#f59e0b;color:#000;padding:0.2rem 0.5rem;border-radius:4px;font-size:0.65rem;font-weight:700">PRO</span>
+          <span style="opacity:0.8;font-size:0.75rem">j.wittern@…</span>
+          <span style="background:rgba(255,255,255,0.15);padding:0.25rem 0.7rem;border-radius:4px;cursor:pointer">▾</span>
+        </div>
+      </div>
+      <p style="font-size:0.7rem;color:#64748b;margin:0.5rem 0 0;text-align:center">Oben: nicht eingeloggt · Unten: eingeloggt mit Plan-Badge</p>
+    </div>
+    <div class="card-body">
+      <h3>B – Inline mit Plan-Badge</h3>
+      <p>Guest sieht „Anmelden" + „Pro abonnieren"-CTA. Eingeloggte sehen E-Mail-Kurzform + farbiges Plan-Badge (FREE / PRO / BUSINESS) + Dropdown-Pfeil. Gut für Conversion-Fokus, etwas voller.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:1.25rem;background:#f8fafc;border-radius:8px;font-family:system-ui,sans-serif">
+      <div style="display:flex;align-items:center;justify-content:space-between;background:#1e3a8a;padding:0.6rem 1rem;border-radius:6px;color:white;font-size:0.8rem">
+        <span style="font-weight:700">fordify</span>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <span style="opacity:0.7">Preise</span>
+          <span style="background:rgba(255,255,255,0.15);padding:0.25rem 0.7rem;border-radius:4px">Anmelden</span>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;background:#1e3a8a;padding:0.6rem 1rem;border-radius:6px;color:white;font-size:0.8rem">
+          <span style="font-weight:700">fordify</span>
+          <div style="display:flex;gap:0.5rem;align-items:center">
+            <span style="opacity:0.7">Preise</span>
+            <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:0.7rem">👤</div>
+          </div>
+        </div>
+        <div style="background:white;border:1px solid #e2e8f0;border-radius:6px;padding:0.75rem;margin-top:0.25rem;font-size:0.75rem;box-shadow:0 4px 12px rgba(0,0,0,0.1)">
+          <div style="color:#64748b;margin-bottom:0.5rem">j.wittern@gmail.com</div>
+          <div style="background:#eff6ff;color:#1e40af;font-size:0.65rem;font-weight:700;padding:0.2rem 0.5rem;border-radius:4px;display:inline-block;margin-bottom:0.5rem">PRO</div>
+          <div style="border-top:1px solid #f1f5f9;padding-top:0.5rem">
+            <div style="padding:0.25rem 0;cursor:pointer">Abo verwalten →</div>
+            <div style="padding:0.25rem 0;color:#ef4444;cursor:pointer">Abmelden</div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:0.7rem;color:#64748b;margin:0.5rem 0 0;text-align:center">Oben: nicht eingeloggt · Unten: Dropdown offen (mit E-Mail, Plan, Aktionen)</p>
+    </div>
+    <div class="card-body">
+      <h3>C – Avatar + aufgeklapptes Dropdown</h3>
+      <p>Wie A, aber zeigt schon im Mockup den aufgeklappten Dropdown-Inhalt: E-Mail, Plan-Badge, „Abo verwalten" (→ Paddle Portal), Trennlinie, „Abmelden". Das ist der Standard bei Stripe, GitHub, etc.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:1.5rem">Empfehlung: <strong>C</strong> — sauberste UX, klar differenziert zwischen Guest und eingeloggt, alle Infos im Dropdown ohne Platzverschwendung in der Navbar.</p>

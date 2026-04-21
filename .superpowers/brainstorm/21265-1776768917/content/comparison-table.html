@@ -1,0 +1,58 @@
+<h2>Funktionsvergleich – Tabellendesign</h2>
+<p class="subtitle">Wie soll die Vergleichstabelle aussehen?</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="current" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:1rem;background:#f8fafc;border-radius:6px 6px 0 0;overflow:hidden;">
+      <table style="width:100%;border-collapse:collapse;font-family:sans-serif;font-size:0.72rem;">
+        <thead>
+          <tr>
+            <th style="background:#eff6ff;padding:0.5rem 0.75rem;text-align:left;font-weight:600;color:#1e3a8a;border-bottom:2px solid #1e3a8a;">Funktion</th>
+            <th style="background:#eff6ff;padding:0.5rem 0.75rem;text-align:center;font-weight:600;color:#1e3a8a;border-bottom:2px solid #1e3a8a;">Free</th>
+            <th style="background:#eff6ff;padding:0.5rem 0.75rem;text-align:center;font-weight:600;color:#1e3a8a;border-bottom:2px solid #1e3a8a;">Pro</th>
+            <th style="background:#eff6ff;padding:0.5rem 0.75rem;text-align:center;font-weight:600;color:#1e3a8a;border-bottom:2px solid #1e3a8a;">Business</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:0.4rem 0.75rem;border-bottom:1px solid #e2e8f0;color:#334155;">Zinsrechner (§ 288 BGB)</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;">✓</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;">✓</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;">✓</td></tr>
+          <tr style="background:#f8fafc;"><td style="padding:0.4rem 0.75rem;border-bottom:1px solid #e2e8f0;color:#334155;">Forderungsaufstellung erstellen</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;">✓</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;">✓</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;">✓</td></tr>
+          <tr><td style="padding:0.4rem 0.75rem;border-bottom:1px solid #e2e8f0;color:#334155;">Cloud-Speicherung</td><td style="text-align:center;color:#cbd5e1;border-bottom:1px solid #e2e8f0;">–</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;">✓</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;">✓</td></tr>
+          <tr style="background:#f8fafc;"><td style="padding:0.4rem 0.75rem;border-bottom:1px solid #e2e8f0;color:#334155;">Excel / CSV-Export</td><td style="text-align:center;color:#cbd5e1;border-bottom:1px solid #e2e8f0;">–</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;">✓</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;">✓</td></tr>
+          <tr><td style="padding:0.4rem 0.75rem;color:#334155;">Mehrere Nutzer</td><td style="text-align:center;color:#cbd5e1;">–</td><td style="text-align:center;color:#cbd5e1;">–</td><td style="text-align:center;color:#16a34a;font-weight:700;">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-body">
+      <h3>A – Wie bisher (heller Header)</h3>
+      <p>Hellblaue Kopfzeile, gestreift, kompakt. Funktioniert gut, passt aber nicht zum neuen dunklen Hero-Stil.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="dark-header" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:1rem;background:#f8fafc;border-radius:6px 6px 0 0;overflow:hidden;">
+      <table style="width:100%;border-collapse:collapse;font-family:sans-serif;font-size:0.72rem;border-radius:8px;overflow:hidden;">
+        <thead>
+          <tr>
+            <th style="background:linear-gradient(135deg,#0f1d5c,#1e3a8a);padding:0.5rem 0.75rem;text-align:left;font-weight:600;color:#fff;">Funktion</th>
+            <th style="background:linear-gradient(135deg,#0f1d5c,#1e3a8a);padding:0.5rem 0.75rem;text-align:center;font-weight:600;color:rgba(255,255,255,0.75);">Free</th>
+            <th style="background:linear-gradient(135deg,#0f1d5c,#1e3a8a);padding:0.5rem 0.75rem;text-align:center;font-weight:700;color:#fff;">Pro ★</th>
+            <th style="background:linear-gradient(135deg,#0f1d5c,#1e3a8a);padding:0.5rem 0.75rem;text-align:center;font-weight:600;color:rgba(255,255,255,0.75);">Business</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:0.4rem 0.75rem;border-bottom:1px solid #e2e8f0;color:#334155;">Zinsrechner (§ 288 BGB)</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;">✓</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;background:#f0f5ff;">✓</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;">✓</td></tr>
+          <tr style="background:#f8fafc;"><td style="padding:0.4rem 0.75rem;border-bottom:1px solid #e2e8f0;color:#334155;">Forderungsaufstellung erstellen</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;">✓</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;background:#eef3ff;">✓</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;">✓</td></tr>
+          <tr><td style="padding:0.4rem 0.75rem;border-bottom:1px solid #e2e8f0;color:#334155;">Cloud-Speicherung</td><td style="text-align:center;color:#cbd5e1;border-bottom:1px solid #e2e8f0;">–</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;background:#f0f5ff;">✓</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;">✓</td></tr>
+          <tr style="background:#f8fafc;"><td style="padding:0.4rem 0.75rem;border-bottom:1px solid #e2e8f0;color:#334155;">Excel / CSV-Export</td><td style="text-align:center;color:#cbd5e1;border-bottom:1px solid #e2e8f0;">–</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;background:#eef3ff;">✓</td><td style="text-align:center;color:#16a34a;font-weight:700;border-bottom:1px solid #e2e8f0;">✓</td></tr>
+          <tr><td style="padding:0.4rem 0.75rem;color:#334155;">Mehrere Nutzer</td><td style="text-align:center;color:#cbd5e1;">–</td><td style="text-align:center;color:#cbd5e1;background:#f0f5ff;">–</td><td style="text-align:center;color:#16a34a;font-weight:700;">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-body">
+      <h3>B – Dunkler Header + Pro-Spalte hervorgehoben</h3>
+      <p>Navy-Gradient in der Kopfzeile passend zum Hero. Pro-Spalte bekommt leichte Hintergrundfarbe zur Orientierung.</p>
+    </div>
+  </div>
+
+</div>

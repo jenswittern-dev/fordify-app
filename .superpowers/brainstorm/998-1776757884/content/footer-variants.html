@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Footer Varianten</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #0f172a; padding: 2rem; color: #1a1d23; }
+
+  .page-header { text-align: center; margin-bottom: 2rem; }
+  .page-header h1 { font-size: 1.5rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
+  .page-header p { color: #94a3b8; font-size: 0.875rem; }
+
+  .variant-block { margin-bottom: 2.5rem; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 32px rgba(0,0,0,0.5); cursor: pointer; outline: 3px solid transparent; transition: outline 0.15s, transform 0.15s; }
+  .variant-block:hover { transform: translateY(-2px); }
+  .variant-block.selected { outline: 3px solid #60a5fa; }
+  .variant-label { background: #1e293b; padding: 0.6rem 1.25rem; display: flex; align-items: center; gap: 0.75rem; }
+  .v-letter { width: 24px; height: 24px; border-radius: 50%; background: #334155; color: #94a3b8; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .variant-block.selected .v-letter { background: #1d4ed8; color: white; }
+  .v-name { font-size: 0.75rem; font-weight: 700; color: #cbd5e1; }
+  .v-desc { font-size: 0.65rem; color: #64748b; margin-left: auto; }
+  .selected-badge { display: none; background: #1d4ed8; color: white; font-size: 0.6rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 4px; margin-left: auto; }
+  .variant-block.selected .selected-badge { display: inline-block; }
+  .variant-info { background: #1e293b; padding: 0.75rem 1.25rem; display: flex; gap: 1rem; }
+  .vi-pros { flex: 1; }
+  .vi-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #475569; margin-bottom: 0.3rem; }
+  .vi-point { font-size: 0.65rem; color: #94a3b8; line-height: 1.6; }
+  .vi-point::before { content: '+ '; color: #34d399; font-weight: 700; }
+  .select-hint { text-align: center; color: #475569; font-size: 0.75rem; margin-top: 1.5rem; }
+
+  /* ── VARIANT A: Dark full-width + CTA band + 4-col links ── */
+  .fa-pre { background: linear-gradient(135deg, #0f1d5c, #1e3a8a); padding: 2.5rem 3rem; text-align: center; }
+  .fa-pre__tag { display: inline-block; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.8); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.25rem 0.7rem; border-radius: 20px; margin-bottom: 0.8rem; }
+  .fa-pre__title { font-size: 1.4rem; font-weight: 900; color: white; letter-spacing: -0.03em; margin-bottom: 0.4rem; }
+  .fa-pre__sub { font-size: 0.8rem; color: rgba(255,255,255,0.55); margin-bottom: 1.5rem; }
+  .fa-pre__cta { display: inline-block; background: white; color: #0f1d5c; font-size: 0.82rem; font-weight: 700; padding: 0.6rem 1.6rem; border-radius: 10px; }
+
+  .fa-main { background: #0f172a; padding: 2.5rem 3rem 1.5rem; }
+  .fa-cols { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2rem; max-width: 900px; margin: 0 auto 2rem; }
+  .fa-brand { }
+  .fa-brand__name { font-size: 1.1rem; font-weight: 900; color: white; letter-spacing: -0.04em; margin-bottom: 0.5rem; }
+  .fa-brand__desc { font-size: 0.72rem; color: rgba(255,255,255,0.4); line-height: 1.6; margin-bottom: 1rem; }
+  .fa-brand__badges { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .fa-badge { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); font-size: 0.58rem; font-weight: 600; padding: 0.18rem 0.5rem; border-radius: 4px; }
+  .fa-col__title { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #475569; margin-bottom: 0.75rem; }
+  .fa-col__link { display: block; font-size: 0.72rem; color: rgba(255,255,255,0.45); margin-bottom: 0.4rem; }
+  .fa-col__link--highlight { color: #60a5fa; font-weight: 600; }
+  .fa-bottom { border-top: 1px solid rgba(255,255,255,0.07); padding-top: 1.25rem; display: flex; justify-content: space-between; align-items: center; max-width: 900px; margin: 0 auto; }
+  .fa-bottom__copy { font-size: 0.65rem; color: rgba(255,255,255,0.25); }
+  .fa-bottom__right { font-size: 0.65rem; color: rgba(255,255,255,0.25); }
+
+  /* ── VARIANT B: Light + divider + 3-col + bottom strip ── */
+  .fb-main { background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 3rem 3rem 0; }
+  .fb-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 3rem; max-width: 900px; margin: 0 auto 2.5rem; }
+  .fb-brand__name { font-size: 1.05rem; font-weight: 900; color: #0f172a; letter-spacing: -0.04em; margin-bottom: 0.5rem; }
+  .fb-brand__desc { font-size: 0.73rem; color: #64748b; line-height: 1.6; margin-bottom: 1.25rem; }
+  .fb-brand__trust { display: flex; flex-direction: column; gap: 0.3rem; }
+  .fb-trust-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.65rem; color: #475569; }
+  .fb-trust-dot { width: 6px; height: 6px; border-radius: 50%; background: #34d399; flex-shrink: 0; }
+  .fb-col__title { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #94a3b8; margin-bottom: 0.85rem; }
+  .fb-col__link { display: block; font-size: 0.75rem; color: #475569; margin-bottom: 0.45rem; }
+  .fb-col__link--highlight { color: #1e3a8a; font-weight: 600; }
+  .fb-bottom { background: #0f172a; padding: 1rem 3rem; display: flex; justify-content: space-between; align-items: center; max-width: 100%; }
+  .fb-bottom__copy { font-size: 0.65rem; color: rgba(255,255,255,0.3); }
+  .fb-bottom__links { display: flex; gap: 1.25rem; }
+  .fb-bottom__link { font-size: 0.65rem; color: rgba(255,255,255,0.3); }
+
+  /* ── VARIANT C: Minimal centered + single row + subtle ── */
+  .fc-main { background: white; border-top: 2px solid #0f1d5c; }
+  .fc-upper { padding: 2.5rem 3rem; display: grid; grid-template-columns: 1fr auto 1fr; gap: 2rem; align-items: start; max-width: 900px; margin: 0 auto; }
+  .fc-brand__name { font-size: 1.05rem; font-weight: 900; color: #0f1d5c; letter-spacing: -0.04em; margin-bottom: 0.35rem; }
+  .fc-brand__desc { font-size: 0.7rem; color: #94a3b8; line-height: 1.5; }
+  .fc-nav { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+  .fc-nav__link { font-size: 0.75rem; color: #475569; }
+  .fc-nav__link--highlight { color: #1e3a8a; font-weight: 700; }
+  .fc-legal { display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; }
+  .fc-legal__link { font-size: 0.7rem; color: #94a3b8; }
+  .fc-bottom { background: #0f1d5c; padding: 0.85rem 3rem; display: flex; justify-content: space-between; align-items: center; }
+  .fc-bottom__copy { font-size: 0.62rem; color: rgba(255,255,255,0.35); }
+  .fc-bottom__badges { display: flex; gap: 0.6rem; }
+  .fc-bottom__badge { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.5); font-size: 0.55rem; font-weight: 600; padding: 0.15rem 0.45rem; border-radius: 3px; letter-spacing: 0.04em; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>4 / 6 — Footer</h1>
+  <p>Drei Varianten · Design-Richtung B (Modern SaaS) · Klicke deine Favoriten an</p>
+</div>
+
+<!-- ══════════════════ VARIANT A ══════════════════ -->
+<div class="variant-block" onclick="toggleSelect(this)" data-choice="footer-a">
+  <div class="variant-label">
+    <div class="v-letter">A</div>
+    <div class="v-name">Dunkel + CTA-Band oben + 4-Spalten-Links</div>
+    <div class="v-desc">Stripe / Linear-Stil</div>
+    <span class="selected-badge">✓ Gewählt</span>
+  </div>
+
+  <!-- Pre-footer CTA Band -->
+  <div class="fa-pre">
+    <div class="fa-pre__tag">Kostenlos · Kein Login</div>
+    <div class="fa-pre__title">Jetzt fordify nutzen</div>
+    <div class="fa-pre__sub">Forderungsaufstellung, Zinsen, RVG — alles an einem Ort.</div>
+    <div class="fa-pre__cta">Forderungsaufstellung erstellen →</div>
+  </div>
+
+  <!-- Main Footer -->
+  <div class="fa-main">
+    <div class="fa-cols">
+      <div class="fa-brand">
+        <div class="fa-brand__name">fordify</div>
+        <div class="fa-brand__desc">Professionelle Forderungsberechnungen für Kanzleien und Unternehmen. Von Anwälten entwickelt und geprüft.</div>
+        <div class="fa-brand__badges">
+          <span class="fa-badge">RVG 2025</span>
+          <span class="fa-badge">§ 367 BGB</span>
+          <span class="fa-badge">DSGVO</span>
+          <span class="fa-badge">Basiszins 07/2026</span>
+        </div>
+      </div>
+      <div>
+        <div class="fa-col__title">Tools</div>
+        <a class="fa-col__link fa-col__link--highlight">Forderungsaufstellung →</a>
+        <a class="fa-col__link">Verzugszinsrechner</a>
+        <a class="fa-col__link">RVG-Rechner</a>
+        <a class="fa-col__link">Gerichtskostenrechner</a>
+      </div>
+      <div>
+        <div class="fa-col__title">Produkt</div>
+        <a class="fa-col__link fa-col__link--highlight">Preise</a>
+        <a class="fa-col__link">Über fordify</a>
+        <a class="fa-col__link">Changelog</a>
+      </div>
+      <div>
+        <div class="fa-col__title">Rechtliches</div>
+        <a class="fa-col__link">Impressum</a>
+        <a class="fa-col__link">Datenschutz</a>
+        <a class="fa-col__link">AGB</a>
+        <a class="fa-col__link">AVV</a>
+      </div>
+    </div>
+    <div class="fa-bottom">
+      <div class="fa-bottom__copy">© 2025 fordify · Alle Rechte vorbehalten</div>
+      <div class="fa-bottom__right">Von Anwälten entwickelt · DSGVO-konform</div>
+    </div>
+  </div>
+
+  <div class="variant-info">
+    <div class="vi-pros">
+      <div class="vi-label">Stärken</div>
+      <div class="vi-point">CTA-Band vor dem Footer — letzte Conversion-Chance, stark platziert</div>
+      <div class="vi-point">Badges (RVG, §367, DSGVO) kommunizieren Vertrauen passiv</div>
+      <div class="vi-point">4-Spalten zeigt mehr — vollständige Linkstruktur sichtbar</div>
+      <div class="vi-point">Dunkel über dunkel: nahtloser Übergang von dunklen Sektionen</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ VARIANT B ══════════════════ -->
+<div class="variant-block" onclick="toggleSelect(this)" data-choice="footer-b">
+  <div class="variant-label">
+    <div class="v-letter">B</div>
+    <div class="v-name">Hell + Trust-Liste links + 3 Spalten + dunkle Bodenleiste</div>
+    <div class="v-desc">Clio / Notion-Stil</div>
+    <span class="selected-badge">✓ Gewählt</span>
+  </div>
+
+  <div class="fb-main">
+    <div class="fb-top">
+      <div class="fb-brand">
+        <div class="fb-brand__name">fordify</div>
+        <div class="fb-brand__desc">Professionelle Forderungsberechnungen für Kanzleien, Inkassobüros und Unternehmen. Kostenlos, ohne Registrierung, DSGVO-konform.</div>
+        <div class="fb-brand__trust">
+          <div class="fb-trust-item"><div class="fb-trust-dot"></div> RVG 2025 (BGBl. I Nr. 109)</div>
+          <div class="fb-trust-item"><div class="fb-trust-dot"></div> Basiszinssatz bis 07/2026</div>
+          <div class="fb-trust-item"><div class="fb-trust-dot"></div> Von Anwälten entwickelt</div>
+          <div class="fb-trust-item"><div class="fb-trust-dot"></div> Kein Login · 100 % kostenlos</div>
+        </div>
+      </div>
+      <div>
+        <div class="fb-col__title">Tools</div>
+        <a class="fb-col__link fb-col__link--highlight">Forderungsaufstellung →</a>
+        <a class="fb-col__link">Verzugszinsrechner</a>
+        <a class="fb-col__link">RVG-Rechner</a>
+        <a class="fb-col__link">Gerichtskostenrechner</a>
+        <div class="fb-col__title" style="margin-top:1.25rem">Produkt</div>
+        <a class="fb-col__link fb-col__link--highlight">Preise</a>
+      </div>
+      <div>
+        <div class="fb-col__title">Rechtliches</div>
+        <a class="fb-col__link">Impressum</a>
+        <a class="fb-col__link">Datenschutz</a>
+        <a class="fb-col__link">AGB</a>
+        <a class="fb-col__link">AVV</a>
+      </div>
+    </div>
+  </div>
+  <div class="fb-bottom">
+    <div class="fb-bottom__copy">© 2025 fordify · Alle Rechte vorbehalten</div>
+    <div class="fb-bottom__links">
+      <a class="fb-bottom__link">Impressum</a>
+      <a class="fb-bottom__link">Datenschutz</a>
+    </div>
+  </div>
+
+  <div class="variant-info">
+    <div class="vi-pros">
+      <div class="vi-label">Stärken</div>
+      <div class="vi-point">Trust-Liste mit grünen Dots: Vertrauen im Footer wiederholen</div>
+      <div class="vi-point">Heller Footer nach dunklen Sektionen — klarer visueller Abschluss</div>
+      <div class="vi-point">Dunkle Bodenleiste: saubere Copyright-Zone, rechtliche Links doppelt</div>
+      <div class="vi-point">Kompakt, übersichtlich, genug Links ohne Überladung</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ VARIANT C ══════════════════ -->
+<div class="variant-block" onclick="toggleSelect(this)" data-choice="footer-c">
+  <div class="variant-label">
+    <div class="v-letter">C</div>
+    <div class="v-name">Minimalistisch zentriert + Navy-Bodenleiste mit Badges</div>
+    <div class="v-desc">Vercel / Arc-Stil</div>
+    <span class="selected-badge">✓ Gewählt</span>
+  </div>
+
+  <div class="fc-main">
+    <div class="fc-upper">
+      <div class="fc-brand">
+        <div class="fc-brand__name">fordify</div>
+        <div class="fc-brand__desc">Professionelle Forderungsberechnungen für Kanzleien und Unternehmen. Kostenlos · Kein Login · DSGVO-konform.</div>
+      </div>
+      <div class="fc-nav">
+        <a class="fc-nav__link fc-nav__link--highlight">Forderungsaufstellung</a>
+        <a class="fc-nav__link">Verzugszinsrechner</a>
+        <a class="fc-nav__link">RVG-Rechner</a>
+        <a class="fc-nav__link">Gerichtskostenrechner</a>
+        <a class="fc-nav__link fc-nav__link--highlight" style="margin-top:0.5rem">Preise</a>
+      </div>
+      <div class="fc-legal">
+        <a class="fc-legal__link">Impressum</a>
+        <a class="fc-legal__link">Datenschutz</a>
+        <a class="fc-legal__link">AGB</a>
+        <a class="fc-legal__link">AVV</a>
+      </div>
+    </div>
+  </div>
+  <div class="fc-bottom">
+    <div class="fc-bottom__copy">© 2025 fordify · Von Anwälten entwickelt</div>
+    <div class="fc-bottom__badges">
+      <span class="fc-bottom__badge">RVG 2025</span>
+      <span class="fc-bottom__badge">§ 367 BGB</span>
+      <span class="fc-bottom__badge">DSGVO-konform</span>
+      <span class="fc-bottom__badge">Basiszins bis 07/2026</span>
+    </div>
+  </div>
+
+  <div class="variant-info">
+    <div class="vi-pros">
+      <div class="vi-label">Stärken</div>
+      <div class="vi-point">Maximale Reduktion: kein Gewicht, kein Rauschen</div>
+      <div class="vi-point">3-Spalten-Layout auf weißem Grund: elegant, atem­beraubend klar</div>
+      <div class="vi-point">Navy-Bodenleiste mit Badges: Vertrauen im letzten Pixel</div>
+      <div class="vi-point">Passt perfekt zu einem modernen SaaS-Premium-Auftritt</div>
+    </div>
+  </div>
+</div>
+
+<p class="select-hint">Favorit(en) anklicken — oder Elemente kombinieren.</p>
+
+<script>
+function toggleSelect(el) {
+  el.classList.toggle('selected');
+  const event = {
+    type: el.classList.contains('selected') ? 'select' : 'deselect',
+    choice: el.dataset.choice,
+    text: el.querySelector('.v-name').textContent,
+    timestamp: Math.floor(Date.now() / 1000)
+  };
+  fetch('/event', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(event) }).catch(() => {});
+}
+</script>
+</body>
+</html>

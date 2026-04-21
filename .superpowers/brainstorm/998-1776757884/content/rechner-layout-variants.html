@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rechner Layout Varianten</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #0f172a; padding: 2rem; color: #1a1d23; }
+
+  .page-header { text-align: center; margin-bottom: 2rem; }
+  .page-header h1 { font-size: 1.5rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
+  .page-header p { color: #94a3b8; font-size: 0.875rem; }
+
+  .variant-block { margin-bottom: 2.5rem; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 32px rgba(0,0,0,0.5); cursor: pointer; outline: 3px solid transparent; transition: outline 0.15s, transform 0.15s; }
+  .variant-block:hover { transform: translateY(-2px); }
+  .variant-block.selected { outline: 3px solid #60a5fa; }
+  .variant-label { background: #1e293b; padding: 0.6rem 1.25rem; display: flex; align-items: center; gap: 0.75rem; }
+  .v-letter { width: 24px; height: 24px; border-radius: 50%; background: #334155; color: #94a3b8; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .variant-block.selected .v-letter { background: #1d4ed8; color: white; }
+  .v-name { font-size: 0.75rem; font-weight: 700; color: #cbd5e1; }
+  .v-desc { font-size: 0.65rem; color: #64748b; margin-left: auto; }
+  .selected-badge { display: none; background: #1d4ed8; color: white; font-size: 0.6rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 4px; margin-left: auto; }
+  .variant-block.selected .selected-badge { display: inline-block; }
+  .variant-info { background: #1e293b; padding: 0.75rem 1.25rem; }
+  .vi-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #475569; margin-bottom: 0.3rem; }
+  .vi-point { font-size: 0.65rem; color: #94a3b8; line-height: 1.6; }
+  .vi-point::before { content: '+ '; color: #34d399; font-weight: 700; }
+  .select-hint { text-align: center; color: #475569; font-size: 0.75rem; margin-top: 1.5rem; }
+
+  /* Shared: Hero band (established Variant A) */
+  .hero-band { background: linear-gradient(135deg, #0f1d5c 0%, #1e3a8a 60%, #1c439a 100%); padding: 1.5rem 2.5rem; }
+  .hero-bc { font-size: 0.62rem; color: rgba(255,255,255,0.4); margin-bottom: 0.75rem; }
+  .hero-bc span { color: rgba(255,255,255,0.65); }
+  .hero-inner { display: flex; align-items: flex-start; justify-content: space-between; }
+  .hero-left { flex: 1; }
+  .hero-tag { display: inline-flex; align-items: center; gap: 0.35rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); font-size: 0.58rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.18rem 0.55rem; border-radius: 4px; margin-bottom: 0.5rem; }
+  .hero-tag-dot { width: 4px; height: 4px; background: #34d399; border-radius: 50%; }
+  .hero-h1 { font-size: 1.2rem; font-weight: 900; color: white; letter-spacing: -0.03em; line-height: 1.2; margin-bottom: 0.35rem; }
+  .hero-desc { font-size: 0.72rem; color: rgba(255,255,255,0.55); line-height: 1.5; max-width: 500px; }
+  .hero-stats { flex: 0 0 auto; display: flex; flex-direction: column; gap: 0.3rem; align-items: flex-end; }
+  .hero-stat__val { font-size: 1rem; font-weight: 900; color: white; letter-spacing: -0.02em; text-align: right; }
+  .hero-stat__label { font-size: 0.58rem; color: rgba(255,255,255,0.38); text-align: right; }
+
+  /* ── VARIANT A: Two-card side-by-side, white bg ── */
+  .ra-wrap { background: #f8fafc; padding: 2rem 2.5rem; }
+  .ra-grid { display: grid; grid-template-columns: 5fr 7fr; gap: 1.5rem; }
+
+  /* Form card */
+  .ra-form { background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.5rem; }
+  .ra-form__fact-bar { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9; }
+  .ra-fact-chip { background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; font-size: 0.6rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 4px; }
+  .ra-label { font-size: 0.72rem; font-weight: 600; color: #374151; margin-bottom: 0.3rem; display: block; }
+  .ra-field { width: 100%; height: 34px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 7px; margin-bottom: 0.85rem; }
+  .ra-select { width: 100%; height: 34px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 7px; margin-bottom: 1.25rem; }
+  .ra-btn { width: 100%; height: 40px; background: linear-gradient(135deg, #1e3a8a, #2563eb); border-radius: 9px; display: flex; align-items: center; justify-content: center; gap: 0.4rem; }
+  .ra-btn span { color: white; font-size: 0.78rem; font-weight: 700; }
+  .ra-btn svg { fill: white; width: 13px; height: 13px; }
+
+  /* Result card */
+  .ra-result { background: white; border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; }
+  .ra-result__header { background: #0f1d5c; padding: 0.85rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+  .ra-result__title { color: white; font-size: 0.78rem; font-weight: 700; }
+  .ra-result__total-badge { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 0.72rem; font-weight: 900; padding: 0.2rem 0.65rem; border-radius: 6px; font-family: monospace; }
+  .ra-result__body { padding: 1.25rem; }
+  .ra-result__row { display: flex; justify-content: space-between; align-items: center; padding: 0.55rem 0.75rem; border-radius: 7px; margin-bottom: 0.35rem; }
+  .ra-result__row:nth-child(odd) { background: #f8fafc; }
+  .ra-result__period { font-size: 0.68rem; color: #475569; font-family: monospace; }
+  .ra-result__rate { font-size: 0.65rem; color: #94a3b8; margin-left: 0.5rem; }
+  .ra-result__amount { font-size: 0.75rem; font-weight: 700; color: #0f172a; font-family: monospace; }
+  .ra-result__footer { border-top: 2px solid #e2e8f0; margin: 0 1.25rem; padding: 0.75rem 0; display: flex; justify-content: space-between; align-items: center; }
+  .ra-result__footer-label { font-size: 0.78rem; font-weight: 700; color: #0f172a; }
+  .ra-result__footer-val { font-size: 1rem; font-weight: 900; color: #1e3a8a; font-family: monospace; }
+
+  /* CTA box */
+  .ra-cta { margin-top: 1.25rem; background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #bfdbfe; border-radius: 12px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .ra-cta__title { font-size: 0.78rem; font-weight: 700; color: #1e3a8a; margin-bottom: 0.2rem; }
+  .ra-cta__sub { font-size: 0.68rem; color: #3b82f6; line-height: 1.4; }
+  .ra-cta__btn { background: #1e3a8a; color: white; font-size: 0.7rem; font-weight: 700; padding: 0.4rem 0.9rem; border-radius: 7px; flex-shrink: 0; white-space: nowrap; }
+
+  /* FAQ */
+  .ra-faq { padding: 2rem 2.5rem; background: #f8fafc; border-top: 1px solid #e2e8f0; }
+  .ra-faq__overline { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #94a3b8; margin-bottom: 0.4rem; }
+  .ra-faq__title { font-size: 1rem; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; margin-bottom: 1.25rem; }
+  .ra-faq__item { border: 1px solid #e2e8f0; border-radius: 9px; background: white; margin-bottom: 0.5rem; overflow: hidden; }
+  .ra-faq__q { padding: 0.8rem 1rem; font-size: 0.75rem; font-weight: 600; color: #0f172a; display: flex; justify-content: space-between; }
+  .ra-faq__q svg { flex-shrink: 0; width: 14px; height: 14px; fill: #94a3b8; }
+  .ra-faq__a { padding: 0 1rem 0.8rem; font-size: 0.7rem; color: #64748b; line-height: 1.7; border-top: 1px solid #f1f5f9; }
+
+  /* ── VARIANT B: Dark sidebar form + light wide result ── */
+  .rb-wrap { background: #f1f5f9; padding: 2rem 2.5rem; }
+  .rb-grid { display: grid; grid-template-columns: 4fr 8fr; gap: 0; border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 16px rgba(0,0,0,0.06); }
+
+  .rb-form { background: #0f172a; padding: 1.75rem 1.5rem; }
+  .rb-form__title { font-size: 0.8rem; font-weight: 700; color: white; margin-bottom: 1.25rem; padding-bottom: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .rb-label { font-size: 0.68rem; font-weight: 600; color: rgba(255,255,255,0.6); margin-bottom: 0.3rem; display: block; }
+  .rb-field { width: 100%; height: 32px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; margin-bottom: 0.85rem; }
+  .rb-select { width: 100%; height: 32px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; margin-bottom: 1.25rem; }
+  .rb-btn { width: 100%; height: 38px; background: linear-gradient(135deg, #1e3a8a, #3b82f6); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .rb-btn span { color: white; font-size: 0.75rem; font-weight: 700; }
+  .rb-facts { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.07); display: flex; flex-direction: column; gap: 0.6rem; }
+  .rb-fact { display: flex; justify-content: space-between; align-items: center; }
+  .rb-fact__label { font-size: 0.62rem; color: rgba(255,255,255,0.35); }
+  .rb-fact__val { font-size: 0.68rem; font-weight: 700; color: rgba(255,255,255,0.7); font-family: monospace; }
+
+  .rb-result { background: white; padding: 1.75rem 1.5rem; }
+  .rb-result__title { font-size: 0.8rem; font-weight: 700; color: #0f172a; margin-bottom: 1.25rem; padding-bottom: 0.85rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; }
+  .rb-result__total { font-family: monospace; font-size: 0.8rem; font-weight: 900; color: #1e3a8a; }
+  .rb-table { width: 100%; border-collapse: collapse; }
+  .rb-table th { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #94a3b8; text-align: left; padding: 0 0.6rem 0.6rem; }
+  .rb-table td { font-size: 0.7rem; color: #374151; padding: 0.5rem 0.6rem; border-bottom: 1px solid #f8fafc; }
+  .rb-table td.mono { font-family: monospace; font-weight: 700; color: #0f172a; text-align: right; }
+  .rb-table td.muted { color: #94a3b8; font-size: 0.65rem; }
+  .rb-cta-row { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; }
+  .rb-cta-row__text { font-size: 0.72rem; color: #475569; }
+  .rb-cta-row__text strong { color: #0f172a; display: block; font-size: 0.78rem; }
+  .rb-cta-row__btn { background: #1e3a8a; color: white; font-size: 0.7rem; font-weight: 700; padding: 0.4rem 0.9rem; border-radius: 7px; flex-shrink: 0; }
+
+  .rb-faq { padding: 2rem 2.5rem; background: #f1f5f9; border-top: 1px solid #e2e8f0; }
+  .rb-faq__overline { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #94a3b8; margin-bottom: 0.4rem; }
+  .rb-faq__title { font-size: 1rem; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; margin-bottom: 1.25rem; }
+  .rb-faq__cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .rb-faq__item { background: white; border: 1px solid #e2e8f0; border-radius: 9px; padding: 1rem; }
+  .rb-faq__q { font-size: 0.75rem; font-weight: 700; color: #0f172a; margin-bottom: 0.4rem; }
+  .rb-faq__a { font-size: 0.68rem; color: #64748b; line-height: 1.6; }
+
+  /* ── VARIANT C: Full-width clean white, results as timeline ── */
+  .rc-wrap { background: white; padding: 2rem 2.5rem; }
+  .rc-top { display: grid; grid-template-columns: 5fr 7fr; gap: 1.5rem; margin-bottom: 2rem; }
+  .rc-form { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.5rem; }
+  .rc-form__chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1.1rem; }
+  .rc-chip { background: white; border: 1px solid #e2e8f0; color: #475569; font-size: 0.6rem; font-weight: 600; padding: 0.18rem 0.5rem; border-radius: 4px; }
+  .rc-label { font-size: 0.7rem; font-weight: 600; color: #374151; margin-bottom: 0.25rem; display: block; }
+  .rc-field { width: 100%; height: 33px; background: white; border: 1px solid #d1d5db; border-radius: 7px; margin-bottom: 0.75rem; }
+  .rc-select { width: 100%; height: 33px; background: white; border: 1px solid #d1d5db; border-radius: 7px; margin-bottom: 1.1rem; }
+  .rc-btn { width: 100%; height: 40px; background: #0f1d5c; border-radius: 9px; display: flex; align-items: center; justify-content: center; }
+  .rc-btn span { color: white; font-size: 0.78rem; font-weight: 700; }
+
+  .rc-result { }
+  .rc-result__header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem; }
+  .rc-result__title { font-size: 0.82rem; font-weight: 700; color: #0f172a; }
+  .rc-result__total { font-size: 1.1rem; font-weight: 900; color: #1e3a8a; font-family: monospace; }
+  .rc-timeline { position: relative; padding-left: 1.25rem; }
+  .rc-timeline::before { content: ''; position: absolute; left: 0; top: 0.5rem; bottom: 0.5rem; width: 2px; background: #e0e7ff; border-radius: 2px; }
+  .rc-period { position: relative; margin-bottom: 0.85rem; }
+  .rc-period__dot { position: absolute; left: -1.35rem; top: 0.3rem; width: 10px; height: 10px; border-radius: 50%; background: #1e3a8a; border: 2px solid white; box-shadow: 0 0 0 2px #c7d2fe; }
+  .rc-period__head { display: flex; justify-content: space-between; margin-bottom: 0.2rem; }
+  .rc-period__dates { font-size: 0.68rem; font-weight: 700; color: #0f172a; font-family: monospace; }
+  .rc-period__amount { font-size: 0.75rem; font-weight: 900; color: #1e3a8a; font-family: monospace; }
+  .rc-period__meta { font-size: 0.62rem; color: #94a3b8; }
+
+  .rc-cta { background: linear-gradient(135deg, #0f1d5c, #1e3a8a); border-radius: 12px; padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; margin-top: 2rem; }
+  .rc-cta__title { font-size: 0.82rem; font-weight: 700; color: white; margin-bottom: 0.2rem; }
+  .rc-cta__sub { font-size: 0.68rem; color: rgba(255,255,255,0.55); }
+  .rc-cta__btn { background: white; color: #0f1d5c; font-size: 0.72rem; font-weight: 700; padding: 0.4rem 0.95rem; border-radius: 7px; flex-shrink: 0; }
+
+  .rc-faq { padding: 2rem 2.5rem; background: #f8fafc; border-top: 1px solid #e2e8f0; }
+  .rc-faq__title { font-size: 1rem; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; margin-bottom: 1.25rem; }
+  .rc-faq__item { padding: 0.85rem 0; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: start; gap: 1rem; }
+  .rc-faq__q { font-size: 0.75rem; font-weight: 600; color: #0f172a; flex: 1; }
+  .rc-faq__a { font-size: 0.68rem; color: #64748b; line-height: 1.6; flex: 2; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>6 / 6 — Rechner-Layout</h1>
+  <p>Drei Varianten für das Rechner-Interface · Design-Richtung B · Beispiel: Verzugszinsrechner</p>
+</div>
+
+<!-- ══════════════ VARIANT A ══════════════ -->
+<div class="variant-block" onclick="toggleSelect(this)" data-choice="rechner-a">
+  <div class="variant-label">
+    <div class="v-letter">A</div>
+    <div class="v-name">Zwei weiße Cards — Form links, Ergebnis mit dunklem Header rechts</div>
+    <div class="v-desc">Stripe / Clio-Stil</div>
+    <span class="selected-badge">✓ Gewählt</span>
+  </div>
+
+  <div class="hero-band">
+    <div class="hero-bc">fordify › <span>Verzugszinsrechner</span></div>
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-tag"><span class="hero-tag-dot"></span> § 288 BGB · Basiszins aktuell</div>
+        <div class="hero-h1">Verzugszinsrechner<br>kostenlos & tagesgenau</div>
+        <div class="hero-desc">Berechnen Sie Verzugszinsen nach § 288 BGB tagesgenau – mit aktuellem Basiszinssatz, getrennt für B2B und B2C.</div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat__val">1,27 %</div><div class="hero-stat__label">Basiszins 01/2026</div>
+        <div style="height:0.5rem"></div>
+        <div class="hero-stat__val">10,27 %</div><div class="hero-stat__label">B2B p.a.</div>
+        <div style="height:0.5rem"></div>
+        <div class="hero-stat__val">6,27 %</div><div class="hero-stat__label">B2C p.a.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ra-wrap">
+    <div class="ra-grid">
+      <!-- Form -->
+      <div class="ra-form">
+        <div class="ra-form__fact-bar">
+          <span class="ra-fact-chip">Basiszins: 1,27 % (01.01.2026)</span>
+          <span class="ra-fact-chip">B2B: 10,27 % p.a.</span>
+          <span class="ra-fact-chip">B2C: 6,27 % p.a.</span>
+        </div>
+        <label class="ra-label">Hauptforderung (€)</label>
+        <div class="ra-field"></div>
+        <label class="ra-label">Zinsbeginn</label>
+        <div class="ra-field"></div>
+        <label class="ra-label">Zinsende</label>
+        <div class="ra-field"></div>
+        <label class="ra-label">Schuldner-Typ</label>
+        <div class="ra-select"></div>
+        <div class="ra-btn">
+          <svg viewBox="0 0 16 16"><path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/></svg>
+          <span>Zinsen berechnen</span>
+        </div>
+      </div>
+      <!-- Result -->
+      <div>
+        <div class="ra-result">
+          <div class="ra-result__header">
+            <div class="ra-result__title">Ergebnis · Verzugszinsen</div>
+            <div class="ra-result__total-badge">∑ 921,96 €</div>
+          </div>
+          <div class="ra-result__body">
+            <div class="ra-result__row">
+              <div><span class="ra-result__period">01.01.2024 – 30.06.2024</span><span class="ra-result__rate"> · 10,77 % p.a.</span></div>
+              <div class="ra-result__amount">342,18 €</div>
+            </div>
+            <div class="ra-result__row">
+              <div><span class="ra-result__period">01.07.2024 – 31.12.2024</span><span class="ra-result__rate"> · 11,27 % p.a.</span></div>
+              <div class="ra-result__amount">378,45 €</div>
+            </div>
+            <div class="ra-result__row">
+              <div><span class="ra-result__period">01.01.2025 – 15.04.2025</span><span class="ra-result__rate"> · 11,90 % p.a.</span></div>
+              <div class="ra-result__amount">201,33 €</div>
+            </div>
+          </div>
+          <div class="ra-result__footer">
+            <div class="ra-result__footer-label">Zinsen gesamt</div>
+            <div class="ra-result__footer-val">921,96 €</div>
+          </div>
+        </div>
+        <div class="ra-cta">
+          <div>
+            <div class="ra-cta__title">Vollständige Forderungsaufstellung erstellen</div>
+            <div class="ra-cta__sub">Zinsen, RVG-Kosten & § 367-Verrechnung — als PDF exportierbar.</div>
+          </div>
+          <div class="ra-cta__btn">Zur Forderungsaufstellung →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ra-faq">
+    <div class="ra-faq__overline">FAQ</div>
+    <div class="ra-faq__title">Häufige Fragen zum Verzugszinsrechner</div>
+    <div class="ra-faq__item">
+      <div class="ra-faq__q">Wie werden Verzugszinsen nach § 288 BGB berechnet? <svg viewBox="0 0 16 16"><path d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/></svg></div>
+      <div class="ra-faq__a">Betrag × Zinssatz × Tage ÷ 365. Basiszinssatz + 9 PP (B2B) oder + 5 PP (B2C). Wird an den Basiszins-Wechseldaten (01.01. / 01.07.) automatisch aufgeteilt.</div>
+    </div>
+    <div class="ra-faq__item">
+      <div class="ra-faq__q">Was ist der aktuelle Basiszinssatz? <svg viewBox="0 0 16 16"><path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg></div>
+    </div>
+  </div>
+
+  <div class="variant-info">
+    <div class="vi-label">Stärken</div>
+    <div class="vi-point">Ergebnis-Header in Navy: visuell klar als „Output" erkennbar, sofort scanbar</div>
+    <div class="vi-point">Fact-Bar in der Form-Card: Basiszinssatz vor dem Ausfüllen sichtbar</div>
+    <div class="vi-point">CTA-Box in Blau-Gradient: weich aber auffällig, ohne zu stören</div>
+    <div class="vi-point">FAQ als vertikale Cards: SEO-stark, gut lesbar</div>
+  </div>
+</div>
+
+<!-- ══════════════ VARIANT B ══════════════ -->
+<div class="variant-block" onclick="toggleSelect(this)" data-choice="rechner-b">
+  <div class="variant-label">
+    <div class="v-letter">B</div>
+    <div class="v-name">Dunkle Sidebar-Form + helle Tabellen-Ergebnisse</div>
+    <div class="v-desc">Linear / Vercel-Stil</div>
+    <span class="selected-badge">✓ Gewählt</span>
+  </div>
+
+  <div class="hero-band">
+    <div class="hero-bc">fordify › <span>Verzugszinsrechner</span></div>
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-tag"><span class="hero-tag-dot"></span> § 288 BGB · Basiszins aktuell</div>
+        <div class="hero-h1">Verzugszinsrechner<br>kostenlos & tagesgenau</div>
+        <div class="hero-desc">Berechnen Sie Verzugszinsen nach § 288 BGB tagesgenau – mit aktuellem Basiszinssatz, getrennt für B2B und B2C.</div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat__val">1,27 %</div><div class="hero-stat__label">Basiszins 01/2026</div>
+        <div style="height:0.5rem"></div>
+        <div class="hero-stat__val">10,27 %</div><div class="hero-stat__label">B2B p.a.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rb-wrap">
+    <div class="rb-grid">
+      <!-- Dark form sidebar -->
+      <div class="rb-form">
+        <div class="rb-form__title">Zinsen berechnen</div>
+        <label class="rb-label">Hauptforderung (€)</label>
+        <div class="rb-field"></div>
+        <label class="rb-label">Zinsbeginn</label>
+        <div class="rb-field"></div>
+        <label class="rb-label">Zinsende</label>
+        <div class="rb-field"></div>
+        <label class="rb-label">Schuldner-Typ</label>
+        <div class="rb-select"></div>
+        <div class="rb-btn"><span>Zinsen berechnen →</span></div>
+        <div class="rb-facts">
+          <div class="rb-fact"><span class="rb-fact__label">Basiszins aktuell</span><span class="rb-fact__val">1,27 %</span></div>
+          <div class="rb-fact"><span class="rb-fact__label">B2B Zinssatz</span><span class="rb-fact__val">10,27 %</span></div>
+          <div class="rb-fact"><span class="rb-fact__label">B2C Zinssatz</span><span class="rb-fact__val">6,27 %</span></div>
+          <div class="rb-fact"><span class="rb-fact__label">Gültig bis</span><span class="rb-fact__val">07/2026</span></div>
+        </div>
+      </div>
+      <!-- Light result -->
+      <div class="rb-result">
+        <div class="rb-result__title">
+          <span>Ergebnis · Verzugszinsen</span>
+          <span class="rb-result__total">921,96 €</span>
+        </div>
+        <table class="rb-table">
+          <tr><th>Zeitraum</th><th>Zinssatz</th><th>Tage</th><th style="text-align:right">Zinsen</th></tr>
+          <tr>
+            <td class="mono">01.01.2024 – 30.06.2024</td>
+            <td class="muted">10,77 %</td>
+            <td class="muted">182</td>
+            <td class="mono">342,18 €</td>
+          </tr>
+          <tr>
+            <td class="mono">01.07.2024 – 31.12.2024</td>
+            <td class="muted">11,27 %</td>
+            <td class="muted">184</td>
+            <td class="mono">378,45 €</td>
+          </tr>
+          <tr>
+            <td class="mono">01.01.2025 – 15.04.2025</td>
+            <td class="muted">11,90 %</td>
+            <td class="muted">105</td>
+            <td class="mono">201,33 €</td>
+          </tr>
+        </table>
+        <div class="rb-cta-row">
+          <div class="rb-cta-row__text">
+            <strong>Vollständige Forderungsaufstellung erstellen</strong>
+            Zinsen, RVG-Kosten & § 367-Verrechnung automatisch.
+          </div>
+          <div class="rb-cta-row__btn">Zur Aufstellung →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rb-faq">
+    <div class="rb-faq__overline">FAQ</div>
+    <div class="rb-faq__title">Häufige Fragen</div>
+    <div class="rb-faq__cols">
+      <div class="rb-faq__item">
+        <div class="rb-faq__q">Wie werden Verzugszinsen berechnet?</div>
+        <div class="rb-faq__a">Betrag × Zinssatz × Tage ÷ 365, aufgeteilt an Basiszins-Wechseldaten (01.01. / 01.07.).</div>
+      </div>
+      <div class="rb-faq__item">
+        <div class="rb-faq__q">Was ist der aktuelle Basiszinssatz?</div>
+        <div class="rb-faq__a">Seit 01.01.2026: 1,27 %. Wird halbjährlich von der Bundesbank festgesetzt, bis 07/2026 gepflegt.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="variant-info">
+    <div class="vi-label">Stärken</div>
+    <div class="vi-point">Dunkle Sidebar: Form klar abgegrenzt vom Ergebnis — keine visuelle Konkurrenz</div>
+    <div class="vi-point">Tabelle mit Zinssatz + Tage + Betrag: maximale Transparenz für Profis</div>
+    <div class="vi-point">Fakten in der Sidebar: immer sichtbar während der Eingabe</div>
+    <div class="vi-point">FAQ zweispaltig: kompakt, gut für SEO</div>
+  </div>
+</div>
+
+<!-- ══════════════ VARIANT C ══════════════ -->
+<div class="variant-block" onclick="toggleSelect(this)" data-choice="rechner-c">
+  <div class="variant-label">
+    <div class="v-letter">C</div>
+    <div class="v-name">Weiß + Timeline-Ergebnis + Navy CTA-Banner</div>
+    <div class="v-desc">Notion / Arc-Stil</div>
+    <span class="selected-badge">✓ Gewählt</span>
+  </div>
+
+  <div class="hero-band">
+    <div class="hero-bc">fordify › <span>Verzugszinsrechner</span></div>
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-tag"><span class="hero-tag-dot"></span> § 288 BGB · Basiszins aktuell</div>
+        <div class="hero-h1">Verzugszinsrechner<br>kostenlos & tagesgenau</div>
+        <div class="hero-desc">Berechnen Sie Verzugszinsen nach § 288 BGB tagesgenau – mit aktuellem Basiszinssatz, getrennt für B2B und B2C.</div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat__val">1,27 %</div><div class="hero-stat__label">Basiszins 01/2026</div>
+        <div style="height:0.5rem"></div>
+        <div class="hero-stat__val">10,27 %</div><div class="hero-stat__label">B2B p.a.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rc-wrap">
+    <div class="rc-top">
+      <div class="rc-form">
+        <div class="rc-form__chips">
+          <span class="rc-chip">Basiszins: 1,27 %</span>
+          <span class="rc-chip">B2B: 10,27 %</span>
+          <span class="rc-chip">B2C: 6,27 %</span>
+        </div>
+        <label class="rc-label">Hauptforderung (€)</label>
+        <div class="rc-field"></div>
+        <label class="rc-label">Zinsbeginn</label>
+        <div class="rc-field"></div>
+        <label class="rc-label">Zinsende</label>
+        <div class="rc-field"></div>
+        <label class="rc-label">Schuldner-Typ</label>
+        <div class="rc-select"></div>
+        <div class="rc-btn"><span>Zinsen berechnen →</span></div>
+      </div>
+      <div class="rc-result">
+        <div class="rc-result__header">
+          <div class="rc-result__title">Ergebnis · Verzugszinsen B2B</div>
+          <div class="rc-result__total">921,96 €</div>
+        </div>
+        <div class="rc-timeline">
+          <div class="rc-period">
+            <div class="rc-period__dot"></div>
+            <div class="rc-period__head">
+              <span class="rc-period__dates">01.01.2024 – 30.06.2024</span>
+              <span class="rc-period__amount">342,18 €</span>
+            </div>
+            <div class="rc-period__meta">182 Tage · 10,77 % p.a. · Basiszins 1,77 %</div>
+          </div>
+          <div class="rc-period">
+            <div class="rc-period__dot"></div>
+            <div class="rc-period__head">
+              <span class="rc-period__dates">01.07.2024 – 31.12.2024</span>
+              <span class="rc-period__amount">378,45 €</span>
+            </div>
+            <div class="rc-period__meta">184 Tage · 11,27 % p.a. · Basiszins 2,27 %</div>
+          </div>
+          <div class="rc-period">
+            <div class="rc-period__dot"></div>
+            <div class="rc-period__head">
+              <span class="rc-period__dates">01.01.2025 – 15.04.2025</span>
+              <span class="rc-period__amount">201,33 €</span>
+            </div>
+            <div class="rc-period__meta">105 Tage · 11,90 % p.a. · Basiszins 2,90 %</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rc-cta">
+      <div>
+        <div class="rc-cta__title">Vollständige Forderungsaufstellung erstellen</div>
+        <div class="rc-cta__sub">Zinsen, RVG-Kosten und Zahlungen automatisch nach § 367 BGB verrechnen – als PDF exportierbar.</div>
+      </div>
+      <div class="rc-cta__btn">Zur Forderungsaufstellung →</div>
+    </div>
+  </div>
+
+  <div class="rc-faq">
+    <div class="rc-faq__title">Häufige Fragen zum Verzugszinsrechner</div>
+    <div class="rc-faq__item">
+      <div class="rc-faq__q">Wie werden Verzugszinsen nach § 288 BGB berechnet?</div>
+      <div class="rc-faq__a">Betrag × Zinssatz × Tage ÷ 365. Der Zinssatz setzt sich aus dem Basiszinssatz + gesetzlichem Aufschlag zusammen. Wird an den Wechseldaten (01.01. / 01.07.) automatisch aufgeteilt.</div>
+    </div>
+    <div class="rc-faq__item">
+      <div class="rc-faq__q">Was ist der aktuelle Basiszinssatz?</div>
+      <div class="rc-faq__a">Seit 01.01.2026: 1,27 %. Wird halbjährlich von der Bundesbank festgesetzt. fordify enthält alle historischen Basiszinssätze, bis 07/2026 gepflegt.</div>
+    </div>
+  </div>
+
+  <div class="variant-info">
+    <div class="vi-label">Stärken</div>
+    <div class="vi-point">Timeline-Visualisierung: Zinszeiträume wie ein Zeitstrahl — intuitiv und einzigartig</div>
+    <div class="vi-point">Jede Periode zeigt Tage + Zinssatz + Basiszins: maximale Transparenz</div>
+    <div class="vi-point">Navy CTA-Banner: volle Breite, kann nicht übersehen werden</div>
+    <div class="vi-point">FAQ als Q&amp;A nebeneinander: sehr scanbar, platzsparend</div>
+  </div>
+</div>
+
+<p class="select-hint">Favorit(en) anklicken — oder Elemente aus mehreren Varianten kombinieren.</p>
+
+<script>
+function toggleSelect(el) {
+  el.classList.toggle('selected');
+  const event = {
+    type: el.classList.contains('selected') ? 'select' : 'deselect',
+    choice: el.dataset.choice,
+    text: el.querySelector('.v-name').textContent,
+    timestamp: Math.floor(Date.now() / 1000)
+  };
+  fetch('/event', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(event) }).catch(() => {});
+}
+</script>
+</body>
+</html>

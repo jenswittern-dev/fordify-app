@@ -1,0 +1,147 @@
+{
+  "fall": {
+    "mandant": "Interlead GmbH",
+    "gegner": "Solar GMI GmbH",
+    "aktenzeichen": "Kunden-Nr.: 21409 (Az.: IL-01/25)",
+    "aufschlagPP": 9,
+    "insoDatum": null,
+    "titelArt": "gerichtlicher Vergleich",
+    "titelDatum": "2026-03-13",
+    "titelRechtskraft": "2026-03-13",
+    "titelGericht": "LG Bremen",
+    "titelAz": "3 O 704/25",
+    "positionen": [
+      {
+        "typ": "hauptforderung",
+        "datum": "2025-03-03",
+        "beschreibung": "RG-22674",
+        "tituliert": true,
+        "betrag": "10162.60",
+        "id": 1,
+        "gruppeId": "g0"
+      },
+      {
+        "typ": "zinsperiode",
+        "datum": "2025-03-03",
+        "beschreibung": "",
+        "tituliert": true,
+        "hauptbetrag": "10162.60",
+        "zinsVon": "2025-03-11",
+        "zinsBis": "2026-04-01",
+        "aufschlag": 9,
+        "perioden": [
+          {
+            "von": "2025-03-10T23:00:00.000Z",
+            "bis": "2025-06-29T22:00:00.000Z",
+            "tage": 112,
+            "basiszinssatz": "2.27",
+            "aufschlag": "9",
+            "zinssatz": "11.27",
+            "betrag": "10162.6",
+            "zinsbetrag": "351.44"
+          },
+          {
+            "von": "2025-06-30T22:00:00.000Z",
+            "bis": "2026-03-31T22:00:00.000Z",
+            "tage": 275,
+            "basiszinssatz": "1.27",
+            "aufschlag": "9",
+            "zinssatz": "10.27",
+            "betrag": "10162.6",
+            "zinsbetrag": "786.35"
+          }
+        ],
+        "betrag": "1137.79",
+        "tage": 387,
+        "id": 3,
+        "gruppeId": "g0"
+      },
+      {
+        "typ": "hauptforderung",
+        "datum": "2025-04-01",
+        "beschreibung": "RG-23063",
+        "tituliert": true,
+        "betrag": "6497.40",
+        "id": 2,
+        "gruppeId": "g0"
+      },
+      {
+        "typ": "zinsperiode",
+        "datum": "2025-04-01",
+        "beschreibung": "",
+        "tituliert": true,
+        "hauptbetrag": "6497.40",
+        "zinsVon": "2025-04-09",
+        "zinsBis": "2026-04-01",
+        "aufschlag": 9,
+        "perioden": [
+          {
+            "von": "2025-04-08T22:00:00.000Z",
+            "bis": "2025-06-29T22:00:00.000Z",
+            "tage": 83,
+            "basiszinssatz": "2.27",
+            "aufschlag": "9",
+            "zinssatz": "11.27",
+            "betrag": "6497.4",
+            "zinsbetrag": "166.51"
+          },
+          {
+            "von": "2025-06-30T22:00:00.000Z",
+            "bis": "2026-03-31T22:00:00.000Z",
+            "tage": 275,
+            "basiszinssatz": "1.27",
+            "aufschlag": "9",
+            "zinssatz": "10.27",
+            "betrag": "6497.4",
+            "zinsbetrag": "502.75"
+          }
+        ],
+        "betrag": "669.26",
+        "tage": 358,
+        "id": 4,
+        "gruppeId": "g0"
+      },
+      {
+        "typ": "anwaltsverguetung",
+        "datum": "2025-05-01",
+        "beschreibung": "",
+        "tituliert": true,
+        "streitwert": "16660",
+        "vvNummern": [
+          "3100",
+          "3104",
+          "7002"
+        ],
+        "faktoren": {
+          "2300": "1.3",
+          "3100": "1.3",
+          "3309": "0.5"
+        },
+        "ustSatz": 0,
+        "ohneUst": true,
+        "netto": "2062.50",
+        "ust": "0.00",
+        "betrag": "2062.50",
+        "id": 7
+      },
+      {
+        "typ": "sonstige_kosten",
+        "datum": "2026-03-13",
+        "beschreibung": "Gerichtskosten",
+        "tituliert": true,
+        "betrag": "353",
+        "id": 5
+      },
+      {
+        "typ": "zahlung",
+        "datum": "2026-03-13",
+        "beschreibung": "Überweisung Schuldner*in",
+        "tituliert": false,
+        "betrag": "5000.00",
+        "id": 8
+      }
+    ],
+    "forderungsgrundKat": "Titel"
+  },
+  "naechsteId": 10
+}

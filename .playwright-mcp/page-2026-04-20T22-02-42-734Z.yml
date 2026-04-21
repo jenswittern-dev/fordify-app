@@ -1,0 +1,100 @@
+- generic [active] [ref=e1]:
+  - link "Zum Hauptinhalt springen" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - link "fordify Logo fordify" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img "fordify Logo" [ref=e6]
+        - generic [ref=e7]: fordify
+      - generic [ref=e8]: IK-2025-4471 – Telekom Deutschland GmbH
+      - generic [ref=e10]:
+        - generic [ref=e11]: Gespeichert ✓
+        - generic [ref=e12]:
+          - link "← Website" [ref=e13] [cursor=pointer]:
+            - /url: /
+          - button "Fälle" [ref=e14] [cursor=pointer]
+          - button "Einstellungen" [ref=e15] [cursor=pointer]
+          - button "Neu" [ref=e16] [cursor=pointer]
+          - button "Drucken / PDF" [ref=e17] [cursor=pointer]
+          - button "Anmelden" [ref=e18] [cursor=pointer]
+  - generic [ref=e19]:
+    - text: Daten werden beim Schließen des Tabs gelöscht.
+    - link "Kostenloses Konto erstellen" [ref=e20] [cursor=pointer]:
+      - /url: "#"
+    - text: oder
+    - link "Pro abonnieren" [ref=e21] [cursor=pointer]:
+      - /url: /preise
+  - main [ref=e22]:
+    - heading "fordify – Forderungsaufstellung" [level=1] [ref=e23]
+    - navigation "Workflow-Schritte" [ref=e25]:
+      - link "1 Allgemeine Angaben" [ref=e26] [cursor=pointer]:
+        - /url: javascript:void(0)
+        - generic [ref=e27]: "1"
+        - generic [ref=e28]: Allgemeine Angaben
+      - link "2 Positionen" [ref=e30] [cursor=pointer]:
+        - /url: javascript:void(0)
+        - generic [ref=e31]: "2"
+        - generic [ref=e32]: Positionen
+      - link "3 Vorschau & PDF" [ref=e34] [cursor=pointer]:
+        - /url: javascript:void(0)
+        - generic [ref=e35]: "3"
+        - generic [ref=e36]: Vorschau & PDF
+    - generic [ref=e40]:
+      - heading "Allgemeine Angaben" [level=2] [ref=e41]
+      - generic [ref=e42]:
+        - generic [ref=e43]:
+          - generic [ref=e44]:
+            - generic [ref=e45]: Gläubiger*in
+            - textbox "Gläubiger*in" [ref=e46]:
+              - /placeholder: Name der Gläubigerin / des Gläubigers
+              - text: Telekom Deutschland GmbH
+          - generic [ref=e47]:
+            - generic [ref=e48]: Schuldner*in
+            - textbox "Schuldner*in" [ref=e49]:
+              - /placeholder: Name der Schuldnerin / des Schuldners
+              - text: Max Mustermann
+        - generic [ref=e50]:
+          - generic [ref=e51]: Geschäftszeichen (optional)
+          - textbox "Geschäftszeichen (optional)" [ref=e52]:
+            - /placeholder: z.B. Kunden-Nr. 1234/25
+            - text: IK-2025-4471
+        - generic [ref=e53]:
+          - generic [ref=e54]: Verzugszins-Aufschlag
+          - combobox "Verzugszins-Aufschlag" [ref=e55]:
+            - option "9 Prozentpunkte – Unternehmer (§ 288 Abs. 2 BGB)"
+            - option "5 Prozentpunkte – Verbraucher (§ 288 Abs. 1 BGB)" [selected]
+        - separator [ref=e56]
+        - heading "Forderungsgrund (optional)" [level=3] [ref=e57]
+        - generic [ref=e58]:
+          - generic [ref=e59]: Grundlage der Forderung
+          - combobox "Grundlage der Forderung" [ref=e60]:
+            - option "– keine Angabe –"
+            - option "Vertrag" [selected]
+            - option "gesetzlich"
+            - option "Titel"
+        - generic [ref=e61]:
+          - generic [ref=e62]: Art des Vertrags
+          - combobox "Art des Vertrags" [ref=e63]:
+            - option "– bitte wählen –" [selected]
+            - option "Dienstleistung"
+            - option "Kauf"
+            - option "Werkvertrag"
+            - option "Ratenzahlung"
+            - option "Vergleich"
+            - option "sonstiger Vertrag"
+        - separator [ref=e64]
+        - generic [ref=e65]:
+          - generic [ref=e66]: Insolvenzverfahren – Eröffnungsdatum (optional)
+          - textbox "Insolvenzverfahren – Eröffnungsdatum (optional)" [ref=e67]
+          - generic [ref=e68]: Wenn ausgefüllt, wird der Zinslauf am Eröffnungstag gekappt.
+        - button "Weiter zu Positionen →" [ref=e69] [cursor=pointer]
+  - contentinfo [ref=e70]:
+    - generic [ref=e71]:
+      - generic [ref=e72]: © 2026 fordify
+      - link "Impressum" [ref=e73] [cursor=pointer]:
+        - /url: impressum.html
+      - link "Datenschutz" [ref=e74] [cursor=pointer]:
+        - /url: datenschutz.html
+      - link "AGB" [ref=e75] [cursor=pointer]:
+        - /url: agb.html

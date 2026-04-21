@@ -1,0 +1,44 @@
+<h2>Checkout-Flow für nicht eingeloggte Nutzer</h2>
+<p class="subtitle">Was passiert nach Klick auf „Pro abonnieren"?</p>
+
+<div class="options">
+
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Login-Modal → dann automatisch Checkout</h3>
+      <p>Klick auf „Pro abonnieren" → Login-Modal öffnet sich mit Hinweis <em>„Melde dich an, um fortzufahren"</em> → Nutzer gibt E-Mail ein → Magic Link → nach Rückkehr öffnet sich der Paddle-Checkout automatisch (via URL-Parameter <code>?checkout=pro-monthly</code>).</p>
+      <div class="pros-cons" style="margin-top:0.75rem">
+        <div class="pros"><h4>Pro</h4><ul><li>Nahtlos, kein zweiter Klick nötig</li><li>Nutzer kommt direkt zum Ziel</li></ul></div>
+        <div class="cons"><h4>Con</h4><ul><li>Etwas komplexere Implementierung (URL-State)</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Login-Modal → manuell auf Preisseite abonnieren</h3>
+      <p>Klick auf „Pro abonnieren" → Login-Modal öffnet sich → Nutzer loggt ein → wird zurück auf <code>/preise</code> geleitet → sieht jetzt seinen Avatar → klickt selbst nochmal auf „Pro abonnieren" → Checkout öffnet sich.</p>
+      <div class="pros-cons" style="margin-top:0.75rem">
+        <div class="pros"><h4>Pro</h4><ul><li>Einfache Implementierung</li><li>Klarer, einfacher Flow</li></ul></div>
+        <div class="cons"><h4>Con</h4><ul><li>Zweiter Klick nötig — leichte Reibung</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Kein Login nötig — E-Mail direkt im Checkout</h3>
+      <p>Checkout öffnet sich sofort. Paddle fragt im Checkout-Overlay nach E-Mail-Adresse. Nach Zahlung wird automatisch ein Account erstellt (via Webhook → Supabase). Nutzer bekommt Magic Link per E-Mail zum ersten Login.</p>
+      <div class="pros-cons" style="margin-top:0.75rem">
+        <div class="pros"><h4>Pro</h4><ul><li>Maximale Conversion — kein Vor-Login nötig</li><li>Weniger Schritte</li></ul></div>
+        <div class="cons"><h4>Con</h4><ul><li>Webhook muss Account erstellen (komplex)</li><li>Nutzer braucht user_id für Zuordnung — ohne Login schwieriger</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:1.5rem">Empfehlung: <strong>A</strong> — beste Balance aus UX und Einfachheit. Der URL-Parameter <code>?checkout=pro-monthly</code> löst den Auto-Checkout nach Login.</p>

@@ -1,0 +1,42 @@
+- generic [active] [ref=e1]:
+  - paragraph [ref=e2]: "Design-Spec: Header + Trust-Bar"
+  - navigation [ref=e3]:
+    - link "f fordify" [ref=e4] [cursor=pointer]:
+      - /url: "#"
+      - generic [ref=e5]: f
+      - text: fordify
+    - list [ref=e6]:
+      - listitem [ref=e7]:
+        - link "Startseite" [ref=e8] [cursor=pointer]:
+          - /url: "#"
+      - listitem [ref=e9]:
+        - link "Forderungsaufstellung" [ref=e10] [cursor=pointer]:
+          - /url: "#"
+      - listitem [ref=e11]:
+        - link "Zinsrechner" [ref=e12] [cursor=pointer]:
+          - /url: "#"
+      - listitem [ref=e13]:
+        - link "RVG-Rechner" [ref=e14] [cursor=pointer]:
+          - /url: "#"
+      - listitem [ref=e15]:
+        - link "Gerichtskostenrechner" [ref=e16] [cursor=pointer]:
+          - /url: "#"
+      - listitem [ref=e17]:
+        - link "Preise" [ref=e18] [cursor=pointer]:
+          - /url: "#"
+    - generic [ref=e19]:
+      - button "Anmelden" [ref=e20] [cursor=pointer]
+      - button "Kostenlos starten →" [ref=e21] [cursor=pointer]
+  - generic [ref=e22]:
+    - generic [ref=e23]: RVG 2025 (BGBl. I Nr. 109)
+    - generic [ref=e25]: Basiszinssatz aktuell bis 07/2026
+    - generic [ref=e27]: Von Anwälten entwickelt
+    - generic [ref=e29]: Kein Login · 100 % kostenlos
+  - generic [ref=e31]:
+    - heading "In Minuten zur rechtssicheren Forderungsaufstellung nach § 367 BGB" [level=1] [ref=e32]:
+      - text: In Minuten zur rechtssicheren
+      - text: Forderungsaufstellung nach § 367 BGB
+    - paragraph [ref=e33]: Verzugszinsen, RVG-Gebühren und § 367-Verrechnung automatisch berechnen – für Kanzleien, Inkassobüros und Unternehmen.
+    - generic [ref=e34]:
+      - button "Jetzt kostenlos starten" [ref=e35] [cursor=pointer]
+      - button "Mehr erfahren" [ref=e36] [cursor=pointer]

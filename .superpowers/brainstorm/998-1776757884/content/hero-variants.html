@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero Varianten</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', system-ui, sans-serif; background: #0a0f1e; padding: 2rem; color: #1a1d23; }
+
+.page-header { text-align: center; margin-bottom: 2rem; }
+.page-header h1 { font-size: 1.5rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
+.page-header p { color: #64748b; font-size: 0.875rem; }
+
+/* Shared nav (header A + dark navy) */
+.shared-nav {
+  background: linear-gradient(135deg, #0a1540 0%, #0f1d5c 50%, #0d2070 100%);
+  padding: 0 2.5rem;
+  height: 56px;
+  display: flex; align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 1px 24px rgba(0,0,0,0.3);
+}
+.sn-brand { color: white; font-size: 1.05rem; font-weight: 800; letter-spacing: -0.04em; flex: 0 0 auto; margin-right: 2.5rem; }
+.sn-links { display: flex; gap: 0; flex: 1; justify-content: center; }
+.sn-links a { color: rgba(255,255,255,0.6); font-size: 0.75rem; font-weight: 500; padding: 0 1rem; height: 56px; display: flex; align-items: center; border-bottom: 2px solid transparent; }
+.sn-links a.active { color: white; border-bottom-color: #60a5fa; }
+.sn-right { display: flex; align-items: center; gap: 0.6rem; flex: 0 0 auto; }
+.sn-login { color: rgba(255,255,255,0.7); font-size: 0.75rem; font-weight: 500; padding: 0.38rem 0.85rem; border-radius: 7px; border: 1px solid rgba(255,255,255,0.18); }
+.sn-cta { background: white; color: #0f1d5c; font-size: 0.75rem; font-weight: 700; padding: 0.38rem 1rem; border-radius: 7px; }
+
+/* Variant wrapper */
+.variant-block {
+  margin-bottom: 2.5rem;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.6);
+  cursor: pointer;
+  outline: 3px solid transparent;
+  transition: outline 0.15s, transform 0.15s;
+}
+.variant-block:hover { transform: translateY(-2px); }
+.variant-block.selected { outline: 3px solid #60a5fa; }
+
+.variant-label {
+  background: #1e293b;
+  padding: 0.6rem 1.25rem;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.v-letter { width: 24px; height: 24px; border-radius: 50%; background: #334155; color: #94a3b8; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.variant-block.selected .v-letter { background: #1d4ed8; color: white; }
+.v-name { font-size: 0.75rem; font-weight: 700; color: #cbd5e1; }
+.v-ref { font-size: 0.65rem; color: #475569; margin-left: auto; }
+.selected-badge { display: none; background: #1d4ed8; color: white; font-size: 0.6rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 4px; }
+.variant-block.selected .selected-badge { display: inline-block; }
+
+/* ═══════════════════════════════
+   HERO A: Text-Links + Mockup-Rechts (evolved)
+   ═══════════════════════════════ */
+.hero-a {
+  background: linear-gradient(145deg, #080e2e 0%, #0f1d5c 40%, #102266 70%, #0a1540 100%);
+  padding: 4rem 2.5rem 3rem;
+  display: flex; align-items: center; gap: 3rem; min-height: 380px;
+  position: relative; overflow: hidden;
+}
+.hero-a::before {
+  content: '';
+  position: absolute; top: -80px; right: 200px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-a::after {
+  content: '';
+  position: absolute; bottom: -60px; left: -60px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(6,182,212,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.ha-text { flex: 1; max-width: 480px; position: relative; z-index: 1; }
+.ha-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.25);
+  color: #93c5fd; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 0.25rem 0.75rem; border-radius: 999px;
+  margin-bottom: 1.25rem;
+}
+.ha-eyebrow::before { content: ''; width: 6px; height: 6px; background: #34d399; border-radius: 50%; }
+.ha-h1 { color: white; font-size: 2.6rem; font-weight: 900; line-height: 1.12; letter-spacing: -0.04em; margin-bottom: 1rem; }
+.ha-h1 .gradient { background: linear-gradient(90deg, #60a5fa 0%, #a5f3fc 60%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.ha-sub { color: rgba(255,255,255,0.6); font-size: 0.95rem; line-height: 1.65; margin-bottom: 1.75rem; max-width: 400px; }
+.ha-cta-row { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+.ha-cta { background: white; color: #0f1d5c; font-size: 0.88rem; font-weight: 800; padding: 0.7rem 1.5rem; border-radius: 10px; box-shadow: 0 4px 24px rgba(255,255,255,0.15); }
+.ha-cta-ghost { color: rgba(255,255,255,0.65); font-size: 0.82rem; font-weight: 500; display: flex; align-items: center; gap: 0.3rem; }
+.ha-visual { flex: 0 0 340px; position: relative; z-index: 1; }
+.ha-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px; padding: 1.25rem;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 48px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);
+}
+.ha-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.ha-card-title { color: white; font-size: 0.8rem; font-weight: 700; }
+.ha-card-pill { background: rgba(52,211,153,0.15); color: #34d399; font-size: 0.6rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px; border: 1px solid rgba(52,211,153,0.25); }
+.ha-row { display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.ha-row:last-child { border: none; }
+.ha-row-label { color: rgba(255,255,255,0.55); font-size: 0.72rem; display: flex; align-items: center; gap: 0.35rem; }
+.ha-row-badge { background: rgba(99,179,255,0.15); color: #93c5fd; font-size: 0.5rem; font-weight: 600; padding: 0.1rem 0.3rem; border-radius: 4px; }
+.ha-row-val { color: white; font-size: 0.78rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+.ha-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 0.5rem 0; }
+.ha-row-total .ha-row-label { color: rgba(255,255,255,0.8); font-weight: 600; }
+.ha-row-total .ha-row-val { color: #60a5fa; font-size: 0.9rem; }
+.ha-row-rest .ha-row-val { color: #34d399; }
+.ha-verrechnung { color: rgba(255,255,255,0.35); font-size: 0.6rem; padding: 0.25rem 0; font-style: italic; }
+.ha-trust { background: rgba(0,0,0,0.2); padding: 0.75rem 2.5rem; border-top: 1px solid rgba(255,255,255,0.06); display: flex; gap: 2rem; justify-content: center; }
+.ha-trust-item { color: rgba(255,255,255,0.45); font-size: 0.68rem; font-weight: 500; display: flex; align-items: center; gap: 0.4rem; }
+.ha-trust-dot { width: 5px; height: 5px; background: #34d399; border-radius: 50%; flex-shrink: 0; }
+
+/* ═══════════════════════════════
+   HERO B: Zentriert + Metriken + Screenshot
+   ═══════════════════════════════ */
+.hero-b {
+  background: linear-gradient(180deg, #080e2e 0%, #0e1b58 50%, #0a1540 100%);
+  padding: 3.5rem 2.5rem 0;
+  text-align: center;
+  position: relative; overflow: hidden; min-height: 400px;
+}
+.hero-b::before {
+  content: '';
+  position: absolute; top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 700px; height: 300px;
+  background: radial-gradient(ellipse, rgba(59,130,246,0.18) 0%, transparent 70%);
+}
+.hb-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2);
+  color: #93c5fd; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 0.28rem 0.85rem; border-radius: 999px;
+  margin-bottom: 1.5rem; position: relative;
+}
+.hb-h1 { color: white; font-size: 3rem; font-weight: 900; line-height: 1.08; letter-spacing: -0.04em; margin-bottom: 1rem; position: relative; }
+.hb-h1 .line2 { background: linear-gradient(90deg, #60a5fa, #a5f3fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hb-sub { color: rgba(255,255,255,0.55); font-size: 1rem; line-height: 1.6; max-width: 560px; margin: 0 auto 2rem; position: relative; }
+.hb-cta-row { display: flex; gap: 0.75rem; justify-content: center; align-items: center; margin-bottom: 2.5rem; position: relative; }
+.hb-cta { background: white; color: #0a1540; font-size: 0.88rem; font-weight: 800; padding: 0.72rem 1.6rem; border-radius: 10px; box-shadow: 0 4px 24px rgba(255,255,255,0.12); }
+.hb-cta-sec { color: rgba(255,255,255,0.6); font-size: 0.8rem; font-weight: 500; padding: 0.72rem 1.2rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); }
+.hb-metrics { display: flex; justify-content: center; gap: 0; margin-bottom: 0; position: relative; }
+.hb-metric { padding: 0.75rem 2rem; border-right: 1px solid rgba(255,255,255,0.08); }
+.hb-metric:last-child { border-right: none; }
+.hb-metric-val { color: white; font-size: 1.4rem; font-weight: 900; letter-spacing: -0.03em; }
+.hb-metric-val span { color: #60a5fa; }
+.hb-metric-lab { color: rgba(255,255,255,0.4); font-size: 0.62rem; font-weight: 500; margin-top: 0.1rem; }
+.hb-screen {
+  background: #0d1836;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px 12px 0 0;
+  margin: 0 -2.5rem;
+  padding: 1rem 1.5rem 0;
+  box-shadow: 0 -8px 40px rgba(59,130,246,0.1);
+  min-height: 120px;
+  display: flex; gap: 1rem; align-items: flex-start;
+  overflow: hidden;
+  position: relative;
+}
+.hb-screen::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(96,165,250,0.4), transparent); }
+.hb-screen-col { flex: 1; }
+.hb-screen-label { color: rgba(255,255,255,0.3); font-size: 0.55rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem; }
+.hb-screen-row { display: flex; justify-content: space-between; padding: 0.3rem 0.5rem; border-radius: 6px; margin-bottom: 0.15rem; }
+.hb-screen-row:nth-child(2) { background: rgba(255,255,255,0.04); }
+.hb-screen-row span { font-size: 0.6rem; color: rgba(255,255,255,0.55); }
+.hb-screen-row span.val { font-family: monospace; color: rgba(255,255,255,0.8); }
+.hb-screen-row.highlight { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); }
+.hb-screen-row.highlight span { color: rgba(255,255,255,0.85); }
+.hb-screen-row.highlight span.val { color: #60a5fa; font-weight: 700; }
+
+/* ═══════════════════════════════
+   HERO C: Asymmetrisch mit Dokument-Vorschau
+   ═══════════════════════════════ */
+.hero-c {
+  background: linear-gradient(135deg, #070d28 0%, #0c1850 40%, #111f6e 70%, #0a1540 100%);
+  padding: 3rem 2.5rem 2.5rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;
+  min-height: 400px; position: relative; overflow: hidden;
+}
+.hero-c::before {
+  content: ''; position: absolute; top: -100px; right: -100px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 60%);
+}
+.hc-left { position: relative; z-index: 1; }
+.hc-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.25);
+  color: #a5b4fc; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 0.22rem 0.7rem; border-radius: 999px;
+  margin-bottom: 1.25rem;
+}
+.hc-h1 { color: white; font-size: 2.4rem; font-weight: 900; line-height: 1.12; letter-spacing: -0.04em; margin-bottom: 1rem; }
+.hc-h1 em { color: #818cf8; font-style: normal; }
+.hc-sub { color: rgba(255,255,255,0.55); font-size: 0.9rem; line-height: 1.65; margin-bottom: 1.5rem; }
+.hc-cta-row { display: flex; gap: 0.6rem; }
+.hc-cta { background: linear-gradient(135deg, #4f46e5, #3b82f6); color: white; font-size: 0.85rem; font-weight: 700; padding: 0.65rem 1.4rem; border-radius: 10px; box-shadow: 0 4px 20px rgba(79,70,229,0.4); }
+.hc-cta-sec { color: rgba(255,255,255,0.6); font-size: 0.8rem; font-weight: 500; padding: 0.65rem 1rem; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; }
+.hc-right { position: relative; z-index: 1; }
+.hc-doc {
+  background: #f8fafc;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1);
+  overflow: hidden;
+  transform: perspective(800px) rotateY(-6deg) rotateX(2deg);
+}
+.hc-doc-header { background: #0f1d5c; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center; }
+.hc-doc-title { color: white; font-size: 0.72rem; font-weight: 700; }
+.hc-doc-date { color: rgba(255,255,255,0.5); font-size: 0.6rem; }
+.hc-doc-body { padding: 1rem; }
+.hc-doc-section { margin-bottom: 0.75rem; }
+.hc-doc-section-title { font-size: 0.58rem; font-weight: 700; color: #1e3a8a; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.3rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.2rem; }
+.hc-doc-row { display: flex; justify-content: space-between; padding: 0.2rem 0; }
+.hc-doc-row span { font-size: 0.62rem; color: #374151; }
+.hc-doc-row span.val { font-family: monospace; font-weight: 600; color: #1f2937; }
+.hc-doc-row.total span { font-weight: 700; color: #1e3a8a; }
+.hc-doc-row.total span.val { font-size: 0.72rem; }
+.hc-doc-row.rest span.val { color: #059669; font-weight: 700; }
+.hc-doc-footer { background: #f1f5f9; padding: 0.5rem 1rem; display: flex; justify-content: space-between; align-items: center; }
+.hc-doc-footer-l { font-size: 0.55rem; color: #64748b; }
+.hc-doc-pdf-btn { background: #1e3a8a; color: white; font-size: 0.55rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 4px; }
+
+.hb-trust { background: rgba(0,0,0,0.2); padding: 0.65rem 2.5rem; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 2rem; justify-content: center; }
+.hb-trust-item { color: rgba(255,255,255,0.4); font-size: 0.65rem; font-weight: 500; display: flex; align-items: center; gap: 0.4rem; }
+.hb-trust-dot { width: 5px; height: 5px; background: #34d399; border-radius: 50%; }
+
+.variant-info { background: #1e293b; padding: 0.75rem 1.25rem; }
+.vi-point { font-size: 0.65rem; color: #94a3b8; line-height: 1.7; }
+.vi-point::before { content: '+ '; color: #34d399; font-weight: 700; }
+
+.select-hint { text-align: center; color: #475569; font-size: 0.75rem; margin-top: 1.5rem; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>2 / 6 — Hero-Sektion Startseite</h1>
+  <p>Drei Varianten · Nav ist bereits festgelegt (A + dunkles Navy)</p>
+</div>
+
+<!-- ── HERO A ── -->
+<div class="variant-block" onclick="toggleSelect(this)" data-choice="hero-a">
+  <div class="variant-label">
+    <div class="v-letter">A</div>
+    <div class="v-name">Text links + Glas-Mockup rechts — klassisches SaaS-Split-Layout</div>
+    <div class="v-ref">Stripe / Clio</div>
+    <span class="selected-badge">✓</span>
+  </div>
+  <div class="shared-nav">
+    <div class="sn-brand">fordify</div>
+    <div class="sn-links">
+      <a class="active">Startseite</a><a>Forderungsaufstellung</a><a>Zinsrechner</a><a>RVG</a><a>Preise</a>
+    </div>
+    <div class="sn-right">
+      <div class="sn-login">Anmelden</div>
+      <div class="sn-cta">Kostenlos starten →</div>
+    </div>
+  </div>
+  <div class="hero-a">
+    <div class="ha-text">
+      <div class="ha-eyebrow">Von Anwälten entwickelt</div>
+      <h1 class="ha-h1">In Minuten zur<br><span class="gradient">§ 367 BGB</span><br>Forderungsaufstellung</h1>
+      <p class="ha-sub">Verzugszinsen, RVG-Gebühren und gesetzliche Tilgungsreihenfolge automatisch berechnen – für Kanzleien, Inkassobüros und Unternehmen.</p>
+      <div class="ha-cta-row">
+        <div class="ha-cta">Kostenlos starten →</div>
+        <div class="ha-cta-ghost">▶ Wie funktioniert's?</div>
+      </div>
+    </div>
+    <div class="ha-visual">
+      <div class="ha-card">
+        <div class="ha-card-header">
+          <span class="ha-card-title">Forderungsaufstellung</span>
+          <span class="ha-card-pill">§ 367 BGB ✓</span>
+        </div>
+        <div class="ha-row">
+          <span class="ha-row-label">Hauptforderung</span>
+          <span class="ha-row-val">15.000,00 €</span>
+        </div>
+        <div class="ha-row">
+          <span class="ha-row-label">Verzugszinsen <span class="ha-row-badge">⚡ auto</span></span>
+          <span class="ha-row-val">892,47 €</span>
+        </div>
+        <div class="ha-row">
+          <span class="ha-row-label">RVG-Kosten (inkl. USt)</span>
+          <span class="ha-row-val">1.029,35 €</span>
+        </div>
+        <div class="ha-divider"></div>
+        <div class="ha-row ha-row-total">
+          <span class="ha-row-label">Gesamtforderung</span>
+          <span class="ha-row-val">16.921,82 €</span>
+        </div>
+        <div class="ha-verrechnung">↳ Zahlung 15.03.2026 – § 367 BGB: Kosten → Zinsen → HF</div>
+        <div class="ha-row ha-row-rest">
+          <span class="ha-row-label">Restforderung</span>
+          <span class="ha-row-val">14.421,82 €</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ha-trust">
+    <div class="ha-trust-item"><div class="ha-trust-dot"></div> RVG 2025 · BGBl. I Nr. 109</div>
+    <div class="ha-trust-item"><div class="ha-trust-dot"></div> Basiszinssatz bis 07/2026</div>
+    <div class="ha-trust-item"><div class="ha-trust-dot"></div> Kein Login · Kein Cookie-Banner</div>
+    <div class="ha-trust-item"><div class="ha-trust-dot"></div> DSGVO-konform</div>
+  </div>
+  <div class="variant-info">
+    <div class="vi-point">Produkt sofort sichtbar — kein Scrollen nötig um zu verstehen was fordify macht</div>
+    <div class="vi-point">Glas-Card vermittelt Modernität ohne den Inhalt zu verstecken</div>
+    <div class="vi-point">Gradient-Headline zieht Blick auf das wichtigste: „§ 367 BGB"</div>
+  </div>
+</div>
+
+<!-- ── HERO B ── -->
+<div class="variant-block" onclick="toggleSelect(this)" data-choice="hero-b">
+  <div class="variant-label">
+    <div class="v-letter">B</div>
+    <div class="v-name">Zentriert + Metriken + App-Screenshot schwebt herein</div>
+    <div class="v-ref">Linear / Vercel</div>
+    <span class="selected-badge">✓</span>
+  </div>
+  <div class="shared-nav">
+    <div class="sn-brand">fordify</div>
+    <div class="sn-links">
+      <a class="active">Startseite</a><a>Forderungsaufstellung</a><a>Zinsrechner</a><a>RVG</a><a>Preise</a>
+    </div>
+    <div class="sn-right">
+      <div class="sn-login">Anmelden</div>
+      <div class="sn-cta">Kostenlos starten →</div>
+    </div>
+  </div>
+  <div class="hero-b">
+    <div class="hb-eyebrow">Von Anwälten entwickelt · RVG 2025 · DSGVO-konform</div>
+    <h1 class="hb-h1">Die rechtssichere<br><span class="line2">Forderungsaufstellung.</span></h1>
+    <p class="hb-sub">§ 367 BGB automatisch. Verzugszinsen, RVG-Gebühren und Tilgungsreihenfolge – kostenlos, ohne Registrierung, direkt im Browser.</p>
+    <div class="hb-cta-row">
+      <div class="hb-cta">Jetzt kostenlos starten →</div>
+      <div class="hb-cta-sec">Demo ansehen</div>
+    </div>
+    <div class="hb-metrics">
+      <div class="hb-metric">
+        <div class="hb-metric-val">0 <span>€</span></div>
+        <div class="hb-metric-lab">Dauerhaft kostenlos</div>
+      </div>
+      <div class="hb-metric">
+        <div class="hb-metric-val">RVG<span> '25</span></div>
+        <div class="hb-metric-lab">Immer aktuell</div>
+      </div>
+      <div class="hb-metric">
+        <div class="hb-metric-val">§ <span>367</span></div>
+        <div class="hb-metric-lab">Rechtssicher</div>
+      </div>
+      <div class="hb-metric">
+        <div class="hb-metric-val">100<span>%</span></div>
+        <div class="hb-metric-lab">Im Browser</div>
+      </div>
+    </div>
+    <div class="hb-screen">
+      <div class="hb-screen-col">
+        <div class="hb-screen-label">Positionen</div>
+        <div class="hb-screen-row"><span>Hauptforderung</span><span class="val">15.000,00 €</span></div>
+        <div class="hb-screen-row"><span>Verzugszinsen ⚡</span><span class="val">892,47 €</span></div>
+        <div class="hb-screen-row highlight"><span>Gesamtforderung</span><span class="val">16.921,82 €</span></div>
+      </div>
+      <div class="hb-screen-col">
+        <div class="hb-screen-label">Nach Zahlung · § 367 BGB</div>
+        <div class="hb-screen-row"><span>Zahlung 15.03.</span><span class="val">− 2.500,00 €</span></div>
+        <div class="hb-screen-row"><span>↳ Kosten → Zinsen → HF</span><span class="val"></span></div>
+        <div class="hb-screen-row highlight"><span>Restforderung</span><span class="val">14.421,82 €</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="hb-trust">
+    <div class="hb-trust-item"><div class="hb-trust-dot"></div> RVG 2025</div>
+    <div class="hb-trust-item"><div class="hb-trust-dot"></div> Basiszinssatz bis 07/2026</div>
+    <div class="hb-trust-item"><div class="hb-trust-dot"></div> Kein Login nötig</div>
+    <div class="hb-trust-item"><div class="hb-trust-dot"></div> DSGVO-konform</div>
+  </div>
+  <div class="variant-info">
+    <div class="vi-point">Zentriert = maximale Wirkung der Headline — kein Split-Attention-Effekt</div>
+    <div class="vi-point">Metriken (0 €, RVG '25, § 367, 100%) schaffen sofort Vertrauen durch Fakten</div>
+    <div class="vi-point">App-Screenshot am unteren Rand vermittelt „echtes Produkt" ohne abzulenken</div>
+  </div>
+</div>
+
+<!-- ── HERO C ── -->
+<div class="variant-block" onclick="toggleSelect(this)" data-choice="hero-c">
+  <div class="variant-label">
+    <div class="v-letter">C</div>
+    <div class="v-name">2-Spalten mit perspektivischer Dokumenten-Vorschau (geneigt)</div>
+    <div class="v-ref">Notion / Pitch</div>
+    <span class="selected-badge">✓</span>
+  </div>
+  <div class="shared-nav">
+    <div class="sn-brand">fordify</div>
+    <div class="sn-links">
+      <a class="active">Startseite</a><a>Forderungsaufstellung</a><a>Zinsrechner</a><a>RVG</a><a>Preise</a>
+    </div>
+    <div class="sn-right">
+      <div class="sn-login">Anmelden</div>
+      <div class="sn-cta">Kostenlos starten →</div>
+    </div>
+  </div>
+  <div class="hero-c">
+    <div class="hc-left">
+      <div class="hc-badge">Von Anwälten entwickelt ✓</div>
+      <h1 class="hc-h1">Forderungsaufstellung<br><em>nach § 367 BGB.</em><br>Fertig in Minuten.</h1>
+      <p class="hc-sub">Verzugszinsen, RVG 2025 und Tilgungsreihenfolge automatisch – kostenlos, ohne Login, DSGVO-konform.</p>
+      <div class="hc-cta-row">
+        <div class="hc-cta">Kostenlos starten →</div>
+        <div class="hc-cta-sec">Demo ansehen</div>
+      </div>
+    </div>
+    <div class="hc-right">
+      <div class="hc-doc">
+        <div class="hc-doc-header">
+          <span class="hc-doc-title">Forderungsaufstellung</span>
+          <span class="hc-doc-date">21.04.2026</span>
+        </div>
+        <div class="hc-doc-body">
+          <div class="hc-doc-section">
+            <div class="hc-doc-section-title">Forderungen</div>
+            <div class="hc-doc-row"><span>Hauptforderung</span><span class="val">15.000,00 €</span></div>
+            <div class="hc-doc-row"><span>Verzugszinsen (B2B, ⚡ auto)</span><span class="val">892,47 €</span></div>
+            <div class="hc-doc-row"><span>RVG Geschäftsgebühr inkl. USt</span><span class="val">1.029,35 €</span></div>
+            <div class="hc-doc-row total"><span>Gesamtforderung</span><span class="val">16.921,82 €</span></div>
+          </div>
+          <div class="hc-doc-section">
+            <div class="hc-doc-section-title">Zahlung · § 367 BGB</div>
+            <div class="hc-doc-row"><span>Zahlung 15.03.2026</span><span class="val">− 2.500,00 €</span></div>
+            <div class="hc-doc-row rest"><span>Restforderung</span><span class="val">14.421,82 €</span></div>
+          </div>
+        </div>
+        <div class="hc-doc-footer">
+          <span class="hc-doc-footer-l">Erstellt mit fordify.de · § 367 BGB ✓</span>
+          <span class="hc-doc-pdf-btn">↓ PDF</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hb-trust">
+    <div class="hb-trust-item"><div class="hb-trust-dot"></div> RVG 2025</div>
+    <div class="hb-trust-item"><div class="hb-trust-dot"></div> Basiszinssatz bis 07/2026</div>
+    <div class="hb-trust-item"><div class="hb-trust-dot"></div> Kein Login nötig</div>
+    <div class="hb-trust-item"><div class="hb-trust-dot"></div> DSGVO-konform</div>
+  </div>
+  <div class="variant-info">
+    <div class="vi-point">Perspektiv-Karte macht das Endprodukt (PDF/Dokument) sichtbar — direktester Beweis</div>
+    <div class="vi-point">Violett-Blau-Akzent schafft subtile Differenzierung zu den anderen Varianten</div>
+    <div class="vi-point">Das geneigte Dokument erzeugt visuelle Spannung und lädt zum Entdecken ein</div>
+  </div>
+</div>
+
+<p class="select-hint">Favorit(en) anklicken — auch Kombinationen möglich</p>
+
+<script>
+function toggleSelect(el) {
+  el.classList.toggle('selected');
+  const event = {
+    type: el.classList.contains('selected') ? 'select' : 'deselect',
+    choice: el.dataset.choice,
+    text: el.querySelector('.v-name').textContent,
+    timestamp: Math.floor(Date.now() / 1000)
+  };
+  fetch('/event', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(event) }).catch(()=>{});
+}
+</script>
+</body>
+</html>

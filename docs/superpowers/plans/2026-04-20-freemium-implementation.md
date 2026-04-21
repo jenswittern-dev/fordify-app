@@ -1,5 +1,20 @@
 # Freemium-Implementierung – Technischer Umsetzungsplan
 
+## Aktueller Stand (2026-04-21)
+| Task | Status | Notiz |
+|---|---|---|
+| 1 – Supabase Schema + RLS | ✅ | `supabase/schema.sql` mit profiles, subscriptions, cases, settings, contacts + RLS |
+| 2 – GoatCounter Analytics | ✅ | Script-Tag in allen HTML-Seiten, `trackEvent()` in config.js |
+| 3 – Storage-Abstraktionsschicht | ✅ | `frontend/js/storage.js` mit sessionStorage (Free) / Supabase (Paid) |
+| 4 – Auth – Magic Link Login | ✅ | `frontend/js/auth.js` komplett implementiert |
+| 5 – Cloud-Laden beim Login | ✅ | `ladeCloudDaten()`, `migrateSessionToCloud()` in auth.js |
+| 6 – Feature-Gates | ✅ | `frontend/js/gates.js` mit `requiresPaid()` und Upgrade-Modal |
+| 7 – Paddle-Webhook Edge Function | ⏳ | Wartet auf Supabase live + Paddle Produkte angelegt |
+| 8 – Pricing-Seite | ✅ | `frontend/preise.html` mit Paddle-Checkout + 3-Schritt-Modal |
+| 9 – N8N-Workflows | ⏳ | Manuell, wartet auf N8N-Server-Setup |
+
+**Blockierung:** Tasks 7+9 warten auf manuelle Infrastruktur (Organisationsplan Schritte 3, 7, 8).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Fordify von einer reinen localStorage-SPA zu einem Freemium-SaaS transformieren: Free-Nutzer arbeiten mit sessionStorage (Daten weg beim Tab-Schließen), Paid-Nutzer haben Cloud-Speicherung via Supabase, dauerhaftes Kanzlei-Profil und Excel-Export. Zahlungsabwicklung über Paddle (Merchant of Record).

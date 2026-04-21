@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mittlere Sektionen Varianten</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #0f172a; padding: 2rem; color: #1a1d23; }
+
+  .page-header { text-align: center; margin-bottom: 2rem; }
+  .page-header h1 { font-size: 1.5rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
+  .page-header p { color: #94a3b8; font-size: 0.875rem; }
+
+  .variant-block {
+    margin-bottom: 2.5rem;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.5);
+    cursor: pointer;
+    outline: 3px solid transparent;
+    transition: outline 0.15s, transform 0.15s;
+  }
+  .variant-block:hover { transform: translateY(-2px); }
+  .variant-block.selected { outline: 3px solid #60a5fa; }
+
+  .variant-label {
+    background: #1e293b;
+    padding: 0.6rem 1.25rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .v-letter { width: 24px; height: 24px; border-radius: 50%; background: #334155; color: #94a3b8; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .variant-block.selected .v-letter { background: #1d4ed8; color: white; }
+  .v-name { font-size: 0.75rem; font-weight: 700; color: #cbd5e1; }
+  .v-desc { font-size: 0.65rem; color: #64748b; margin-left: auto; }
+  .selected-badge { display: none; background: #1d4ed8; color: white; font-size: 0.6rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 4px; margin-left: auto; }
+  .variant-block.selected .selected-badge { display: inline-block; }
+
+  .variant-info {
+    background: #1e293b;
+    padding: 0.75rem 1.25rem;
+    display: flex; gap: 1rem; align-items: flex-start;
+  }
+  .vi-pros { flex: 1; }
+  .vi-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #475569; margin-bottom: 0.3rem; }
+  .vi-point { font-size: 0.65rem; color: #94a3b8; line-height: 1.6; }
+  .vi-point::before { content: '+ '; color: #34d399; font-weight: 700; }
+
+  .select-hint { text-align: center; color: #475569; font-size: 0.75rem; margin-top: 1.5rem; }
+
+  /* ─────────────────────────────────────────────
+     VARIANT A: SaaS Bold Cards + Feature Grid + Minimal Prose
+  ───────────────────────────────────────────── */
+  .sec-a { background: #f8fafc; }
+
+  /* Tool Cards */
+  .sa-tools { padding: 3.5rem 2rem; }
+  .sa-tools-overline { text-align: center; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6366f1; margin-bottom: 0.6rem; }
+  .sa-tools-title { text-align: center; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; color: #0f172a; margin-bottom: 0.5rem; }
+  .sa-tools-sub { text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 2.5rem; }
+  .sa-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; max-width: 900px; margin: 0 auto; }
+  .sa-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; transition: box-shadow 0.15s, transform 0.15s; position: relative; overflow: hidden; }
+  .sa-card--primary { border-color: #1e3a8a; box-shadow: 0 0 0 1px #1e3a8a, 0 4px 24px rgba(30,58,138,0.12); }
+  .sa-card__badge { position: absolute; top: 0.75rem; right: 0.75rem; background: #1e3a8a; color: white; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.45rem; border-radius: 4px; }
+  .sa-card__icon { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #1e3a8a, #3b82f6); display: flex; align-items: center; justify-content: center; margin-bottom: 0.85rem; }
+  .sa-card--primary .sa-card__icon { background: linear-gradient(135deg, #0f1d5c, #1e3a8a); }
+  .sa-card:not(.sa-card--primary) .sa-card__icon { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); }
+  .sa-card__icon svg { width: 16px; height: 16px; fill: white; }
+  .sa-card:not(.sa-card--primary) .sa-card__icon svg { fill: #3730a3; }
+  .sa-card__title { font-size: 0.82rem; font-weight: 700; color: #0f172a; margin-bottom: 0.3rem; }
+  .sa-card__desc { font-size: 0.7rem; color: #64748b; line-height: 1.5; margin-bottom: 0.85rem; }
+  .sa-card__cta { font-size: 0.72rem; font-weight: 600; color: #1e3a8a; display: flex; align-items: center; gap: 0.3rem; }
+  .sa-card--primary .sa-card__cta { color: #1d4ed8; }
+  .sa-card__cta::after { content: '→'; }
+
+  /* Warum Section */
+  .sa-warum { background: #0f1d5c; padding: 3.5rem 2rem; }
+  .sa-warum-overline { text-align: center; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #60a5fa; margin-bottom: 0.6rem; }
+  .sa-warum-title { text-align: center; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; color: white; margin-bottom: 2.5rem; }
+  .sa-feats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 800px; margin: 0 auto; }
+  .sa-feat { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; }
+  .sa-feat__icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(96,165,250,0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+  .sa-feat__icon svg { width: 18px; height: 18px; fill: #60a5fa; }
+  .sa-feat__title { font-size: 0.85rem; font-weight: 700; color: white; margin-bottom: 0.4rem; }
+  .sa-feat__desc { font-size: 0.72rem; color: rgba(255,255,255,0.55); line-height: 1.6; }
+
+  /* SEO Text */
+  .sa-seo { background: white; padding: 3rem 2rem; }
+  .sa-seo-inner { max-width: 680px; margin: 0 auto; }
+  .sa-seo-inner h2 { font-size: 1rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem; margin-top: 1.5rem; letter-spacing: -0.01em; }
+  .sa-seo-inner h2:first-child { margin-top: 0; }
+  .sa-seo-inner p { font-size: 0.78rem; color: #64748b; line-height: 1.75; }
+  .sa-seo-divider { height: 1px; background: #e2e8f0; margin: 1.5rem 0; }
+
+  /* ─────────────────────────────────────────────
+     VARIANT B: Alternating Spotlights + Stats + Two-Col SEO
+  ───────────────────────────────────────────── */
+  .sec-b { background: white; }
+
+  /* Tool Cards — Spotlight style */
+  .sb-tools { padding: 3.5rem 2rem; background: white; }
+  .sb-overline { text-align: center; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6366f1; margin-bottom: 0.5rem; }
+  .sb-title { text-align: center; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; color: #0f172a; margin-bottom: 2.5rem; }
+  .sb-primary-wrap { max-width: 700px; margin: 0 auto 1.5rem; }
+  .sb-primary { background: linear-gradient(135deg, #0f1d5c 0%, #1e3a8a 100%); border-radius: 16px; padding: 2rem; display: flex; align-items: center; gap: 2rem; }
+  .sb-primary__left { flex: 1; }
+  .sb-primary__tag { display: inline-block; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.75rem; }
+  .sb-primary__title { font-size: 1.1rem; font-weight: 800; color: white; letter-spacing: -0.02em; margin-bottom: 0.4rem; }
+  .sb-primary__desc { font-size: 0.75rem; color: rgba(255,255,255,0.65); line-height: 1.6; }
+  .sb-primary__cta { display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 1rem; background: white; color: #0f1d5c; font-size: 0.75rem; font-weight: 700; padding: 0.5rem 1.1rem; border-radius: 8px; }
+  .sb-primary__right { flex: 0 0 120px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 1rem; }
+  .sb-primary__doc-line { height: 6px; border-radius: 3px; background: rgba(255,255,255,0.2); margin-bottom: 0.45rem; }
+  .sb-primary__doc-line--short { width: 60%; }
+  .sb-primary__doc-line--medium { width: 80%; }
+  .sb-primary__doc-val { text-align: right; font-size: 0.65rem; font-weight: 700; color: #34d399; margin-top: 0.75rem; }
+  .sb-secondary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; max-width: 700px; margin: 0 auto; }
+  .sb-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.1rem; }
+  .sb-card__icon { width: 32px; height: 32px; border-radius: 7px; background: #ede9fe; display: flex; align-items: center; justify-content: center; margin-bottom: 0.7rem; }
+  .sb-card__icon svg { width: 15px; height: 15px; fill: #6d28d9; }
+  .sb-card__title { font-size: 0.78rem; font-weight: 700; color: #0f172a; margin-bottom: 0.25rem; }
+  .sb-card__desc { font-size: 0.68rem; color: #64748b; line-height: 1.5; }
+  .sb-card__cta { font-size: 0.68rem; font-weight: 600; color: #6d28d9; margin-top: 0.6rem; }
+
+  /* Warum — Stats Row */
+  .sb-warum { background: #f8fafc; padding: 3rem 2rem; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
+  .sb-warum-inner { max-width: 700px; margin: 0 auto; }
+  .sb-warum-overline { text-align: center; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6366f1; margin-bottom: 0.4rem; }
+  .sb-warum-title { text-align: center; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.03em; color: #0f172a; margin-bottom: 2rem; }
+  .sb-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+  .sb-stat { text-align: center; }
+  .sb-stat__num { font-size: 2rem; font-weight: 900; color: #0f1d5c; letter-spacing: -0.04em; line-height: 1; }
+  .sb-stat__label { font-size: 0.7rem; color: #64748b; margin-top: 0.3rem; line-height: 1.4; }
+  .sb-feat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid #e2e8f0; }
+  .sb-feat-item { display: flex; align-items: flex-start; gap: 0.75rem; }
+  .sb-feat-item__icon { width: 28px; height: 28px; border-radius: 7px; background: #dbeafe; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 0.1rem; }
+  .sb-feat-item__icon svg { width: 13px; height: 13px; fill: #1d4ed8; }
+  .sb-feat-item__title { font-size: 0.78rem; font-weight: 700; color: #0f172a; margin-bottom: 0.2rem; }
+  .sb-feat-item__desc { font-size: 0.68rem; color: #64748b; line-height: 1.5; }
+
+  /* SEO — 2 col */
+  .sb-seo { padding: 3rem 2rem; background: white; }
+  .sb-seo-inner { max-width: 780px; margin: 0 auto; }
+  .sb-seo-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .sb-seo-col h2 { font-size: 0.85rem; font-weight: 700; color: #0f172a; margin-bottom: 0.4rem; padding-bottom: 0.4rem; border-bottom: 2px solid #e0e7ff; }
+  .sb-seo-col p { font-size: 0.7rem; color: #64748b; line-height: 1.75; margin-top: 0.6rem; }
+
+  /* ─────────────────────────────────────────────
+     VARIANT C: Icon-Row Cards + Dark Warum + Accordion SEO
+  ───────────────────────────────────────────── */
+  .sec-c { background: #f8fafc; }
+
+  /* Tool Cards — horizontal icon-row */
+  .sc-tools { padding: 3.5rem 2rem; background: white; }
+  .sc-overline { text-align: center; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6366f1; margin-bottom: 0.5rem; }
+  .sc-title { text-align: center; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; color: #0f172a; margin-bottom: 2.5rem; }
+  .sc-list { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.75rem; }
+  .sc-item { display: flex; align-items: center; gap: 1.25rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem 1.25rem; transition: border-color 0.15s; }
+  .sc-item--primary { background: white; border-color: #1e3a8a; border-width: 2px; }
+  .sc-item__icon { width: 38px; height: 38px; border-radius: 9px; background: linear-gradient(135deg, #e0e7ff, #c7d2fe); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .sc-item--primary .sc-item__icon { background: linear-gradient(135deg, #0f1d5c, #1e3a8a); }
+  .sc-item__icon svg { width: 16px; height: 16px; fill: #4338ca; }
+  .sc-item--primary .sc-item__icon svg { fill: white; }
+  .sc-item__body { flex: 1; }
+  .sc-item__title { font-size: 0.82rem; font-weight: 700; color: #0f172a; margin-bottom: 0.15rem; }
+  .sc-item--primary .sc-item__title { color: #0f1d5c; }
+  .sc-item__desc { font-size: 0.7rem; color: #64748b; line-height: 1.5; }
+  .sc-item__badge { background: #0f1d5c; color: white; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.15rem 0.45rem; border-radius: 4px; flex-shrink: 0; }
+  .sc-item__arrow { font-size: 0.85rem; color: #94a3b8; flex-shrink: 0; }
+  .sc-item--primary .sc-item__arrow { color: #1e3a8a; font-weight: 700; }
+
+  /* Warum — large dark section */
+  .sc-warum { background: #0f172a; padding: 4rem 2rem; }
+  .sc-warum-overline { text-align: center; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #34d399; margin-bottom: 0.5rem; }
+  .sc-warum-title { text-align: center; font-size: 1.6rem; font-weight: 900; letter-spacing: -0.04em; color: white; margin-bottom: 0.5rem; }
+  .sc-warum-title span { color: #60a5fa; }
+  .sc-warum-sub { text-align: center; font-size: 0.8rem; color: rgba(255,255,255,0.45); margin-bottom: 3rem; }
+  .sc-feats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,0.08); max-width: 750px; margin: 0 auto; border-radius: 14px; overflow: hidden; }
+  .sc-feat { background: rgba(15,23,42,0.95); padding: 1.75rem 1.5rem; }
+  .sc-feat__num { font-size: 2.5rem; font-weight: 900; color: #1e3a8a; letter-spacing: -0.05em; line-height: 1; margin-bottom: 0.5rem; opacity: 0.6; }
+  .sc-feat__title { font-size: 0.85rem; font-weight: 700; color: white; margin-bottom: 0.4rem; }
+  .sc-feat__desc { font-size: 0.7rem; color: rgba(255,255,255,0.45); line-height: 1.6; }
+
+  /* SEO — accordion style */
+  .sc-seo { background: #f8fafc; padding: 3rem 2rem; }
+  .sc-seo-inner { max-width: 680px; margin: 0 auto; }
+  .sc-seo-title { font-size: 1rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem; }
+  .sc-acc-item { border: 1px solid #e2e8f0; border-radius: 10px; background: white; margin-bottom: 0.5rem; overflow: hidden; }
+  .sc-acc-header { padding: 0.85rem 1.1rem; display: flex; justify-content: space-between; align-items: center; }
+  .sc-acc-header h2 { font-size: 0.82rem; font-weight: 700; color: #0f172a; }
+  .sc-acc-header .sc-acc-icon { color: #94a3b8; font-size: 0.8rem; }
+  .sc-acc-body { padding: 0 1.1rem 0.85rem; font-size: 0.72rem; color: #64748b; line-height: 1.75; border-top: 1px solid #f1f5f9; margin-top: 0; }
+  .sc-acc-item--open .sc-acc-body { display: block; padding-top: 0.6rem; }
+  .sc-acc-item:not(.sc-acc-item--open) .sc-acc-body { display: none; }
+  .sc-acc-item--open .sc-acc-header { color: #1e3a8a; }
+  .sc-acc-item--open .sc-acc-header h2 { color: #1e3a8a; }
+  .sc-acc-item--open .sc-acc-icon { color: #1e3a8a; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>3 / 6 — Tool Cards, Warum fordify & SEO-Text</h1>
+  <p>Drei Varianten · Design-Richtung B (Modern SaaS) · Klicke deine Favoriten an</p>
+</div>
+
+<!-- ══════════════════════════════════
+     VARIANT A
+══════════════════════════════════ -->
+<div class="variant-block" onclick="toggleSelect(this)" data-choice="sections-a">
+  <div class="variant-label">
+    <div class="v-letter">A</div>
+    <div class="v-name">Bold Cards + Dark Feature-Block + Prosa SEO</div>
+    <div class="v-desc">Stripe / Clio-Stil</div>
+    <span class="selected-badge">✓ Gewählt</span>
+  </div>
+
+  <div class="sec-a">
+    <!-- Tool Cards -->
+    <div class="sa-tools">
+      <div class="sa-tools-overline">Alle Tools</div>
+      <div class="sa-tools-title">Alles was du brauchst — kostenlos</div>
+      <div class="sa-tools-sub">Kein Login, keine Installation, sofort nutzbar.</div>
+      <div class="sa-grid">
+        <div class="sa-card sa-card--primary">
+          <div class="sa-card__badge">Kernfeature</div>
+          <div class="sa-card__icon">
+            <svg viewBox="0 0 16 16"><path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/></svg>
+          </div>
+          <div class="sa-card__title">Forderungsaufstellung</div>
+          <div class="sa-card__desc">§ 367 BGB, Zinsen, RVG-Gebühren, Verrechnung, PDF-Export.</div>
+          <div class="sa-card__cta">Jetzt erstellen</div>
+        </div>
+        <div class="sa-card">
+          <div class="sa-card__icon">
+            <svg viewBox="0 0 16 16"><path d="M13.442 2.558a.625.625 0 0 1 0 .884l-10 10a.625.625 0 1 1-.884-.884l10-10a.625.625 0 0 1 .884 0zM4.5 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm7 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg>
+          </div>
+          <div class="sa-card__title">Verzugszinsrechner</div>
+          <div class="sa-card__desc">§ 288 BGB, tagesgenau, B2B + B2C, RVG 2025.</div>
+          <div class="sa-card__cta">Zinsen berechnen</div>
+        </div>
+        <div class="sa-card">
+          <div class="sa-card__icon">
+            <svg viewBox="0 0 16 16"><path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v8A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3z"/></svg>
+          </div>
+          <div class="sa-card__title">RVG-Rechner</div>
+          <div class="sa-card__desc">Geschäfts-, Verfahrensgebühr + USt. nach RVG 2025.</div>
+          <div class="sa-card__cta">Gebühren berechnen</div>
+        </div>
+        <div class="sa-card">
+          <div class="sa-card__icon">
+            <svg viewBox="0 0 16 16"><path d="M2 15a1 1 0 0 1-1-1V3.5a.5.5 0 0 1 .5-.5H4V2a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v1h2.5a.5.5 0 0 1 .5.5V14a1 1 0 0 1-1 1H2z"/></svg>
+          </div>
+          <div class="sa-card__title">Gerichtskostenrechner</div>
+          <div class="sa-card__desc">GKG Anlage 2, AG / LG / OLG / BGH – alle Instanzen.</div>
+          <div class="sa-card__cta">Kosten berechnen</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Warum Section -->
+    <div class="sa-warum">
+      <div class="sa-warum-overline">Warum fordify?</div>
+      <div class="sa-warum-title">Gebaut für Kanzleien. Nicht für IT-Abteilungen.</div>
+      <div class="sa-feats">
+        <div class="sa-feat">
+          <div class="sa-feat__icon">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2V5z"/></svg>
+          </div>
+          <div class="sa-feat__title">Browserbasiert</div>
+          <div class="sa-feat__desc">Keine Installation, keine App. Läuft auf jedem Gerät direkt im Browser.</div>
+        </div>
+        <div class="sa-feat">
+          <div class="sa-feat__icon">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/></svg>
+          </div>
+          <div class="sa-feat__title">Immer aktuell</div>
+          <div class="sa-feat__desc">RVG 2025, Basiszinssätze bis 07/2026, GKG Anlage 2 – automatisch.</div>
+        </div>
+        <div class="sa-feat">
+          <div class="sa-feat__icon">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+          </div>
+          <div class="sa-feat__title">DSGVO-konform</div>
+          <div class="sa-feat__desc">Alle Daten bleiben im Browser. Kein Server, keine Cloud, keine Weitergabe.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEO Text -->
+    <div class="sa-seo">
+      <div class="sa-seo-inner">
+        <h2>Forderungsaufstellung nach § 367 BGB</h2>
+        <p>Eine rechtssichere Forderungsaufstellung zeigt, wie Zahlungseingänge auf eine offene Forderung verrechnet werden. § 367 BGB schreibt die Reihenfolge zwingend vor: zuerst die Kosten, dann die Zinsen, zuletzt die Hauptforderung.</p>
+        <div class="sa-seo-divider"></div>
+        <h2>Verzugszinsen nach § 288 BGB berechnen</h2>
+        <p>Gerät ein Schuldner in Verzug, entstehen automatisch Verzugszinsen. Der aktuelle Basiszinssatz beträgt seit 01.01.2026 genau 1,27 %. Für B2B-Forderungen ergibt sich damit 10,27 % p.a., für B2C-Forderungen 6,27 % p.a.</p>
+        <div class="sa-seo-divider"></div>
+        <h2>Anwaltskosten nach RVG berechnen</h2>
+        <p>Anwaltsgebühren richten sich nach dem RVG. Der RVG-Rechner verwendet die aktuelle Tabelle aus dem BGBl. 2025 I Nr. 109 und berechnet Geschäftsgebühr, Verfahrensgebühr und Auslagenpauschale inklusive Umsatzsteuer.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="variant-info">
+    <div class="vi-pros">
+      <div class="vi-label">Stärken</div>
+      <div class="vi-point">Cards klar strukturiert — Primary-Karte visuell hervorgehoben</div>
+      <div class="vi-point">„Warum" als dunkles Panel schafft Kontrast und Gewicht</div>
+      <div class="vi-point">SEO-Text mit Trennern: leserlich, aber nicht dominant</div>
+      <div class="vi-point">Klare Sektion-Hierarchie: hell → dunkel → hell</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     VARIANT B
+══════════════════════════════════ -->
+<div class="variant-block" onclick="toggleSelect(this)" data-choice="sections-b">
+  <div class="variant-label">
+    <div class="v-letter">B</div>
+    <div class="v-name">Spotlight Primary + Metriken-Warum + Zwei-Spalten SEO</div>
+    <div class="v-desc">Linear / Notion-Stil</div>
+    <span class="selected-badge">✓ Gewählt</span>
+  </div>
+
+  <div class="sec-b">
+    <!-- Tool Cards — Spotlight -->
+    <div class="sb-tools">
+      <div class="sb-overline">Unsere Tools</div>
+      <div class="sb-title">Berechnen. Erstellen. Fertig.</div>
+      <!-- Primary Spotlight -->
+      <div class="sb-primary-wrap">
+        <div class="sb-primary">
+          <div class="sb-primary__left">
+            <div class="sb-primary__tag">★ Kernfeature</div>
+            <div class="sb-primary__title">Forderungsaufstellung nach § 367 BGB</div>
+            <div class="sb-primary__desc">Vollständige Forderungsaufstellung mit Verzugszinsen, RVG-Gebühren und automatischer § 367-Verrechnung. Druckfertig als PDF.</div>
+            <div class="sb-primary__cta">Jetzt erstellen →</div>
+          </div>
+          <div class="sb-primary__right">
+            <div class="sb-primary__doc-line sb-primary__doc-line--medium"></div>
+            <div class="sb-primary__doc-line sb-primary__doc-line--short"></div>
+            <div class="sb-primary__doc-line sb-primary__doc-line--medium"></div>
+            <div class="sb-primary__doc-line sb-primary__doc-line--short"></div>
+            <div class="sb-primary__doc-line"></div>
+            <div class="sb-primary__doc-val">∑ 12.847,52 €</div>
+          </div>
+        </div>
+      </div>
+      <!-- Secondary 3-grid -->
+      <div class="sb-secondary-grid">
+        <div class="sb-card">
+          <div class="sb-card__icon">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.442 2.558a.625.625 0 0 1 0 .884l-10 10a.625.625 0 1 1-.884-.884l10-10a.625.625 0 0 1 .884 0zM4.5 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm7 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg>
+          </div>
+          <div class="sb-card__title">Verzugszinsrechner</div>
+          <div class="sb-card__desc">§ 288 BGB · B2B & B2C · tagesgenau · Basiszinssatz 01/2026</div>
+          <div class="sb-card__cta">Zinsen berechnen →</div>
+        </div>
+        <div class="sb-card">
+          <div class="sb-card__icon">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v8A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3z"/></svg>
+          </div>
+          <div class="sb-card__title">RVG-Rechner</div>
+          <div class="sb-card__desc">BGBl. 2025 I Nr. 109 · Geschäfts- & Verfahrensgebühr · USt.</div>
+          <div class="sb-card__cta">Gebühren berechnen →</div>
+        </div>
+        <div class="sb-card">
+          <div class="sb-card__icon">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 15a1 1 0 0 1-1-1V3.5a.5.5 0 0 1 .5-.5H4V2a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v1h2.5a.5.5 0 0 1 .5.5V14a1 1 0 0 1-1 1H2z"/></svg>
+          </div>
+          <div class="sb-card__title">Gerichtskostenrechner</div>
+          <div class="sb-card__desc">GKG Anlage 2 · AG / LG / OLG / BGH · alle Instanzen</div>
+          <div class="sb-card__cta">Kosten berechnen →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Warum — Stats -->
+    <div class="sb-warum">
+      <div class="sb-warum-inner">
+        <div class="sb-warum-overline">Warum fordify?</div>
+        <div class="sb-warum-title">Zahlen sprechen für sich.</div>
+        <div class="sb-stats">
+          <div class="sb-stat">
+            <div class="sb-stat__num">0 €</div>
+            <div class="sb-stat__label">Kosten — dauerhaft kostenlos</div>
+          </div>
+          <div class="sb-stat">
+            <div class="sb-stat__num">0</div>
+            <div class="sb-stat__label">Pflichtfelder vor dem Start</div>
+          </div>
+          <div class="sb-stat">
+            <div class="sb-stat__num">§367</div>
+            <div class="sb-stat__label">BGB – korrekte Reihenfolge garantiert</div>
+          </div>
+          <div class="sb-stat">
+            <div class="sb-stat__num">100%</div>
+            <div class="sb-stat__label">Daten bleiben im Browser</div>
+          </div>
+        </div>
+        <div class="sb-feat-row">
+          <div class="sb-feat-item">
+            <div class="sb-feat-item__icon">
+              <svg viewBox="0 0 16 16" fill="currentColor"><path d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2V5z"/></svg>
+            </div>
+            <div>
+              <div class="sb-feat-item__title">Browserbasiert</div>
+              <div class="sb-feat-item__desc">Keine Installation. Direkt nutzbar auf jedem Gerät.</div>
+            </div>
+          </div>
+          <div class="sb-feat-item">
+            <div class="sb-feat-item__icon">
+              <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/></svg>
+            </div>
+            <div>
+              <div class="sb-feat-item__title">Immer aktuell</div>
+              <div class="sb-feat-item__desc">RVG 2025, Basiszinssätze bis 07/2026, GKG Anlage 2.</div>
+            </div>
+          </div>
+          <div class="sb-feat-item">
+            <div class="sb-feat-item__icon">
+              <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+            </div>
+            <div>
+              <div class="sb-feat-item__title">DSGVO-konform</div>
+              <div class="sb-feat-item__desc">Kein Server, keine Cloud, keine Datenweitergabe.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEO 2-col -->
+    <div class="sb-seo">
+      <div class="sb-seo-inner">
+        <div class="sb-seo-cols">
+          <div class="sb-seo-col">
+            <h2>§ 367 BGB – Forderungsaufstellung</h2>
+            <p>§ 367 BGB schreibt vor: zuerst Kosten, dann Zinsen, zuletzt Hauptforderung. fordify berechnet diese Verrechnung automatisch und erstellt ein druckfertiges Dokument.</p>
+            <h2 style="margin-top:1.25rem">RVG 2025 – Anwaltskosten</h2>
+            <p>Der RVG-Rechner verwendet die aktuelle Tabelle aus BGBl. 2025 I Nr. 109 und berechnet Geschäfts- und Verfahrensgebühr inklusive Umsatzsteuer.</p>
+          </div>
+          <div class="sb-seo-col">
+            <h2>§ 288 BGB – Verzugszinsen</h2>
+            <p>Der aktuelle Basiszinssatz beträgt seit 01.01.2026 genau 1,27 %. Für B2B: 10,27 % p.a., für B2C: 6,27 % p.a. – tagesgenaue Berechnung inklusive.</p>
+            <h2 style="margin-top:1.25rem">GKG – Gerichtskosten</h2>
+            <p>Der Gerichtskostenrechner berechnet Gerichtsgebühren nach GKG Anlage 2 für AG, LG, OLG und BGH – auf Basis des Streitwerts.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="variant-info">
+    <div class="vi-pros">
+      <div class="vi-label">Stärken</div>
+      <div class="vi-point">Primärkarte als Spotlight — klare Priorität, sofort erkennbar</div>
+      <div class="vi-point">Metriken-Row: 4 Zahlen sagen mehr als 4 Feature-Texte</div>
+      <div class="vi-point">Zwei-Spalten SEO: kompakter, weniger wuchtig, besser lesbar</div>
+      <div class="vi-point">Visuelle Hierarchie: Spotlight → Stats → Prose</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     VARIANT C
+══════════════════════════════════ -->
+<div class="variant-block" onclick="toggleSelect(this)" data-choice="sections-c">
+  <div class="variant-label">
+    <div class="v-letter">C</div>
+    <div class="v-name">Listen-Cards + Dunkle Nummerierung + Akkordeon SEO</div>
+    <div class="v-desc">Vercel / Arc-Stil</div>
+    <span class="selected-badge">✓ Gewählt</span>
+  </div>
+
+  <div class="sec-c">
+    <!-- Tool Cards — horizontal list -->
+    <div class="sc-tools">
+      <div class="sc-overline">Tools</div>
+      <div class="sc-title">Die richtigen Werkzeuge. Sofort einsatzbereit.</div>
+      <div class="sc-list">
+        <div class="sc-item sc-item--primary">
+          <div class="sc-item__icon">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/></svg>
+          </div>
+          <div class="sc-item__body">
+            <div class="sc-item__title">Forderungsaufstellung</div>
+            <div class="sc-item__desc">Vollständige Forderungsaufstellung nach § 367 BGB mit Zinsen, RVG-Gebühren, Zahlungsverrechnung und PDF-Export.</div>
+          </div>
+          <div class="sc-item__badge">Kernfeature</div>
+          <div class="sc-item__arrow">→</div>
+        </div>
+        <div class="sc-item">
+          <div class="sc-item__icon">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.442 2.558a.625.625 0 0 1 0 .884l-10 10a.625.625 0 1 1-.884-.884l10-10a.625.625 0 0 1 .884 0zM4.5 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm7 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg>
+          </div>
+          <div class="sc-item__body">
+            <div class="sc-item__title">Verzugszinsrechner</div>
+            <div class="sc-item__desc">§ 288 BGB, tagesgenau, B2B (10,27 % p.a.) und B2C (6,27 % p.a.), Basiszinssatz bis 07/2026.</div>
+          </div>
+          <div class="sc-item__arrow">→</div>
+        </div>
+        <div class="sc-item">
+          <div class="sc-item__icon">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v8A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3z"/></svg>
+          </div>
+          <div class="sc-item__body">
+            <div class="sc-item__title">RVG-Rechner</div>
+            <div class="sc-item__desc">Geschäftsgebühr, Verfahrensgebühr, Auslagenpauschale und USt. nach BGBl. 2025 I Nr. 109.</div>
+          </div>
+          <div class="sc-item__arrow">→</div>
+        </div>
+        <div class="sc-item">
+          <div class="sc-item__icon">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 15a1 1 0 0 1-1-1V3.5a.5.5 0 0 1 .5-.5H4V2a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v1h2.5a.5.5 0 0 1 .5.5V14a1 1 0 0 1-1 1H2z"/></svg>
+          </div>
+          <div class="sc-item__body">
+            <div class="sc-item__title">Gerichtskostenrechner</div>
+            <div class="sc-item__desc">GKG Anlage 2 für AG, LG, OLG und BGH – alle Instanzen, kostenlos.</div>
+          </div>
+          <div class="sc-item__arrow">→</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Warum — dark + numbered -->
+    <div class="sc-warum">
+      <div class="sc-warum-overline">Warum fordify?</div>
+      <div class="sc-warum-title">Rechtssicher. Schnell. <span>Kostenlos.</span></div>
+      <div class="sc-warum-sub">Entwickelt mit Rechtsanwälten. Geprüft auf Praxistauglichkeit.</div>
+      <div class="sc-feats">
+        <div class="sc-feat">
+          <div class="sc-feat__num">01</div>
+          <div class="sc-feat__title">Browserbasiert</div>
+          <div class="sc-feat__desc">Keine Installation, keine App. Läuft auf jedem Gerät direkt im Browser – ohne Account.</div>
+        </div>
+        <div class="sc-feat">
+          <div class="sc-feat__num">02</div>
+          <div class="sc-feat__title">Immer aktuell</div>
+          <div class="sc-feat__desc">RVG 2025, Basiszinssätze bis 07/2026, GKG Anlage 2 – automatisch auf dem neuesten Stand.</div>
+        </div>
+        <div class="sc-feat">
+          <div class="sc-feat__num">03</div>
+          <div class="sc-feat__title">DSGVO-konform</div>
+          <div class="sc-feat__desc">Alle Daten bleiben im Browser. Kein Server, keine Cloud, keine Datenweitergabe an Dritte.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEO Accordion -->
+    <div class="sc-seo">
+      <div class="sc-seo-inner">
+        <div class="sc-seo-title">Häufige Fragen & rechtlicher Hintergrund</div>
+        <div class="sc-acc-item sc-acc-item--open">
+          <div class="sc-acc-header">
+            <h2>Forderungsaufstellung nach § 367 BGB</h2>
+            <span class="sc-acc-icon">▲</span>
+          </div>
+          <div class="sc-acc-body">§ 367 BGB schreibt die Verrechnungsreihenfolge zwingend vor: zuerst die Kosten, dann die Zinsen, zuletzt die Hauptforderung. fordify berechnet diese Verrechnung automatisch und erstellt ein druckfertiges, professionelles Dokument.</div>
+        </div>
+        <div class="sc-acc-item">
+          <div class="sc-acc-header">
+            <h2>Verzugszinsen nach § 288 BGB berechnen</h2>
+            <span class="sc-acc-icon">▼</span>
+          </div>
+          <div class="sc-acc-body">Aktueller Basiszinssatz seit 01.01.2026: 1,27 %. B2B: 10,27 % p.a., B2C: 6,27 % p.a. Tagesgenaue Berechnung inklusive.</div>
+        </div>
+        <div class="sc-acc-item">
+          <div class="sc-acc-header">
+            <h2>Anwaltskosten nach RVG 2025 berechnen</h2>
+            <span class="sc-acc-icon">▼</span>
+          </div>
+          <div class="sc-acc-body">Grundlage ist der Gegenstandswert. Berechnet werden Geschäftsgebühr (VV 2300), Verfahrensgebühr (VV 3100, VV 3309) und Auslagenpauschale (VV 7002) inklusive Umsatzsteuer nach BGBl. 2025 I Nr. 109.</div>
+        </div>
+        <div class="sc-acc-item">
+          <div class="sc-acc-header">
+            <h2>Gerichtskosten nach GKG berechnen</h2>
+            <span class="sc-acc-icon">▼</span>
+          </div>
+          <div class="sc-acc-body">AG (3 Gebühren), LG (3 Gebühren), OLG (4 Gebühren), BGH (5 Gebühren) – ausgehend vom Streitwert nach GKG Anlage 2.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="variant-info">
+    <div class="vi-pros">
+      <div class="vi-label">Stärken</div>
+      <div class="vi-point">Listen-Cards: scanbar, kein visuelles Gewicht, skaliert gut</div>
+      <div class="vi-point">Dunkle Warum-Sektion mit Nummern: modern, merkfähig, klar</div>
+      <div class="vi-point">Akkordeon SEO: Platz spart, nicht dominant, trotzdem vollständig</div>
+      <div class="vi-point">Maximal minimalistisch — Inhalt steht im Vordergrund</div>
+    </div>
+  </div>
+</div>
+
+<p class="select-hint">Einen oder mehrere Favoriten anklicken — oder Elemente aus verschiedenen Varianten benennen.</p>
+
+<script>
+function toggleSelect(el) {
+  el.classList.toggle('selected');
+  const event = {
+    type: el.classList.contains('selected') ? 'select' : 'deselect',
+    choice: el.dataset.choice,
+    text: el.querySelector('.v-name').textContent,
+    timestamp: Math.floor(Date.now() / 1000)
+  };
+  fetch('/event', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(event)
+  }).catch(() => {});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]: Logo-Varianten (ohne Symbol)
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: A — nur Text
+      - generic [ref=e6]: fordify
+    - generic [ref=e7]:
+      - generic [ref=e8]: B — ford blau
+      - generic [ref=e9]: fordify
+    - generic [ref=e10]:
+      - generic [ref=e11]: C — ify blau
+      - generic [ref=e12]: fordify
+    - generic [ref=e13]:
+      - generic [ref=e14]: D — ford grün (Trust Green)
+      - generic [ref=e15]: fordify
+    - generic [ref=e16]:
+      - generic [ref=e17]: E — ford fettstark
+      - generic [ref=e18]: fordify
+  - generic [ref=e19]: Navigation + Trust-Bar
+  - navigation [ref=e20]:
+    - link "fordify" [ref=e21] [cursor=pointer]:
+      - /url: "#"
+    - list [ref=e22]:
+      - listitem [ref=e23]:
+        - link "Startseite" [ref=e24] [cursor=pointer]:
+          - /url: "#"
+      - listitem [ref=e25]:
+        - link "Forderungsaufstellung" [ref=e26] [cursor=pointer]:
+          - /url: "#"
+      - listitem [ref=e27]:
+        - link "Zinsrechner" [ref=e28] [cursor=pointer]:
+          - /url: "#"
+      - listitem [ref=e29]:
+        - link "RVG-Rechner" [ref=e30] [cursor=pointer]:
+          - /url: "#"
+      - listitem [ref=e31]:
+        - link "Gerichtskostenrechner" [ref=e32] [cursor=pointer]:
+          - /url: "#"
+      - listitem [ref=e33]:
+        - link "Preise" [ref=e34] [cursor=pointer]:
+          - /url: "#"
+    - generic [ref=e35]:
+      - button "Anmelden" [ref=e36] [cursor=pointer]
+      - button "Kostenlos starten →" [ref=e37] [cursor=pointer]
+  - generic [ref=e38]:
+    - generic [ref=e39]: RVG 2025 (BGBl. I Nr. 109)
+    - generic [ref=e41]: Basiszinssatz aktuell bis 07/2026
+    - generic [ref=e43]: Von Anwälten entwickelt
+    - generic [ref=e45]: Kein Login · 100 % kostenlos
+  - generic [ref=e47]:
+    - generic [ref=e48]:
+      - heading "In Minuten zur rechtssicheren Forderungsaufstellung nach § 367 BGB" [level=1] [ref=e49]
+      - paragraph [ref=e50]: Verzugszinsen, RVG-Gebühren und § 367-Verrechnung automatisch berechnen – für Kanzleien, Inkassobüros und Unternehmen. Kostenlos, ohne Registrierung, DSGVO-konform.
+      - generic [ref=e51]:
+        - button "Jetzt kostenlos starten" [ref=e52] [cursor=pointer]
+        - button "Mehr erfahren" [ref=e53] [cursor=pointer]
+    - generic [ref=e55]:
+      - generic [ref=e56]:
+        - generic [ref=e57]: Forderungsaufstellung
+        - generic [ref=e58]: ↓ PDF
+      - generic [ref=e59]:
+        - generic [ref=e60]: Hauptforderung
+        - generic [ref=e61]: 15.000,00 €
+      - generic [ref=e62]:
+        - generic [ref=e63]: Verzugszinsen (B2B) ⚡
+        - generic [ref=e64]: 892,47 €
+      - generic [ref=e65]:
+        - generic [ref=e66]: Anwaltskosten (RVG)
+        - generic [ref=e67]: 1.029,35 €
+      - generic [ref=e69]:
+        - generic [ref=e70]: Gesamtforderung
+        - generic [ref=e71]: 16.921,82 €
+      - generic [ref=e72]:
+        - generic [ref=e73]: Zahlung 15.03.2026
+        - generic [ref=e74]: − 2.500,00 €
+      - generic [ref=e75]: "↳ § 367 BGB: Kosten → Zinsen → HF"
+      - generic [ref=e77]:
+        - generic [ref=e78]: Restforderung
+        - generic [ref=e79]: 14.421,82 €
+      - generic [ref=e80]:
+        - generic [ref=e81]: 📄 PDF exportieren
+        - generic [ref=e82]: § 367 BGB ✓

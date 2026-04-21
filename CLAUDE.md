@@ -136,12 +136,53 @@ Siehe `docs/SYSTEM.md` für vollständiges Schema. Kurzübersicht:
 **Vor neuen Features immer prüfen:**
 1. `docs/ROADMAP.md` — ist das Feature schon geplant/erledigt? (Phase 0–6)
 2. `docs/SYSTEM.md` — welche Datenstrukturen und Funktionen sind betroffen?
-3. `docs/freemium-launch-organisationsplan.md` — manuelle Schritte + Pflichtenheft-Ergänzungen (Abschnitt 10)
-4. `docs/superpowers/plans/2026-04-20-freemium-implementation.md` — technischer Freemium-Umsetzungsplan
+3. `docs/freemium-launch-organisationsplan.md` — manuelle Schritte + Pflichtenheft-Ergänzungen
+4. `docs/superpowers/plans/` — aktive Implementierungspläne mit Statusübersicht prüfen
 5. Aktuelle SW-Cache-Version in `frontend/sw.js` prüfen und nach Änderungen erhöhen
 
 **Nach jeder Entscheidung und Umsetzung zwingend aktualisieren:**
 - `docs/ROADMAP.md` — Status ✅ + Datum setzen
 - `docs/SYSTEM.md` — neue Strukturen, Funktionen, Architekturdetails ergänzen
 - `CLAUDE.md` (diese Datei) — SW-Version, Kerndatenmodell, Architekturentscheidungen nachziehen
-- Immer im gleichen Commit wie die eigentliche Änderung
+- Immer im gleichen Commit wie die eigentlichen Änderungen
+
+---
+
+## Datei-Verwaltung (PFLICHT – keine Ausnahmen)
+
+### Erlaubte Dateien in `docs/`
+
+```
+docs/
+├── ROADMAP.md                        ← einzige Feature-Wahrheitsquelle
+├── SYSTEM.md                         ← einzige technische Wahrheitsquelle
+├── freemium-launch-organisationsplan.md ← aktiver Launch-Plan (Jens)
+├── archive/                          ← historische Dokumente (nicht löschen)
+└── superpowers/
+    ├── plans/                        ← max. 5 aktive Pläne gleichzeitig
+    │   └── done/                     ← abgeschlossene Pläne
+    └── specs/
+        └── done/                     ← abgeschlossene Specs
+```
+
+### Verboten
+
+- **Keine neuen `.md`-Dateien** außerhalb dieser Struktur ohne explizite Anweisung von Jens
+- **Keine Research-Dokumente** in `docs/` root (→ `docs/archive/research/`)
+- **Keine Transkripte, Aufträge, Rohdaten** in `docs/` root (→ `docs/archive/`)
+- **Keine doppelten Formate** (kein .pdf + .md + .html vom gleichen Inhalt)
+- **Keine Spec-Dateien** für bereits implementierte Features (→ `docs/superpowers/specs/done/`)
+
+### Nach Implementierung eines Plans (Pflicht)
+
+1. Statusübersicht im Plan auf ✅ aktualisieren
+2. Plan nach `docs/superpowers/plans/done/` verschieben
+3. `docs/ROADMAP.md` mit ✅ + Datum aktualisieren
+4. Kein neuer Plan erstellt, solange nicht mindestens ein bestehender abgeschlossen wurde
+
+### Superpowers-Pläne und Specs
+
+- Brainstorming erstellt Specs in `docs/superpowers/specs/` — OK
+- Writing-Plans erstellt Pläne in `docs/superpowers/plans/` — OK
+- Nach Implementierung **sofort** in `/done/` verschieben — Pflicht
+- Specs und Pläne werden **nicht** in `docs/` root oder anderswo erstellt

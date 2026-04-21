@@ -1,0 +1,184 @@
+- generic [active] [ref=e1]:
+  - link "Zum Hauptinhalt springen" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - link "fordify" [ref=e5] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e6]:
+        - list [ref=e7]:
+          - listitem [ref=e8]:
+            - link "Startseite" [ref=e9] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=e10]:
+            - link "Forderungsaufstellung" [ref=e11] [cursor=pointer]:
+              - /url: /forderungsaufstellung
+          - listitem [ref=e12]:
+            - link "Zinsrechner" [ref=e13] [cursor=pointer]:
+              - /url: /zinsrechner
+          - listitem [ref=e14]:
+            - link "RVG-Rechner" [ref=e15] [cursor=pointer]:
+              - /url: /rvg-rechner
+          - listitem [ref=e16]:
+            - link "Gerichtskostenrechner" [ref=e17] [cursor=pointer]:
+              - /url: /gerichtskostenrechner
+          - listitem [ref=e18]:
+            - link "Preise" [ref=e19] [cursor=pointer]:
+              - /url: /preise
+        - generic [ref=e20]:
+          - button "Anmelden" [ref=e21] [cursor=pointer]
+          - link "Kostenlos starten →" [ref=e22] [cursor=pointer]:
+            - /url: /forderungsaufstellung
+  - list [ref=e25]:
+    - listitem [ref=e26]: RVG 2025 (BGBl. I Nr. 109)
+    - listitem [ref=e28]: Basiszinssatz aktuell bis 07/2026
+    - listitem [ref=e30]: Von Anwälten entwickelt
+    - listitem [ref=e32]: Kein Login · 100 % kostenlos
+  - generic [ref=e36]:
+    - generic [ref=e37]:
+      - heading "In Minuten zur rechtssicheren Forderungsaufstellung nach § 367 BGB" [level=1] [ref=e38]
+      - paragraph [ref=e39]: Verzugszinsen, RVG-Gebühren und § 367-Verrechnung automatisch berechnen – für Kanzleien, Inkassobüros und Unternehmen. Kostenlos, ohne Registrierung, DSGVO-konform.
+      - link "Jetzt kostenlos starten" [ref=e40] [cursor=pointer]:
+        - /url: /forderungsaufstellung
+    - generic [ref=e42]:
+      - generic [ref=e43]:
+        - generic [ref=e44]: Forderungsaufstellung
+        - generic [ref=e45]: ↓ PDF
+      - generic [ref=e46]:
+        - generic [ref=e47]: Hauptforderung
+        - generic [ref=e48]: 15.000,00 €
+      - generic [ref=e49]:
+        - generic [ref=e50]: Verzugszinsen (B2B) ⚡ auto
+        - generic [ref=e51]: 892,47 €
+      - generic [ref=e52]:
+        - generic [ref=e53]: Anwaltskosten (RVG)
+        - generic [ref=e54]: 1.029,35 €
+      - generic [ref=e56]:
+        - generic [ref=e57]: Gesamtforderung
+        - generic [ref=e58]: 16.921,82 €
+      - generic [ref=e59]:
+        - generic [ref=e60]: Zahlung 15.03.2026
+        - generic [ref=e61]: − 2.500,00 €
+      - generic [ref=e62]: "↳ § 367 BGB: Kosten → Zinsen → HF"
+      - generic [ref=e64]:
+        - generic [ref=e65]: Restforderung
+        - generic [ref=e66]: 14.421,82 €
+      - generic [ref=e67]:
+        - generic [ref=e68]: 📄 PDF exportieren
+        - generic [ref=e69]: § 367 BGB ✓
+  - main [ref=e70]:
+    - generic [ref=e72]:
+      - link "★ Kernfeature Forderungsaufstellung nach § 367 BGB Vollständige Forderungsaufstellung mit Verzugszinsen, RVG-Gebühren und automatischer § 367-Verrechnung. Druckfertig als PDF exportierbar. Jetzt erstellen →" [ref=e73] [cursor=pointer]:
+        - /url: /forderungsaufstellung
+        - generic [ref=e74]:
+          - generic [ref=e75]: ★ Kernfeature
+          - generic [ref=e76]: Forderungsaufstellung nach § 367 BGB
+          - paragraph [ref=e77]: Vollständige Forderungsaufstellung mit Verzugszinsen, RVG-Gebühren und automatischer § 367-Verrechnung. Druckfertig als PDF exportierbar.
+          - generic [ref=e78]: Jetzt erstellen →
+        - generic [ref=e85]: ∑ 16.921,82 €
+      - generic [ref=e86]:
+        - link "Verzugszinsrechner § 288 BGB · tagesgenau · B2B (10,27 % p.a.) & B2C (6,27 % p.a.) · Basiszins 01/2026 Zinsen berechnen →" [ref=e87] [cursor=pointer]:
+          - /url: /zinsrechner
+          - img [ref=e89]
+          - generic [ref=e91]: Verzugszinsrechner
+          - paragraph [ref=e92]: § 288 BGB · tagesgenau · B2B (10,27 % p.a.) & B2C (6,27 % p.a.) · Basiszins 01/2026
+          - generic [ref=e93]: Zinsen berechnen →
+        - link "RVG-Rechner Anwaltsgebühren nach RVG 2025 berechnen – Geschäftsgebühr, Verfahrensgebühr, Auslagenpauschale und Umsatzsteuer. Gebühren berechnen →" [ref=e94] [cursor=pointer]:
+          - /url: /rvg-rechner
+          - img [ref=e96]
+          - generic [ref=e98]: RVG-Rechner
+          - paragraph [ref=e99]: Anwaltsgebühren nach RVG 2025 berechnen – Geschäftsgebühr, Verfahrensgebühr, Auslagenpauschale und Umsatzsteuer.
+          - generic [ref=e100]: Gebühren berechnen →
+        - link "RVG-Rechner Geschäfts-, Verfahrensgebühr & Auslagenpauschale nach BGBl. 2025 I Nr. 109 inkl. USt. Gebühren berechnen →" [ref=e101] [cursor=pointer]:
+          - /url: /rvg-rechner
+          - img [ref=e103]
+          - generic [ref=e105]: RVG-Rechner
+          - paragraph [ref=e106]: Geschäfts-, Verfahrensgebühr & Auslagenpauschale nach BGBl. 2025 I Nr. 109 inkl. USt.
+          - generic [ref=e107]: Gebühren berechnen →
+        - link "Gerichtskostenrechner GKG Anlage 2 · AG / LG / OLG / BGH – alle Instanzen, kostenlos, ohne Login. Kosten berechnen →" [ref=e108] [cursor=pointer]:
+          - /url: /gerichtskostenrechner
+          - img [ref=e110]
+          - generic [ref=e112]: Gerichtskostenrechner
+          - paragraph [ref=e113]: GKG Anlage 2 · AG / LG / OLG / BGH – alle Instanzen, kostenlos, ohne Login.
+          - generic [ref=e114]: Kosten berechnen →
+  - region "Warum fordify?" [ref=e115]:
+    - generic [ref=e116]:
+      - paragraph [ref=e117]: Warum fordify?
+      - paragraph [ref=e118]: Rechtssicher. Schnell. Kostenlos.
+      - generic [ref=e119]:
+        - generic [ref=e120]:
+          - generic [ref=e121]: "01"
+          - generic [ref=e122]: Browserbasiert
+          - paragraph [ref=e123]: Keine Installation, keine App. Läuft auf jedem Gerät direkt im Browser – ohne Account.
+        - generic [ref=e124]:
+          - generic [ref=e125]: "02"
+          - generic [ref=e126]: Immer aktuell
+          - paragraph [ref=e127]: RVG 2025, Basiszinssätze bis 07/2026, GKG Anlage 2 – automatisch auf dem neuesten Stand.
+        - generic [ref=e128]:
+          - generic [ref=e129]: "03"
+          - generic [ref=e130]: DSGVO-konform
+          - paragraph [ref=e131]: Alle Daten bleiben im Browser. Kein Server, keine Cloud, keine Datenweitergabe an Dritte.
+  - generic [ref=e134]:
+    - generic [ref=e135]:
+      - heading "Forderungsaufstellung nach § 367 BGB" [level=2] [ref=e136]
+      - paragraph [ref=e137]: "§ 367 BGB schreibt die Verrechnungsreihenfolge zwingend vor: zuerst die Kosten, dann die Zinsen, zuletzt die Hauptforderung. fordify berechnet diese Verrechnung automatisch und erstellt ein druckfertiges Dokument für Anwaltskanzleien und Unternehmen."
+      - heading "Anwaltskosten nach RVG 2025" [level=2] [ref=e138]
+      - paragraph [ref=e139]: Der RVG-Rechner verwendet die aktuelle Tabelle aus dem BGBl. 2025 I Nr. 109 und berechnet Geschäftsgebühr (VV 2300), Verfahrensgebühr (VV 3100, VV 3309) und Auslagenpauschale (VV 7002) inklusive Umsatzsteuer auf Basis des Gegenstandswerts.
+    - generic [ref=e140]:
+      - heading "Verzugszinsen nach § 288 BGB berechnen" [level=2] [ref=e141]
+      - paragraph [ref=e142]: Der aktuelle Basiszinssatz beträgt seit 01.01.2026 genau 1,27 %. Für B2B-Forderungen ergibt sich ein Verzugszinssatz von 10,27 % p.a., für B2C-Forderungen von 6,27 % p.a. fordify berechnet tagesgenaue Zinsen und teilt den Zeitraum automatisch an den Wechseldaten auf.
+      - heading "Gerichtskosten nach GKG berechnen" [level=2] [ref=e143]
+      - paragraph [ref=e144]: Gerichtsgebühren richten sich nach dem GKG. Ausgehend vom Streitwert berechnet der Gerichtskostenrechner für AG (3 Gebühren), LG (3 Gebühren), OLG (4 Gebühren) und BGH (5 Gebühren) – auf Basis der GKG Anlage 2.
+  - generic [ref=e146]:
+    - generic [ref=e147]: Kostenlos · Kein Login
+    - generic [ref=e148]: Jetzt fordify nutzen
+    - generic [ref=e149]: Forderungsaufstellung, Zinsen, RVG — alles an einem Ort.
+    - link "Forderungsaufstellung erstellen →" [ref=e150] [cursor=pointer]:
+      - /url: /forderungsaufstellung
+  - contentinfo [ref=e151]:
+    - generic [ref=e152]:
+      - generic [ref=e153]:
+        - generic [ref=e154]:
+          - generic [ref=e155]: fordify
+          - generic [ref=e156]: Professionelle Forderungsberechnungen für Kanzleien, Inkassobüros und Unternehmen. Von Anwälten entwickelt und geprüft.
+          - generic [ref=e157]:
+            - generic [ref=e158]: RVG 2025
+            - generic [ref=e159]: § 367 BGB
+            - generic [ref=e160]: DSGVO
+            - generic [ref=e161]: Basiszins 07/2026
+        - generic [ref=e162]:
+          - generic [ref=e163]: Tools
+          - list [ref=e164]:
+            - listitem [ref=e165]:
+              - link "Forderungsaufstellung →" [ref=e166] [cursor=pointer]:
+                - /url: /forderungsaufstellung
+            - listitem [ref=e167]:
+              - link "Verzugszinsrechner" [ref=e168] [cursor=pointer]:
+                - /url: /zinsrechner
+            - listitem [ref=e169]:
+              - link "RVG-Rechner" [ref=e170] [cursor=pointer]:
+                - /url: /rvg-rechner
+            - listitem [ref=e171]:
+              - link "Gerichtskostenrechner" [ref=e172] [cursor=pointer]:
+                - /url: /gerichtskostenrechner
+        - generic [ref=e173]:
+          - generic [ref=e174]: Produkt
+          - list [ref=e175]:
+            - listitem [ref=e176]:
+              - link "Preise" [ref=e177] [cursor=pointer]:
+                - /url: /preise
+        - generic [ref=e178]:
+          - generic [ref=e179]: Rechtliches
+          - list [ref=e180]:
+            - listitem [ref=e181]:
+              - link "Impressum" [ref=e182] [cursor=pointer]:
+                - /url: /impressum.html
+            - listitem [ref=e183]:
+              - link "Datenschutz" [ref=e184] [cursor=pointer]:
+                - /url: /datenschutz.html
+            - listitem [ref=e185]:
+              - link "AGB" [ref=e186] [cursor=pointer]:
+                - /url: /agb
+      - generic [ref=e187]:
+        - generic [ref=e188]: © 2025 fordify · Alle Rechte vorbehalten
+        - generic [ref=e189]: Von Anwälten entwickelt · DSGVO-konform
