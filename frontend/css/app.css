@@ -208,9 +208,7 @@ body {
     padding: 0;
     gap: 0.5rem;
     border-top: none;
-    border-left: 1px solid rgba(255,255,255,0.15);
-    padding-left: 1rem;
-    margin-left: 0.5rem;
+    border-left: none;
     margin-top: 0;
   }
 
@@ -227,17 +225,23 @@ body {
   }
 }
 
-/* Outline-Buttons in der Navbar – borderless */
+/* Outline-Buttons in der Navbar – borderless, underline on hover */
 .navbar-fa .navbar-nav-buttons .btn-outline-light {
   border-color: transparent;
   background: transparent;
-  color: rgba(255,255,255,0.88);
-  transition: background var(--transition-fast), color var(--transition-fast);
+  color: rgba(255,255,255,0.65);
+  font-weight: 500;
+  font-size: 0.84rem;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding-bottom: calc(0.25rem - 2px);
+  transition: color 0.15s, border-color 0.15s;
 }
 
 .navbar-fa .navbar-nav-buttons .btn-outline-light:hover {
-  background: rgba(255,255,255,0.13);
+  background: transparent;
   border-color: transparent;
+  border-bottom-color: rgba(96,165,250,0.45);
   color: #fff;
 }
 
@@ -249,7 +253,7 @@ body {
 
 /* Primär-Button "Drucken / PDF" */
 .btn-nav-primary {
-  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
   border: none;
   color: #fff;
   font-weight: 600;
@@ -257,7 +261,7 @@ body {
 }
 
 .btn-nav-primary:hover {
-  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
   border: none;
   color: #fff;
   opacity: 0.92;
