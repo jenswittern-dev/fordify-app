@@ -99,21 +99,21 @@
 <!-- Stepper-Navigation -->
 <div class="container no-print">
   <nav class="stepper-nav" aria-label="Workflow-Schritte">
-    <a href="javascript:void(0)" class="stepper-step" data-ansicht="stammdaten">
+    <button type="button" class="stepper-step" data-ansicht="stammdaten">
       <span class="stepper-step__num">1</span>
       <span class="stepper-step__label">Allgemeine Angaben</span>
-    </a>
+    </button>
     <span class="stepper-sep" aria-hidden="true"></span>
-    <a href="javascript:void(0)" class="stepper-step" data-ansicht="eingabe">
+    <button type="button" class="stepper-step" data-ansicht="eingabe">
       <span class="stepper-step__num">2</span>
       <span class="stepper-step__label">Positionen</span>
       <span class="stepper-step__badge" id="pos-count"></span>
-    </a>
+    </button>
     <span class="stepper-sep" aria-hidden="true"></span>
-    <a href="javascript:void(0)" class="stepper-step" data-ansicht="vorschau">
+    <button type="button" class="stepper-step" data-ansicht="vorschau">
       <span class="stepper-step__num">3</span>
       <span class="stepper-step__label">Vorschau &amp; PDF</span>
-    </a>
+    </button>
   </nav>
 </div>
 
@@ -645,6 +645,7 @@
     <div class="modal-content modal-content--app">
       <div class="modal-header modal-header--app">
         <h5 class="modal-title" id="modal-onboarding-titel">Willkommen bei fordify</h5>
+        <button type="button" class="btn-close ms-auto" onclick="onboardingBestaetigen()" aria-label="Schließen"></button>
       </div>
       <div class="modal-body modal-body--app">
         <h6 class="fw-semibold mb-1">Ihre Daten bleiben bei Ihnen</h6>
@@ -684,8 +685,9 @@
       <div class="modal-body pt-2">
         <p class="text-muted small mb-3">Wir senden dir einen sicheren Login-Link per E-Mail – kein Passwort nötig. Bitte öffne den Link in diesem Browser-Fenster.</p>
         <div class="mb-3">
+          <label for="login-email" class="visually-hidden">E-Mail-Adresse</label>
           <input type="email" class="form-control" id="login-email"
-                 placeholder="deine@kanzlei.de" autocomplete="email">
+                 placeholder="ihre@kanzlei.de" autocomplete="email">
         </div>
         <button class="btn btn-primary w-100"
                 onclick="loginMitEmail(document.getElementById('login-email').value)">
@@ -701,11 +703,11 @@
 </div>
 
 <!-- Upgrade-Modal -->
-<div class="modal fade" id="upgradeModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header border-0 pb-0">
-        <h5 class="modal-title fw-bold">Pro-Funktion</h5>
+        <h5 class="modal-title fw-bold" id="upgradeModalLabel">Pro-Funktion</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body text-center py-4">

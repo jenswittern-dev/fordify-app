@@ -1734,7 +1734,8 @@ body {
   cursor: pointer; display: flex; align-items: center; justify-content: center;
   padding: 0; line-height: 1;
 }
-.nav-avatar:hover, .nav-avatar:focus { background: rgba(255,255,255,0.35); outline: none; }
+.nav-avatar:hover, .nav-avatar:focus { background: rgba(255,255,255,0.35); }
+.nav-avatar:focus-visible { outline: 2px solid rgba(255,255,255,0.8); outline-offset: 2px; }
 .nav-avatar::after { display: none; }
 
 .nav-account-dropdown { min-width: 220px; padding: 0.25rem 0; }
