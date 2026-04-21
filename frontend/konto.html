@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mein Konto | fordify</title>
+  <meta name="theme-color" content="#1e3a8a">
+  <link rel="icon" type="image/svg+xml" href="img/logo.svg">
+  <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/rechner.css">
+</head>
+<body>
+
+<!-- Navbar (identisch mit Unterseiten) -->
+<nav class="navbar navbar-expand-md navbar-dark" style="background:#1e3a8a;">
+  <div class="container-fluid px-3">
+    <a class="navbar-brand" href="/" title="fordify – Startseite">ford<span class="logo-ify">ify</span></a>
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navbar-menu-konto"
+            aria-controls="navbar-menu-konto" aria-expanded="false" aria-label="Navigation öffnen">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbar-menu-konto">
+      <ul class="navbar-nav mx-auto gap-1">
+        <li class="nav-item"><a class="nav-link" href="/">Startseite</a></li>
+        <li class="nav-item"><a class="nav-link" href="/forderungsaufstellung">Forderungsaufstellung</a></li>
+        <li class="nav-item"><a class="nav-link" href="/zinsrechner">Zinsrechner</a></li>
+        <li class="nav-item"><a class="nav-link" href="/rvg-rechner">RVG-Rechner</a></li>
+        <li class="nav-item"><a class="nav-link" href="/gerichtskostenrechner">GKG-Rechner</a></li>
+        <li class="nav-item"><a class="nav-link" href="/preise">Preise</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-2">
+        <div class="dropdown d-none" data-auth-show="user">
+          <button class="nav-avatar dropdown-toggle" data-bs-toggle="dropdown"
+                  aria-expanded="false" title="Mein Konto" aria-label="Konto-Menü">
+            <span class="nav-avatar-initials">?</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end nav-account-dropdown">
+            <li><div class="dropdown-header-info">
+              <div class="nav-user-email-display dropdown-email"></div>
+              <div class="nav-plan-badge"></div>
+            </div></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item fw-semibold" href="/konto">Mein Konto →</a></li>
+            <li><a class="dropdown-item" href="/preise">Pläne &amp; Preise</a></li>
+            <li><a class="dropdown-item" href="#"
+                   onclick="openCustomerPortal(); return false;">Abo verwalten ↗</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#"
+                   onclick="logout(); return false;">Abmelden</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main id="main-content">
+
+  <!-- Lade-Overlay (sichtbar bis Auth-Check abgeschlossen) -->
+  <div id="konto-loading" style="min-height:60vh;display:flex;align-items:center;justify-content:center;">
+    <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Lädt…</span></div>
+  </div>
+
+  <!-- Seiteninhalt (initial versteckt) -->
+  <div id="konto-content" class="d-none">
+
+    <!-- Hero Band -->
+    <div class="rechner-hero-band" style="padding:1.25rem 0 1.5rem;">
+      <div class="container">
+        <nav aria-label="Breadcrumb" class="fordify-breadcrumb" style="margin-bottom:0.5rem;">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/" style="color:rgba(255,255,255,.6);">fordify</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Mein Konto</li>
+          </ol>
+        </nav>
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <div id="konto-hero-avatar"
+               style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);
+                      border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;
+                      justify-content:center;font-size:1rem;font-weight:700;color:white;flex-shrink:0;">?</div>
+          <div>
+            <h1 style="font-size:1.2rem;font-weight:800;margin:0 0 0.2rem;color:white;">Mein Konto</h1>
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+              <span id="konto-hero-email" style="font-size:0.82rem;color:rgba(255,255,255,.7);"></span>
+              <span id="konto-hero-badge" class="plan-badge"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab-Leiste (volle Breite) -->
+    <div style="background:white;border-bottom:1px solid #e2e8f0;">
+      <div class="container">
+        <div class="d-flex gap-0" id="konto-tabs" role="tablist">
+          <button class="konto-tab active" data-tab="faelle" role="tab" aria-selected="true">Fälle</button>
+          <button class="konto-tab" data-tab="firmendaten" role="tab" aria-selected="false">Firmendaten</button>
+          <button class="konto-tab" data-tab="abo" role="tab" aria-selected="false">Abo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab-Inhalt -->
+    <div class="container py-4">
+
+      <!-- Tab: Fälle -->
+      <div id="tab-faelle" class="konto-tab-panel">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span id="faelle-anzahl" class="text-muted small"></span>
+          <div class="d-flex gap-2">
+            <label class="btn btn-sm btn-outline-primary mb-0" role="button" tabindex="0"
+                   onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+              Import JSON
+              <input type="file" accept=".json" id="faelle-import-input" style="display:none"
+                     onchange="kontoFallImportieren(this)">
+            </label>
+            <button class="btn btn-sm btn-outline-primary" onclick="kontoFaelleExportierenAlle()">Export alle</button>
+            <button class="btn btn-sm btn-primary" onclick="kontoNeuenFallAnlegen()">+ Neuer Fall</button>
+          </div>
+        </div>
+        <div id="faelle-liste"></div>
+      </div>
+
+      <!-- Tab: Firmendaten -->
+      <div id="tab-firmendaten" class="konto-tab-panel d-none">
+        <div class="row">
+          <div class="col-lg-8">
+
+            <!-- Logo -->
+            <div class="content-card mb-3">
+              <h6 class="fw-semibold mb-3">Kanzleilogo</h6>
+              <div class="d-flex align-items-start gap-3 mb-2">
+                <img id="konto-logo-vorschau" src="" alt="Logo-Vorschau"
+                     style="max-height:60px;max-width:180px;object-fit:contain;display:none;border:1px solid #e2e8f0;border-radius:4px;padding:4px;">
+                <div>
+                  <label class="btn btn-sm btn-outline-primary mb-1" role="button">
+                    Logo hochladen
+                    <input type="file" accept="image/*" id="konto-logo-input" style="display:none"
+                           onchange="kontoLogoBildLaden(this)">
+                  </label>
+                  <button class="btn btn-sm btn-outline-danger ms-1" onclick="kontoLogoEntfernen()">Entfernen</button>
+                  <div class="text-muted" style="font-size:var(--text-xs);">PNG, JPG, SVG · empfohlen max. 400×100 px</div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <label class="form-label small fw-semibold">Position im PDF</label>
+                <select id="konto-logo-position" class="form-select form-select-sm" style="max-width:200px;">
+                  <option value="links">Links</option>
+                  <option value="mitte">Mitte</option>
+                  <option value="rechts">Rechts</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Kanzleidaten -->
+            <div class="content-card mb-3">
+              <h6 class="fw-semibold mb-3">Kanzleidaten &amp; Impressum</h6>
+              <div class="row g-2">
+                <div class="col-12"><label class="form-label small">Kanzleiname / Rechtsanwalt</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-name" placeholder="Kanzlei Mustermann"></div>
+                <div class="col-12"><label class="form-label small">Straße &amp; Hausnummer</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-strasse" placeholder="Musterstraße 1"></div>
+                <div class="col-3"><label class="form-label small">PLZ</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-plz" placeholder="12345"></div>
+                <div class="col-9"><label class="form-label small">Ort</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-ort" placeholder="Musterstadt"></div>
+                <div class="col-6"><label class="form-label small">Telefon</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-tel" placeholder="+49 30 123456"></div>
+                <div class="col-6"><label class="form-label small">Fax</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-fax"></div>
+                <div class="col-6"><label class="form-label small">E-Mail</label><input type="email" class="form-control form-control-sm" id="konto-einst-imp-email"></div>
+                <div class="col-6"><label class="form-label small">Website</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-website"></div>
+                <div class="col-6"><label class="form-label small">Rechtsanwaltskammer</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-kammer"></div>
+                <div class="col-6"><label class="form-label small">Handels-/Vereinsregister</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-register"></div>
+                <div class="col-12"><label class="form-label small">Vertreten durch</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-vertreten"></div>
+                <div class="col-6"><label class="form-label small">USt-IdNr.</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-ustid"></div>
+                <div class="col-6"><label class="form-label small">Berufshaftpflichtversicherung</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-bhv"></div>
+                <div class="col-6"><label class="form-label small">IBAN</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-iban"></div>
+                <div class="col-3"><label class="form-label small">BIC</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-bic"></div>
+                <div class="col-3"><label class="form-label small">Bank</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-bank"></div>
+                <div class="col-6"><label class="form-label small">Impressum-URL</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-impressum-url"></div>
+                <div class="col-6"><label class="form-label small">Datenschutz-URL</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-datenschutz-url"></div>
+              </div>
+
+              <!-- Vorschau -->
+              <div class="mt-3 p-2 rounded" style="background:var(--color-surface);border:1px solid var(--color-border)">
+                <p class="mb-1" style="font-size:var(--text-xs);color:var(--color-text-muted);font-weight:600;">Vorschau PDF-Footer</p>
+                <div id="konto-imp-vorschau" style="font-size:var(--text-xs);color:var(--color-text-muted);">
+                  <em>Vorschau erscheint hier…</em>
+                </div>
+              </div>
+            </div>
+
+            <!-- Theme -->
+            <div class="content-card mb-3">
+              <h6 class="fw-semibold mb-2">Design-Theme</h6>
+              <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-sm btn-outline-secondary" onclick="kontoThemeWechseln('brand')">Brand (Standard)</button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="kontoThemeWechseln('dark')">Dark</button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="kontoThemeWechseln('clean')">Clean</button>
+              </div>
+              <p class="text-muted mt-2 mb-0" style="font-size:var(--text-xs);">Das Theme wird sofort auf der Forderungsaufstellungs-Seite aktiv.</p>
+            </div>
+
+            <!-- Export/Import -->
+            <div class="content-card mb-3">
+              <h6 class="fw-semibold mb-2">Einstellungen sichern / übertragen</h6>
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onclick="kontoEinstellungenExportieren()">Einstellungen exportieren</button>
+                <label class="btn btn-sm btn-outline-secondary mb-0" role="button" tabindex="0"
+                       onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+                  Einstellungen importieren
+                  <input type="file" accept=".json" id="konto-einst-import-input" style="display:none"
+                         onchange="kontoEinstellungenImportieren(this)">
+                </label>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="kontoEinstellungenSpeichern()">Firmendaten speichern</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Abo -->
+      <div id="tab-abo" class="konto-tab-panel d-none">
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="content-card">
+              <h6 class="fw-semibold mb-3">Mein Abonnement</h6>
+              <div class="mb-3">
+                <div class="text-muted small mb-1">Aktueller Plan</div>
+                <div id="konto-abo-plan-badge"></div>
+              </div>
+              <div class="mb-3" id="konto-abo-laufzeit-block">
+                <div class="text-muted small mb-1">Aktiv bis</div>
+                <div id="konto-abo-laufzeit" class="fw-semibold"></div>
+              </div>
+              <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-primary" onclick="openCustomerPortal()">Abo verwalten ↗</button>
+                <a href="/preise" class="btn btn-outline-secondary">Pläne &amp; Preise ansehen</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /container -->
+  </div><!-- /konto-content -->
+
+</main>
+
+<style>
+.konto-tab {
+  padding: 0.7rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.konto-tab:hover { color: #1e3a8a; }
+.konto-tab.active { color: #1e3a8a; font-weight: 600; border-bottom-color: #1e3a8a; }
+</style>
+
+<script src="js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/auth-ui.js"></script>
+<script src="js/konto.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
