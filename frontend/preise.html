@@ -21,82 +21,29 @@
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/app.css">
-  <link rel="stylesheet" href="css/rechner.css">
-  <style>
-    .preise-hero { background: var(--color-primary-light); border-bottom: 1px solid #bfdbfe; padding: 3rem 0 2.5rem; text-align: center; }
-    .preise-hero h1 { font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 800; color: var(--color-primary); margin-bottom: 0.75rem; }
-    .preise-hero p { color: var(--color-text-muted); font-size: 1.0625rem; max-width: 540px; margin: 0 auto 1.5rem; }
-
-    .billing-toggle-wrap { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-bottom: 2.5rem; font-size: 0.9375rem; }
-    .billing-toggle-wrap .save-badge { background: #dcfce7; color: #166534; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px; }
-    .form-check-input:checked { background-color: var(--color-primary); border-color: var(--color-primary); }
-
-    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; max-width: 900px; margin: 0 auto; padding: 2.5rem 1rem 3rem; }
-
-    .pricing-card { background: var(--color-surface); border: 1.5px solid var(--color-border); border-radius: 14px; padding: 2rem 1.75rem; position: relative; transition: box-shadow 0.2s; display: flex; flex-direction: column; }
-    .pricing-card:hover { box-shadow: 0 4px 24px rgba(30,58,138,0.1); }
-    .pricing-card.featured { border-color: var(--color-primary); border-width: 2px; }
-    .pricing-card.featured::before { content: "Beliebteste Wahl"; position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--color-primary); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.85rem; border-radius: 999px; white-space: nowrap; letter-spacing: .04em; }
-
-    .plan-name { font-size: 0.8125rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--color-text-muted); margin-bottom: 0.5rem; }
-    .plan-price { font-size: 2.25rem; font-weight: 800; color: var(--color-primary); line-height: 1; margin-bottom: 0.25rem; }
-    .plan-price span { font-size: 1rem; font-weight: 400; color: var(--color-text-muted); }
-    .plan-price-alt { font-size: 0.8125rem; color: var(--color-text-muted); margin-bottom: 1.25rem; min-height: 1.2rem; }
-    .plan-desc { font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1.5rem; line-height: 1.5; min-height: 4.5rem; }
-
-    .feature-list { list-style: none; padding: 0; margin: 0 0 1.75rem; flex: 1; }
-    .feature-list li { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.9rem; color: var(--color-text); margin-bottom: 0.6rem; line-height: 1.4; }
-    .feature-list li .icon-check { color: #16a34a; flex-shrink: 0; margin-top: 1px; }
-    .feature-list li .icon-lock { color: var(--color-text-muted); flex-shrink: 0; margin-top: 1px; }
-    .feature-list li.muted { color: var(--color-text-muted); }
-
-    .comparison-section { max-width: 800px; margin: 0 auto; padding: 0 1rem 3rem; }
-    .comparison-section h2 { font-size: 1.375rem; font-weight: 700; color: var(--color-primary); margin-bottom: 1.5rem; text-align: center; }
-    .comparison-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    .comparison-table th { background: var(--color-primary-light); padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); }
-    .comparison-table th:not(:first-child) { text-align: center; }
-    .comparison-table td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--color-border); color: var(--color-text); }
-    .comparison-table td:not(:first-child) { text-align: center; }
-    .comparison-table tr:last-child td { border-bottom: none; }
-    .check { color: #16a34a; font-weight: 700; }
-    .cross { color: var(--color-text-muted); }
-
-    .trust-section { background: var(--color-primary-light); padding: 2.5rem 1rem; text-align: center; }
-    .trust-section p { max-width: 540px; margin: 0 auto; color: var(--color-text-muted); font-size: 0.9375rem; }
-
-    .faq-preise { max-width: 700px; margin: 0 auto; padding: 2.5rem 1rem 3rem; }
-    .faq-preise h2 { font-size: 1.375rem; font-weight: 700; color: var(--color-primary); margin-bottom: 1.5rem; text-align: center; }
-    .faq-preise details { border-bottom: 1px solid var(--color-border); }
-    .faq-preise summary { padding: 1rem 0; font-weight: 600; cursor: pointer; font-size: 0.9375rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
-    .faq-preise summary::after { content: "+"; font-size: 1.25rem; color: var(--color-text-muted); }
-    .faq-preise details[open] summary::after { content: "−"; }
-    .faq-preise details p { padding: 0 0 1rem; color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.7; margin: 0; }
-  </style>
 </head>
 <body>
 <a href="#main-content" class="skip-nav">Zum Hauptinhalt springen</a>
 
 <nav class="navbar navbar-expand-md navbar-fa">
   <div class="container">
-    <a class="navbar-brand" href="/">
-      <img src="img/logo.svg" height="30" alt="fordify Logo">
-      <span>fordify</span>
-    </a>
+    <a class="navbar-brand" href="/" title="fordify – Startseite">ford<span class="logo-ify">ify</span></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Navigation öffnen">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navMenu">
-      <ul class="navbar-nav me-auto gap-1">
+      <ul class="navbar-nav mx-auto gap-1">
         <li class="nav-item"><a class="nav-link" href="/">Startseite</a></li>
-        <li class="nav-item"><a class="nav-link fw-semibold" href="/forderungsaufstellung">Forderungsaufstellung</a></li>
+        <li class="nav-item"><a class="nav-link" href="/forderungsaufstellung">Forderungsaufstellung</a></li>
         <li class="nav-item"><a class="nav-link" href="/zinsrechner">Zinsrechner</a></li>
         <li class="nav-item"><a class="nav-link" href="/rvg-rechner">RVG-Rechner</a></li>
         <li class="nav-item"><a class="nav-link" href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
         <li class="nav-item"><a class="nav-link fw-semibold" href="/preise" aria-current="page">Preise</a></li>
       </ul>
       <div class="d-flex align-items-center gap-2">
-        <button class="btn btn-sm btn-outline-light" data-auth-show="guest"
+        <button class="btn btn-sm btn-nav-ghost" data-auth-show="guest"
                 data-bs-toggle="modal" data-bs-target="#loginModal">Anmelden</button>
+        <a href="/forderungsaufstellung" class="btn btn-sm btn-nav-solid" data-auth-show="guest">Kostenlos starten →</a>
         <div class="dropdown d-none" data-auth-show="user">
           <button class="nav-avatar dropdown-toggle" data-bs-toggle="dropdown"
                   aria-expanded="false" title="Mein Konto" aria-label="Konto-Menü">
@@ -126,7 +73,6 @@
   <div class="container">
     <h1>Einfache, transparente Preise</h1>
     <p>Alle Werkzeuge kostenlos nutzen. Pro schaltet Cloud-Speicherung, Excel-Export und dauerhaftes Kanzlei-Profil frei.</p>
-
     <div class="billing-toggle-wrap">
       <span>Monatlich</span>
       <div class="form-check form-switch mb-0">
@@ -212,26 +158,26 @@
         <tr>
           <th scope="col">Funktion</th>
           <th scope="col">Free</th>
-          <th scope="col">Pro</th>
+          <th scope="col" class="col-pro">Pro</th>
           <th scope="col">Business</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>Zinsrechner (§ 288 BGB)</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-        <tr><td>RVG-Rechner (2025)</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-        <tr><td>Gerichtskostenrechner (GKG)</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-        <tr><td>Forderungsaufstellung erstellen</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-        <tr><td>PDF-Export (inkl. Logo)</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-        <tr><td>fordify-Hinweis im PDF</td><td style="color:#64748b;font-size:0.85rem;">Prominent</td><td style="color:#64748b;font-size:0.85rem;">Dezent</td><td style="color:#64748b;font-size:0.85rem;">Keiner</td></tr>
-        <tr><td>Cloud-Speicherung</td><td class="cross">–</td><td class="check">✓</td><td class="check">✓</td></tr>
-        <tr><td>Excel / CSV-Export</td><td class="cross">–</td><td class="check">✓</td><td class="check">✓</td></tr>
-        <tr><td>Kanzlei-Profil dauerhaft speichern</td><td class="cross">–</td><td class="check">✓</td><td class="check">✓</td></tr>
-        <tr><td>Schuldner-Adressbuch</td><td class="cross">–</td><td class="check">✓</td><td class="check">✓</td></tr>
-        <tr><td>Mehrere Nutzer</td><td class="cross">–</td><td class="cross">–</td><td class="check">✓</td></tr>
-        <tr><td>Gemeinsame Fallverwaltung</td><td class="cross">–</td><td class="cross">–</td><td class="check">✓</td></tr>
-        <tr><td>Eigenes Branding im PDF</td><td class="cross">–</td><td class="cross">–</td><td class="check">✓</td></tr>
-        <tr><td>Prioritäts-Support</td><td class="cross">–</td><td class="cross">–</td><td class="check">✓</td></tr>
-        <tr><td>Jährliche Abrechnung (2 Monate gratis)</td><td class="cross">–</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Zinsrechner (§ 288 BGB)</td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>RVG-Rechner (2025)</td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>Gerichtskostenrechner (GKG)</td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>Forderungsaufstellung erstellen</td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>PDF-Export (inkl. Logo)</td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>fordify-Hinweis im PDF</td><td style="color:#64748b;font-size:0.85rem;">Prominent</td><td class="col-pro" style="color:#64748b;font-size:0.85rem;">Dezent</td><td style="color:#64748b;font-size:0.85rem;">Keiner</td></tr>
+        <tr><td>Cloud-Speicherung</td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>Excel / CSV-Export</td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>Kanzlei-Profil dauerhaft speichern</td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>Schuldner-Adressbuch</td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>Mehrere Nutzer</td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
+        <tr><td>Gemeinsame Fallverwaltung</td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
+        <tr><td>Eigenes Branding im PDF</td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
+        <tr><td>Prioritäts-Support</td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
+        <tr><td>Jährliche Abrechnung (2 Monate gratis)</td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
       </tbody>
     </table>
   </div>
@@ -240,9 +186,7 @@
 <!-- Trust -->
 <div class="trust-section">
   <div class="container">
-    <p>
-      Monatlich kündbar. Daten sicher in der EU (Frankfurt). DSGVO-konform. Kein Cookie-Banner.
-    </p>
+    <p>Monatlich kündbar. Daten sicher in der EU (Frankfurt). DSGVO-konform. Kein Cookie-Banner.</p>
   </div>
 </div>
 
@@ -352,14 +296,12 @@
 <script src="js/auth-ui.js"></script>
 <script src="js/auth.js"></script>
 <script>
-  // Toggle – unabhängig von Paddle/Auth
   const toggle = document.getElementById('billing-toggle');
   toggle.addEventListener('change', () => {
     document.querySelectorAll('.price-monthly').forEach(el => el.classList.toggle('d-none', toggle.checked));
     document.querySelectorAll('.price-yearly').forEach(el => el.classList.toggle('d-none', !toggle.checked));
   });
 
-  // Paddle initialisieren
   let paddleReady = false;
   try {
     if (CONFIG.paddle.token) {
