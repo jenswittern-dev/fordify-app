@@ -464,6 +464,7 @@ function kontoEinstellungenImportieren(input) {
 function kontoThemeWechseln(name) {
   const valid = ['brand', 'dark', 'clean'];
   if (!valid.includes(name)) name = 'brand';
+  // Theme is always local-only (not Supabase-synced) — direct localStorage is intentional
   localStorage.setItem(KONTO_STORAGE_KEY_THEME, name);
   alert('Theme "' + name + '" gespeichert. Es wird aktiv, sobald Sie die Forderungsaufstellungs-Seite öffnen.');
 }
@@ -479,8 +480,12 @@ function kontoRendereAboTab() {
   const c = configs[plan];
 
   const badgeEl = document.getElementById('konto-abo-plan-badge');
-  if (badgeEl && c) {
-    badgeEl.innerHTML = `<span class="plan-badge" style="background:${c.bg};color:${c.color};font-size:1rem;padding:4px 14px;">${c.label}</span>`;
+  if (badgeEl) {
+    if (c) {
+      badgeEl.innerHTML = `<span class="plan-badge" style="background:${c.bg};color:${c.color};font-size:1rem;padding:4px 14px;">${c.label}</span>`;
+    } else {
+      badgeEl.textContent = 'Kein aktives Abo';
+    }
   }
 
   // Laufzeit aus Supabase laden
