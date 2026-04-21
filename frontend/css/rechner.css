@@ -26,24 +26,34 @@
   margin-right: auto;
 }
 
-/* Hero – zentriert mit Visual darunter */
+/* Hero – Text links, Mockup rechts */
 .hero-inner {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 2.5rem;
+  gap: 3.5rem;
 }
-.hero-text {
-  width: 100%;
-  max-width: 700px;
+@media (max-width: 767px) {
+  .hero-inner { flex-direction: column; gap: 2rem; }
 }
+.hero-text { flex: 1; text-align: left; }
+.hero-text .lead { margin-left: 0; margin-right: 0; }
+.hero-text .btn { align-self: flex-start; }
 .hero-visual {
-  width: 100%;
+  flex: 0 0 300px;
   display: flex;
   justify-content: center;
 }
 @media (max-width: 767px) {
   .hero-visual { display: none; }
+}
+
+/* Gradient-Text in Hero-Headline */
+.hero-gradient-text {
+  background: linear-gradient(90deg, #60a5fa 0%, #34d399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Hero Mockup Card */

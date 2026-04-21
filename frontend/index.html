@@ -58,25 +58,23 @@
 
 <nav class="navbar navbar-expand-md navbar-fa">
   <div class="container">
-    <a class="navbar-brand" href="/">
-      <img src="img/logo.svg" height="30" alt="fordify Logo">
-      <span>fordify</span>
-    </a>
+    <a class="navbar-brand" href="/">ford<span class="logo-ify">ify</span></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Navigation öffnen">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navMenu">
-      <ul class="navbar-nav me-auto gap-1">
-        <li class="nav-item"><a class="nav-link fw-semibold" href="/" aria-current="page">Startseite</a></li>
-        <li class="nav-item"><a class="nav-link fw-semibold" href="/forderungsaufstellung">Forderungsaufstellung</a></li>
+      <ul class="navbar-nav mx-auto gap-1">
+        <li class="nav-item"><a class="nav-link" href="/" aria-current="page">Startseite</a></li>
+        <li class="nav-item"><a class="nav-link" href="/forderungsaufstellung">Forderungsaufstellung</a></li>
         <li class="nav-item"><a class="nav-link" href="/zinsrechner">Zinsrechner</a></li>
         <li class="nav-item"><a class="nav-link" href="/rvg-rechner">RVG-Rechner</a></li>
         <li class="nav-item"><a class="nav-link" href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
         <li class="nav-item"><a class="nav-link" href="/preise">Preise</a></li>
       </ul>
       <div class="d-flex align-items-center gap-2">
-        <button class="btn btn-sm btn-outline-light" data-auth-show="guest"
+        <button class="btn btn-sm btn-nav-ghost" data-auth-show="guest"
                 data-bs-toggle="modal" data-bs-target="#loginModal">Anmelden</button>
+        <a href="/forderungsaufstellung" class="btn btn-sm btn-nav-solid" data-auth-show="guest">Kostenlos starten →</a>
         <div class="dropdown d-none" data-auth-show="user">
           <button class="nav-avatar dropdown-toggle" data-bs-toggle="dropdown"
                   aria-expanded="false" title="Mein Konto" aria-label="Konto-Menü">
@@ -101,11 +99,22 @@
   </div>
 </nav>
 
+<div class="trust-bar">
+  <div class="container">
+    <ul class="trust-bar__list">
+      <li class="trust-bar__item"><span class="trust-bar__dot" aria-hidden="true"></span> RVG 2025 (BGBl. I Nr. 109)</li>
+      <li class="trust-bar__item"><span class="trust-bar__dot" aria-hidden="true"></span> Basiszinssatz aktuell bis 07/2026</li>
+      <li class="trust-bar__item"><span class="trust-bar__dot" aria-hidden="true"></span> Von Anwälten entwickelt</li>
+      <li class="trust-bar__item"><span class="trust-bar__dot" aria-hidden="true"></span> Kein Login · 100 % kostenlos</li>
+    </ul>
+  </div>
+</div>
+
 <section class="fordify-hero">
   <div class="container">
     <div class="hero-inner">
       <div class="hero-text">
-        <h1>In Minuten zur rechtssicheren<br>Forderungsaufstellung nach § 367 BGB</h1>
+        <h1>In Minuten zur rechtssicheren Forderungsaufstellung <span class="hero-gradient-text">nach § 367 BGB</span></h1>
         <p class="lead mb-4">Verzugszinsen, RVG-Gebühren und § 367-Verrechnung automatisch berechnen – für Kanzleien, Inkassobüros und Unternehmen. Kostenlos, ohne Registrierung, DSGVO-konform.</p>
         <a href="/forderungsaufstellung" class="btn btn-light btn-lg fw-semibold">
           Jetzt kostenlos starten
@@ -147,17 +156,6 @@
     </div>
   </div>
 </section>
-
-<div class="trust-bar">
-  <div class="container">
-    <ul class="trust-bar__list">
-      <li class="trust-bar__item"><span class="trust-bar__dot" aria-hidden="true"></span> RVG 2025 (BGBl. I Nr. 109)</li>
-      <li class="trust-bar__item"><span class="trust-bar__dot" aria-hidden="true"></span> Basiszinssatz aktuell bis 07/2026</li>
-      <li class="trust-bar__item"><span class="trust-bar__dot" aria-hidden="true"></span> Von Anwälten entwickelt</li>
-      <li class="trust-bar__item"><span class="trust-bar__dot" aria-hidden="true"></span> Kein Login · 100 % kostenlos</li>
-    </ul>
-  </div>
-</div>
 
 <main id="main-content">
   <div class="container">
