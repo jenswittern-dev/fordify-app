@@ -29,7 +29,9 @@ function kontoLadeEinstellungen() {
 }
 
 function kontoSpeichereEinstellungen(einst) {
-  StorageBackend.setItem(KONTO_STORAGE_KEY_SETTINGS, JSON.stringify(einst));
+  try {
+    StorageBackend.setItem(KONTO_STORAGE_KEY_SETTINGS, JSON.stringify(einst));
+  } catch (e) { console.warn('Einstellungen speichern fehlgeschlagen:', e); }
 }
 
 // ---- Auth-Guard und Init ----
@@ -40,24 +42,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  if (!session) {
-    window.location.href = '/forderungsaufstellung';
-    return;
+  try {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) {
+      window.location.href = '/forderungsaufstellung';
+      return;
+    }
+
+    fordifyAuth.isAuthenticated = true;
+    fordifyAuth.user = session.user;
+    await ladeSubscriptionStatus();
+    StorageBackend.init(fordifyAuth);
+    aktualisiereUIFuerAuth();
+
+    _kontoUpdateHero();
+    _kontoInitTabs();
+    _kontoActivateTabFromUrl();
+
+    document.getElementById('konto-loading').style.display = 'none';
+    document.getElementById('konto-content').classList.remove('d-none');
+  } catch (e) {
+    console.error('Konto-Init fehlgeschlagen:', e);
+    const loadingEl = document.getElementById('konto-loading');
+    if (loadingEl) loadingEl.innerHTML = '<p class="text-danger">Fehler beim Laden. Bitte Seite neu laden.</p>';
   }
-
-  fordifyAuth.isAuthenticated = true;
-  fordifyAuth.user = session.user;
-  await ladeSubscriptionStatus();
-  StorageBackend.init(fordifyAuth);
-  aktualisiereUIFuerAuth();
-
-  _kontoUpdateHero();
-  _kontoInitTabs();
-  _kontoActivateTabFromUrl();
-
-  document.getElementById('konto-loading').style.display = 'none';
-  document.getElementById('konto-content').classList.remove('d-none');
 });
 
 // ---- Hero aktualisieren ----
@@ -263,6 +271,10 @@ function kontoFallImportieren(input) {
     } catch (e) {
       alert('Import fehlgeschlagen: ' + e.message);
     }
+    input.value = '';
+  };
+  reader.onerror = () => {
+    alert('Datei konnte nicht gelesen werden.');
     input.value = '';
   };
   reader.readAsText(file);
