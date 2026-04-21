@@ -36,14 +36,14 @@
 | UI | Bootstrap 5.3.3 |
 | Arithmetik | decimal.js (exakte Dezimalrechnung) |
 | Schriften | Inter (UI), JetBrains Mono (Beträge) – selbst gehostet |
-| Datenpersistenz | `localStorage` (Free/Gast) + Supabase (Pro/Business, geplant) |
+| Datenpersistenz | `sessionStorage` (Free/Gast) + `localStorage` + Supabase Cloud-Sync (Pro/Business) |
 | Auth | Supabase Magic Link (`frontend/js/auth.js`, `auth-ui.js`) |
 | Zahlungen | Paddle (Merchant of Record, `frontend/js/config.js` → `PRICE_MAP`) |
-| E-Mail | Resend (Transaktionale E-Mails via Supabase SMTP) |
+| E-Mail | Resend (via Supabase SMTP / N8N) |
 | Analytics | GoatCounter (self-hosted, cookielos, DSGVO-konform) |
 | PWA | Service Worker (`frontend/sw.js`) + Manifest (`frontend/manifest.json`) |
-| Hosting | All-Inkl (main: fordify.de, staging: fordify.de/staging) |
-| Deployment | Push auf `main` → GitHub Actions → live; `staging` → staging-Branch |
+| Hosting | All-Inkl (fordify.de); Staging: staging.fordify.de |
+| Deployment | Push auf `main` → GitHub Actions → fordify.de; `staging`-Branch → staging.fordify.de |
 
 ---
 
@@ -51,58 +51,85 @@
 
 ```
 fordify-app/
-├── CLAUDE.md               ← diese Datei
-├── LIESMICH.txt            ← Nutzerdoku (offline)
-├── docs/
-│   ├── ROADMAP.md          ← Feature-Roadmap mit Status + Datum
-│   ├── SYSTEM.md           ← Technisches Whitepaper
-│   ├── konkurrenzanalyse.md
-│   ├── webapp-transformation.md
-│   ├── feedback/           ← abgearbeitetes Nutzerfeedback (Runde 1)
-│   └── feedback-2/         ← abgearbeitetes Nutzerfeedback (Runde 2)
+├── CLAUDE.md                   ← diese Datei
+├── LIESMICH.txt                ← Nutzerdoku (offline)
+├── .github/workflows/
+│   ├── deploy.yml              ← main → fordify.de
+│   └── deploy-staging.yml      ← staging → staging.fordify.de
 ├── frontend/
-│   ├── index.html          ← einzige HTML-Seite (SPA)
-│   ├── impressum.html      ← statische Impressumsseite
-│   ├── datenschutz.html    ← statische Datenschutzerklärung
-│   ├── sw.js               ← Service Worker (aktuell fordify-v86 / staging-v40)
-│   ├── manifest.json       ← PWA-Manifest
-│   ├── css/app.css         ← gesamtes Styling inkl. Print-CSS + Preisseite
-│   ├── css/rechner.css     ← Rechner-Unterseiten + Footer + Prefooter
-│   ├── css/themes.css      ← Theme-Overrides (brand/dark/clean via [data-theme])
+│   ├── index.html              ← Landing Page / Homepage
+│   ├── forderungsaufstellung.html ← Haupt-App (SPA)
+│   ├── preise.html             ← Pricing-Seite (Paddle-Checkout)
+│   ├── zinsrechner.html        ← SEO-Unterseite
+│   ├── rvg-rechner.html        ← SEO-Unterseite
+│   ├── gerichtskostenrechner.html ← SEO-Unterseite
+│   ├── impressum.html
+│   ├── datenschutz.html
+│   ├── agb.html
+│   ├── sw.js                   ← Service Worker (aktuell fordify-v90 / staging-v44)
+│   ├── manifest.json           ← PWA-Manifest
+│   ├── css/
+│   │   ├── app.css             ← Styling, Print-CSS, Preisseite, Feature-Gates
+│   │   ├── rechner.css         ← Rechner-Seiten, Footer, Prefooter
+│   │   └── themes.css          ← Theme-Overrides (brand/dark/clean via [data-theme])
 │   ├── js/
-│   │   ├── app.js          ← Haupt-App (~2100 Zeilen)
-│   │   ├── config.js       ← Supabase-URL/Key, Paddle-Token, PRICE_MAP, Feature-Flags
-│   │   ├── auth.js         ← Supabase Auth (Magic Link, Session, logout)
-│   │   ├── auth-ui.js      ← Auth-UI-Steuerung (data-auth-show, Avatar, Plan-Badge)
-│   │   ├── gates.js        ← Feature-Gates (requiresPaid, Upgrade-Modal)
-│   │   ├── storage.js      ← Storage-Abstraktion (localStorage ↔ Supabase)
-│   │   ├── data.js         ← Datentabellen (BASISZINSSAETZE, RVG_TABELLE, GKG_TABELLE)
-│   │   ├── zinsen.js       ← Verzugszinsberechnung
-│   │   ├── rvg.js          ← RVG-Berechnung
-│   │   ├── verrechnung.js  ← § 367 BGB Verrechnungslogik
-│   │   ├── rechner-zins.js ← Zinsrechner-Logik (zinsrechner.html)
-│   │   ├── rechner-rvg.js  ← RVG-Rechner-Logik (rvg-rechner.html)
-│   │   ├── rechner-gkg.js  ← GKG-Rechner-Logik (gerichtskostenrechner.html)
-│   │   └── zusammenfassung.js ← (deprecated, nicht mehr direkt genutzt)
+│   │   ├── app.js              ← Haupt-App (~2100 Zeilen)
+│   │   ├── config.js           ← Supabase-URL/Key, Paddle-Token, PRICE_MAP, trackEvent()
+│   │   ├── auth.js             ← Supabase Auth (Magic Link, Session, Cloud-Laden)
+│   │   ├── auth-ui.js          ← Auth-UI-Steuerung (data-auth-show, Avatar, Plan-Badge)
+│   │   ├── gates.js            ← Feature-Gates (requiresPaid, Upgrade-Modal)
+│   │   ├── storage.js          ← Storage-Abstraktion (sessionStorage ↔ localStorage ↔ Supabase)
+│   │   ├── data.js             ← Datentabellen (BASISZINSSAETZE, RVG_TABELLE, GKG_TABELLE)
+│   │   ├── zinsen.js           ← Verzugszinsberechnung
+│   │   ├── rvg.js              ← RVG-Berechnung
+│   │   ├── verrechnung.js      ← § 367 BGB Verrechnungslogik
+│   │   ├── rechner-zins.js     ← Zinsrechner-Logik (zinsrechner.html)
+│   │   ├── rechner-rvg.js      ← RVG-Rechner-Logik (rvg-rechner.html)
+│   │   ├── rechner-gkg.js      ← GKG-Rechner-Logik (gerichtskostenrechner.html)
+│   │   └── zusammenfassung.js  ← (deprecated, nicht mehr direkt genutzt)
 │   ├── data/
-│   │   ├── basiszinssaetze.json ← aktualisierbar (bis 01.07.2026)
-│   │   └── rvg_tabelle.json     ← BGBl. 2025 I Nr. 109
-│   └── fonts/              ← selbst gehostete Schriftarten
-├── docs/
-│   ├── ROADMAP.md          ← Feature-Roadmap (Phase 0–6) mit Status + Datum
-│   ├── SYSTEM.md           ← Technisches Whitepaper
-│   ├── freemium-launch-organisationsplan.md ← Manuelle Schritte für Jens (Accounts, Rechtliches)
-│   ├── machbarkeitsstudie.md / machbarkeitsstudie-review-2026-04-20.md
-│   ├── konkurrenzanalyse.md / feature-analyse.md / customer-personas.md
-│   ├── feedback-2/ … feedback-6/ ← Nutzerfeedback-Transkripte
-│   └── superpowers/
-│       ├── specs/          ← Design-Specs (Brainstorming-Ergebnisse)
-│       └── plans/          ← Implementierungspläne (inkl. freemium-implementation.md)
+│   │   ├── basiszinssaetze.json ← aktualisierbar (nächste Fälligkeit 01.07.2026)
+│   │   └── rvg_tabelle.json    ← BGBl. 2025 I Nr. 109
+│   └── fonts/                  ← selbst gehostete Schriftarten
 ├── supabase/
-│   └── schema.sql          ← DB-Schema (profiles, subscriptions, cases)
-├── tests/                  ← Python-Tests für Berechnungslogik
-└── static/                 ← (legacy)
+│   ├── schema.sql              ← DB-Schema (profiles, subscriptions, cases, settings, contacts)
+│   └── functions/
+│       └── paddle-webhook/     ← Edge Function (Task 7 – in Umsetzung)
+├── docs/
+│   ├── ROADMAP.md              ← Feature-Roadmap (Phase 0–6) mit Status + Datum
+│   ├── SYSTEM.md               ← Technisches Whitepaper
+│   ├── freemium-launch-organisationsplan.md ← Manuelle Schritte für Jens (Accounts, Rechtliches)
+│   ├── archive/                ← historische Dokumente (nicht löschen, nicht bearbeiten)
+│   └── superpowers/
+│       ├── specs/              ← Design-Specs (Brainstorming-Ergebnisse)
+│       │   └── done/           ← abgeschlossene Specs
+│       └── plans/              ← Implementierungspläne
+│           └── done/           ← abgeschlossene Pläne
+└── tests/                      ← Python-Tests für Berechnungslogik
 ```
+
+---
+
+## Aktiver Implementierungsplan: Freemium
+
+`docs/superpowers/plans/2026-04-20-freemium-implementation.md`
+
+| Task | Status | Notiz |
+|---|---|---|
+| 1 – Supabase Schema + RLS | ✅ | |
+| 2 – GoatCounter Analytics | ✅ | |
+| 3 – Storage-Abstraktionsschicht | ✅ | |
+| 4 – Auth – Magic Link Login | ✅ | |
+| 5 – Cloud-Laden beim Login | ✅ | |
+| 6 – Feature-Gates | ✅ | |
+| 7 – Paddle-Webhook Edge Function | ⏳ | Supabase + Paddle eingerichtet – prüfen ob deploybar |
+| 8 – Pricing-Seite | ✅ | |
+| 9 – N8N-Workflows | ⏳ | Wartet auf N8N-Server-Setup |
+| 10 – Launch-Vorbereitung (AGB etc.) | ✅ | agb.html vorhanden |
+| 11 – Gestuftes PDF-Branding | ⏳ | getFordifyBranding() noch nicht implementiert |
+| 12 – Excel/CSV-Export | ✅ | fallExportierenAlsExcel() in app.js |
+
+**Blockierungen:** Task 7 (prüfen), Task 9 (N8N fehlt), Task 11 (Code-Änderung nötig)
 
 ---
 
@@ -110,40 +137,42 @@ fordify-app/
 
 Siehe `docs/SYSTEM.md` für vollständiges Schema. Kurzübersicht:
 
-- `localStorage["fordify_cases"]` — Registry aller Fälle
+- `sessionStorage` / `localStorage["fordify_cases"]` — Registry aller Fälle (je nach Plan)
 - `localStorage["fordify_settings"]` — Kanzlei-Einstellungen + Impressum
-- `localStorage["fordify_last_export"]` — Timestamp letzter Export
 - `localStorage["fordify_theme"]` — aktives Theme (`"brand"` / `"dark"` / `"clean"`)
 - `state.fall.positionen[]` — Array von Positions-Objekten (typ, id, datum, betrag, ...)
 - `gruppeId` — verknüpft Hauptforderung mit zugehöriger Zinsperiode
+- `fordifyAuth` — globales Auth-Objekt: `isAuthenticated`, `hasSubscription`, `user`, `plan`
 
 ---
 
 ## Wichtige Architekturentscheidungen
 
 - **Kein Build-Schritt** — direkt aus Quellcode auslieferbar
-- **Keine externen API-Calls** — alle Daten lokal
+- **Externe API-Calls** — Supabase (Auth + DB), Paddle (Checkout), GoatCounter (Analytics) — alle DSGVO-konform
 - **Print via Popup-Window** (`drucken()`) — kein html2canvas/jsPDF (wäre Bitmap-PDF, nicht durchsuchbar)
 - **GKG_TABELLE in data.js** (nicht als JSON) — kein zusätzlicher Netzwerkaufruf nötig
 - **`baueSummaryTabelle()`** ist die aktive Zusammenfassungs-Funktion (in app.js, NICHT `erstelleZusammenfassung()` in zusammenfassung.js — deprecated)
 - **`migratePositionen()`** — lazy Migration: alte Positionen ohne `gruppeId` erhalten "g0"
 - **Theme-System** — `[data-theme]` auf `<html>`, CSS Custom Properties in `themes.css`, drei Themes: `brand` (default, kein Attribut), `dark`, `clean`
+- **Free-Nutzer = sessionStorage** — Daten weg beim Tab-Schließen ist Absicht (kein Bug)
+- **StorageBackend** (`storage.js`) — Abstraktion über sessionStorage/localStorage/Supabase-Sync
 
 ---
 
 ## Dokumentation lesen + pflegen
 
 **Vor neuen Features immer prüfen:**
-1. `docs/ROADMAP.md` — ist das Feature schon geplant/erledigt? (Phase 0–6)
+1. `docs/ROADMAP.md` — ist das Feature schon geplant/erledigt?
 2. `docs/SYSTEM.md` — welche Datenstrukturen und Funktionen sind betroffen?
-3. `docs/freemium-launch-organisationsplan.md` — manuelle Schritte + Pflichtenheft-Ergänzungen
-4. `docs/superpowers/plans/` — aktive Implementierungspläne mit Statusübersicht prüfen
+3. Aktive Implementierungspläne in `docs/superpowers/plans/` (Statusübersicht oben)
+4. `docs/freemium-launch-organisationsplan.md` — manuelle Schritte + offene Punkte für Jens
 5. Aktuelle SW-Cache-Version in `frontend/sw.js` prüfen und nach Änderungen erhöhen
 
 **Nach jeder Entscheidung und Umsetzung zwingend aktualisieren:**
 - `docs/ROADMAP.md` — Status ✅ + Datum setzen
 - `docs/SYSTEM.md` — neue Strukturen, Funktionen, Architekturdetails ergänzen
-- `CLAUDE.md` (diese Datei) — SW-Version, Kerndatenmodell, Architekturentscheidungen nachziehen
+- `CLAUDE.md` (diese Datei) — SW-Version, Statusübersicht Freemium-Plan, Architekturentscheidungen
 - Immer im gleichen Commit wie die eigentlichen Änderungen
 
 ---
@@ -176,13 +205,6 @@ docs/
 ### Nach Implementierung eines Plans (Pflicht)
 
 1. Statusübersicht im Plan auf ✅ aktualisieren
-2. Plan nach `docs/superpowers/plans/done/` verschieben
-3. `docs/ROADMAP.md` mit ✅ + Datum aktualisieren
-4. Kein neuer Plan erstellt, solange nicht mindestens ein bestehender abgeschlossen wurde
-
-### Superpowers-Pläne und Specs
-
-- Brainstorming erstellt Specs in `docs/superpowers/specs/` — OK
-- Writing-Plans erstellt Pläne in `docs/superpowers/plans/` — OK
-- Nach Implementierung **sofort** in `/done/` verschieben — Pflicht
-- Specs und Pläne werden **nicht** in `docs/` root oder anderswo erstellt
+2. Statusübersicht in CLAUDE.md aktualisieren
+3. Plan nach `docs/superpowers/plans/done/` verschieben
+4. `docs/ROADMAP.md` mit ✅ + Datum aktualisieren

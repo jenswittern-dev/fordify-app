@@ -1,6 +1,6 @@
 # SYSTEM.md – Technisches Whitepaper Fordify
 
-> Stand: 2026-04-01
+> Stand: 2026-04-21
 > Zielgruppe: Entwickler, Claude Code (Kontext für neue Features)
 
 ---
@@ -11,26 +11,73 @@ Fordify ist eine **reine Client-Side-SPA** ohne Build-Schritt:
 
 ```
 Browser
-  └── index.html
-        ├── css/app.css          (gesamtes Styling + Print-CSS)
-        ├── js/decimal.min.js    (externe Lib, exakte Dezimalarithmetik)
+  └── forderungsaufstellung.html   (Haupt-App)
+        ├── css/app.css            (Styling, Print-CSS, Preisseite, Feature-Gates)
+        ├── css/themes.css         (Theme-Overrides: brand/dark/clean)
+        ├── js/decimal.min.js      (externe Lib, exakte Dezimalarithmetik)
         ├── js/bootstrap.bundle.min.js
-        ├── js/data.js           (statische Datentabellen)
-        ├── js/zinsen.js         (Verzugszinsberechnung)
-        ├── js/rvg.js            (RVG-Gebührenberechnung)
-        ├── js/verrechnung.js    (§ 367 BGB Verrechnung)
-        ├── js/zusammenfassung.js (deprecated – nicht mehr direkt genutzt)
-        └── js/app.js            (State, UI, Event-Handling – ~2100 Zeilen)
+        ├── js/config.js           (Supabase-Credentials, Paddle-Token, PRICE_MAP, trackEvent)
+        ├── js/data.js             (statische Datentabellen)
+        ├── js/zinsen.js           (Verzugszinsberechnung)
+        ├── js/rvg.js              (RVG-Gebührenberechnung)
+        ├── js/verrechnung.js      (§ 367 BGB Verrechnung)
+        ├── js/storage.js          (Storage-Abstraktion: sessionStorage/localStorage/Supabase)
+        ├── js/auth.js             (Supabase Magic Link Auth)
+        ├── js/auth-ui.js          (Auth-UI-Steuerung: data-auth-show, Avatar, Plan-Badge)
+        ├── js/gates.js            (Feature-Gates: requiresPaid(), Upgrade-Modal)
+        ├── js/zusammenfassung.js  (deprecated – nicht mehr direkt genutzt)
+        └── js/app.js              (State, UI, Event-Handling – ~2100 Zeilen)
+
+  Weitere Seiten (eigenständige HTML-Dateien):
+  ├── index.html                   (Landing Page / Homepage)
+  ├── preise.html                  (Pricing-Seite mit Paddle-Checkout)
+  ├── zinsrechner.html             (SEO-Zinsrechner, js/rechner-zins.js)
+  ├── rvg-rechner.html             (SEO-RVG-Rechner, js/rechner-rvg.js)
+  ├── gerichtskostenrechner.html   (SEO-GKG-Rechner, js/rechner-gkg.js)
+  ├── impressum.html
+  ├── datenschutz.html
+  └── agb.html
 ```
 
-**Service Worker** (`sw.js`, aktuell `fordify-v10`) cached alle Assets für Offline-Nutzung.
-Bei Frontend-Änderungen: Cache-Name inkrementieren.
+**Service Worker** (`sw.js`, aktuell `fordify-v90` / Staging `fordify-staging-v44`) cached alle Assets für Offline-Nutzung. Bei Frontend-Änderungen: Cache-Name inkrementieren.
+
+**Externe Dienste:**
+- **Supabase** (EU Frankfurt): Auth, Datenbank, Edge Functions
+- **Paddle**: Zahlungsabwicklung (Merchant of Record)
+- **GoatCounter**: Analytics (cookielos, DSGVO-konform, self-hosted)
+- **Resend**: Transaktionale E-Mails (via Supabase SMTP / N8N)
 
 ---
 
-## 2. Datenmodell
+## 2. Freemium-Architektur
 
-### 2.1 localStorage-Keys
+Fordify nutzt ein dreistufiges Modell:
+
+| Stufe | Storage | Features |
+|---|---|---|
+| **Free (Gast)** | `sessionStorage` — Daten weg beim Tab-Schließen | PDF-Export, Zinsberechnung |
+| **Pro** | `localStorage` + Supabase Cloud-Sync | + dauerhafter Speicher, Excel-Export, Kanzlei-Profil |
+| **Business** | `localStorage` + Supabase Cloud-Sync | + alles, white-label PDF |
+
+**Auth-Flow:**
+1. Nutzer klickt Login → Magic Link per Supabase
+2. Klick auf Link → `SIGNED_IN`-Event → `fordifyAuth` befüllt
+3. `ladeSubscriptionStatus()` → `fordifyAuth.hasSubscription` + `fordifyAuth.plan`
+4. `StorageBackend.init(fordifyAuth)` → wechselt Backend zu localStorage
+5. `ladeCloudDaten()` → Fälle + Einstellungen aus Supabase laden
+6. `aktualisiereUIFuerAuth()` → UI anpassen
+
+**Checkout-Flow (preise.html):**
+1. "Pro abonnieren" → prüft ob eingeloggt
+2. Nicht eingeloggt → Login-Modal im Checkout-Modus (3-Schritt-Erklärung)
+3. Magic Link → selber Browser → `?checkout=pro-monthly` Parameter
+4. `checkAutoCheckout()` in preise.html feuert Paddle.Checkout.open automatisch
+
+---
+
+## 3. Datenmodell
+
+### 3.1 localStorage-Keys
 
 | Key | Inhalt |
 |---|---|
@@ -41,7 +88,9 @@ Bei Frontend-Änderungen: Cache-Name inkrementieren.
 | `fordify_onboarded` | `"1"` wenn Onboarding-Modal bestätigt |
 | `forderungsaufstellung_state` | Legacy-Key (Migration auf fordify_cases) |
 
-### 2.2 Registry-Struktur (`fordify_cases`)
+**Hinweis:** `fordify_theme` und `fordify_onboarded` bleiben immer auf `localStorage` — auch für Free-Nutzer.
+
+### 3.2 Registry-Struktur (`fordify_cases`)
 
 ```json
 {
@@ -58,7 +107,7 @@ Bei Frontend-Änderungen: Cache-Name inkrementieren.
 }
 ```
 
-### 2.3 Fall-Objekt
+### 3.3 Fall-Objekt
 
 ```json
 {
@@ -77,7 +126,7 @@ Bei Frontend-Änderungen: Cache-Name inkrementieren.
 }
 ```
 
-### 2.4 Positions-Objekt (alle Typen)
+### 3.4 Positions-Objekt (alle Typen)
 
 Gemeinsame Felder aller Typen:
 
@@ -105,7 +154,7 @@ Typ-spezifische Zusatzfelder:
 | `inkassopauschale` | _(nur Basisfelder)_ |
 | `gv_kosten`, `zahlungsverbot`, `auskunftskosten`, `mahnkosten`, `sonstige_kosten` | _(nur Basisfelder)_ |
 
-### 2.5 Einstellungen-Objekt (`fordify_settings`)
+### 3.5 Einstellungen-Objekt (`fordify_settings`)
 
 ```json
 {
@@ -136,11 +185,27 @@ Typ-spezifische Zusatzfelder:
 }
 ```
 
+### 3.6 Supabase-Datenbankschema
+
+```
+profiles       – id (UUID), email, firma, created_at
+subscriptions  – id, user_id, paddle_subscription_id, paddle_customer_id,
+                 status ('active'|'trialing'|'canceled'|'past_due'|'suspended'),
+                 plan ('pro'|'business'), billing_cycle ('monthly'|'yearly'),
+                 trial_ends_at, current_period_end, updated_at
+cases          – id (TEXT), user_id, name, data (JSONB), naechste_id, updated_at
+settings       – user_id (PK), data (JSONB), updated_at
+contacts       – id (UUID), user_id, name, strasse, plz, ort, email, telefon, created_at
+```
+
+RLS: Jede Tabelle hat Row Level Security. Nutzer sehen nur eigene Daten.
+`subscriptions` ist schreibgeschützt für den Client — nur Edge Function (Service Role) schreibt.
+
 ---
 
-## 3. Berechnungslogik
+## 4. Berechnungslogik
 
-### 3.1 Verzugszinsen (`js/zinsen.js`)
+### 4.1 Verzugszinsen (`js/zinsen.js`)
 
 **Formel:** `Zinsen = Betrag × (Basiszinssatz + Aufschlag) / 100 × Tage / 365`
 
@@ -152,21 +217,20 @@ Typ-spezifische Zusatzfelder:
 
 **InsO-Kappung:** Wenn `insoDatum` gesetzt, wird `zinsBis` auf `insoDatum - 1 Tag` gekappt.
 
-### 3.2 RVG-Berechnung (`js/rvg.js`)
+### 4.2 RVG-Berechnung (`js/rvg.js`)
 
 - Tabelle: `RVG_TABELLE[]` in `data.js` (BGBl. 2025 I Nr. 109, gültig ab 01.06.2025)
 - VV-Nummern: `VV_DEFINITIONEN{}` in `data.js`
 - Funktion: `berechneRVGGesamt(streitwert, vvNummern, tabelle, definitionen, faktoren)`
 - USt-Satz wählbar: 0 % / 7 % / 19 % (default 19 %)
 
-### 3.3 GKG-Gebühren (`js/app.js: gkgGebuehr()`)
+### 4.3 GKG-Gebühren (`js/app.js: gkgGebuehr()`)
 
 - Tabelle: `GKG_TABELLE[]` in `data.js` (Anlage 2 GKG, KostBRÄG 2021)
 - Über 500.000 €: 2.201 € + 108 € je angefangene weitere 30.000 €
 - Verfahrensarten: Mahnbescheid (×0,5), Vollstreckungsbescheid (×1,5), Klage (×3,0), Berufung (×4,0)
-- **Hinweis:** Tabelle vor Produktivnutzung mit aktueller amtlicher Fassung abgleichen
 
-### 3.4 § 367 BGB Verrechnung (`js/verrechnung.js`)
+### 4.4 § 367 BGB Verrechnung (`js/verrechnung.js`)
 
 **Reihenfolge der Anrechnung** bei Teilzahlung:
 1. Kosten (unverzinslich)
@@ -174,25 +238,18 @@ Typ-spezifische Zusatzfelder:
 3. Hauptforderung
 
 Funktion: `berechneVerrechnung(positionen, stichtag, basiszinssaetze, aufschlagPP, insoDatum)`
-- Sortiert Zahlungen chronologisch
-- Berechnet für jede Zahlung die akkumulierten Zinsen zum Zahlungszeitpunkt
-- Gibt Restsaldo, aufgeschlüsselt nach Kategorien, zurück
 
-### 3.5 Zusammenfassung (`js/app.js: baueSummaryTabelle()`)
+**Tilgungsbestimmung:** Wenn `zahlung.tilgungsbestimmung === true` und `zahlung.tilgungsHFId` gesetzt: Zahlung wird zuerst auf Zinsen + diese spezifische HF verrechnet, dann Rest nach § 367 BGB.
 
-- Aktive Funktion ist `baueSummaryTabelle()` in `app.js` (NICHT `erstelleZusammenfassung()` in `zusammenfassung.js` — deprecated)
-- Spalten: Datum / Bezeichnung / Forderung / **Teilzahlung** / **Anrechnung** / Restforderung
-  - „Teilzahlung": zeigt die eingegangene Zahlung selbst (positiv, in eigener Zeile am Ende)
-  - „Anrechnung" (§ 367 BGB): zeigt wie die Zahlung auf die Forderungspositionen verrechnet wurde (negativ, als Sub-Rows)
-  - Sub-Rows zeigen immer explizit die Restforderung nach Anrechnung – auch `0,00 €` wenn vollständig beglichen
+### 4.5 Zusammenfassung (`js/app.js: baueSummaryTabelle()`)
+
+- Aktive Funktion: `baueSummaryTabelle()` in `app.js` (NICHT `erstelleZusammenfassung()` in `zusammenfassung.js` — deprecated)
+- Spalten: Datum / Bezeichnung / Forderung / Teilzahlung / Anrechnung / Restforderung
 - Ordnet Zinsperioden per `gruppeId` der jeweiligen Hauptforderung zu
-- Fallback-Heuristik: Betragsvergleich für Legacy-Daten ohne `gruppeId`
-- Zinsperioden-Datumsspalte: zeigt „VON – BIS" als Range statt nur Startdatum (`datumRangeCell()`)
-- **Tilgungsbestimmung:** Wenn `zahlung.tilgungsbestimmung === true` und `zahlung.tilgungsHFId` gesetzt: Zahlung wird zuerst auf Zinsen + diese spezifische HF verrechnet, dann Rest nach § 367 BGB. Legacy-Feld `tilgungsGruppeId` wird als Fallback unterstützt. Abweichung ist in Sub-Rows mit Badge „Tilgungsbestimmung" sichtbar.
 
 ---
 
-## 4. Gruppen-System (mehrere Hauptforderungen)
+## 5. Gruppen-System (mehrere Hauptforderungen)
 
 Jede `hauptforderung`-Position hat eine `gruppeId` (z.B. `"g7"`).
 Zugehörige `zinsperiode`-Positionen teilen dieselbe `gruppeId`.
@@ -202,13 +259,11 @@ Zugehörige `zinsperiode`-Positionen teilen dieselbe `gruppeId`.
 - `holeGruppen()`: gibt deduplizierte Hauptforderungen zurück (eine pro gruppeId)
 - `neueRechnungsgruppe()`: erstellt neue gruppeId, öffnet Hauptforderungs-Modal
 
-**Wichtig:** `berechneVerrechnung()` sortiert nach Datum — implizite Reihenfolge wäre zerstört. Deshalb `gruppeId` als explizite Zuordnung.
-
 ---
 
-## 5. UI-Architektur
+## 6. UI-Architektur
 
-### 5.1 Ansichten (Views)
+### 6.1 Ansichten (Views) in forderungsaufstellung.html
 
 ```
 stammdaten  → Mandant, Gegner, AZ, Aufschlag, InsO, Forderungsgrund
@@ -218,7 +273,7 @@ vorschau    → Druckvorschau (rendereVorschau()) + PDF-Export
 
 Navigation via `zeigeAnsicht(name)` — schaltet `d-none` um.
 
-### 5.2 Modal-Workflow
+### 6.2 Modal-Workflow
 
 ```
 positionHinzufuegen(typ) / positionBearbeiten(id)
@@ -231,55 +286,79 @@ positionHinzufuegen(typ) / positionBearbeiten(id)
     → speichernMitFeedback() + renderePositionsliste()
 ```
 
-### 5.3 Undo-Stack
+### 6.3 Undo-Stack
 
 - `pushUndo()` vor jeder Mutation aufrufen
 - Max. 20 Einträge (LIFO)
 - `undo()` stellt letzten State wieder her
 - Tastatur: Strg+Z (außerhalb von Eingabefeldern)
 
-### 5.4 Theme-System
+### 6.4 Theme-System
 
-Drei Themes, umschaltbar im Einstellungen-Modal unter „Erscheinungsbild":
+Drei Themes, umschaltbar via `themeWechseln(name)`:
 
 | Theme-Key | Name | Beschreibung |
 |---|---|---|
 | `brand` (default) | Professionell | Gradient-Navbar (Blau), Shimmer-Animation, Card-Hover-Lift |
-| `dark` | Dark | Vollständiges Dark Mode – alle Bootstrap-Komponenten überschrieben |
-| `clean` | Clean | Notion-Stil: weiße Navbar, flache Cards mit 1px-Border, kein Schatten, Blau #2383e2 |
-
-**Logo-Varianten:**
-- `img/logo.svg` — Standard (blauer Hintergrund, weißes F)
-- `img/logo-dark.svg` — freigestellt, kein Hintergrund, weißes F (für Dark-Navbar)
-- `img/logo-clean.svg` — freigestellt, kein Hintergrund, blaues F (für weiße Navbar)
-- Logo-Tausch erfolgt per JS in `themeWechseln()` via `.navbar-brand img` src-Swap
+| `dark` | Dark | Vollständiges Dark Mode |
+| `clean` | Clean | Notion-Stil: weiße Navbar, flache Cards, Blau #2383e2 |
 
 **Technisch:**
-- `[data-theme]`-Attribut auf `<html>` — CSS Custom Properties werden überschrieben
-- `brand` = kein Attribut (Base-Styles gelten)
-- `css/themes.css` wird nach `css/app.css` geladen (gezieltes Überschreiben)
+- `[data-theme]`-Attribut auf `<html>` — `brand` = kein Attribut (Base-Styles gelten)
+- `css/themes.css` wird nach `css/app.css` geladen
 - Persistenz: `localStorage["fordify_theme"]`
-- Funktionen: `themeWechseln(name)`, `themeLaden()`, `aktualisierThemeSwitcher(name)` in `app.js`
-- UI: `.theme-card` / `.theme-switcher` Komponenten im Einstellungen-Modal
+- Logo-SVGs: `img/logo.svg` (Standard), `img/logo-dark.svg`, `img/logo-clean.svg` — gestapelte Balken-Grafik, kein einzelnes F mehr
 
-### 5.5 Print-Popup
+### 6.5 Auth-UI (`js/auth-ui.js`)
+
+Steuert sichtbare Elemente anhand Auth-Status via `data-auth-show`-Attribut:
+
+| Attributwert | Sichtbar wenn |
+|---|---|
+| `guest` | Nicht eingeloggt |
+| `user` | Eingeloggt |
+| `paid` | Eingeloggt + aktives Abo |
+
+### 6.6 Feature-Gates (`js/gates.js`)
+
+```javascript
+function requiresPaid(featureName)  // → false wenn bezahlt, sonst Upgrade-Modal + return true
+function zeigeUpgradeModal(featureName)  // → Bootstrap-Modal mit Upgrade-CTA
+```
+
+Gegated: Excel-Export (`fallExportierenAlsExcel()`), JSON-Export, Einstellungen dauerhaft speichern.
+Nicht gegated: PDF-Export (`drucken()`).
+
+### 6.7 Print-Popup
 
 `drucken()` öffnet `window.open()` mit vollständigem HTML (CSS inline injiziert),
-ruft `window.print()` nach 400ms auf. Popup-Blocker-Fallback: Alert mit Hinweis.
-Kein html2canvas / jsPDF — native Druckengine des Browsers erzeugt text-searchable PDF.
+ruft `window.print()` nach 400ms auf. Kein html2canvas / jsPDF — native Druckengine.
+
+PDF-Branding aktuell: einheitlicher blauer Footer für alle Nutzer. Gestuftes Branding (Pro = dezent, Business = keins) ist in `docs/superpowers/plans/2026-04-20-freemium-implementation.md` Task 11 geplant aber noch nicht implementiert.
+
+### 6.8 Storage-Abstraktion (`js/storage.js`)
+
+```javascript
+StorageBackend.init(authState)   // wechselt Backend je nach Plan
+StorageBackend.getItem(key)
+StorageBackend.setItem(key, val) // → bei Paid: auch CloudSync.enqueue()
+StorageBackend.removeItem(key)
+```
+
+`CloudSync` sendet Änderungen debounced (2 Sek.) an Supabase.
 
 ---
 
-## 6. Service Worker & Caching
+## 7. Service Worker & Caching
 
-- Cache-Name: `fordify-vN` (aktuell `fordify-v10`)
+- Cache-Name: `fordify-v90` (Prod) / `fordify-staging-v44` (Staging)
+- Erkennung: `self.location.hostname.includes('staging') || localhost`
 - Strategie: Cache-First, dann Network
 - **Regel:** Bei jedem Commit mit geänderten Frontend-Dateien → N um 1 erhöhen
-- Asset-Liste in `sw.js` muss neue Dateien enthalten
 
 ---
 
-## 7. Datentabellen – Pflegeanforderungen
+## 8. Datentabellen – Pflegeanforderungen
 
 | Tabelle | Quelle | Nächste Fälligkeit |
 |---|---|---|
@@ -289,10 +368,12 @@ Kein html2canvas / jsPDF — native Druckengine des Browsers erzeugt text-search
 
 ---
 
-## 8. Bekannte Besonderheiten & Fallstricke
+## 9. Bekannte Besonderheiten & Fallstricke
 
 - **Typografische Anführungszeichen** (`„"`) in JS-Strings verursachen SyntaxError → immer `\u201e` / `\u201c` verwenden
 - `href="#"` in Navigationslinks schreibt `#` in die URL → immer `href="javascript:void(0)"` oder `onclick="return false;"`
 - `zusammenfassung.js: erstelleZusammenfassung()` ist deprecated — nicht wieder aktivieren
 - `berechneVerrechnung()` sortiert intern nach Datum — Positionsreihenfolge im Array ist für Verrechnung irrelevant
 - `localStorage` ist domain-scoped: Entwicklung auf `localhost` vs. Produktion `fordify.de` haben getrennte Stores
+- **Free-Nutzer** verwenden `sessionStorage` — alle Daten weg beim Tab-Schließen, das ist Absicht (kein Bug)
+- **`supabase.auth.onAuthStateChange`** feuert auch beim Seitenneuladen wenn Session noch aktiv ist → kein separater Init-Call nötig

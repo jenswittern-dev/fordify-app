@@ -9,11 +9,14 @@
 | 4 – Auth – Magic Link Login | ✅ | `frontend/js/auth.js` komplett implementiert |
 | 5 – Cloud-Laden beim Login | ✅ | `ladeCloudDaten()`, `migrateSessionToCloud()` in auth.js |
 | 6 – Feature-Gates | ✅ | `frontend/js/gates.js` mit `requiresPaid()` und Upgrade-Modal |
-| 7 – Paddle-Webhook Edge Function | ⏳ | Wartet auf Supabase live + Paddle Produkte angelegt |
+| 7 – Paddle-Webhook Edge Function | ⏳ | Supabase + Paddle eingerichtet – prüfen ob jetzt deploybar |
 | 8 – Pricing-Seite | ✅ | `frontend/preise.html` mit Paddle-Checkout + 3-Schritt-Modal |
-| 9 – N8N-Workflows | ⏳ | Manuell, wartet auf N8N-Server-Setup |
+| 9 – N8N-Workflows | ⏳ | Wartet auf N8N-Server-Setup |
+| 10 – Launch-Vorbereitung (AGB etc.) | ✅ | `agb.html`, `impressum.html`, `datenschutz.html` vorhanden |
+| 11 – Gestuftes PDF-Branding | ⏳ | `getFordifyBranding()` noch nicht implementiert |
+| 12 – Excel/CSV-Export | ✅ | `fallExportierenAlsExcel()` in app.js implementiert |
 
-**Blockierung:** Tasks 7+9 warten auf manuelle Infrastruktur (Organisationsplan Schritte 3, 7, 8).
+**Blockierungen:** Task 7 (klären ob Paddle-Webhook deploybar), Task 9 (N8N fehlt), Task 11 (Code-Änderung nötig).
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
