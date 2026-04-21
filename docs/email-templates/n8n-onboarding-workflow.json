@@ -1,15 +1,17 @@
 {
   "_meta": {
-    "n8n_workflow_id": "7Wkj6aOiBuebZ0Jf",
+    "n8n_workflow_id": "elcsjZCxDmtCw2BI",
     "webhook_url": "https://n8n.srv1063720.hstgr.cloud/webhook/fordify-subscription",
     "description": "Fordify Post-Payment Onboarding – sendet Willkommens-E-Mail 5 Minuten nach Subscription-Aktivierung",
     "deployed": "2026-04-21",
+    "recreated": "2026-04-21",
+    "recreated_note": "Neu erstellt – alter Workflow (7Wkj6aOiBuebZ0Jf) war in N8N-UI leer (fake Node-IDs, falsche Supabase-Keys). Neue ID: elcsjZCxDmtCw2BI",
     "credentials_note": "Echte Keys wurden durch $VARIABLE-Platzhalter ersetzt. Werte stehen in .env"
   },
   "name": "Fordify – Post-Payment Onboarding",
   "nodes": [
     {
-      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "id": "node-webhook",
       "name": "Subscription Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
@@ -19,10 +21,11 @@
         "httpMethod": "POST",
         "responseMode": "onReceived",
         "responseData": "allEntries"
-      }
+      },
+      "webhookId": "fordify-subscription-hook"
     },
     {
-      "id": "a1b2c3d4-0001-4000-8000-000000000002",
+      "id": "node-if",
       "name": "Nur aktive Subscriptions",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
@@ -43,19 +46,19 @@
       }
     },
     {
-      "id": "a1b2c3d4-0001-4000-8000-000000000003",
+      "id": "node-wait",
       "name": "5 Minuten warten",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1,
       "position": [690, 300],
-      "webhookId": "a1b2c3d4-0001-4000-8000-000000000099",
+      "webhookId": "fordify-wait-hook",
       "parameters": {
         "amount": 5,
         "unit": "minutes"
       }
     },
     {
-      "id": "a1b2c3d4-0001-4000-8000-000000000004",
+      "id": "node-get-email",
       "name": "E-Mail aus Supabase holen",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
@@ -66,14 +69,14 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "apikey", "value": "$SUPABASE_ANON_KEY" },
-            { "name": "Authorization", "value": "Bearer $SUPABASE_SERVICE_ROLE_KEY" }
+            { "name": "apikey", "value": "$SUPABASE_ANON_KEY_JWT" },
+            { "name": "Authorization", "value": "Bearer $SUPABASE_SERVICE_ROLE_KEY_JWT" }
           ]
         }
       }
     },
     {
-      "id": "a1b2c3d4-0001-4000-8000-000000000005",
+      "id": "node-send-email",
       "name": "Onboarding-Mail senden",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
@@ -90,7 +93,7 @@
         },
         "sendBody": true,
         "contentType": "raw",
-        "body": "={\n  \"from\": \"Fordify <noreply@fordify.de>\",\n  \"to\": [\"{{ $json[0].email }}\"],\n  \"subject\": \"Willkommen bei fordify \\u2013 so legst du los\",\n  \"html\": \"<table width=\\\"100%\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" style=\\\"background:#f1f5f9;padding:32px 16px;font-family:Arial,Helvetica,sans-serif;border-collapse:collapse;\\\"><tr><td align=\\\"center\\\"><table width=\\\"600\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" style=\\\"max-width:600px;width:100%;\\\"><tr><td style=\\\"background:#1e3a8a;padding:20px 32px;border-radius:8px 8px 0 0;\\\"><span style=\\\"color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:700;letter-spacing:0.03em;\\\">fordify<\\/span><\\/td><\\/tr><tr><td style=\\\"background:#ffffff;padding:36px 32px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.7;color:#1e293b;\\\"><h2 style=\\\"margin:0 0 8px;font-size:20px;font-weight:700;color:#1e293b;line-height:1.3;\\\">Sch&ouml;n, dass du dabei bist.<\\/h2><p style=\\\"margin:0 0 28px;color:#475569;\\\">Du hast jetzt vollen Zugriff auf alle Pro-Funktionen. Hier sind deine ersten drei Schritte:<\\/p><div style=\\\"margin:0 0 12px;padding:16px 20px;background:#f8fafc;border-left:3px solid #1e3a8a;border-radius:0 6px 6px 0;\\\"><p style=\\\"margin:0;font-weight:700;color:#1e293b;\\\">1. Firmendaten &amp; Logo hinterlegen<\\/p><p style=\\\"margin:6px 0 0;font-size:13px;color:#64748b;\\\">\\u00dcber &bdquo;Einstellungen&ldquo; (oben rechts in der App) kannst du deine Daten und dein Logo f\\u00fcr das PDF hinterlegen.<\\/p><\\/div><div style=\\\"margin:0 0 12px;padding:16px 20px;background:#f8fafc;border-left:3px solid #1e3a8a;border-radius:0 6px 6px 0;\\\"><p style=\\\"margin:0;font-weight:700;color:#1e293b;\\\">2. Erste Forderungsaufstellung anlegen<\\/p><p style=\\\"margin:6px 0 0;font-size:13px;color:#64748b;\\\">Trag Stammdaten ein, f\\u00fcge Positionen hinzu &ndash; fordify berechnet Zinsen und Verrechnungen nach &sect; 367 BGB automatisch.<\\/p><\\/div><div style=\\\"margin:0 0 28px;padding:16px 20px;background:#f8fafc;border-left:3px solid #1e3a8a;border-radius:0 6px 6px 0;\\\"><p style=\\\"margin:0;font-weight:700;color:#1e293b;\\\">3. PDF exportieren<\\/p><p style=\\\"margin:6px 0 0;font-size:13px;color:#64748b;\\\">Mit einem Klick auf &bdquo;Drucken \\/ PDF&ldquo; erzeugst du eine druckfertige, durchsuchbare PDF-Forderungsaufstellung.<\\/p><\\/div><table cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" style=\\\"margin:0 0 28px;\\\"><tr><td style=\\\"background:#1e3a8a;border-radius:6px;\\\"><a href=\\\"https:\\/\\/fordify.de\\/forderungsaufstellung.html\\\" style=\\\"display:inline-block;padding:13px 28px;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:600;text-decoration:none !important;\\\">Zur App &rarr;<\\/a><\\/td><\\/tr><\\/table><p style=\\\"margin:0;font-size:13px;color:#64748b;\\\">Fragen? Schreib uns: <a href=\\\"mailto:hallo@fordify.de\\\" style=\\\"color:#1e3a8a;\\\">hallo@fordify.de<\\/a><\\/p><\\/td><\\/tr><tr><td style=\\\"background:#f8fafc;padding:20px 32px;border-top:1px solid #e2e8f0;border-radius:0 0 8px 8px;\\\"><p style=\\\"margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#64748b !important;line-height:1.6;\\\">fordify &ndash; Professionelle Forderungsaufstellungen<br><a href=\\\"https:\\/\\/fordify.de\\\" style=\\\"color:#64748b !important;text-decoration:underline;\\\">fordify.de<\\/a><\\/p><\\/td><\\/tr><\\/table><\\/td><\\/tr><\\/table>\"\n}"
+        "body": "={\n  \"from\": \"Fordify <noreply@fordify.de>\",\n  \"to\": [\"{{ $('E-Mail aus Supabase holen').first().json.email }}\"],\n  \"subject\": \"Willkommen bei fordify \\u2013 so legst du los\",\n  \"html\": \"<table width=\\\"100%\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" style=\\\"background:#f1f5f9;padding:32px 16px;font-family:Arial,Helvetica,sans-serif;border-collapse:collapse;\\\"><tr><td align=\\\"center\\\"><table width=\\\"600\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" style=\\\"max-width:600px;width:100%;\\\"><tr><td style=\\\"background:#1e3a8a;padding:20px 32px;border-radius:8px 8px 0 0;\\\"><span style=\\\"color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:700;letter-spacing:0.03em;\\\">fordify<\\/span><\\/td><\\/tr><tr><td style=\\\"background:#ffffff;padding:36px 32px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.7;color:#1e293b;\\\"><h2 style=\\\"margin:0 0 8px;font-size:20px;font-weight:700;color:#1e293b;line-height:1.3;\\\">Sch&ouml;n, dass du dabei bist.<\\/h2><p style=\\\"margin:0 0 28px;color:#475569;\\\">Du hast jetzt vollen Zugriff auf alle Pro-Funktionen. Hier sind deine ersten drei Schritte:<\\/p><div style=\\\"margin:0 0 12px;padding:16px 20px;background:#f8fafc;border-left:3px solid #1e3a8a;border-radius:0 6px 6px 0;\\\"><p style=\\\"margin:0;font-weight:700;color:#1e293b;\\\">1. Firmendaten &amp; Logo hinterlegen<\\/p><p style=\\\"margin:6px 0 0;font-size:13px;color:#64748b;\\\">\\u00dcber &bdquo;Einstellungen&ldquo; (oben rechts in der App) kannst du deine Daten und dein Logo f\\u00fcr das PDF hinterlegen.<\\/p><\\/div><div style=\\\"margin:0 0 12px;padding:16px 20px;background:#f8fafc;border-left:3px solid #1e3a8a;border-radius:0 6px 6px 0;\\\"><p style=\\\"margin:0;font-weight:700;color:#1e293b;\\\">2. Erste Forderungsaufstellung anlegen<\\/p><p style=\\\"margin:6px 0 0;font-size:13px;color:#64748b;\\\">Trag Stammdaten ein, f\\u00fcge Positionen hinzu &ndash; fordify berechnet Zinsen und Verrechnungen nach &sect; 367 BGB automatisch.<\\/p><\\/div><div style=\\\"margin:0 0 28px;padding:16px 20px;background:#f8fafc;border-left:3px solid #1e3a8a;border-radius:0 6px 6px 0;\\\"><p style=\\\"margin:0;font-weight:700;color:#1e293b;\\\">3. PDF exportieren<\\/p><p style=\\\"margin:6px 0 0;font-size:13px;color:#64748b;\\\">Mit einem Klick auf &bdquo;Drucken \\/ PDF&ldquo; erzeugst du eine druckfertige, durchsuchbare PDF-Forderungsaufstellung.<\\/p><\\/div><table cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" style=\\\"margin:0 0 28px;\\\"><tr><td style=\\\"background:#1e3a8a;border-radius:6px;\\\"><a href=\\\"https:\\/\\/fordify.de\\/forderungsaufstellung.html\\\" style=\\\"display:inline-block;padding:13px 28px;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:600;text-decoration:none !important;\\\">Zur App &rarr;<\\/a><\\/td><\\/tr><\\/table><p style=\\\"margin:0;font-size:13px;color:#64748b;\\\">Fragen? Schreib uns: <a href=\\\"mailto:hallo@fordify.de\\\" style=\\\"color:#1e3a8a;\\\">hallo@fordify.de<\\/a><\\/p><\\/td><\\/tr><tr><td style=\\\"background:#f8fafc;padding:20px 32px;border-top:1px solid #e2e8f0;border-radius:0 0 8px 8px;\\\"><p style=\\\"margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#64748b !important;line-height:1.6;\\\">fordify &ndash; Professionelle Forderungsaufstellungen<br><a href=\\\"https:\\/\\/fordify.de\\\" style=\\\"color:#64748b !important;text-decoration:underline;\\\">fordify.de<\\/a><\\/p><\\/td><\\/tr><\\/table><\\/td><\\/tr><\\/table>\"\n}"
       }
     }
   ],
