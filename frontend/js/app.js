@@ -2427,7 +2427,7 @@ function einstellungenImportieren(input) {
 // ---- Drucken / PDF ----
 
 function getFordifyBranding() {
-  const plan = (window.fordifyAuth && window.fordifyAuth.plan) || 'free';
+  const plan = (typeof fordifyAuth !== 'undefined' && fordifyAuth.plan) || 'free';
   if (plan === 'business') return '';
   if (plan === 'pro') {
     return `<div style="margin-top:2rem;text-align:center;font-family:sans-serif;">
