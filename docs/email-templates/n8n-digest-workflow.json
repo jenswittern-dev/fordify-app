@@ -155,17 +155,31 @@
             {
               "name": "Authorization",
               "value": "Bearer $RESEND_API_KEY"
-            },
-            {
-              "name": "Content-Type",
-              "value": "application/json"
             }
           ]
         },
         "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"from\": \"Fordify Digest <noreply@fordify.de>\",\n  \"to\": [\"hallo@fordify.de\"],\n  \"subject\": \"{{ $json.subject }}\",\n  \"html\": \"{{ $json.html }}\"\n}",
-        "options": {}
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "from",
+              "value": "Fordify <noreply@fordify.de>"
+            },
+            {
+              "name": "to",
+              "value": "={{ [\"jens@fordify.de\"] }}"
+            },
+            {
+              "name": "subject",
+              "value": "={{ $json.subject }}"
+            },
+            {
+              "name": "html",
+              "value": "={{ $json.html }}"
+            }
+          ]
+        }
       },
       "id": "digest-mail-senden",
       "name": "Digest-Mail senden",
