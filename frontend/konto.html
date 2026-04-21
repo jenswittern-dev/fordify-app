@@ -134,7 +134,7 @@
 
             <!-- Logo -->
             <div class="content-card mb-3">
-              <h6 class="fw-semibold mb-3">Kanzleilogo</h6>
+              <h2 class="h6 fw-semibold mb-3">Kanzleilogo</h2>
               <div class="d-flex align-items-start gap-3 mb-2">
                 <img id="konto-logo-vorschau" src="" alt="Logo-Vorschau"
                      style="max-height:60px;max-width:180px;object-fit:contain;display:none;border:1px solid #e2e8f0;border-radius:4px;padding:4px;">
@@ -149,7 +149,7 @@
                 </div>
               </div>
               <div class="mt-2">
-                <label class="form-label small fw-semibold">Position im PDF</label>
+                <label class="form-label small fw-semibold" for="konto-logo-position">Position im PDF</label>
                 <select id="konto-logo-position" class="form-select form-select-sm" style="max-width:200px;">
                   <option value="links">Links</option>
                   <option value="mitte">Mitte</option>
@@ -160,26 +160,26 @@
 
             <!-- Kanzleidaten -->
             <div class="content-card mb-3">
-              <h6 class="fw-semibold mb-3">Kanzleidaten &amp; Impressum</h6>
+              <h2 class="h6 fw-semibold mb-3">Kanzleidaten &amp; Impressum</h2>
               <div class="row g-2">
-                <div class="col-12"><label class="form-label small">Kanzleiname / Rechtsanwalt</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-name" placeholder="Kanzlei Mustermann"></div>
-                <div class="col-12"><label class="form-label small">Straße &amp; Hausnummer</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-strasse" placeholder="Musterstraße 1"></div>
-                <div class="col-3"><label class="form-label small">PLZ</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-plz" placeholder="12345"></div>
-                <div class="col-9"><label class="form-label small">Ort</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-ort" placeholder="Musterstadt"></div>
-                <div class="col-6"><label class="form-label small">Telefon</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-tel" placeholder="+49 30 123456"></div>
-                <div class="col-6"><label class="form-label small">Fax</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-fax"></div>
-                <div class="col-6"><label class="form-label small">E-Mail</label><input type="email" class="form-control form-control-sm" id="konto-einst-imp-email"></div>
-                <div class="col-6"><label class="form-label small">Website</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-website"></div>
-                <div class="col-6"><label class="form-label small">Rechtsanwaltskammer</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-kammer"></div>
-                <div class="col-6"><label class="form-label small">Handels-/Vereinsregister</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-register"></div>
-                <div class="col-12"><label class="form-label small">Vertreten durch</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-vertreten"></div>
-                <div class="col-6"><label class="form-label small">USt-IdNr.</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-ustid"></div>
-                <div class="col-6"><label class="form-label small">Berufshaftpflichtversicherung</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-bhv"></div>
-                <div class="col-6"><label class="form-label small">IBAN</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-iban"></div>
-                <div class="col-3"><label class="form-label small">BIC</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-bic"></div>
-                <div class="col-3"><label class="form-label small">Bank</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-bank"></div>
-                <div class="col-6"><label class="form-label small">Impressum-URL</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-impressum-url"></div>
-                <div class="col-6"><label class="form-label small">Datenschutz-URL</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-datenschutz-url"></div>
+                <div class="col-12"><label class="form-label small" for="konto-einst-imp-name">Kanzleiname / Rechtsanwalt</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-name" placeholder="Kanzlei Mustermann"></div>
+                <div class="col-12"><label class="form-label small" for="konto-einst-imp-strasse">Straße &amp; Hausnummer</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-strasse" placeholder="Musterstraße 1"></div>
+                <div class="col-3"><label class="form-label small" for="konto-einst-imp-plz">PLZ</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-plz" placeholder="12345"></div>
+                <div class="col-9"><label class="form-label small" for="konto-einst-imp-ort">Ort</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-ort" placeholder="Musterstadt"></div>
+                <div class="col-6"><label class="form-label small" for="konto-einst-imp-tel">Telefon</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-tel" placeholder="+49 30 123456"></div>
+                <div class="col-6"><label class="form-label small" for="konto-einst-imp-fax">Fax</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-fax"></div>
+                <div class="col-6"><label class="form-label small" for="konto-einst-imp-email">E-Mail</label><input type="email" class="form-control form-control-sm" id="konto-einst-imp-email"></div>
+                <div class="col-6"><label class="form-label small" for="konto-einst-imp-website">Website</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-website"></div>
+                <div class="col-6"><label class="form-label small" for="konto-einst-imp-kammer">Rechtsanwaltskammer</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-kammer"></div>
+                <div class="col-6"><label class="form-label small" for="konto-einst-imp-register">Handels-/Vereinsregister</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-register"></div>
+                <div class="col-12"><label class="form-label small" for="konto-einst-imp-vertreten">Vertreten durch</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-vertreten"></div>
+                <div class="col-6"><label class="form-label small" for="konto-einst-imp-ustid">USt-IdNr.</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-ustid"></div>
+                <div class="col-6"><label class="form-label small" for="konto-einst-imp-bhv">Berufshaftpflichtversicherung</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-bhv"></div>
+                <div class="col-6"><label class="form-label small" for="konto-einst-imp-iban">IBAN</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-iban"></div>
+                <div class="col-3"><label class="form-label small" for="konto-einst-imp-bic">BIC</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-bic"></div>
+                <div class="col-3"><label class="form-label small" for="konto-einst-imp-bank">Bank</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-bank"></div>
+                <div class="col-6"><label class="form-label small" for="konto-einst-imp-impressum-url">Impressum-URL</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-impressum-url"></div>
+                <div class="col-6"><label class="form-label small" for="konto-einst-imp-datenschutz-url">Datenschutz-URL</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-datenschutz-url"></div>
               </div>
 
               <!-- Vorschau -->
@@ -193,7 +193,7 @@
 
             <!-- Theme -->
             <div class="content-card mb-3">
-              <h6 class="fw-semibold mb-2">Design-Theme</h6>
+              <h2 class="h6 fw-semibold mb-2">Design-Theme</h2>
               <div class="d-flex gap-2 flex-wrap">
                 <button class="btn btn-sm btn-outline-secondary" onclick="kontoThemeWechseln('brand')">Brand (Standard)</button>
                 <button class="btn btn-sm btn-outline-secondary" onclick="kontoThemeWechseln('dark')">Dark</button>
@@ -204,7 +204,7 @@
 
             <!-- Export/Import -->
             <div class="content-card mb-3">
-              <h6 class="fw-semibold mb-2">Einstellungen sichern / übertragen</h6>
+              <h2 class="h6 fw-semibold mb-2">Einstellungen sichern / übertragen</h2>
               <div class="d-flex gap-2">
                 <button class="btn btn-sm btn-outline-secondary" onclick="kontoEinstellungenExportieren()">Einstellungen exportieren</button>
                 <label class="btn btn-sm btn-outline-secondary mb-0" role="button" tabindex="0"
@@ -226,7 +226,7 @@
         <div class="row">
           <div class="col-lg-6">
             <div class="content-card">
-              <h6 class="fw-semibold mb-3">Mein Abonnement</h6>
+              <h2 class="h6 fw-semibold mb-3">Mein Abonnement</h2>
               <div class="mb-3">
                 <div class="text-muted small mb-1">Aktueller Plan</div>
                 <div id="konto-abo-plan-badge"></div>
