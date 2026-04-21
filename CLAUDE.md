@@ -39,8 +39,10 @@
 | Datenpersistenz | `localStorage` (Free/Gast) + Supabase (Pro/Business, geplant) |
 | Auth | Supabase Magic Link (`frontend/js/auth.js`, `auth-ui.js`) |
 | Zahlungen | Paddle (Merchant of Record, `frontend/js/config.js` → `PRICE_MAP`) |
+| E-Mail | Resend (Transaktionale E-Mails via Supabase SMTP) |
+| Analytics | GoatCounter (self-hosted, cookielos, DSGVO-konform) |
 | PWA | Service Worker (`frontend/sw.js`) + Manifest (`frontend/manifest.json`) |
-| Hosting | Hetzner (main: fordify.de, staging: fordify.de/staging) |
+| Hosting | All-Inkl (main: fordify.de, staging: fordify.de/staging) |
 | Deployment | Push auf `main` → GitHub Actions → live; `staging` → staging-Branch |
 
 ---
