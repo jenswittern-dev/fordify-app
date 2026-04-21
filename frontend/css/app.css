@@ -142,7 +142,7 @@ body {
   display: inline-block;
   transition: opacity 0.15s;
 }
-.btn-nav-solid:hover { opacity: 0.9; color: #0f1d5c; }
+.btn-nav-solid:hover { background: #e8f0ff; color: #0f1d5c; text-decoration: none; }
 
 #nav-context {
   color: var(--color-nav-text-muted);

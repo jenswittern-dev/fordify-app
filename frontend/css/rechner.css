@@ -48,6 +48,31 @@
   .hero-visual { display: none; }
 }
 
+/* Trust-Items im Hero (über der Headline) */
+.hero-trust {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.9rem;
+}
+.hero-trust__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.hero-trust__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #34d399;
+  flex-shrink: 0;
+}
+
 /* Gradient-Text in Hero-Headline */
 .hero-gradient-text {
   background: linear-gradient(90deg, #60a5fa 0%, #34d399 100%);
@@ -212,7 +237,7 @@
   margin: 2.5rem 0;
 }
 /* Primary spotlight card */
-.tool-card--primary {
+.tool-card.tool-card--primary {
   background: linear-gradient(135deg, #0f1d5c 0%, #1e3a8a 100%);
   border-radius: 14px;
   padding: 2rem;
