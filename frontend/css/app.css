@@ -1848,3 +1848,23 @@ body {
 .faq-preise summary::after { content: "+"; font-size: 1.25rem; color: var(--color-text-muted); }
 .faq-preise details[open] summary::after { content: "−"; }
 .faq-preise details p { padding: 0 0 1rem; color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.7; margin: 0; }
+
+.pricing-card .btn-primary {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  border-color: transparent;
+  color: #fff;
+}
+.pricing-card .btn-primary:hover {
+  background: linear-gradient(135deg, #163072 0%, #1d4ed8 100%);
+  border-color: transparent;
+  color: #fff;
+}
+.pricing-card .btn-outline-primary {
+  color: #1e3a8a;
+  border-color: #1e3a8a;
+}
+.pricing-card .btn-outline-primary:hover {
+  background: #1e3a8a;
+  border-color: #1e3a8a;
+  color: #fff;
+}
