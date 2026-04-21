@@ -10,10 +10,10 @@
   --color-primary-hover:  #1e40af;
   --color-primary-light:  #eff6ff;
 
-  /* Akzent: Cyan */
-  --color-accent:         #0e7490;
-  --color-accent-hover:   #0c5f72;
-  --color-accent-light:   #ecfeff;
+  /* Akzent: Blue (konsistent mit neuem Design) */
+  --color-accent:         #2563eb;
+  --color-accent-hover:   #1d4ed8;
+  --color-accent-light:   #eff6ff;
 
   /* Semantisch: Typ-Farben */
   --color-forderung:      #1e3a8a;
@@ -249,21 +249,22 @@ body {
 
 /* Primär-Button "Drucken / PDF" */
 .btn-nav-primary {
-  background: var(--color-accent);
-  border: 1px solid var(--color-accent);
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  border: none;
   color: #fff;
   font-weight: 600;
-  transition: background var(--transition-fast), border-color var(--transition-fast);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 
 .btn-nav-primary:hover {
-  background: var(--color-accent-hover);
-  border-color: var(--color-accent-hover);
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+  border: none;
   color: #fff;
+  opacity: 0.92;
 }
 
 .btn-nav-primary:focus-visible {
-  box-shadow: 0 0 0 3px rgba(14,116,144,0.45);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.45);
   outline: none;
 }
 
@@ -303,6 +304,11 @@ body {
   transition: color var(--transition-fast);
   position: relative;
   white-space: nowrap;
+  border: none;
+  background: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
 }
 
 .stepper-step::after {
@@ -800,7 +806,7 @@ body {
 .modal-body--app .form-control:focus,
 .modal-body--app .form-select:focus {
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(14, 116, 144, 0.18);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
 }
 
 .modal-footer--app {
