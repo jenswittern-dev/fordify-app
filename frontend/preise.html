@@ -273,17 +273,63 @@
 
 <!-- Login-Modal -->
 <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered" id="loginModalDialog">
     <div class="modal-content">
       <div class="modal-header border-0 pb-0">
         <h5 class="modal-title fw-bold" id="loginModalLabel">Bei fordify anmelden</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body pt-2">
-        <p class="text-muted small mb-3">Wir senden dir einen sicheren Login-Link per E-Mail – kein Passwort nötig. Bitte öffne den Link in diesem Browser-Fenster.</p>
+
+        <!-- Standard-Login (Anmelden-Button in Nav) -->
+        <div id="login-mode-default">
+          <p class="text-muted small mb-3">Wir senden dir einen sicheren Login-Link per E-Mail – kein Passwort nötig. Bitte öffne den Link in diesem Browser-Fenster.</p>
+        </div>
+
+        <!-- Checkout-Modus (wird per JS eingeblendet) -->
+        <div id="login-mode-checkout" class="d-none">
+          <!-- Plan-Badge -->
+          <div class="mb-3">
+            <span id="checkout-plan-badge" class="badge px-3 py-2" style="background:linear-gradient(135deg,#1e3a8a,#2563eb);font-size:0.85rem;letter-spacing:0.01em"></span>
+          </div>
+          <!-- Schritte -->
+          <div class="d-flex gap-2 mb-3 text-center" style="font-size:0.78rem">
+            <div class="flex-fill rounded py-2 px-1" style="background:#eff6ff;border:1.5px solid #2563eb">
+              <div class="fw-bold mb-1" style="color:#1e3a8a;font-size:1rem">①</div>
+              <div class="fw-semibold" style="color:#1e3a8a">E-Mail bestätigen</div>
+              <div class="text-muted mt-1">Link anklicken</div>
+            </div>
+            <div class="flex-fill rounded py-2 px-1" style="background:#f8fafc;border:1px solid #e2e8f0">
+              <div class="fw-bold mb-1 text-muted" style="font-size:1rem">②</div>
+              <div class="fw-semibold text-muted">Bezahlung</div>
+              <div class="text-muted mt-1">startet automatisch</div>
+            </div>
+            <div class="flex-fill rounded py-2 px-1" style="background:#f8fafc;border:1px solid #e2e8f0">
+              <div class="fw-bold mb-1 text-muted" style="font-size:1rem">③</div>
+              <div class="fw-semibold text-muted">Sofort aktiv</div>
+              <div class="text-muted mt-1">nach Zahlung</div>
+            </div>
+          </div>
+          <p class="small mb-3" style="color:#374151">Gib deine E-Mail ein. Du erhältst einen <strong>sicheren Link</strong> – kein Passwort nötig. Nach dem Klick auf den Link öffnet sich <strong>automatisch der Bezahlvorgang</strong> von Paddle.</p>
+        </div>
+
+        <!-- Gemeinsames Eingabefeld + Button -->
         <input type="email" id="login-email" class="form-control mb-2" placeholder="deine@email.de" autocomplete="email">
-        <button class="btn btn-primary w-100" onclick="loginMitEmail(document.getElementById('login-email').value)">Magic Link senden</button>
+        <button class="btn btn-primary w-100" id="login-submit-btn" onclick="handleLoginSubmit()">Link senden</button>
         <div id="login-status" class="d-none mt-2"></div>
+
+        <!-- Hinweise nur im Checkout-Modus (nach Link-Versand sichtbar) -->
+        <div id="checkout-trust" class="d-none mt-3">
+          <hr class="my-2">
+          <ul class="list-unstyled small mb-0" style="color:#6b7280;line-height:1.7">
+            <li>🔒 <strong>Paddle</strong> übernimmt den Bezahlvorgang – sicher &amp; verschlüsselt</li>
+            <li>💳 Keine Kreditkartendaten werden bei fordify gespeichert</li>
+            <li>↩️ 14 Tage Widerrufrecht (EU)</li>
+            <li>🔄 Monatlich kündbar (Jahresabo: zum Laufzeitende)</li>
+            <li>✅ Zugang aktiv sofort nach erfolgreicher Zahlung</li>
+          </ul>
+        </div>
+
       </div>
     </div>
   </div>
@@ -314,6 +360,51 @@
     console.warn('Paddle Init fehlgeschlagen:', e);
   }
 
+  const PLAN_LABELS = {
+    'pro-monthly':      'Pro – 19 €/Monat',
+    'pro-yearly':       'Pro – 149 €/Jahr (≈ 12,42 €/Monat)',
+    'business-monthly': 'Business – 49 €/Monat',
+    'business-yearly':  'Business – 399 €/Jahr (≈ 33,25 €/Monat)'
+  };
+
+  function _setLoginModalCheckoutMode(interval) {
+    document.getElementById('loginModalLabel').textContent = 'Abonnieren – fast geschafft';
+    document.getElementById('login-mode-default').classList.add('d-none');
+    document.getElementById('login-mode-checkout').classList.remove('d-none');
+    document.getElementById('checkout-plan-badge').textContent = PLAN_LABELS[interval] || interval;
+    document.getElementById('checkout-trust').classList.remove('d-none');
+    document.getElementById('login-submit-btn').textContent = 'Sicheren Link senden →';
+    document.getElementById('loginModalDialog').classList.add('modal-lg');
+  }
+
+  function _resetLoginModal() {
+    document.getElementById('loginModalLabel').textContent = 'Bei fordify anmelden';
+    document.getElementById('login-mode-default').classList.remove('d-none');
+    document.getElementById('login-mode-checkout').classList.add('d-none');
+    document.getElementById('checkout-trust').classList.add('d-none');
+    document.getElementById('login-status').classList.add('d-none');
+    document.getElementById('login-email').value = '';
+    document.getElementById('login-submit-btn').textContent = 'Link senden';
+    document.getElementById('loginModalDialog').classList.remove('modal-lg');
+  }
+
+  document.getElementById('loginModal').addEventListener('hidden.bs.modal', _resetLoginModal);
+
+  async function handleLoginSubmit() {
+    const email = document.getElementById('login-email').value;
+    const isCheckout = !document.getElementById('login-mode-checkout').classList.contains('d-none');
+    await loginMitEmail(email);
+    if (isCheckout) {
+      // Überschreibe die generische Erfolgsmeldung mit checkout-spezifischem Text
+      const statusEl = document.getElementById('login-status');
+      if (statusEl && !statusEl.classList.contains('alert-danger')) {
+        statusEl.className = 'alert alert-success py-2 small mb-0 mt-2';
+        statusEl.innerHTML = '<strong>Link gesendet!</strong> Öffne ihn in <strong>diesem Browser-Fenster</strong> – der Bezahlvorgang startet dann automatisch.';
+        statusEl.classList.remove('d-none');
+      }
+    }
+  }
+
   function startCheckout(interval) {
     if (!VALID_CHECKOUT_PARAMS.includes(interval)) return;
     if (!paddleReady) {
@@ -325,6 +416,7 @@
       const url = new URL(window.location.href);
       url.searchParams.set('checkout', interval);
       history.replaceState({}, '', url);
+      _setLoginModalCheckoutMode(interval);
       new bootstrap.Modal(document.getElementById('loginModal')).show();
       return;
     }
