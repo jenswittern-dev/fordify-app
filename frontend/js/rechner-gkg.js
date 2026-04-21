@@ -68,26 +68,37 @@
   }
 
   function renderErgebnis(streitwert, instanz, einfach, mult, gesamt) {
+    const gesamtStr = fmt(gesamt);
     return `
       <div class="rechner-result">
-        <table class="table table-sm table-bordered mb-0">
-          <tbody>
-            <tr><td>Streitwert</td><td class="text-end font-mono">${fmt(streitwert)} €</td></tr>
-            <tr><td>Instanz</td><td class="text-end">${escapeHtml(INSTANZ_LABEL[instanz])}</td></tr>
-            <tr><td>Einfache Gebühr (§ 34 GKG, Anlage 2)</td><td class="text-end font-mono">${fmt(einfach)} €</td></tr>
-            <tr><td>Gebührenanzahl</td><td class="text-end">${mult.toFixed(1)}</td></tr>
-            <tr class="fw-bold table-primary"><td>Gerichtskosten gesamt</td><td class="text-end font-mono">${fmt(gesamt)} €</td></tr>
-          </tbody>
-        </table>
-        <div class="alert alert-info small mt-2 mb-0">
-          <strong>Hinweis:</strong> Dies sind nur die Gerichtsgebühren. Anwaltskosten beider Parteien und sonstige Auslagen (Zeugenentschädigung, Sachverständigengebühren) sind nicht enthalten.
+        <div class="rechner-result__header">
+          <div class="rechner-result__header-title">Ergebnis · Gerichtskosten</div>
+          <div class="rechner-result__total-badge">${gesamtStr} €</div>
+        </div>
+        <div class="rechner-result__body">
+          <table class="table table-sm table-striped mb-0">
+            <tbody>
+              <tr><td>Streitwert</td><td class="text-end font-mono">${fmt(streitwert)} €</td></tr>
+              <tr><td>Instanz</td><td class="text-end">${escapeHtml(INSTANZ_LABEL[instanz])}</td></tr>
+              <tr><td>Einfache Gebühr (§ 34 GKG, Anlage 2)</td><td class="text-end font-mono">${fmt(einfach)} €</td></tr>
+              <tr><td>Gebührenanzahl</td><td class="text-end">${mult.toFixed(1)}</td></tr>
+            </tbody>
+          </table>
+          <div class="alert alert-info small mt-2 mb-0">
+            <strong>Hinweis:</strong> Dies sind nur die Gerichtsgebühren. Anwaltskosten beider Parteien und sonstige Auslagen sind nicht enthalten.
+          </div>
+        </div>
+        <div class="rechner-result__footer">
+          <span class="rechner-result__footer-label">Gerichtskosten gesamt</span>
+          <span class="rechner-result__footer-val">${gesamtStr} €</span>
         </div>
       </div>
-      <div class="rechner-cta-box mt-3">
-        <div class="rechner-cta-box__title">Gerichtskosten in die Forderungsaufstellung aufnehmen</div>
-        <div class="rechner-cta-box__sub">In der Forderungsaufstellung können titulierte Gerichtskosten und RVG-Positionen nach § 367 BGB verrechnet werden.</div>
-        <a href="/forderungsaufstellung" class="btn btn-primary btn-sm">Zur Forderungsaufstellung →</a>
-      </div>`;
+      <a href="/forderungsaufstellung" class="rechner-cta-box mt-3">
+        <div>
+          <div class="rechner-cta-box__title">Gerichtskosten in die Forderungsaufstellung aufnehmen →</div>
+          <div class="rechner-cta-box__sub">In der Forderungsaufstellung können titulierte Gerichtskosten nach § 367 BGB verrechnet werden.</div>
+        </div>
+      </a>`;
   }
 
   document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {

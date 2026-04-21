@@ -79,31 +79,37 @@
         <td class="text-end font-mono">${p.zinsbetrag.toFixed(2)} €</td>
       </tr>`;
     }
+    const gesamtStr = gesamt.toFixed(2);
     return `
       <div class="rechner-result">
-        <table class="table table-sm table-bordered mb-0">
-          <thead class="table-primary">
-            <tr>
-              <th>Zeitraum</th>
-              <th class="text-end">Tage</th>
-              <th class="text-end">Zinssatz</th>
-              <th class="text-end">Zinsbetrag</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-          <tfoot class="fw-bold">
-            <tr>
-              <td colspan="3">Gesamte Verzugszinsen</td>
-              <td class="text-end font-mono">${gesamt.toFixed(2)} €</td>
-            </tr>
-          </tfoot>
-        </table>
+        <div class="rechner-result__header">
+          <div class="rechner-result__header-title">Ergebnis · Verzugszinsen</div>
+          <div class="rechner-result__total-badge">${gesamtStr} €</div>
+        </div>
+        <div class="rechner-result__body">
+          <table class="table table-sm table-striped mb-0">
+            <thead>
+              <tr>
+                <th>Zeitraum</th>
+                <th class="text-end">Tage</th>
+                <th class="text-end">Zinssatz</th>
+                <th class="text-end">Zinsbetrag</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+        <div class="rechner-result__footer">
+          <span class="rechner-result__footer-label">Zinsen gesamt</span>
+          <span class="rechner-result__footer-val">${gesamtStr} €</span>
+        </div>
       </div>
-      <div class="rechner-cta-box mt-3">
-        <div class="rechner-cta-box__title">Vollständige Forderungsaufstellung nach § 367 BGB</div>
-        <div class="rechner-cta-box__sub">Zinsen, RVG-Gebühren, Zahlungsverrechnung – alles in einem professionellen Dokument.</div>
-        <a href="/forderungsaufstellung" class="btn btn-primary btn-sm">Zur Forderungsaufstellung →</a>
-      </div>`;
+      <a href="/forderungsaufstellung" class="rechner-cta-box mt-3">
+        <div>
+          <div class="rechner-cta-box__title">Vollständige Forderungsaufstellung nach § 367 BGB →</div>
+          <div class="rechner-cta-box__sub">Zinsen, RVG-Gebühren, Zahlungsverrechnung – alles in einem professionellen Dokument.</div>
+        </div>
+      </a>`;
   }
 
   document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {

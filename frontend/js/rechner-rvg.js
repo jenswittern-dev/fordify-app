@@ -76,25 +76,36 @@
         <td class="text-end font-mono">${p.gebuehrGesamt.toFixed(2)} €</td>
       </tr>`;
     }
+    const gesamtStr = gesamt.toFixed(2);
     return `
       <div class="rechner-result">
-        <table class="table table-sm table-bordered mb-0">
-          <thead class="table-primary">
-            <tr><th>VV-Nr.</th><th>Position</th><th class="text-end">Faktor</th><th class="text-end">Betrag</th></tr>
-          </thead>
-          <tbody>${rows}</tbody>
-          <tfoot>
-            <tr><td colspan="3">Netto</td><td class="text-end font-mono">${netto.toFixed(2)} €</td></tr>
-            <tr><td colspan="3">Umsatzsteuer (${ustProzent} %)</td><td class="text-end font-mono">${ust.toFixed(2)} €</td></tr>
-            <tr class="fw-bold table-primary"><td colspan="3">Gesamt</td><td class="text-end font-mono">${gesamt.toFixed(2)} €</td></tr>
-          </tfoot>
-        </table>
+        <div class="rechner-result__header">
+          <div class="rechner-result__header-title">Ergebnis · Anwaltskosten</div>
+          <div class="rechner-result__total-badge">${gesamtStr} €</div>
+        </div>
+        <div class="rechner-result__body">
+          <table class="table table-sm table-striped mb-0">
+            <thead>
+              <tr><th>VV-Nr.</th><th>Position</th><th class="text-end">Faktor</th><th class="text-end">Betrag</th></tr>
+            </thead>
+            <tbody>${rows}</tbody>
+            <tfoot>
+              <tr class="rechner-result__subtotal-row"><td colspan="3">Netto</td><td class="text-end font-mono">${netto.toFixed(2)} €</td></tr>
+              <tr class="rechner-result__subtotal-row"><td colspan="3">Umsatzsteuer (${ustProzent} %)</td><td class="text-end font-mono">${ust.toFixed(2)} €</td></tr>
+            </tfoot>
+          </table>
+        </div>
+        <div class="rechner-result__footer">
+          <span class="rechner-result__footer-label">Anwaltskosten gesamt</span>
+          <span class="rechner-result__footer-val">${gesamtStr} €</span>
+        </div>
       </div>
-      <div class="rechner-cta-box mt-3">
-        <div class="rechner-cta-box__title">RVG-Gebühren direkt in die Forderungsaufstellung übernehmen</div>
-        <div class="rechner-cta-box__sub">In der Forderungsaufstellung werden RVG-Positionen nach § 367 BGB verrechnet.</div>
-        <a href="/forderungsaufstellung" class="btn btn-primary btn-sm">Zur Forderungsaufstellung →</a>
-      </div>`;
+      <a href="/forderungsaufstellung" class="rechner-cta-box mt-3">
+        <div>
+          <div class="rechner-cta-box__title">RVG-Gebühren in die Forderungsaufstellung übernehmen →</div>
+          <div class="rechner-cta-box__sub">In der Forderungsaufstellung werden RVG-Positionen nach § 367 BGB verrechnet.</div>
+        </div>
+      </a>`;
   }
 
   document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {
