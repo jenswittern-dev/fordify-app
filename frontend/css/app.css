@@ -78,7 +78,6 @@ body {
 .navbar-fa {
   background: var(--color-nav-bg) !important;
   padding: 0.625rem 0;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
 }
 
 .navbar-fa .navbar-brand {
