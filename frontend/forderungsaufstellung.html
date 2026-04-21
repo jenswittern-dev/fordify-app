@@ -50,8 +50,7 @@
         <span id="save-indicator" aria-live="polite" aria-atomic="true">Gespeichert ✓</span>
         <div class="navbar-nav-buttons">
           <a href="/" class="btn btn-sm btn-outline-light">← Website</a>
-          <button class="btn btn-sm btn-outline-light" onclick="zeigeFallModal()">Fälle</button>
-          <button class="btn btn-sm btn-outline-light" onclick="zeigeEinstellungenModal()">Einstellungen</button>
+          <button class="btn btn-sm btn-outline-light" data-auth-show="guest" onclick="zeigeEinstellungenModal()">Firmendaten</button>
           <button class="btn btn-sm btn-outline-light" onclick="fallZuruecksetzen()">Neu</button>
           <button class="btn btn-sm btn-nav-primary" onclick="drucken()">Drucken / PDF</button>
           <button class="btn btn-sm btn-nav-ghost" data-auth-show="guest"
@@ -67,6 +66,7 @@
                 <div class="nav-plan-badge"></div>
               </div></li>
               <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item fw-semibold" href="/konto">Mein Konto →</a></li>
               <li><a class="dropdown-item" href="/preise">Pläne &amp; Preise</a></li>
               <li><a class="dropdown-item" href="#"
                      onclick="openCustomerPortal(); return false;">
