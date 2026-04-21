@@ -1868,3 +1868,16 @@ body {
   border-color: #1e3a8a;
   color: #fff;
 }
+
+/* ---- Preise: Mobile Responsivität ---- */
+.comparison-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+@media (max-width: 575px) {
+  /* Preise-Hero: mehr Atemraum vom Bildschirmrand */
+  .preise-hero .container { --bs-gutter-x: 2.5rem; }
+  /* Vergleichstabelle: Schrift kleiner damit sie besser passt */
+  .comparison-table { font-size: 0.78rem; }
+  .comparison-table th, .comparison-table td { padding: 0.5rem 0.6rem; }
+  /* Billing-Toggle zentriert */
+  .billing-toggle-wrap { flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
+}

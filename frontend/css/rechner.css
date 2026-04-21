@@ -941,3 +941,18 @@ a.rechner-cta-box .rechner-cta-box__title { color: #1e3a8a; }
   vertical-align: middle;
   line-height: 1.4;
 }
+
+/* ---- Mobile Responsivität (< 576px) ---- */
+@media (max-width: 575px) {
+  /* Hero: mehr Atemraum vom Bildschirmrand */
+  .fordify-hero .container,
+  .rechner-hero-band .container {
+    --bs-gutter-x: 2.5rem;
+  }
+  /* Trust-Badges: engerer Gap auf kleinen Screens */
+  .hero-trust { gap: 0.6rem; }
+  /* Rechner-Hero: Statistiken etwas kleiner */
+  .rechner-hero-stat__val { font-size: 1rem; }
+  /* Fact-Chips: Umbruch erlauben */
+  .rechner-fact-chip { white-space: normal; }
+}
