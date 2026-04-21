@@ -295,6 +295,206 @@ function kontoNeuenFallAnlegen() {
   window.location.href = '/forderungsaufstellung';
 }
 
-// Stubs for Task 4 (will be replaced)
-function kontoRendereFirmendatenTab() {}
-function kontoRendereAboTab() {}
+// ---- Tab: Firmendaten ----
+
+const KONTO_IMP_FIELDS = [
+  'name','strasse','plz','ort','tel','fax','email',
+  'website','kammer','register','vertreten','ustid','bhv','iban','bic','bank',
+  'impressum-url','datenschutz-url'
+];
+
+let _pendingLogoData = undefined; // undefined = keine Änderung; null = entfernen; string = neues DataURL
+
+function kontoRendereFirmendatenTab() {
+  const einst = kontoLadeEinstellungen();
+  _pendingLogoData = undefined;
+
+  const posEl = document.getElementById('konto-logo-position');
+  if (posEl) posEl.value = einst.logoPosition || 'links';
+
+  const imp = einst.imp || {};
+  for (const suffix of KONTO_IMP_FIELDS) {
+    const key = suffix.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+    const el = document.getElementById('konto-einst-imp-' + suffix);
+    if (el) el.value = imp[key] || '';
+  }
+
+  _kontoAktualisiereLogoVorschau(einst.logo || null);
+  _kontoAktualisiereFussVorschau();
+
+  // Live-Vorschau bei Eingabe
+  const col = document.getElementById('tab-firmendaten');
+  if (col) {
+    col.removeEventListener('input', _kontoAktualisiereFussVorschau);
+    col.addEventListener('input', _kontoAktualisiereFussVorschau);
+  }
+}
+
+function _kontoAktualisiereLogoVorschau(src) {
+  const img = document.getElementById('konto-logo-vorschau');
+  if (!img) return;
+  if (src) {
+    img.src = src;
+    img.style.display = '';
+  } else {
+    img.src = '';
+    img.style.display = 'none';
+  }
+}
+
+function kontoLogoBildLaden(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) {
+    alert('Logo-Datei ist zu groß (max. 2 MB).');
+    input.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    _pendingLogoData = ev.target.result;
+    _kontoAktualisiereLogoVorschau(_pendingLogoData);
+  };
+  reader.onerror = () => {
+    alert('Logo konnte nicht gelesen werden.');
+    input.value = '';
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+function kontoLogoEntfernen() {
+  _pendingLogoData = null;
+  _kontoAktualisiereLogoVorschau(null);
+}
+
+function _kontoLeseImpFelder() {
+  const imp = {};
+  for (const suffix of KONTO_IMP_FIELDS) {
+    const key = suffix.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+    const el = document.getElementById('konto-einst-imp-' + suffix);
+    imp[key] = el ? el.value.trim() : '';
+  }
+  return imp;
+}
+
+function _kontoGeneriereImpressumFooterHtml(imp) {
+  if (!imp) return '';
+  const parts = [];
+  if (imp.name)     parts.push(`<strong>${_escHtml(imp.name)}</strong>`);
+  const adresse = [imp.strasse, (imp.plz && imp.ort ? imp.plz + ' ' + imp.ort : imp.plz || imp.ort)].filter(Boolean);
+  if (adresse.length) parts.push(adresse.map(_escHtml).join(', '));
+  if (imp.tel)      parts.push('Tel: ' + _escHtml(imp.tel));
+  if (imp.fax)      parts.push('Fax: ' + _escHtml(imp.fax));
+  if (imp.email)    parts.push('E-Mail: ' + _escHtml(imp.email));
+  if (imp.website)  parts.push(_escHtml(imp.website));
+  if (imp.kammer)   parts.push(_escHtml(imp.kammer));
+  if (imp.ustid)    parts.push('USt-IdNr.: ' + _escHtml(imp.ustid));
+  return parts.join(' &middot; ');
+}
+
+function _kontoAktualisiereFussVorschau() {
+  const el = document.getElementById('konto-imp-vorschau');
+  if (!el) return;
+  const html = _kontoGeneriereImpressumFooterHtml(_kontoLeseImpFelder());
+  el.innerHTML = html || '<em style="color:#94a3b8;">Vorschau erscheint hier…</em>';
+}
+
+function kontoEinstellungenSpeichern() {
+  const einst = kontoLadeEinstellungen();
+
+  if (_pendingLogoData !== undefined) {
+    einst.logo = _pendingLogoData; // null = entfernen, string = neues Logo
+  }
+
+  einst.logoPosition = document.getElementById('konto-logo-position')?.value || 'links';
+  einst.imp = _kontoLeseImpFelder();
+
+  kontoSpeichereEinstellungen(einst);
+  _pendingLogoData = undefined;
+
+  // Kurzfeedback
+  const btn = document.querySelector('[onclick="kontoEinstellungenSpeichern()"]');
+  if (btn) {
+    const orig = btn.textContent;
+    btn.textContent = 'Gespeichert ✓';
+    btn.disabled = true;
+    setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 1500);
+  }
+}
+
+function kontoEinstellungenExportieren() {
+  const einst = kontoLadeEinstellungen();
+  const blob = new Blob([JSON.stringify({ fordify_settings: einst }, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const firma = ((einst.imp || {}).name || '').replace(/[/\\:*?"<>|]/g, '').replace(/\s+/g, '_').slice(0, 50);
+  a.download = 'Fordify_Einstellungen' + (firma ? '_' + firma : '') + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function kontoEinstellungenImportieren(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      if (!parsed.fordify_settings) {
+        alert('Import fehlgeschlagen: Dies ist keine fordify-Einstellungsdatei.');
+        input.value = '';
+        return;
+      }
+      kontoSpeichereEinstellungen(parsed.fordify_settings);
+      kontoRendereFirmendatenTab();
+    } catch (e) {
+      alert('Import fehlgeschlagen: ' + e.message);
+    }
+    input.value = '';
+  };
+  reader.onerror = () => {
+    alert('Datei konnte nicht gelesen werden.');
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function kontoThemeWechseln(name) {
+  const valid = ['brand', 'dark', 'clean'];
+  if (!valid.includes(name)) name = 'brand';
+  localStorage.setItem(KONTO_STORAGE_KEY_THEME, name);
+  alert('Theme "' + name + '" gespeichert. Es wird aktiv, sobald Sie die Forderungsaufstellungs-Seite öffnen.');
+}
+
+// ---- Tab: Abo ----
+
+function kontoRendereAboTab() {
+  const plan = fordifyAuth.plan || 'free';
+  const configs = {
+    pro:      { label: 'PRO',      bg: '#fef3c7', color: '#92400e' },
+    business: { label: 'BUSINESS', bg: '#dbeafe', color: '#1e40af' },
+  };
+  const c = configs[plan];
+
+  const badgeEl = document.getElementById('konto-abo-plan-badge');
+  if (badgeEl && c) {
+    badgeEl.innerHTML = `<span class="plan-badge" style="background:${c.bg};color:${c.color};font-size:1rem;padding:4px 14px;">${c.label}</span>`;
+  }
+
+  // Laufzeit aus Supabase laden
+  if (supabaseClient && fordifyAuth.user) {
+    supabaseClient
+      .from('subscriptions')
+      .select('current_period_end')
+      .eq('user_id', fordifyAuth.user.id)
+      .single()
+      .then(({ data }) => {
+        const laufzeitEl = document.getElementById('konto-abo-laufzeit');
+        if (laufzeitEl && data?.current_period_end) {
+          laufzeitEl.textContent = new Date(data.current_period_end).toLocaleDateString('de-DE');
+        }
+      });
+  }
+}
