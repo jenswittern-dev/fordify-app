@@ -180,6 +180,7 @@ Alle API-Keys und Credentials stehen in `.env` (nicht im Repo — gitignored):
 | `RESEND_API_KEY` | Resend E-Mail API Key |
 | `GOATCOUNTER_URL` | GoatCounter Analytics URL (`https://fordify.goatcounter.com/`) |
 | `GOATCOUNTER_API_KEY` | GoatCounter API Token (für N8N Digest-Abfragen) |
+| `HOSTINGER_API_KEY` | Hostinger API Token (MCP-Server in `.mcp.json`) |
 
 Bei CLI-Befehlen (z.B. `supabase functions deploy`) `.env` sourcen oder Werte direkt übergeben.
 

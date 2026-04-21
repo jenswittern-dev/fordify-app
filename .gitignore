@@ -48,3 +48,6 @@ node_modules/
 
 # Supabase temporäre Dateien
 supabase/.temp/
+
+# MCP-Konfiguration (enthält API-Keys)
+.mcp.json
