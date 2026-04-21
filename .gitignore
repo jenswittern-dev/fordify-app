@@ -31,3 +31,20 @@ docs/*.pdf
 
 # Lokale Testdateien
 *.local.*
+
+# Playwright MCP Cache
+.playwright-mcp/
+
+# Superpowers Brainstorm Cache
+.superpowers/
+
+# Screenshot-Dateien im Root (temporäre Review-Bilder)
+/*.png
+/*.jpeg
+/*.jpg
+
+# Node
+node_modules/
+
+# Supabase temporäre Dateien
+supabase/.temp/
