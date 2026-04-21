@@ -77,7 +77,8 @@ function checkAutoCheckout() {
     if (typeof Paddle === 'undefined') return;
     Paddle.Checkout.open({
       items: [{ priceId, quantity: 1 }],
-      customData: { user_id: fordifyAuth.user.id }
+      customData: { user_id: fordifyAuth.user.id },
+      locale: 'de'
     });
   });
 }

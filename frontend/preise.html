@@ -424,7 +424,8 @@
     if (!priceId) return;
     Paddle.Checkout.open({
       items: [{ priceId, quantity: 1 }],
-      customData: { user_id: userId }
+      customData: { user_id: userId },
+      locale: 'de'
     });
   }
 </script>
