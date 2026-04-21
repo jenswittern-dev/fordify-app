@@ -1751,7 +1751,8 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   }
 
   // Initiale HF-Zinsen (Phase 0: von zp.zinsVon bis erster Zahlung oder heute)
-  const phase0End = zahlungen.length > 0 ? parseDate(zahlungen[0].datum) : heute;
+  let phase0End = zahlungen.length > 0 ? parseDate(zahlungen[0].datum) : heute;
+  if (insoDatum && phase0End > insoDatum) phase0End = insoDatum;
   for (let hfIdx = 0; hfIdx < hfs.length; hfIdx++) {
     const hf = hfs[hfIdx];
     const zp = hfZpMap[hf.id];
@@ -1888,13 +1889,14 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
       const hfEntry = hfEntries.find(e => e.hfId === hf.id);
       if (!hfEntry || hfEntry.rest.lte(0)) continue;
       if (!hfZpMap[hf.id]) continue;
-      const z = calcZinsen(hfEntry.rest, lastPayDatum, heute);
+      const effektivBis = (insoDatum && insoDatum < heute) ? insoDatum : heute;
+      const z = calcZinsen(hfEntry.rest, lastPayDatum, effektivBis);
       if (z.lte(0)) continue;
       const hfNum = hfs.length > 1 ? ` ${hfIdx + 1}` : "";
       zinsenEntries.push({
         id: `hfz_final_${hf.id}`, hfId: hf.id, isNew: true,
         afterPayIdx: zahlungen.length - 1,
-        vonStr: lastPayDatum, bisDate: heute,
+        vonStr: lastPayDatum, bisDate: effektivBis,
         bezeichnung: `Zinsen HF${hfNum}`,
         betrag: z, rest: z.plus(ZERO), payAllocs: []
       });
@@ -2476,8 +2478,12 @@ function drucken() {
 // ---- Zurücksetzen ----
 
 function fallZuruecksetzen() {
-  if (!confirm("Neuen leeren Fall anlegen?")) return;
-  neuenFallAnlegen();
+  const modal = new bootstrap.Modal(document.getElementById("confirmNeuModal"));
+  document.getElementById("confirmNeuBtn").onclick = () => {
+    modal.hide();
+    neuenFallAnlegen();
+  };
+  modal.show();
 }
 
 // ---- Init ----

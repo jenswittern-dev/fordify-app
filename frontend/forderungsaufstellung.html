@@ -720,6 +720,25 @@
   </div>
 </div>
 
+<!-- Confirm-Modal: Neuer Fall -->
+<div class="modal fade" id="confirmNeuModal" tabindex="-1" aria-labelledby="confirmNeuModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content modal-content--app">
+      <div class="modal-header modal-header--app">
+        <h5 class="modal-title" id="confirmNeuModalLabel">Neuen Fall anlegen?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+      </div>
+      <div class="modal-body modal-body--app">
+        <p class="mb-0">Alle nicht gespeicherten Daten des aktuellen Falls gehen verloren.</p>
+      </div>
+      <div class="modal-footer modal-footer--app">
+        <button type="button" class="btn-secondary-app" data-bs-dismiss="modal">Abbrechen</button>
+        <button type="button" class="btn-primary-app" id="confirmNeuBtn">Neuer Fall</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ============================================================
      Scripts
      ============================================================ -->
@@ -735,7 +754,6 @@
 <script src="js/zinsen.js"></script>
 <script src="js/rvg.js"></script>
 <script src="js/verrechnung.js"></script>
-<script src="js/zusammenfassung.js"></script>
 <script src="js/app.js"></script>
 <script>
   if ('serviceWorker' in navigator) {
