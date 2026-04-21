@@ -160,6 +160,30 @@ Siehe `docs/SYSTEM.md` für vollständiges Schema. Kurzübersicht:
 
 ---
 
+## Credentials & Secrets
+
+Alle API-Keys und Credentials stehen in `.env` (nicht im Repo — gitignored):
+
+| Variable | Zweck |
+|---|---|
+| `SUPABASE_URL` | Supabase Projekt-URL (Project-Ref: `dswhllvtewtqpiqnpbsu`) |
+| `SUPABASE_ANON_KEY` | Supabase anon/public Key (für Frontend) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase Service Role Key (nur Edge Functions, nie Frontend!) |
+| `SUPABASE_ACCESS_TOKEN` | Supabase CLI Login-Token |
+| `PADDLE_API_KEY` | Paddle Backend API Key |
+| `PADDLE_CLIENT_TOKEN` | Paddle Frontend Token (live) |
+| `PADDLE_WEBHOOK_SECRET` | Paddle Webhook-Signatur-Secret |
+| `PADDLE_PRICE_ID_PRO_MONTHLY` | Paddle Price-ID für Pro monatlich |
+| `PADDLE_PRICE_ID_PRO_YEARLY` | Paddle Price-ID für Pro jährlich |
+| `PADDLE_PRICE_ID_BUSINESS_MONTHLY` | Paddle Price-ID für Business monatlich |
+| `PADDLE_PRICE_ID_BUSINESS_YEARLY` | Paddle Price-ID für Business jährlich |
+| `RESEND_API_KEY` | Resend E-Mail API Key |
+| `GOATCOUNTER_URL` | GoatCounter Analytics URL |
+
+Bei CLI-Befehlen (z.B. `supabase functions deploy`) `.env` sourcen oder Werte direkt übergeben.
+
+---
+
 ## Dokumentation lesen + pflegen
 
 **Vor neuen Features immer prüfen:**
