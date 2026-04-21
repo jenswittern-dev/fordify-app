@@ -2175,8 +2175,6 @@ function speichereEinstellungen(einst) {
 function zeigeEinstellungenModal() {
   const einst = ladeEinstellungen();
 
-  aktualisierThemeSwitcher(localStorage.getItem(STORAGE_KEY_THEME) || "brand");
-
   const posEl = document.getElementById("einst-logo-position");
   if (posEl) posEl.value = einst.logoPosition || "links";
 
@@ -2566,15 +2564,6 @@ function themeWechseln(name) {
     logoImg.src = logoMap[name] || "img/logo.svg";
   }
   localStorage.setItem(STORAGE_KEY_THEME, name);
-  aktualisierThemeSwitcher(name);
-}
-
-function aktualisierThemeSwitcher(name) {
-  document.querySelectorAll(".theme-card").forEach(el => {
-    const active = el.dataset.themeSelect === name;
-    el.classList.toggle("theme-card--active", active);
-    el.setAttribute("aria-pressed", active ? "true" : "false");
-  });
 }
 
 function themeLaden() {
