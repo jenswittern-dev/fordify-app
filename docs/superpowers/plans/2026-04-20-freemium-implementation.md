@@ -9,7 +9,7 @@
 | 4 – Auth – Magic Link Login | ✅ | `frontend/js/auth.js` komplett implementiert |
 | 5 – Cloud-Laden beim Login | ✅ | `ladeCloudDaten()`, `migrateSessionToCloud()` in auth.js |
 | 6 – Feature-Gates | ✅ | `frontend/js/gates.js` mit `requiresPaid()` und Upgrade-Modal |
-| 7 – Paddle-Webhook Edge Function | ⏳ | Supabase + Paddle eingerichtet – prüfen ob jetzt deploybar |
+| 7 – Paddle-Webhook Edge Function | ✅ | Deployed, Secrets gesetzt – Webhook-URL in Paddle manuell eintragen |
 | 8 – Pricing-Seite | ✅ | `frontend/preise.html` mit Paddle-Checkout + 3-Schritt-Modal |
 | 9 – N8N-Workflows | ⏳ | Wartet auf N8N-Server-Setup |
 | 10 – Launch-Vorbereitung (AGB etc.) | ✅ | `agb.html`, `impressum.html`, `datenschutz.html` vorhanden |

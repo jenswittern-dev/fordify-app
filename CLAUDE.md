@@ -122,14 +122,14 @@ fordify-app/
 | 4 – Auth – Magic Link Login | ✅ | |
 | 5 – Cloud-Laden beim Login | ✅ | |
 | 6 – Feature-Gates | ✅ | |
-| 7 – Paddle-Webhook Edge Function | ⏳ | Supabase + Paddle eingerichtet – prüfen ob deploybar |
+| 7 – Paddle-Webhook Edge Function | ✅ | Deployed + Secrets gesetzt; Webhook-URL in Paddle manuell eintragen |
 | 8 – Pricing-Seite | ✅ | |
 | 9 – N8N-Workflows | ⏳ | Wartet auf N8N-Server-Setup |
 | 10 – Launch-Vorbereitung (AGB etc.) | ✅ | agb.html vorhanden |
 | 11 – Gestuftes PDF-Branding | ⏳ | getFordifyBranding() noch nicht implementiert |
 | 12 – Excel/CSV-Export | ✅ | fallExportierenAlsExcel() in app.js |
 
-**Blockierungen:** Task 7 (prüfen), Task 9 (N8N fehlt), Task 11 (Code-Änderung nötig)
+**Blockierungen:** Task 9 (N8N fehlt), Task 11 (Code-Änderung nötig)
 
 ---
 
