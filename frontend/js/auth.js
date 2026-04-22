@@ -42,6 +42,7 @@ async function ladeSubscriptionStatus() {
 async function loginMitEmail(email) {
   email = (email || '').trim();
   if (!email) { _loginStatus('Bitte E-Mail eingeben.', 'danger'); return; }
+  if (!CONFIG.supabase.url) { _loginStatus('Auth auf dieser Umgebung nicht konfiguriert.', 'danger'); return; }
 
   _loginStatus('Link wird gesendet…', 'info');
   try {
@@ -53,10 +54,12 @@ async function loginMitEmail(email) {
     const json = await resp.json();
 
     if (resp.status === 403 && json.error === 'kein_abo') {
+      const safeHref = (typeof json.preiseUrl === 'string' && json.preiseUrl.startsWith('https://fordify.de'))
+        ? json.preiseUrl : '/preise';
       _loginStatusMitLink(
         'Kein aktives Abo gefunden. Bitte zuerst ',
         'abonnieren',
-        json.preiseUrl || '/preise',
+        safeHref,
         '.'
       );
       return;
