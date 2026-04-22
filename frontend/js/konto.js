@@ -34,6 +34,13 @@ function kontoSpeichereEinstellungen(einst) {
   } catch (e) { console.warn('Einstellungen speichern fehlgeschlagen:', e); }
 }
 
+// ---- Logout ----
+
+async function kontoLogout() {
+  await logout();
+  window.location.href = '/forderungsaufstellung';
+}
+
 // ---- Auth-Guard und Init ----
 
 // Read session directly from localStorage to bypass Supabase Web Locks.
