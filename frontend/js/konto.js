@@ -49,9 +49,9 @@ async function kontoLogout() {
 
 // ---- Auth-Guard und Init ----
 
-// Read session directly from localStorage to bypass Supabase Web Locks.
-// getSession() and onAuthStateChange both acquire a lock that can be
-// "stolen" during page-to-page navigation, causing infinite spinners.
+// Reads session directly from localStorage — bypasses Supabase Web Locks entirely.
+// Both getSession() and setSession() acquire the same lock that gets "stolen"
+// during page-to-page navigation. Direct localStorage + fetch avoids this.
 function _leseLocalSession() {
   try {
     const projectRef = new URL(CONFIG.supabase.url).hostname.split('.')[0];
@@ -60,8 +60,23 @@ function _leseLocalSession() {
     const data = JSON.parse(raw);
     if (!data?.user || !data?.access_token) return null;
     if (data.expires_at && data.expires_at < Math.floor(Date.now() / 1000)) return null;
-    return { user: data.user, access_token: data.access_token, refresh_token: data.refresh_token };
+    return { user: data.user, access_token: data.access_token };
   } catch (e) { return null; }
+}
+
+// Direct fetch instead of supabaseClient — avoids lock contention on konto.html.
+async function _pruefeAbo(userId, accessToken) {
+  const res = await fetch(
+    `${CONFIG.supabase.url}/rest/v1/subscriptions?user_id=eq.${userId}&select=status,plan`,
+    { headers: { 'apikey': CONFIG.supabase.anonKey, 'Authorization': `Bearer ${accessToken}` } }
+  );
+  if (!res.ok) return;
+  const rows = await res.json();
+  const row = rows?.[0];
+  if (row?.status === 'active') {
+    fordifyAuth.hasSubscription = true;
+    fordifyAuth.plan = row.plan;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -77,14 +92,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   try {
-    // Load session into Supabase client so RLS-protected queries work
-    await supabaseClient.auth.setSession({
-      access_token: session.access_token,
-      refresh_token: session.refresh_token
-    });
     fordifyAuth.isAuthenticated = true;
     fordifyAuth.user = session.user;
-    await ladeSubscriptionStatus();
+    await _pruefeAbo(session.user.id, session.access_token);
     if (!fordifyAuth.hasSubscription) {
       window.location.href = '/preise';
       return;
