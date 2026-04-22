@@ -428,21 +428,27 @@
     document.querySelectorAll('.pricing-card button[onclick^="startCheckout"]').forEach(btn => {
       btn.classList.add('d-none');
     });
-    // Show "Kundenbereich öffnen" on the featured (Pro) card
-    const featured = document.querySelector('.pricing-card.featured');
-    if (featured && !featured.querySelector('.abo-verwalten-btn')) {
-      const btn = document.createElement('a');
-      btn.href = '/konto';
-      btn.className = 'btn btn-outline-primary w-100 abo-verwalten-btn mt-2';
-      btn.textContent = 'Kundenbereich öffnen →';
-      featured.appendChild(btn);
-    }
+    // Add "Kundenbereich öffnen" link to each card whose button was hidden
+    document.querySelectorAll('.pricing-card').forEach(card => {
+      if (!card.querySelector('.abo-verwalten-btn')) {
+        const a = document.createElement('a');
+        a.href = '/konto';
+        a.className = 'btn btn-outline-primary w-100 abo-verwalten-btn mt-2';
+        a.textContent = 'Kundenbereich öffnen →';
+        card.appendChild(a);
+      }
+    });
   }
 
-  // Check after auth initializes (INITIAL_SESSION fires in ~200ms on page load for logged-in users)
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(_aktualisierePreisseiteNachAuth, 1500);
-  });
+  // Hook into aktualisiereUIFuerAuth so subscriber UI updates as soon as auth+subscription
+  // state is confirmed (after ladeSubscriptionStatus() completes in auth.js).
+  (function () {
+    const _orig = typeof aktualisiereUIFuerAuth === 'function' ? aktualisiereUIFuerAuth : null;
+    window.aktualisiereUIFuerAuth = function () {
+      if (_orig) _orig.apply(this, arguments);
+      _aktualisierePreisseiteNachAuth();
+    };
+  })();
 </script>
 <script data-goatcounter="https://fordify.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
