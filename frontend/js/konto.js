@@ -60,7 +60,7 @@ function _leseLocalSession() {
     const data = JSON.parse(raw);
     if (!data?.user || !data?.access_token) return null;
     if (data.expires_at && data.expires_at < Math.floor(Date.now() / 1000)) return null;
-    return { user: data.user, access_token: data.access_token };
+    return { user: data.user, access_token: data.access_token, refresh_token: data.refresh_token };
   } catch (e) { return null; }
 }
 
@@ -77,6 +77,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   try {
+    // Load session into Supabase client so RLS-protected queries work
+    await supabaseClient.auth.setSession({
+      access_token: session.access_token,
+      refresh_token: session.refresh_token
+    });
     fordifyAuth.isAuthenticated = true;
     fordifyAuth.user = session.user;
     await ladeSubscriptionStatus();
