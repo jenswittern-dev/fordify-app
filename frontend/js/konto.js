@@ -43,7 +43,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   try {
-    const { data: { session } } = await supabaseClient.auth.getSession();
+    const { data } = await supabaseClient.auth.getSession();
+    const session = data?.session;
     if (!session) {
       window.location.href = '/forderungsaufstellung';
       return;
