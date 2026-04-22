@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch (e) {
     console.error('Konto-Init fehlgeschlagen:', e);
     const loadingEl = document.getElementById('konto-loading');
-    if (loadingEl) loadingEl.innerHTML = '<p class="text-danger">Fehler beim Laden. Bitte Seite neu laden.</p>';
+    if (loadingEl) loadingEl.innerHTML = `<p class="text-danger">Fehler: ${e?.message || String(e)}</p><p class="small text-muted">Bitte diesen Fehler melden.</p>`;
   }
 });
 
