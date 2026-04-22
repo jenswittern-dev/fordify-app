@@ -127,6 +127,18 @@ async function ladeCloudDaten() {
 
 // Auth-State-Listener
 if (supabaseClient) supabaseClient.auth.onAuthStateChange(async (event, session) => {
+  // INITIAL_SESSION: bereits eingeloggt, Seite neu geladen oder von anderer Seite navigiert
+  if (event === 'INITIAL_SESSION' && session) {
+    fordifyAuth.isAuthenticated = true;
+    fordifyAuth.user = session.user;
+    aktualisiereUIFuerAuth();
+    await ladeSubscriptionStatus();
+    StorageBackend.init(fordifyAuth);
+    aktualisiereUIFuerAuth();
+    checkAutoCheckout();
+    // Auf forderungsaufstellung: App mit korrektem StorageBackend (localStorage) neu laden
+    if (fordifyAuth.hasSubscription && typeof laden === 'function') laden();
+  }
   if (event === 'SIGNED_IN') {
     fordifyAuth.isAuthenticated = true;
     fordifyAuth.user = session.user;
