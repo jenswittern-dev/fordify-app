@@ -49,7 +49,7 @@ function _getInitials(email) {
 
 function _getPlanBadgeHTML(plan) {
   const configs = {
-    free:     { label: 'FREE',     bg: '#e2e8f0', color: '#475569' },
+    free:     { label: 'KEIN ABO', bg: '#e2e8f0', color: '#475569' },
     pro:      { label: 'PRO',      bg: '#fef3c7', color: '#92400e' },
     business: { label: 'BUSINESS', bg: '#dbeafe', color: '#1e40af' },
   };
