@@ -30,7 +30,12 @@ serve(async (req) => {
         return new Response('Could not resolve customer email', { status: 500 })
       }
 
-      userId = await _findOrCreateUser(supabase, email)
+      try {
+        userId = await _findOrCreateUser(supabase, email)
+      } catch (e) {
+        console.error('_findOrCreateUser failed:', e)
+        return new Response('User resolution failed', { status: 500 })
+      }
 
       // 2. Send magic link so new user can access their account
       if (event_type === 'subscription.created' || event_type === 'subscription.activated') {
@@ -78,7 +83,9 @@ async function _findOrCreateUser(supabase: ReturnType<typeof createClient>, emai
     { headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` } }
   )
   const searchData = await searchResp.json()
-  const existing   = searchData?.users?.[0]
+  const existing = searchData?.users?.find(
+    (u: { email: string; id: string }) => u.email === email
+  )
   if (existing?.id) return existing.id
 
   // Create new user
@@ -102,7 +109,7 @@ async function _sendMagicLink(supabase: ReturnType<typeof createClient>, email: 
   }
   const magicLink = data.properties.action_link
 
-  await fetch('https://api.resend.com/emails', {
+  const sendResp = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${RESEND_API_KEY}`,
@@ -133,6 +140,11 @@ async function _sendMagicLink(supabase: ReturnType<typeof createClient>, email: 
       `
     })
   })
+  if (!sendResp.ok) {
+    const errBody = await sendResp.text()
+    console.error('Resend send failed:', sendResp.status, errBody)
+    // Do not throw — subscription upsert already happened, Paddle needs 200
+  }
 }
 
 async function verifyPaddleSignature(body: string, signature: string, secret: string): Promise<boolean> {
