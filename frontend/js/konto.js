@@ -37,7 +37,13 @@ function kontoSpeichereEinstellungen(einst) {
 // ---- Logout ----
 
 async function kontoLogout() {
-  await logout();
+  try { await logout(); } catch (e) { console.warn('Logout-Fehler:', e); }
+  // Clear session from localStorage directly as fallback
+  try {
+    const projectRef = new URL(CONFIG.supabase.url).hostname.split('.')[0];
+    localStorage.removeItem(`sb-${projectRef}-auth-token`);
+    localStorage.removeItem(`sb-${projectRef}-auth-token-code-verifier`);
+  } catch (e) { /* ignore */ }
   window.location.href = '/forderungsaufstellung';
 }
 
