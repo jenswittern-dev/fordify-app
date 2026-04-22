@@ -28,7 +28,7 @@ async function ladeSubscriptionStatus() {
     .from('subscriptions')
     .select('status, plan, current_period_end')
     .eq('user_id', fordifyAuth.user.id)
-    .single();
+    .maybeSingle();
 
   if (data && data.status === 'active') {
     fordifyAuth.hasSubscription = true;

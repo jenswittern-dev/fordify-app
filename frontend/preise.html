@@ -360,49 +360,18 @@
     console.warn('Paddle Init fehlgeschlagen:', e);
   }
 
-  const PLAN_LABELS = {
-    'pro-monthly':      'Pro – 19 €/Monat',
-    'pro-yearly':       'Pro – 149 €/Jahr (≈ 12,42 €/Monat)',
-    'business-monthly': 'Business – 49 €/Monat',
-    'business-yearly':  'Business – 399 €/Jahr (≈ 33,25 €/Monat)'
-  };
-
-  function _setLoginModalCheckoutMode(interval) {
-    document.getElementById('loginModalLabel').textContent = 'Abonnieren – fast geschafft';
-    document.getElementById('login-mode-default').classList.add('d-none');
-    document.getElementById('login-mode-checkout').classList.remove('d-none');
-    document.getElementById('checkout-plan-badge').textContent = PLAN_LABELS[interval] || interval;
-    document.getElementById('checkout-trust').classList.remove('d-none');
-    document.getElementById('login-submit-btn').textContent = 'Sicheren Link senden →';
-    document.getElementById('loginModalDialog').classList.add('modal-lg');
-  }
-
   function _resetLoginModal() {
     document.getElementById('loginModalLabel').textContent = 'Bei fordify anmelden';
-    document.getElementById('login-mode-default').classList.remove('d-none');
-    document.getElementById('login-mode-checkout').classList.add('d-none');
-    document.getElementById('checkout-trust').classList.add('d-none');
     document.getElementById('login-status').classList.add('d-none');
     document.getElementById('login-email').value = '';
     document.getElementById('login-submit-btn').textContent = 'Link senden';
-    document.getElementById('loginModalDialog').classList.remove('modal-lg');
   }
 
   document.getElementById('loginModal').addEventListener('hidden.bs.modal', _resetLoginModal);
 
   async function handleLoginSubmit() {
     const email = document.getElementById('login-email').value;
-    const isCheckout = !document.getElementById('login-mode-checkout').classList.contains('d-none');
     await loginMitEmail(email);
-    if (isCheckout) {
-      // Überschreibe die generische Erfolgsmeldung mit checkout-spezifischem Text
-      const statusEl = document.getElementById('login-status');
-      if (statusEl && !statusEl.classList.contains('alert-danger')) {
-        statusEl.className = 'alert alert-success py-2 small mb-0 mt-2';
-        statusEl.innerHTML = '<strong>Link gesendet!</strong> Öffne ihn in <strong>diesem Browser-Fenster</strong> – der Bezahlvorgang startet dann automatisch.';
-        statusEl.classList.remove('d-none');
-      }
-    }
   }
 
   function startCheckout(interval) {

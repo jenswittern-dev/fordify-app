@@ -46,7 +46,7 @@ serve(async (req) => {
     // 3. Derive plan from Paddle price custom_data (set in Paddle dashboard) or fallback
     const plan = data.items?.[0]?.price?.custom_data?.plan || 'pro'
 
-    await supabase.from('subscriptions').upsert({
+    const { error: upsertError } = await supabase.from('subscriptions').upsert({
       user_id:                userId,
       paddle_subscription_id: data.id,
       paddle_customer_id:     data.customer_id,
@@ -56,6 +56,10 @@ serve(async (req) => {
       current_period_end:     data.current_billing_period?.ends_at || null,
       updated_at:             new Date().toISOString()
     }, { onConflict: 'paddle_subscription_id' })
+    if (upsertError) {
+      console.error('subscriptions upsert failed:', upsertError)
+      return new Response('DB upsert failed', { status: 500 })
+    }
   }
 
   if (event_type === 'subscription.canceled') {
@@ -152,6 +156,8 @@ async function verifyPaddleSignature(body: string, signature: string, secret: st
   const ts = parts['ts']
   const h1 = parts['h1']
   if (!ts || !h1) return false
+  const tsNum = parseInt(ts, 10)
+  if (isNaN(tsNum) || Math.abs(Date.now() / 1000 - tsNum) > 300) return false
   const signedPayload = `${ts}:${body}`
   const key = await crypto.subtle.importKey(
     'raw', new TextEncoder().encode(secret),
