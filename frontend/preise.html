@@ -411,23 +411,38 @@
       alert('Checkout ist auf dieser Umgebung nicht verfügbar (Staging/Test).');
       return;
     }
-    const userId = (typeof fordifyAuth !== 'undefined' && fordifyAuth.user?.id) || null;
-    if (!userId) {
-      const url = new URL(window.location.href);
-      url.searchParams.set('checkout', interval);
-      history.replaceState({}, '', url);
-      _setLoginModalCheckoutMode(interval);
-      new bootstrap.Modal(document.getElementById('loginModal')).show();
-      return;
-    }
     const priceId = PRICE_MAP[interval]?.();
     if (!priceId) return;
+    // Pass user_id if already logged in (webhook uses it as optimisation; still works without it)
+    const userId = (typeof fordifyAuth !== 'undefined' && fordifyAuth.user?.id) || undefined;
     Paddle.Checkout.open({
       items: [{ priceId, quantity: 1 }],
-      customData: { user_id: userId },
+      customData: userId ? { user_id: userId } : undefined,
       locale: 'de'
     });
   }
+
+  function _aktualisierePreisseiteNachAuth() {
+    if (typeof fordifyAuth === 'undefined' || !fordifyAuth.hasSubscription) return;
+    // Hide all checkout buttons for active subscribers
+    document.querySelectorAll('.pricing-card button[onclick^="startCheckout"]').forEach(btn => {
+      btn.classList.add('d-none');
+    });
+    // Show "Kundenbereich öffnen" on the featured (Pro) card
+    const featured = document.querySelector('.pricing-card.featured');
+    if (featured && !featured.querySelector('.abo-verwalten-btn')) {
+      const btn = document.createElement('a');
+      btn.href = '/konto';
+      btn.className = 'btn btn-outline-primary w-100 abo-verwalten-btn mt-2';
+      btn.textContent = 'Kundenbereich öffnen →';
+      featured.appendChild(btn);
+    }
+  }
+
+  // Check after auth initializes (INITIAL_SESSION fires in ~200ms on page load for logged-in users)
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(_aktualisierePreisseiteNachAuth, 1500);
+  });
 </script>
 <script data-goatcounter="https://fordify.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
