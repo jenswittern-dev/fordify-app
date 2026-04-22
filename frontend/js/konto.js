@@ -80,6 +80,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     fordifyAuth.isAuthenticated = true;
     fordifyAuth.user = session.user;
     await ladeSubscriptionStatus();
+    if (!fordifyAuth.hasSubscription) {
+      window.location.href = '/preise';
+      return;
+    }
     StorageBackend.init(fordifyAuth);
     aktualisiereUIFuerAuth();
 
