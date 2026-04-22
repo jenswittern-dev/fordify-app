@@ -36,55 +36,54 @@ function kontoSpeichereEinstellungen(einst) {
 
 // ---- Auth-Guard und Init ----
 
-document.addEventListener('DOMContentLoaded', () => {
+// Read session directly from localStorage to bypass Supabase Web Locks.
+// getSession() and onAuthStateChange both acquire a lock that can be
+// "stolen" during page-to-page navigation, causing infinite spinners.
+function _leseLocalSession() {
+  try {
+    const projectRef = new URL(CONFIG.supabase.url).hostname.split('.')[0];
+    const raw = localStorage.getItem(`sb-${projectRef}-auth-token`);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (!data?.user || !data?.access_token) return null;
+    if (data.expires_at && data.expires_at < Math.floor(Date.now() / 1000)) return null;
+    return { user: data.user, access_token: data.access_token };
+  } catch (e) { return null; }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
   if (!supabaseClient) {
     window.location.href = '/forderungsaufstellung';
     return;
   }
 
-  let initialized = false;
-
-  // Redirect guests after 5s — handles case where no auth event fires
-  const authTimeout = setTimeout(() => {
-    if (!initialized) window.location.href = '/forderungsaufstellung';
-  }, 5000);
-
-  async function _initKonto(session) {
-    if (initialized) return;
-    initialized = true;
-    clearTimeout(authTimeout);
-    try {
-      fordifyAuth.isAuthenticated = true;
-      fordifyAuth.user = session.user;
-      await ladeSubscriptionStatus();
-      StorageBackend.init(fordifyAuth);
-      aktualisiereUIFuerAuth();
-
-      _kontoUpdateHero();
-      _kontoInitTabs();
-      _kontoActivateTabFromUrl();
-
-      document.getElementById('konto-loading').style.display = 'none';
-      document.getElementById('konto-content').classList.remove('d-none');
-    } catch (e) {
-      console.error('Konto-Init fehlgeschlagen:', e);
-      const loadingEl = document.getElementById('konto-loading');
-      if (loadingEl) loadingEl.innerHTML = `<p class="text-danger">Fehler: ${e?.message || String(e)}</p><p class="small text-muted">Bitte diesen Fehler melden.</p>`;
-    }
+  const session = _leseLocalSession();
+  if (!session) {
+    window.location.href = '/forderungsaufstellung';
+    return;
   }
 
-  // Avoid getSession() — it throws "lock was stolen" when navigating between pages.
-  // INITIAL_SESSION may arrive with null when a Magic Link is being processed (SIGNED_IN follows).
-  // SIGNED_OUT means definitely not logged in → redirect immediately.
-  supabaseClient.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'SIGNED_OUT') {
-      clearTimeout(authTimeout);
-      window.location.href = '/forderungsaufstellung';
-      return;
-    }
-    if ((event === 'INITIAL_SESSION' || event === 'SIGNED_IN') && session) {
-      await _initKonto(session);
-    }
+  try {
+    fordifyAuth.isAuthenticated = true;
+    fordifyAuth.user = session.user;
+    await ladeSubscriptionStatus();
+    StorageBackend.init(fordifyAuth);
+    aktualisiereUIFuerAuth();
+
+    _kontoUpdateHero();
+    _kontoInitTabs();
+    _kontoActivateTabFromUrl();
+
+    document.getElementById('konto-loading').style.display = 'none';
+    document.getElementById('konto-content').classList.remove('d-none');
+  } catch (e) {
+    console.error('Konto-Init fehlgeschlagen:', e);
+    const loadingEl = document.getElementById('konto-loading');
+    if (loadingEl) loadingEl.innerHTML = `<p class="text-danger">Fehler: ${e?.message || String(e)}</p><p class="small text-muted">Bitte diesen Fehler melden.</p>`;
+  }
+
+  supabaseClient.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_OUT') window.location.href = '/forderungsaufstellung';
   });
 });
 
