@@ -36,37 +36,47 @@ function kontoSpeichereEinstellungen(einst) {
 
 // ---- Auth-Guard und Init ----
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   if (!supabaseClient) {
     window.location.href = '/forderungsaufstellung';
     return;
   }
 
-  try {
-    const { data } = await supabaseClient.auth.getSession();
-    const session = data?.session;
+  // Fallback: redirect after 8s if auth never resolves
+  const authTimeout = setTimeout(() => {
+    window.location.href = '/forderungsaufstellung';
+  }, 8000);
+
+  // Use onAuthStateChange instead of getSession() to avoid Web Locks contention
+  // (getSession() can throw "lock was stolen" when navigating between pages)
+  supabaseClient.auth.onAuthStateChange(async (event, session) => {
+    if (event !== 'INITIAL_SESSION' && event !== 'SIGNED_IN') return;
+    clearTimeout(authTimeout);
+
     if (!session) {
       window.location.href = '/forderungsaufstellung';
       return;
     }
 
-    fordifyAuth.isAuthenticated = true;
-    fordifyAuth.user = session.user;
-    await ladeSubscriptionStatus();
-    StorageBackend.init(fordifyAuth);
-    aktualisiereUIFuerAuth();
+    try {
+      fordifyAuth.isAuthenticated = true;
+      fordifyAuth.user = session.user;
+      await ladeSubscriptionStatus();
+      StorageBackend.init(fordifyAuth);
+      aktualisiereUIFuerAuth();
 
-    _kontoUpdateHero();
-    _kontoInitTabs();
-    _kontoActivateTabFromUrl();
+      _kontoUpdateHero();
+      _kontoInitTabs();
+      _kontoActivateTabFromUrl();
 
-    document.getElementById('konto-loading').style.display = 'none';
-    document.getElementById('konto-content').classList.remove('d-none');
-  } catch (e) {
-    console.error('Konto-Init fehlgeschlagen:', e);
-    const loadingEl = document.getElementById('konto-loading');
-    if (loadingEl) loadingEl.innerHTML = `<p class="text-danger">Fehler: ${e?.message || String(e)}</p><p class="small text-muted">Bitte diesen Fehler melden.</p>`;
-  }
+      document.getElementById('konto-loading').style.display = 'none';
+      document.getElementById('konto-content').classList.remove('d-none');
+    } catch (e) {
+      console.error('Konto-Init fehlgeschlagen:', e);
+      const loadingEl = document.getElementById('konto-loading');
+      if (loadingEl) loadingEl.innerHTML = `<p class="text-danger">Fehler: ${e?.message || String(e)}</p><p class="small text-muted">Bitte diesen Fehler melden.</p>`;
+    }
+  });
 });
 
 // ---- Hero aktualisieren ----
