@@ -16,8 +16,8 @@
 <body>
 
 <!-- Navbar (identisch mit Unterseiten) -->
-<nav class="navbar navbar-expand-md navbar-dark" style="background:#1e3a8a;">
-  <div class="container-fluid px-3">
+<nav class="navbar navbar-expand-md navbar-fa">
+  <div class="container">
     <a class="navbar-brand" href="/" title="fordify – Startseite">ford<span class="logo-ify">ify</span></a>
     <button class="navbar-toggler" type="button"
             data-bs-toggle="collapse" data-bs-target="#navbar-menu-konto"
@@ -34,6 +34,9 @@
         <li class="nav-item"><a class="nav-link" href="/preise">Preise</a></li>
       </ul>
       <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-sm btn-nav-ghost" data-auth-show="guest"
+                data-bs-toggle="modal" data-bs-target="#loginModal">Anmelden</button>
+        <a href="/forderungsaufstellung" class="btn btn-sm btn-nav-solid" data-auth-show="guest">Kostenlos starten →</a>
         <div class="dropdown d-none" data-auth-show="user">
           <button class="nav-avatar dropdown-toggle" data-bs-toggle="dropdown"
                   aria-expanded="false" title="Mein Konto" aria-label="Konto-Menü">
