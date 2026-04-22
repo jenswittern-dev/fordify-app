@@ -42,22 +42,17 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Fallback: redirect after 8s if auth never resolves
+  let initialized = false;
+
+  // Redirect guests after 5s — handles case where no auth event fires
   const authTimeout = setTimeout(() => {
-    window.location.href = '/forderungsaufstellung';
-  }, 8000);
+    if (!initialized) window.location.href = '/forderungsaufstellung';
+  }, 5000);
 
-  // Use onAuthStateChange instead of getSession() to avoid Web Locks contention
-  // (getSession() can throw "lock was stolen" when navigating between pages)
-  supabaseClient.auth.onAuthStateChange(async (event, session) => {
-    if (event !== 'INITIAL_SESSION' && event !== 'SIGNED_IN') return;
+  async function _initKonto(session) {
+    if (initialized) return;
+    initialized = true;
     clearTimeout(authTimeout);
-
-    if (!session) {
-      window.location.href = '/forderungsaufstellung';
-      return;
-    }
-
     try {
       fordifyAuth.isAuthenticated = true;
       fordifyAuth.user = session.user;
@@ -75,6 +70,20 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Konto-Init fehlgeschlagen:', e);
       const loadingEl = document.getElementById('konto-loading');
       if (loadingEl) loadingEl.innerHTML = `<p class="text-danger">Fehler: ${e?.message || String(e)}</p><p class="small text-muted">Bitte diesen Fehler melden.</p>`;
+    }
+  }
+
+  // Avoid getSession() — it throws "lock was stolen" when navigating between pages.
+  // INITIAL_SESSION may arrive with null when a Magic Link is being processed (SIGNED_IN follows).
+  // SIGNED_OUT means definitely not logged in → redirect immediately.
+  supabaseClient.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_OUT') {
+      clearTimeout(authTimeout);
+      window.location.href = '/forderungsaufstellung';
+      return;
+    }
+    if ((event === 'INITIAL_SESSION' || event === 'SIGNED_IN') && session) {
+      await _initKonto(session);
     }
   });
 });
