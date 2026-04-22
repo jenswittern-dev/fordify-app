@@ -130,11 +130,12 @@ if (supabaseClient) supabaseClient.auth.onAuthStateChange(async (event, session)
   if (event === 'SIGNED_IN') {
     fordifyAuth.isAuthenticated = true;
     fordifyAuth.user = session.user;
+    aktualisiereUIFuerAuth(); // Avatar sofort zeigen, Plan-Badge aktualisiert sich nach DB-Call
     await ladeSubscriptionStatus();
     await migrateSessionToCloud();
     StorageBackend.init(fordifyAuth);
     await ladeCloudDaten();
-    aktualisiereUIFuerAuth();
+    aktualisiereUIFuerAuth(); // Nochmal für Plan-Badge (pro/business)
     checkAutoCheckout();
     // Login-Modal schließen falls offen
     const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
