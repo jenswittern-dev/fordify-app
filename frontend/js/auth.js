@@ -40,21 +40,35 @@ async function ladeSubscriptionStatus() {
 }
 
 async function loginMitEmail(email) {
-  if (!supabaseClient) { _loginStatus('Auth nicht konfiguriert.', 'danger'); return; }
   email = (email || '').trim();
   if (!email) { _loginStatus('Bitte E-Mail eingeben.', 'danger'); return; }
 
   _loginStatus('Link wird gesendet…', 'info');
-  const { error } = await supabaseClient.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: _emailRedirectTo() }
-  });
+  try {
+    const resp = await fetch(CONFIG.supabase.url + '/functions/v1/verify-and-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': CONFIG.supabase.anonKey },
+      body: JSON.stringify({ email, redirectTo: _emailRedirectTo() })
+    });
+    const json = await resp.json();
 
-  if (error) {
-    _loginStatus('Fehler: ' + error.message, 'danger');
-  } else {
+    if (resp.status === 403 && json.error === 'kein_abo') {
+      _loginStatusMitLink(
+        'Kein aktives Abo gefunden. Bitte zuerst ',
+        'abonnieren',
+        json.preiseUrl || '/preise',
+        '.'
+      );
+      return;
+    }
+    if (!resp.ok) {
+      _loginStatus('Fehler beim Senden. Bitte erneut versuchen.', 'danger');
+      return;
+    }
     _loginStatus('Link gesendet – bitte E-Mail prüfen und Link in diesem Browser öffnen.', 'success');
     trackEvent('login-link-gesendet');
+  } catch (e) {
+    _loginStatus('Netzwerkfehler. Bitte erneut versuchen.', 'danger');
   }
 }
 
@@ -169,5 +183,19 @@ function _loginStatus(msg, type) {
   if (!el) return;
   el.className = `alert alert-${type} py-2 small mb-0 mt-2`;
   el.textContent = msg;
+  el.classList.remove('d-none');
+}
+
+function _loginStatusMitLink(before, linkText, href, after) {
+  const el = document.getElementById('login-status');
+  if (!el) return;
+  el.className = 'alert alert-danger py-2 small mb-0 mt-2';
+  el.innerHTML = '';
+  el.appendChild(document.createTextNode(before));
+  const a = document.createElement('a');
+  a.href = href;
+  a.textContent = linkText;
+  el.appendChild(a);
+  el.appendChild(document.createTextNode(after));
   el.classList.remove('d-none');
 }
