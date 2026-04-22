@@ -24,7 +24,7 @@
             aria-controls="navbar-menu-konto" aria-expanded="false" aria-label="Navigation öffnen">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbar-menu-konto">
+    <div class="collapse navbar-collapse align-items-center" id="navbar-menu-konto">
       <ul class="navbar-nav mx-auto gap-1">
         <li class="nav-item"><a class="nav-link" href="/">Startseite</a></li>
         <li class="nav-item"><a class="nav-link" href="/forderungsaufstellung">Forderungsaufstellung</a></li>
@@ -137,7 +137,7 @@
 
             <!-- Logo -->
             <div class="content-card mb-3">
-              <h2 class="h6 fw-semibold mb-3">Kanzleilogo</h2>
+              <h2 class="h6 fw-semibold mb-3">Logo</h2>
               <div class="d-flex align-items-start gap-3 mb-2">
                 <img id="konto-logo-vorschau" src="" alt="Logo-Vorschau"
                      style="max-height:60px;max-width:180px;object-fit:contain;display:none;border:1px solid #e2e8f0;border-radius:4px;padding:4px;">
@@ -163,9 +163,9 @@
 
             <!-- Kanzleidaten -->
             <div class="content-card mb-3">
-              <h2 class="h6 fw-semibold mb-3">Kanzleidaten &amp; Impressum</h2>
+              <h2 class="h6 fw-semibold mb-3">Absender &amp; Impressum</h2>
               <div class="row g-2">
-                <div class="col-12"><label class="form-label small" for="konto-einst-imp-name">Kanzleiname / Rechtsanwalt</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-name" placeholder="Kanzlei Mustermann"></div>
+                <div class="col-12"><label class="form-label small" for="konto-einst-imp-name">Name / Unternehmen</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-name" placeholder="Mustermann &amp; Partner"></div>
                 <div class="col-12"><label class="form-label small" for="konto-einst-imp-strasse">Straße &amp; Hausnummer</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-strasse" placeholder="Musterstraße 1"></div>
                 <div class="col-3"><label class="form-label small" for="konto-einst-imp-plz">PLZ</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-plz" placeholder="12345"></div>
                 <div class="col-9"><label class="form-label small" for="konto-einst-imp-ort">Ort</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-ort" placeholder="Musterstadt"></div>
@@ -173,7 +173,7 @@
                 <div class="col-6"><label class="form-label small" for="konto-einst-imp-fax">Fax</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-fax"></div>
                 <div class="col-6"><label class="form-label small" for="konto-einst-imp-email">E-Mail</label><input type="email" class="form-control form-control-sm" id="konto-einst-imp-email"></div>
                 <div class="col-6"><label class="form-label small" for="konto-einst-imp-website">Website</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-website"></div>
-                <div class="col-6"><label class="form-label small" for="konto-einst-imp-kammer">Rechtsanwaltskammer</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-kammer"></div>
+                <div class="col-6"><label class="form-label small" for="konto-einst-imp-kammer">Berufsorganisation / Kammer</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-kammer"></div>
                 <div class="col-6"><label class="form-label small" for="konto-einst-imp-register">Handels-/Vereinsregister</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-register"></div>
                 <div class="col-12"><label class="form-label small" for="konto-einst-imp-vertreten">Vertreten durch</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-vertreten"></div>
                 <div class="col-6"><label class="form-label small" for="konto-einst-imp-ustid">USt-IdNr.</label><input type="text" class="form-control form-control-sm" id="konto-einst-imp-ustid"></div>
@@ -194,17 +194,6 @@
               </div>
             </div>
 
-            <!-- Theme -->
-            <div class="content-card mb-3">
-              <h2 class="h6 fw-semibold mb-2">Design-Theme</h2>
-              <div class="d-flex gap-2 flex-wrap">
-                <button class="btn btn-sm btn-outline-secondary" onclick="kontoThemeWechseln('brand')">Brand (Standard)</button>
-                <button class="btn btn-sm btn-outline-secondary" onclick="kontoThemeWechseln('dark')">Dark</button>
-                <button class="btn btn-sm btn-outline-secondary" onclick="kontoThemeWechseln('clean')">Clean</button>
-              </div>
-              <p class="text-muted mt-2 mb-0" style="font-size:var(--text-xs);">Das Theme wird sofort auf der Forderungsaufstellungs-Seite aktiv.</p>
-            </div>
-
             <!-- Export/Import -->
             <div class="content-card mb-3">
               <h2 class="h6 fw-semibold mb-2">Einstellungen sichern / übertragen</h2>
@@ -219,7 +208,7 @@
               </div>
             </div>
 
-            <button class="btn btn-primary" onclick="kontoEinstellungenSpeichern()">Firmendaten speichern</button>
+            <button class="btn btn-primary-app" onclick="kontoEinstellungenSpeichern()">Firmendaten speichern</button>
           </div>
         </div>
       </div>
@@ -254,6 +243,14 @@
 </main>
 
 <style>
+.plan-badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
 .konto-tab {
   padding: 0.7rem 1.25rem;
   font-size: 0.875rem;
