@@ -5,18 +5,36 @@ const SUPABASE_URL         = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const RESEND_API_KEY       = Deno.env.get('RESEND_API_KEY')!
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin':  '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, apikey',
+// Issue 2 fix: dynamic CORS origin per request (fordify.de + staging only)
+const ALLOWED_CORS_ORIGINS = ['https://fordify.de', 'https://staging.fordify.de']
+
+function corsHeaders(req: Request): Record<string, string> {
+  const origin     = req.headers.get('origin') || ''
+  const safeOrigin = ALLOWED_CORS_ORIGINS.includes(origin) ? origin : 'https://fordify.de'
+  return {
+    'Access-Control-Allow-Origin':  safeOrigin,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, apikey',
+  }
+}
+
+// Issue 1 fix: validate redirectTo against allowed origins
+const ALLOWED_REDIRECT_ORIGINS = ['https://fordify.de', 'https://staging.fordify.de']
+
+function isSafeRedirect(url: string | undefined): boolean {
+  if (!url) return false
+  try {
+    const parsed = new URL(url)
+    return ALLOWED_REDIRECT_ORIGINS.some(o => parsed.origin === o)
+  } catch { return false }
 }
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS })
+    return new Response(null, { status: 204, headers: corsHeaders(req) })
   }
   if (req.method !== 'POST') {
-    return new Response('Method Not Allowed', { status: 405, headers: CORS_HEADERS })
+    return new Response('Method Not Allowed', { status: 405, headers: corsHeaders(req) })
   }
 
   let email: string
@@ -28,14 +46,14 @@ serve(async (req) => {
   } catch {
     return new Response(
       JSON.stringify({ error: 'invalid_request' }),
-      { status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
+      { status: 400, headers: { ...corsHeaders(req), 'Content-Type': 'application/json' } }
     )
   }
 
   if (!email || !email.includes('@')) {
     return new Response(
       JSON.stringify({ error: 'invalid_email' }),
-      { status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
+      { status: 400, headers: { ...corsHeaders(req), 'Content-Type': 'application/json' } }
     )
   }
 
@@ -52,23 +70,32 @@ serve(async (req) => {
   )
 
   if (!user?.id) {
-    return _noSubscriptionResponse()
+    return _noSubscriptionResponse(req)
   }
 
-  // 2. Check for active subscription
-  const { data: sub } = await supabase
+  // 2. Check for active subscription (Issue 3 fix: handle DB errors)
+  const { data: sub, error: subError } = await supabase
     .from('subscriptions')
     .select('status')
     .eq('user_id', user.id)
     .eq('status', 'active')
     .maybeSingle()
 
+  if (subError) {
+    console.error('subscription lookup failed:', subError)
+    return new Response(
+      JSON.stringify({ error: 'server_error' }),
+      { status: 503, headers: { ...corsHeaders(req), 'Content-Type': 'application/json' } }
+    )
+  }
+
   if (!sub) {
-    return _noSubscriptionResponse()
+    return _noSubscriptionResponse(req)
   }
 
   // 3. Generate magic link and send via Resend
-  const finalRedirect = redirectTo || 'https://fordify.de/konto'
+  // Issue 1 fix: validate redirectTo before using it
+  const finalRedirect = isSafeRedirect(redirectTo) ? redirectTo! : 'https://fordify.de/konto'
   const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
     type: 'magiclink',
     email,
@@ -79,7 +106,7 @@ serve(async (req) => {
     console.error('generateLink error:', linkError)
     return new Response(
       JSON.stringify({ error: 'link_generation_failed' }),
-      { status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...corsHeaders(req), 'Content-Type': 'application/json' } }
     )
   }
 
@@ -122,19 +149,19 @@ serve(async (req) => {
     console.error('Resend error:', sendErr)
     return new Response(
       JSON.stringify({ error: 'email_send_failed' }),
-      { status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...corsHeaders(req), 'Content-Type': 'application/json' } }
     )
   }
 
   return new Response(
     JSON.stringify({ ok: true }),
-    { status: 200, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
+    { status: 200, headers: { ...corsHeaders(req), 'Content-Type': 'application/json' } }
   )
 })
 
-function _noSubscriptionResponse(): Response {
+function _noSubscriptionResponse(req: Request): Response {
   return new Response(
     JSON.stringify({ error: 'kein_abo', preiseUrl: 'https://fordify.de/preise' }),
-    { status: 403, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
+    { status: 403, headers: { ...corsHeaders(req), 'Content-Type': 'application/json' } }
   )
 }
