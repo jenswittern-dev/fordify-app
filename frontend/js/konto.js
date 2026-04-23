@@ -79,8 +79,7 @@ async function _pruefeAbo(userId, accessToken) {
   }
 }
 
-// AVV-Banner ist deaktiviert bis Jens den AVV-Text von Andreas freigeben lässt
-const AVV_BANNER_AKTIV = false;
+const AVV_BANNER_AKTIV = true;
 
 async function _pruefeAVV(userId, accessToken) {
   try {
