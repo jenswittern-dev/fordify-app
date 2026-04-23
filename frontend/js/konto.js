@@ -169,7 +169,7 @@ function _kontoInitTabs() {
 function _kontoActivateTabFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const tab = params.get('tab');
-  if (tab && ['faelle', 'firmendaten', 'abo'].includes(tab)) {
+  if (tab && ['faelle', 'firmendaten', 'abo', 'adressen'].includes(tab)) {
     _kontoZeigeTab(tab);
   }
 }
@@ -189,6 +189,7 @@ function _kontoRendererFuerTab(name) {
   if (name === 'faelle')      kontoRendereFaelleTab();
   if (name === 'firmendaten') kontoRendereFirmendatenTab();
   if (name === 'abo')         kontoRendereAboTab();
+  if (name === 'adressen')    kontoRendereAdressbuchTab();
 }
 
 // ---- Tab: Fälle ----
@@ -556,4 +557,89 @@ function kontoRendereAboTab() {
       })
       .catch(e => console.warn('Abo-Laufzeit Netzwerkfehler:', e));
   }
+}
+
+// ---- Tab: Adressen ----
+
+function kontoRendereAdressbuchTab() {
+  _kontoRendereKontaktListe('schuldner');
+
+  const isBusiness = fordifyAuth.plan === 'business';
+  const gateEl = document.getElementById('mandanten-gate-hinweis');
+  const neuBtn = document.getElementById('mandant-neu-btn');
+  const formEl = document.getElementById('mandant-form-wrap');
+
+  if (gateEl)  gateEl.classList.toggle('d-none', isBusiness);
+  if (neuBtn)  neuBtn.style.display = isBusiness ? '' : 'none';
+  if (formEl && !isBusiness) formEl.classList.add('d-none');
+
+  if (isBusiness) _kontoRendereKontaktListe('mandant');
+}
+
+function _kontoRendereKontaktListe(type) {
+  const listeEl = document.getElementById(type === 'schuldner' ? 'schuldner-liste' : 'mandanten-liste');
+  if (!listeEl) return;
+  const eintraege = fordifyContacts[type === 'schuldner' ? 'schuldner' : 'mandanten'];
+
+  if (eintraege.length === 0) {
+    listeEl.innerHTML = '<p class="text-muted small mt-3 mb-0">Noch keine Einträge vorhanden.</p>';
+    return;
+  }
+
+  listeEl.innerHTML = `
+    <div class="list-group list-group-flush mt-3">
+      ${eintraege.map(k => {
+        const adresse = [k.strasse, k.plz && k.ort ? k.plz + ' ' + k.ort : (k.plz || k.ort)].filter(Boolean);
+        return `<div class="list-group-item px-0 d-flex align-items-start justify-content-between gap-2">
+          <div>
+            <div class="fw-medium">${_escHtml(k.name)}</div>
+            ${adresse.length ? `<div class="text-muted small">${adresse.map(_escHtml).join(', ')}</div>` : ''}
+            ${k.email ? `<div class="text-muted small">${_escHtml(k.email)}</div>` : ''}
+            ${k.telefon ? `<div class="text-muted small">${_escHtml(k.telefon)}</div>` : ''}
+          </div>
+          <button class="btn btn-sm flex-shrink-0" style="background:#fef2f2;color:#ef4444;border:none;"
+                  onclick="kontoKontaktLoeschen('${_escHtml(k.id)}')">Löschen</button>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function kontoAdressbuchFormToggle(type) {
+  const el = document.getElementById(type + '-form-wrap');
+  if (!el) return;
+  el.classList.toggle('d-none');
+  if (!el.classList.contains('d-none')) {
+    const first = el.querySelector('input');
+    if (first) first.focus();
+  }
+}
+
+function kontoKontaktSpeichern(type) {
+  const name = (document.getElementById(type + '-inp-name')?.value || '').trim();
+  if (!name) { alert('Name ist erforderlich.'); return; }
+
+  const kontakt = {
+    name,
+    strasse: (document.getElementById(type + '-inp-strasse')?.value || '').trim() || null,
+    plz:     (document.getElementById(type + '-inp-plz')?.value || '').trim() || null,
+    ort:     (document.getElementById(type + '-inp-ort')?.value || '').trim() || null,
+    email:   (document.getElementById(type + '-inp-email')?.value || '').trim() || null,
+    telefon: (document.getElementById(type + '-inp-telefon')?.value || '').trim() || null,
+  };
+
+  speichereKontakt(type, kontakt).then(result => {
+    if (!result) { alert('Speichern fehlgeschlagen. Bitte erneut versuchen.'); return; }
+    ['name', 'strasse', 'plz', 'ort', 'email', 'telefon'].forEach(f => {
+      const el = document.getElementById(type + '-inp-' + f);
+      if (el) el.value = '';
+    });
+    document.getElementById(type + '-form-wrap')?.classList.add('d-none');
+    kontoRendereAdressbuchTab();
+  });
+}
+
+async function kontoKontaktLoeschen(id) {
+  if (!confirm('Diesen Eintrag wirklich löschen?')) return;
+  await loescheKontakt(id);
+  kontoRendereAdressbuchTab();
 }
