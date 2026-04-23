@@ -19,6 +19,8 @@ function aktualisiereUIFuerAuth() {
     el.classList.toggle('d-none', isAuth));
   document.querySelectorAll('[data-auth-show="user"]').forEach(el =>
     el.classList.toggle('d-none', !isAuth));
+  document.querySelectorAll('[data-auth-show="paid"]').forEach(el =>
+    el.classList.toggle('d-none', !isPaid));
 
   if (isAuth && fordifyAuth.user) {
     const initials = _getInitials(fordifyAuth.user.email);
