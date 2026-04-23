@@ -88,10 +88,10 @@ async function _pruefeAVV(userId, accessToken) {
       `${CONFIG.supabase.url}/rest/v1/profiles?id=eq.${userId}&select=accepted_avv_at`,
       { headers: { 'apikey': CONFIG.supabase.anonKey, 'Authorization': `Bearer ${accessToken}` } }
     );
-    if (!res.ok) return;
+    if (!res.ok) { fordifyAuth.acceptedAvvAt = null; return; }
     const rows = await res.json();
-    fordifyAuth.acceptedAvvAt = rows?.[0]?.accepted_avv_at || null;
-  } catch (e) { /* ignore */ }
+    fordifyAuth.acceptedAvvAt = rows?.[0]?.accepted_avv_at ?? null;
+  } catch (e) { fordifyAuth.acceptedAvvAt = null; }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -958,6 +958,7 @@ function _kontoZeigeAVVBanner() {
 async function kontoAVVAkzeptieren() {
   const session = _leseLocalSession();
   if (!session) return;
+  const now = new Date().toISOString();
   try {
     const res = await fetch(
       `${CONFIG.supabase.url}/rest/v1/profiles?id=eq.${session.user.id}`,
@@ -969,11 +970,11 @@ async function kontoAVVAkzeptieren() {
           'Content-Type': 'application/json',
           'Prefer': 'return=minimal'
         },
-        body: JSON.stringify({ accepted_avv_at: new Date().toISOString() })
+        body: JSON.stringify({ accepted_avv_at: now })
       }
     );
     if (!res.ok) { alert('Fehler beim Speichern der AVV-Akzeptanz. Bitte erneut versuchen.'); return; }
-    fordifyAuth.acceptedAvvAt = new Date().toISOString();
+    fordifyAuth.acceptedAvvAt = now;
     _kontoZeigeAVVBanner();
     kontoRendereAboTab();
   } catch (e) {
