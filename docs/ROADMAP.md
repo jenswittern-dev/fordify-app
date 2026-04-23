@@ -121,6 +121,7 @@
 | 5.6 | URL-basierter Fall-Import (komprimiertes JSON im Hash) | 💡 | — |
 | 5.7 | ZV-Auftrag-Generierung (ZwVollstrFormV 2024) | 💡 | — |
 | 5.8 | **Free-Version: Export/Import vollständig sperren** – JSON-Import, JSON-Export und CSV-Export der Fälle aus der FA nur für eingeloggte Paid-Nutzer (Pro/Business). Menüpunkte für Gäste ausblenden oder deaktivieren (nicht nur Modal zeigen). | ✅ | 2026-04-23 |
+| 5.9 | **AVV (Auftragsverarbeitungsvertrag)** – avv.html (ENTWURF), Supabase-Spalte `accepted_avv_at`, Akzeptieren-Flow in konto.html, persistenter Non-Blocking-Banner (`AVV_BANNER_AKTIV=false` bis Andreas freigibt) | ✅ | 2026-04-23 |
 
 ---
 
