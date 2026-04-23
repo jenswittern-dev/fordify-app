@@ -40,15 +40,22 @@ CREATE TABLE settings (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Kontakte / Schuldner-Adressbuch (Business-Tier)
+-- Kontakte: Schuldner-Adressbuch (Pro) + Mandanten-Adressbuch (Business)
 CREATE TABLE contacts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  type TEXT NOT NULL DEFAULT 'schuldner' CHECK (type IN ('schuldner', 'mandant')),
   name TEXT NOT NULL,
   strasse TEXT, plz TEXT, ort TEXT,
   email TEXT, telefon TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
+
+ALTER TABLE contacts ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "contacts: eigene Zeilen"
+  ON contacts FOR ALL
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
 
 -- Trigger: neues auth.user → Profile anlegen
 CREATE OR REPLACE FUNCTION handle_new_user()
