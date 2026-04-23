@@ -67,7 +67,7 @@ function periodenGrenzen(von, bis) {
  * @param {Date|null} insoDatum - InsO-Eröffnungsdatum (kappt Zinslauf)
  * @returns {Array} Array von ZinsPeriode-Objekten
  */
-function berechneVerzugszinsen(betrag, von, bis, aufschlagPP, basiszinssaetze, insoDatum = null) {
+function berechneVerzugszinsen(betrag, von, bis, aufschlagPP, basiszinssaetze, insoDatum = null, methode = 'act/365') {
   betrag = new Decimal(betrag);
 
   if (von > bis) return [];
@@ -85,8 +85,9 @@ function berechneVerzugszinsen(betrag, von, bis, aufschlagPP, basiszinssaetze, i
   for (const p of perioden) {
     const basisSatz = aktuellerBasiszinssatz(p.von, basiszinssaetze);
     const zinssatz = Decimal.max(basisSatz.plus(new Decimal(aufschlagPP)), new Decimal(0));
-    const tage = tageDiff(p.von, p.bis);
-    const zinsbetrag = betrag.times(zinssatz).dividedBy(100).times(tage).dividedBy(365).toDecimalPlaces(2);
+    const tage = methode === '30/360' ? tage30360(p.von, p.bis) : tageDiff(p.von, p.bis);
+    const divisor = methode === '30/360' ? 360 : 365;
+    const zinsbetrag = betrag.times(zinssatz).dividedBy(100).times(tage).dividedBy(divisor).toDecimalPlaces(2);
 
     ergebnis.push({
       von: p.von,
@@ -97,6 +98,7 @@ function berechneVerzugszinsen(betrag, von, bis, aufschlagPP, basiszinssaetze, i
       zinssatz: zinssatz,
       betrag: betrag,
       zinsbetrag: zinsbetrag,
+      methode: methode,
     });
   }
 
@@ -148,6 +150,17 @@ function tageDiff(von, bis) {
 }
 
 /**
+ * Tageszählung nach 30E/360-Konvention (beide Grenzen inklusiv).
+ */
+function tage30360(von, bis) {
+  let d1 = von.getDate();   const m1 = von.getMonth() + 1;   const y1 = von.getFullYear();
+  let d2 = bis.getDate();   const m2 = bis.getMonth() + 1;   const y2 = bis.getFullYear();
+  if (d1 > 30) d1 = 30;
+  if (d2 > 30) d2 = 30;
+  return (y2 - y1) * 360 + (m2 - m1) * 30 + (d2 - d1) + 1;
+}
+
+/**
  * Führt benachbarte Perioden mit demselben Zinssatz zusammen.
  */
 function zusammenfuehren(perioden) {
@@ -156,13 +169,14 @@ function zusammenfuehren(perioden) {
   for (let i = 1; i < perioden.length; i++) {
     const prev = result[result.length - 1];
     const curr = perioden[i];
-    if (prev.zinssatz.equals(curr.zinssatz) && prev.betrag.equals(curr.betrag)) {
+    if (prev.zinssatz.equals(curr.zinssatz) && prev.betrag.equals(curr.betrag) && prev.methode === curr.methode) {
       const neuTage = prev.tage + curr.tage;
+      const divisor = prev.methode === '30/360' ? 360 : 365;
       const neuZinsbetrag = prev.betrag
         .times(prev.zinssatz)
         .dividedBy(100)
         .times(neuTage)
-        .dividedBy(365)
+        .dividedBy(divisor)
         .toDecimalPlaces(2);
       result[result.length - 1] = {
         von: prev.von,
@@ -173,6 +187,7 @@ function zusammenfuehren(perioden) {
         zinssatz: prev.zinssatz,
         betrag: prev.betrag,
         zinsbetrag: neuZinsbetrag,
+        methode: prev.methode,
       };
     } else {
       result.push(curr);

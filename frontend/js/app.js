@@ -950,6 +950,7 @@ function modalDatenLesen() {
         ...basis,
         zinsBis: v("mf-zins-bis"),
         aufschlag: parseInt(v("mf-aufschlag"), 10) || state.fall.aufschlagPP,
+        zinsmethode: v("mf-zinsmethode") || 'act/365',
         betrag: v("mf-betrag"),
       };
 
@@ -975,6 +976,7 @@ function modalDatenLesen() {
         zinsVon: von,
         zinsBis: bis,
         aufschlag,
+        zinsmethode: v("mf-zinsmethode") || 'act/365',
         perioden,
         betrag: gesamtBetrag.toFixed(2),
         tage: perioden.reduce((s, p) => s + p.tage, 0),
@@ -1172,8 +1174,9 @@ function modalDynamischAktualisieren(typ) {
     }
     try {
       const insoDatum = state.fall.insoDatum ? parseDate(state.fall.insoDatum) : null;
+      const methode = document.getElementById("mf-zinsmethode")?.value || 'act/365';
       const perioden = berechneVerzugszinsen(
-        betrag, parseDate(von), parseDate(bis), aufschlag, BASISZINSSAETZE, insoDatum
+        betrag, parseDate(von), parseDate(bis), aufschlag, BASISZINSSAETZE, insoDatum, methode
       );
       container.innerHTML = "";  // Berechnungsergebnis wird im Hintergrund berechnet, nicht angezeigt
     } catch (e) {
@@ -1270,6 +1273,13 @@ function tplZinsforderungTitel(pos) {
       <label class="form-label">Zinsaufschlag (Prozentpunkte über jeweiligem Basiszinssatz p.\u00a0a.)</label>
       <input type="number" step="1" min="1" max="20" class="form-control" id="mf-aufschlag" value="${pos?.aufschlag || state.fall.aufschlagPP}">
     </div>
+    <div class="mb-3">
+      <label class="form-label">Zinsmethode</label>
+      <select class="form-select" id="mf-zinsmethode">
+        <option value="act/365" ${(!pos?.zinsmethode || pos?.zinsmethode === 'act/365') ? 'selected' : ''}>act/365 – Taggenau (§ 288 BGB Standard)</option>
+        <option value="30/360" ${pos?.zinsmethode === '30/360' ? 'selected' : ''}>30/360 – Kaufmännisch (vertragliche Zinsen)</option>
+      </select>
+    </div>
     ${betragFeld("mf-betrag", pos?.betrag, "Zinsbetrag (bis Datum oben)")}
     ${tituliertFeld(pos?.tituliert)}
   `;
@@ -1307,6 +1317,13 @@ function tplZinsperiode(pos) {
     <div class="mb-3">
       <label class="form-label">Zinsaufschlag (Prozentpunkte über jeweiligem Basiszinssatz p.\u00a0a.)</label>
       <input type="number" step="1" min="1" max="20" class="form-control" id="mf-aufschlag" value="${pos?.aufschlag || state.fall.aufschlagPP}" data-onchange="1">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Zinsmethode</label>
+      <select class="form-select" id="mf-zinsmethode" data-onchange="1">
+        <option value="act/365" ${(!pos?.zinsmethode || pos?.zinsmethode === 'act/365') ? 'selected' : ''}>act/365 – Taggenau (§ 288 BGB Standard)</option>
+        <option value="30/360" ${pos?.zinsmethode === '30/360' ? 'selected' : ''}>30/360 – Kaufmännisch (vertragliche Zinsen)</option>
+      </select>
     </div>
     ${tituliertFeld(pos?.tituliert)}
   `;
@@ -1709,14 +1726,14 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     if (zp) hfZpMap[hf.id] = zp;
   }
 
-  function calcZinsen(betrag, vonStr, bisDate) {
+  function calcZinsen(betrag, vonStr, bisDate, methode) {
     if (!vonStr || !betrag || new Decimal(betrag).lte(0)) return ZERO;
     const vonDate = parseDate(vonStr);
     if (vonDate >= bisDate) return ZERO;
     try {
       const per = berechneVerzugszinsen(
         new Decimal(betrag).toFixed(2), vonDate, bisDate,
-        aufschlagPP, basiszinssaetze, insoDatum
+        aufschlagPP, basiszinssaetze, insoDatum, methode || 'act/365'
       );
       return per.reduce((s, p) => s.plus(new Decimal(p.zinsbetrag)), ZERO);
     } catch(e) { return ZERO; }
@@ -1758,7 +1775,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     const hf = hfs[hfIdx];
     const zp = hfZpMap[hf.id];
     if (!zp || !zp.zinsVon) continue;
-    const z = calcZinsen(hf.betrag, zp.zinsVon, phase0End);
+    const z = calcZinsen(hf.betrag, zp.zinsVon, phase0End, hf.zinsmethode);
     if (z.lte(0)) continue;
     const hfNum = hfs.length > 1 ? ` ${hfIdx + 1}` : "";
     zinsenEntries.push({
@@ -1807,7 +1824,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
         const hfEntry = hfEntries.find(e => e.hfId === hf.id);
         if (!hfEntry || hfEntry.rest.lte(0)) continue;
         if (!hfZpMap[hf.id]) continue;
-        const z = calcZinsen(hfEntry.rest, prevPayDatum, zahlDatum);
+        const z = calcZinsen(hfEntry.rest, prevPayDatum, zahlDatum, hf.zinsmethode);
         if (z.lte(0)) continue;
         const hfNum = hfs.length > 1 ? ` ${hfIdx + 1}` : "";
         zinsenEntries.push({
@@ -1891,7 +1908,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
       if (!hfEntry || hfEntry.rest.lte(0)) continue;
       if (!hfZpMap[hf.id]) continue;
       const effektivBis = (insoDatum && insoDatum < heute) ? insoDatum : heute;
-      const z = calcZinsen(hfEntry.rest, lastPayDatum, effektivBis);
+      const z = calcZinsen(hfEntry.rest, lastPayDatum, effektivBis, hf.zinsmethode);
       if (z.lte(0)) continue;
       const hfNum = hfs.length > 1 ? ` ${hfIdx + 1}` : "";
       zinsenEntries.push({
@@ -2147,9 +2164,9 @@ function positionDetailBeschreibung(pos) {
       return (pos.vvNummern ? pos.vvNummern.join(", ") : "—") + ustHinweis;
     }
     case "zinsforderung_titel":
-      return `Laufende Zinsen ab ${formatDate(parseDate(pos.zinsBis))}, ${pos.aufschlag || state.fall.aufschlagPP} PP über Basiszins`;
+      return `Laufende Zinsen ab ${formatDate(parseDate(pos.zinsBis))}, ${pos.aufschlag || state.fall.aufschlagPP} PP${pos.zinsmethode === '30/360' ? ', 30/360' : ''}`;
     case "zinsperiode":
-      return `Zinsen ${formatDate(parseDate(pos.zinsVon))} – ${formatDate(parseDate(pos.zinsBis))} (${pos.tage || "?"} Tage, ${pos.aufschlag || state.fall.aufschlagPP} PP)`;
+      return `Zinsen ${formatDate(parseDate(pos.zinsVon))} – ${formatDate(parseDate(pos.zinsBis))} (${pos.tage || "?"} Tage, ${pos.aufschlag || state.fall.aufschlagPP} PP${pos.zinsmethode === '30/360' ? ', 30/360' : ''})`;
     case "zahlung":
       return pos.beschreibung || "Zahlung";
     default:
