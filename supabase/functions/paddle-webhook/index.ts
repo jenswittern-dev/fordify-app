@@ -7,6 +7,7 @@ const SUPABASE_URL          = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_KEY  = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const RESEND_API_KEY        = Deno.env.get('RESEND_API_KEY')!
 const PADDLE_API_BASE       = 'https://api.paddle.com'
+const N8N_BASE              = 'https://n8n.srv1063720.hstgr.cloud/webhook'
 
 serve(async (req) => {
   const body      = await req.text()
@@ -19,8 +20,8 @@ serve(async (req) => {
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
   const { event_type, data } = event
 
+  // ── Subscription created / updated / activated ──────────────────────────
   if (['subscription.created', 'subscription.updated', 'subscription.activated'].includes(event_type)) {
-    // 1. Resolve user_id — prefer explicit customData, else look up by Paddle customer email
     let userId = data.custom_data?.user_id || null
 
     if (!userId) {
@@ -29,22 +30,25 @@ serve(async (req) => {
         console.error('Could not resolve customer email for customer_id:', data.customer_id)
         return new Response('Could not resolve customer email', { status: 500 })
       }
-
       try {
         userId = await _findOrCreateUser(supabase, email)
       } catch (e) {
         console.error('_findOrCreateUser failed:', e)
         return new Response('User resolution failed', { status: 500 })
       }
-
-      // 2. Send magic link so new user can access their account
       if (event_type === 'subscription.created' || event_type === 'subscription.activated') {
         await _sendMagicLink(supabase, email)
       }
     }
 
-    // 3. Derive plan from Paddle price custom_data (set in Paddle dashboard) or fallback
     const plan = data.items?.[0]?.price?.custom_data?.plan || 'pro'
+
+    // Clear grace/retention fields if subscription is reactivated
+    const clearFields = (data.status === 'active') ? {
+      grace_period_end: null,
+      scheduled_cancel_at: null,
+      retention_email_sent_at: null
+    } : {}
 
     const { error: upsertError } = await supabase.from('subscriptions').upsert({
       user_id:                userId,
@@ -54,22 +58,116 @@ serve(async (req) => {
       plan,
       billing_cycle:          data.billing_cycle?.interval || 'month',
       current_period_end:     data.current_billing_period?.ends_at || null,
-      updated_at:             new Date().toISOString()
+      updated_at:             new Date().toISOString(),
+      ...clearFields
     }, { onConflict: 'paddle_subscription_id' })
+
     if (upsertError) {
       console.error('subscriptions upsert failed:', upsertError)
       return new Response('DB upsert failed', { status: 500 })
     }
+
+    // Detect cancellation scheduled → store scheduled_cancel_at + fire retention webhook
+    if (event_type === 'subscription.updated' &&
+        data.scheduled_change?.action === 'cancel' &&
+        data.scheduled_change?.effective_at) {
+      const scheduledCancelAt = data.scheduled_change.effective_at
+
+      await supabase.from('subscriptions')
+        .update({ scheduled_cancel_at: scheduledCancelAt })
+        .eq('paddle_subscription_id', data.id)
+
+      // Fetch email for retention webhook payload
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', userId)
+        .maybeSingle()
+
+      if (profile?.email) {
+        await _fireN8NWebhook(`${N8N_BASE}/fordify-retention`, {
+          email:              profile.email,
+          plan:               plan,
+          billing_cycle:      data.billing_cycle?.interval || 'month',
+          scheduled_cancel_at: scheduledCancelAt
+        })
+      }
+    }
   }
 
+  // ── Subscription canceled (billing period ended) ─────────────────────────
   if (event_type === 'subscription.canceled') {
-    await supabase.from('subscriptions')
-      .update({ status: 'canceled', updated_at: new Date().toISOString() })
+    const gracePeriodEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+
+    const { data: updatedSub } = await supabase.from('subscriptions')
+      .update({
+        status:          'canceled',
+        plan:            'free',
+        grace_period_end: gracePeriodEnd,
+        updated_at:      new Date().toISOString()
+      })
       .eq('paddle_subscription_id', data.id)
+      .select('user_id, billing_cycle')
+      .maybeSingle()
+
+    if (updatedSub?.user_id) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', updatedSub.user_id)
+        .maybeSingle()
+
+      if (profile?.email) {
+        await _fireN8NWebhook(`${N8N_BASE}/fordify-offboarding`, {
+          email:            profile.email,
+          grace_period_end: gracePeriodEnd,
+          billing_cycle:    updatedSub.billing_cycle
+        })
+      }
+    }
+  }
+
+  // ── Transaction completed (payment received) ─────────────────────────────
+  if (event_type === 'transaction.completed') {
+    const customerId = data.customer_id
+    const email = await _getPaddleCustomerEmail(customerId)
+    if (email) {
+      const totals = data.details?.totals
+      const amountRaw = totals?.total ? parseInt(totals.total, 10) : null
+      const currency  = totals?.currency_code || 'EUR'
+      const amount    = amountRaw !== null
+        ? (amountRaw / 100).toLocaleString('de-DE', { style: 'currency', currency })
+        : null
+
+      const plan = data.items?.[0]?.price?.custom_data?.plan || null
+
+      await _fireN8NWebhook(`${N8N_BASE}/fordify-payment-confirmed`, {
+        email,
+        plan,
+        amount,
+        currency,
+        transaction_id:   data.id,
+        transaction_date: data.created_at
+          ? new Date(data.created_at).toLocaleDateString('de-DE')
+          : new Date().toLocaleDateString('de-DE')
+      })
+    }
   }
 
   return new Response('OK', { status: 200 })
 })
+
+async function _fireN8NWebhook(url: string, payload: Record<string, unknown>): Promise<void> {
+  try {
+    await fetch(url, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    })
+  } catch (e) {
+    console.error('N8N webhook call failed:', url, e)
+  }
+}
 
 async function _getPaddleCustomerEmail(customerId: string): Promise<string | null> {
   const resp = await fetch(`${PADDLE_API_BASE}/customers/${customerId}`, {
@@ -81,7 +179,6 @@ async function _getPaddleCustomerEmail(customerId: string): Promise<string | nul
 }
 
 async function _findOrCreateUser(supabase: ReturnType<typeof createClient>, email: string): Promise<string> {
-  // Search existing user by email via GoTrue admin API
   const searchResp = await fetch(
     `${SUPABASE_URL}/auth/v1/admin/users?email=${encodeURIComponent(email)}&page=1&per_page=1`,
     { headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` } }
@@ -92,7 +189,6 @@ async function _findOrCreateUser(supabase: ReturnType<typeof createClient>, emai
   )
   if (existing?.id) return existing.id
 
-  // Create new user
   const { data, error } = await supabase.auth.admin.createUser({
     email,
     email_confirm: true
@@ -137,8 +233,8 @@ async function _sendMagicLink(supabase: ReturnType<typeof createClient>, email: 
           </p>
           <hr style="border:none;border-top:1px solid #e5e7eb;margin:1.5rem 0">
           <p style="color:#9ca3af;font-size:0.8rem">
-            fordify · <a href="https://fordify.de/impressum.html" style="color:#9ca3af">Impressum</a> ·
-            <a href="https://fordify.de/datenschutz.html" style="color:#9ca3af">Datenschutz</a>
+            fordify · <a href="https://fordify.de/impressum" style="color:#9ca3af">Impressum</a> ·
+            <a href="https://fordify.de/datenschutz" style="color:#9ca3af">Datenschutz</a>
           </p>
         </div>
       `
@@ -147,7 +243,6 @@ async function _sendMagicLink(supabase: ReturnType<typeof createClient>, email: 
   if (!sendResp.ok) {
     const errBody = await sendResp.text()
     console.error('Resend send failed:', sendResp.status, errBody)
-    // Do not throw — subscription upsert already happened, Paddle needs 200
   }
 }
 
