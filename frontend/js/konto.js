@@ -795,3 +795,52 @@ function _csvZeileZuFall(row, baseTime, index) {
     }
   };
 }
+
+// ---- CSV-Export (6.2) ----
+
+function kontoFaelleExportierenAlsCSV() {
+  if (requiresPaid('csv-export')) return;
+  const reg = kontoLadeRegistry();
+  const cases = Object.values(reg.cases || {}).sort(
+    (a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')
+  );
+
+  const header = ['Aktenzeichen', 'Name', 'Mandant', 'Geändert', 'Gesamtforderung_EUR'];
+  const rows = cases.map(c => {
+    const az = c.fall?.aktenzeichen || '';
+    const gegner = c.fall?.gegner || '';
+    const mandant = c.fall?.mandant || '';
+    const datum = c.updatedAt ? new Date(c.updatedAt).toLocaleDateString('de-DE') : '';
+    const summe = _hfSumme(c.fall?.positionen).toFixed(2).replace('.', ',');
+    return [az, gegner, mandant, datum, summe].map(_csvQuote).join(';');
+  });
+
+  const bom = '﻿';
+  const csv = bom + header.map(_csvQuote).join(';') + '\r\n' + rows.join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Fordify_Faelle_' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ---- CSV-Export Hilfsfunktionen ----
+
+function _hfSumme(positionen) {
+  return (positionen || [])
+    .filter(p => p.typ === 'hauptforderung')
+    .reduce((s, p) => {
+      const val = parseFloat((p.betrag || '0').replace(/\./g, '').replace(',', '.'));
+      return s + (isNaN(val) ? 0 : val);
+    }, 0);
+}
+
+function _csvQuote(val) {
+  const s = String(val == null ? '' : val);
+  if (s.includes(';') || s.includes('"') || s.includes('\n')) {
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  return s;
+}
