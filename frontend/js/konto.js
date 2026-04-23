@@ -304,25 +304,37 @@ function kontoFallImportieren(input) {
   reader.onload = ev => {
     try {
       const data = JSON.parse(ev.target.result);
-      if (!data.fall) {
-        alert('Ungültige Datei. Bitte verwenden Sie eine von fordify exportierte Fall-JSON-Datei.');
-        input.value = '';
-        return;
-      }
       const reg = kontoLadeRegistry();
-      const id = 'f' + Date.now();
-      const mandant = data.fall.mandant || '';
-      const gegner  = data.fall.gegner  || '';
-      const name = mandant && gegner ? mandant + ' ./. ' + gegner : mandant || gegner || 'Importierter Fall';
-      reg.cases[id] = {
-        id,
-        name,
-        updatedAt: new Date().toISOString(),
-        fall: data.fall,
-        naechsteId: data.naechsteId || 1,
-      };
-      kontoSpeichereRegistry(reg);
-      kontoRendereFaelleTab();
+
+      if (data.fordify_cases && data.fordify_cases.cases) {
+        // Bulk-Import: alle Fälle aus exportierter Gesamt-JSON
+        const imported = Object.values(data.fordify_cases.cases);
+        if (imported.length === 0) {
+          alert('Die Datei enthält keine Fälle.');
+          input.value = '';
+          return;
+        }
+        let count = 0;
+        for (const eintrag of imported) {
+          if (!eintrag.id || !eintrag.fall) continue;
+          reg.cases[eintrag.id] = { ...eintrag, updatedAt: eintrag.updatedAt || new Date().toISOString() };
+          count++;
+        }
+        kontoSpeichereRegistry(reg);
+        kontoRendereFaelleTab();
+        alert(count + (count === 1 ? ' Fall importiert.' : ' Fälle importiert.'));
+      } else if (data.fall) {
+        // Einzel-Fall-Import
+        const id = 'f' + Date.now();
+        const mandant = data.fall.mandant || '';
+        const gegner  = data.fall.gegner  || '';
+        const name = mandant && gegner ? mandant + ' ./. ' + gegner : mandant || gegner || 'Importierter Fall';
+        reg.cases[id] = { id, name, updatedAt: new Date().toISOString(), fall: data.fall, naechsteId: data.naechsteId || 1 };
+        kontoSpeichereRegistry(reg);
+        kontoRendereFaelleTab();
+      } else {
+        alert('Ungültige Datei. Bitte verwenden Sie eine von fordify exportierte Fall-JSON-Datei.');
+      }
     } catch (e) {
       alert('Import fehlgeschlagen: ' + e.message);
     }
