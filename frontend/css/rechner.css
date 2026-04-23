@@ -819,6 +819,30 @@ a.rechner-cta-box .rechner-cta-box__title { color: #1e3a8a; }
   line-height: 1.4;
 }
 
+/* ---- Tilgungsrechner: Modus-Tabs ---- */
+.tilgung-tabs {
+  display: flex;
+  gap: 0.35rem;
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 0.3rem;
+}
+.tilgung-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  padding: 0.45rem 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.tilgung-tab:hover { background: #e2e8f0; color: #0f172a; }
+.tilgung-tab.active { background: #fff; color: #1e3a8a; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
 /* ---- Mobile Responsivität (< 576px) ---- */
 @media (max-width: 575px) {
   /* Hero: mehr Atemraum vom Bildschirmrand */

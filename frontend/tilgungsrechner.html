@@ -180,23 +180,36 @@
   <div class="row g-4">
     <div class="col-lg-5">
       <div class="rechner-form-card">
+        <div class="tilgung-tabs mb-4" role="tablist" aria-label="Berechnungsmodus">
+          <button type="button" class="tilgung-tab active" data-mode="plan" role="tab" aria-selected="true">Tilgungsplan</button>
+          <button type="button" class="tilgung-tab" data-mode="rate" role="tab" aria-selected="false">Rate berechnen</button>
+          <button type="button" class="tilgung-tab" data-mode="betrag" role="tab" aria-selected="false">Betrag berechnen</button>
+        </div>
         <form id="form-tilgung">
-          <div class="mb-3">
+          <div class="mb-3" id="field-schuld">
             <label for="tilgung-schuld" class="form-label fw-semibold">Schuldbetrag (€)</label>
-            <input type="text" class="form-control" id="tilgung-schuld" placeholder="z. B. 50.000,00" required>
+            <input type="text" class="form-control" id="tilgung-schuld" placeholder="z. B. 50.000,00"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Gesamter Darlehensbetrag in Euro, z. B. 50.000,00">
           </div>
           <div class="mb-3">
             <label for="tilgung-zins" class="form-label fw-semibold">Zinssatz p.a. (%)</label>
-            <input type="text" class="form-control" id="tilgung-zins" placeholder="z. B. 4,50" required>
+            <input type="text" class="form-control" id="tilgung-zins" placeholder="z. B. 4,50"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Jährlicher Nominalzinssatz in Prozent, z. B. 4,50 für 4,5 % p.a.">
           </div>
-          <div class="mb-4">
+          <div class="mb-3" id="field-rate">
             <label for="tilgung-rate" class="form-label fw-semibold">Monatliche Rate (€)</label>
-            <input type="text" class="form-control" id="tilgung-rate" placeholder="z. B. 800,00" required>
+            <input type="text" class="form-control" id="tilgung-rate" placeholder="z. B. 800,00"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Konstante monatliche Zahlung (Annuität). Muss höher als die monatlichen Zinsen sein.">
             <div id="tilgung-mindestrate-hint" class="form-text text-muted small mt-1"></div>
           </div>
-          <button type="submit" class="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center gap-2">
+          <div class="mb-4 d-none" id="field-laufzeit">
+            <label for="tilgung-laufzeit" class="form-label fw-semibold">Laufzeit (Monate)</label>
+            <input type="text" class="form-control" id="tilgung-laufzeit" placeholder="z. B. 60"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Gewünschte Laufzeit in Monaten, z. B. 60 für 5 Jahre">
+          </div>
+          <button type="submit" id="tilgung-submit" class="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center gap-2">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            Tilgungsplan berechnen
+            <span id="tilgung-submit-label">Tilgungsplan berechnen</span>
           </button>
         </form>
       </div>
