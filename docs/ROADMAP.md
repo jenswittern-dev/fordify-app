@@ -141,7 +141,7 @@
 | 6.2 | **Fälle: CSV-Export** (Pro + Business) – Fälle als CSV exportieren (Spalten: FallID, Name, Datum, Gesamtforderung, Restforderung, Status). Hinweis: CSV-Import (neue Fälle aus CSV) → 6.0d ✅. | ✅ | 2026-04-23 |
 | 6.3 | **Schuldner-/Kundendaten: CSV-Import** (Pro + Business) – Schuldner-Adressbuch per CSV befüllen. Pflichtfelder: Name, Anschrift; optional: IBAN, E-Mail, Aktenzeichen. Im Kundenbereich bereitgestellt: Beispiel-CSV-Datei zum Download + schriftliche Formatierungsanleitung (welche Spalten, Zeichensatz UTF-8, Trennzeichen Semikolon). | ✅ | 2026-04-23 |
 | 6.4 | **Kundenbereich: Fallübersicht + Direktbearbeitung** (Pro + Business) – alle Cloud-Fälle in einer Listenansicht (Kundenbereich/Dashboard); von dort direkt öffnen, duplizieren, löschen, exportieren (JSON/CSV). | ✅ | 2026-04-23 |
-| 6.5 | **Kundenbereich: Schuldner-Datenbank** (Pro + Business) – zentrale Verwaltung aller Schuldner-Adressen; Schuldner einem neuen Fall zuweisen; Import via CSV (→ 6.3). Hinweis: CRUD-Grundlage → 6.0b ✅. | 📋 | — |
+| 6.5 | **Kundenbereich: Schuldner-Datenbank** (Pro + Business) – zentrale Verwaltung aller Schuldner-Adressen; Schuldner einem neuen Fall zuweisen; Import via CSV (→ 6.3). Hinweis: CRUD-Grundlage → 6.0b ✅. | ✅ | 2026-04-23 |
 | 6.6 | **Preisseite: Pro vs. Business klarer differenzieren** – Tilgungsrechner in Featureliste, JSON-Import bei Pro ergänzen, Mandanten-Adressbuch bei Business-Karte hinzufügen, Business-Beschreibung überarbeiten, Meta/OG-Tags auf Business ausweiten, Vergleichstabelle vervollständigen. | ✅ | 2026-04-23 |
 
 ---

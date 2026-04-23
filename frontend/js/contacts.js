@@ -31,6 +31,20 @@ async function speichereKontakt(type, kontakt) {
   return data;
 }
 
+async function aktualisiereKontakt(id, updates) {
+  if (!supabaseClient || !fordifyAuth.user) return null;
+  const { data, error } = await supabaseClient
+    .from('contacts')
+    .update(updates)
+    .eq('id', id)
+    .eq('user_id', fordifyAuth.user.id)
+    .select('id, type, name, strasse, plz, ort, email, telefon')
+    .single();
+  if (error) { console.warn('Kontakt aktualisieren fehlgeschlagen:', error.message); return null; }
+  await ladeKontakte();
+  return data;
+}
+
 async function loescheKontakt(id) {
   if (!supabaseClient || !fordifyAuth.user) return;
   const { error } = await supabaseClient
