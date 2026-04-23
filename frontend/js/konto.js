@@ -760,9 +760,8 @@ function _csvZeileZuFall(row, baseTime, index) {
   const mandant      = (row.mandant || '').trim();
   const aktenzeichen = (row.aktenzeichen || '').trim();
   const datum        = (row.faelligkeitsdatum || '').trim();
-  const aufschlagPP  = row.aufschlag_pp !== undefined && row.aufschlag_pp.trim() !== ''
-    ? (parseInt(row.aufschlag_pp, 10) || 9)
-    : 9;
+  const pp = parseInt(row.aufschlag_pp, 10);
+  const aufschlagPP = !isNaN(pp) ? pp : 9;
   const id           = 'f' + baseTime + '_' + index;
   const name         = mandant && gegner ? mandant + ' ./. ' + gegner : gegner;
 
