@@ -965,8 +965,9 @@ function modalDatenLesen() {
         return null;
       }
       const insoDatum = state.fall.insoDatum ? parseDate(state.fall.insoDatum) : null;
+      const methode = v("mf-zinsmethode") || 'act/365';
       const perioden = berechneVerzugszinsen(
-        betrag, parseDate(von), parseDate(bis), aufschlag, BASISZINSSAETZE, insoDatum
+        betrag, parseDate(von), parseDate(bis), aufschlag, BASISZINSSAETZE, insoDatum, methode
       );
       const gesamtBetrag = perioden.reduce((s, p) => s.plus(p.zinsbetrag), new Decimal(0));
       const gruppeIdFromDropdown = v("mf-gruppe") || null;
