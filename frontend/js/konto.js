@@ -257,7 +257,7 @@ function kontoRendereFaelleTab() {
 }
 
 function _escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 function kontoFallLaden(id) {
@@ -353,6 +353,7 @@ function kontoFallImportieren(input) {
         reg.cases[id] = { id, name, updatedAt: new Date().toISOString(), fall: data.fall, naechsteId: data.naechsteId || 1 };
         kontoSpeichereRegistry(reg);
         kontoRendereFaelleTab();
+        alert('Fall "' + name + '" importiert.');
       } else {
         alert('Ungültige Datei. Bitte verwenden Sie eine von fordify exportierte Fall-JSON-Datei.');
       }
@@ -882,7 +883,7 @@ function kontoSchuldnerCSVImportDatei(input) {
     const lines = text.split(/\r?\n/).filter(l => l.trim());
     if (lines.length < 2) { alert('CSV leer oder kein Header gefunden.'); input.value = ''; return; }
 
-    const headers = lines[0].split(';').map(h => h.trim().toLowerCase());
+    const headers = _csvSplitLine(lines[0]).map(h => h.trim().toLowerCase());
     const nameIdx    = headers.indexOf('name');
     const strasseIdx = headers.indexOf('strasse');
     const plzIdx     = headers.indexOf('plz');
@@ -894,7 +895,7 @@ function kontoSchuldnerCSVImportDatei(input) {
 
     let ok = 0, skip = 0;
     for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].split(';');
+      const cols = _csvSplitLine(lines[i]);
       const name = (cols[nameIdx] || '').trim();
       if (!name) { skip++; continue; }
       const kontakt = {
