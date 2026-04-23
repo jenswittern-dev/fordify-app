@@ -110,9 +110,48 @@
       <ul class="navbar-nav mx-auto gap-1">
         <li class="nav-item"><a class="nav-link" href="/">Startseite</a></li>
         <li class="nav-item"><a class="nav-link" href="/forderungsaufstellung">Forderungsaufstellung</a></li>
-        <li class="nav-item"><a class="nav-link" href="/zinsrechner">Zinsrechner</a></li>
-        <li class="nav-item"><a class="nav-link fw-semibold" href="/rvg-rechner" aria-current="page">RVG-Rechner</a></li>
-        <li class="nav-item"><a class="nav-link" href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle active" href="#" id="navRechnerDropdown" role="button"
+             data-bs-toggle="dropdown" aria-expanded="false">Rechner</a>
+          <ul class="dropdown-menu nav-rechner-dropdown" aria-labelledby="navRechnerDropdown">
+            <li>
+              <a class="dropdown-item nav-rechner-item" href="/zinsrechner">
+                <span class="nav-rechner-icon" aria-hidden="true">%</span>
+                <span class="nav-rechner-text">
+                  <span class="nav-rechner-name">Zinsrechner</span>
+                  <span class="nav-rechner-desc">Verzugszinsen nach § 288 BGB</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item nav-rechner-item active-item" href="/rvg-rechner" aria-current="page">
+                <span class="nav-rechner-icon" aria-hidden="true">§</span>
+                <span class="nav-rechner-text">
+                  <span class="nav-rechner-name">RVG-Rechner</span>
+                  <span class="nav-rechner-desc">Anwaltsgebühren nach RVG</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item nav-rechner-item" href="/gerichtskostenrechner">
+                <span class="nav-rechner-icon" aria-hidden="true">⚖</span>
+                <span class="nav-rechner-text">
+                  <span class="nav-rechner-name">GKG-Rechner</span>
+                  <span class="nav-rechner-desc">Gerichtskosten nach Streitwert</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item nav-rechner-item" href="/tilgungsrechner">
+                <span class="nav-rechner-icon" aria-hidden="true">↓</span>
+                <span class="nav-rechner-text">
+                  <span class="nav-rechner-name">Tilgungsrechner</span>
+                  <span class="nav-rechner-desc">Tilgungsplan &amp; Annuitäten</span>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </li>
         <li class="nav-item"><a class="nav-link" href="/preise">Preise</a></li>
       </ul>
       <div class="d-flex align-items-center gap-2">
@@ -279,6 +318,7 @@
           <li><a href="/zinsrechner">Verzugszinsrechner</a></li>
           <li><a href="/rvg-rechner">RVG-Rechner</a></li>
           <li><a href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
+          <li><a href="/tilgungsrechner">Tilgungsrechner</a></li>
         </ul>
       </div>
       <div>

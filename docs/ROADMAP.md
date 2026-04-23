@@ -80,7 +80,8 @@
 | 3.4 | Export-Reminder (Banner nach >7 Tagen ohne Export) | ✅ | 2026-04-01 |
 | 3.5 | Zahlungsplan (Zukunft): Tilgungsrechner | ✅ | 2026-04-23 |
 | 3.6 | Mehrere Zinsmethoden (act/365 Standard + 30/360 für Verträge) | ✅ | 2026-04-23 |
-| 3.7 | PKH-Abrechnung (Prozesskostenhilfe) | 💡 | — |
+| 3.7 | Navbar Rechner-Dropdown (alle 7 Seiten, Tilgungsrechner ergänzt) | ✅ | 2026-04-23 |
+| 3.8 | PKH-Abrechnung (Prozesskostenhilfe) | 💡 | — |
 
 ---
 
