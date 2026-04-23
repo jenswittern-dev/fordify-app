@@ -131,11 +131,15 @@
 | # | Feature | Status | Datum |
 |---|---|---|---|
 | 6.0 | **Kundenbereich: konto.html** – Tab-basierte Seite für eingeloggte Nutzer (Fallübersicht, Firmendaten, Abo-Verwaltung) | ✅ | 2026-04-22 |
+| 6.0a | **Gate-System: requiresBusiness + plan-aware Upgrade-Modal** – `requiresBusiness(featureName)` in gates.js; Modal zeigt kontextabhängig Pro- oder Business-Titel/-Text/-CTA; JSON-Import in FA auf Pro gesperrt | ✅ | 2026-04-23 |
+| 6.0b | **Schuldner-Adressbuch (Pro)** – CRUD-Verwaltung in konto.html (Tab „Adressen"), Supabase `contacts`-Tabelle (`type='schuldner'`), Autocomplete-Datalist in Forderungsaufstellung (Gegner-Feld) | ✅ | 2026-04-23 |
+| 6.0c | **Mandanten-Adressbuch (Business)** – CRUD-Verwaltung in konto.html (gleicher Tab, Business-gated), `type='mandant'`, Autocomplete-Datalist in Forderungsaufstellung (Mandant-Feld) | ✅ | 2026-04-23 |
+| 6.0d | **Fälle aus CSV anlegen (Business)** – CSV-Import im Fälle-Tab: jede Zeile → neuer Fall mit einer Hauptforderung; Pflichtfelder `gegner`+`betrag`, optional `aktenzeichen`, `faelligkeitsdatum`, `aufschlag_pp`, `mandant`; Beispiel-CSV unter `/data/beispiel-import.csv` | ✅ | 2026-04-23 |
 | 6.1 | **Fälle: JSON-Export und JSON-Import** (Pro + Business) – alle Fälle als einzelne JSON-Datei oder als ZIP-Archiv exportieren; JSON-Datei wieder importieren und bestehende Fälle ergänzen/überschreiben. | 📋 | — |
-| 6.2 | **Fälle: CSV-Export und CSV-Import** (Pro + Business) – Fälle als CSV exportieren (Spalten: FallID, Name, Datum, Gesamtforderung, Restforderung, Status); CSV-Import zum Anlegen oder Aktualisieren von Fällen. | 📋 | — |
+| 6.2 | **Fälle: CSV-Export** (Pro + Business) – Fälle als CSV exportieren (Spalten: FallID, Name, Datum, Gesamtforderung, Restforderung, Status). Hinweis: CSV-Import (neue Fälle aus CSV) → 6.0d ✅. | 📋 | — |
 | 6.3 | **Schuldner-/Kundendaten: CSV-Import** (Pro + Business) – Schuldner-Adressbuch per CSV befüllen. Pflichtfelder: Name, Anschrift; optional: IBAN, E-Mail, Aktenzeichen. Im Kundenbereich bereitgestellt: Beispiel-CSV-Datei zum Download + schriftliche Formatierungsanleitung (welche Spalten, Zeichensatz UTF-8, Trennzeichen Semikolon). | 📋 | — |
 | 6.4 | **Kundenbereich: Fallübersicht + Direktbearbeitung** (Pro + Business) – alle Cloud-Fälle in einer Listenansicht (Kundenbereich/Dashboard); von dort direkt öffnen, duplizieren, löschen, exportieren (JSON/CSV). | 📋 | — |
-| 6.5 | **Kundenbereich: Schuldner-Datenbank** (Pro + Business) – zentrale Verwaltung aller Schuldner-Adressen; Schuldner einem neuen Fall zuweisen; Import via CSV (→ 6.3). | 📋 | — |
+| 6.5 | **Kundenbereich: Schuldner-Datenbank** (Pro + Business) – zentrale Verwaltung aller Schuldner-Adressen; Schuldner einem neuen Fall zuweisen; Import via CSV (→ 6.3). Hinweis: CRUD-Grundlage → 6.0b ✅. | 📋 | — |
 
 ---
 
