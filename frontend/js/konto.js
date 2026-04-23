@@ -643,3 +643,139 @@ async function kontoKontaktLoeschen(id) {
   await loescheKontakt(id);
   kontoRendereAdressbuchTab();
 }
+
+// ---- CSV-Import (Business) ----
+
+function kontoCSVImportOeffnen() {
+  if (requiresBusiness('csv-import')) return;
+  document.getElementById('csv-import-input').click();
+}
+
+function kontoCSVImportDatei(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const rows = _parseCSV(ev.target.result);
+    if (rows.length === 0) {
+      alert('Die CSV-Datei enthält keine gültigen Zeilen.\nPflichtfelder: gegner, betrag');
+      input.value = '';
+      return;
+    }
+
+    const reg = kontoLadeRegistry();
+    const baseTime = Date.now();
+    let importiert = 0;
+    let fehler = 0;
+
+    for (let i = 0; i < rows.length; i++) {
+      const eintrag = _csvZeileZuFall(rows[i], baseTime, i);
+      if (!eintrag) { fehler++; continue; }
+      reg.cases[eintrag.id] = eintrag;
+      importiert++;
+    }
+
+    if (importiert === 0) {
+      alert('Kein Fall konnte importiert werden.\nBitte prüfen Sie, ob „gegner" und „betrag" in der CSV vorhanden sind.');
+      input.value = '';
+      return;
+    }
+
+    kontoSpeichereRegistry(reg);
+    kontoRendereFaelleTab();
+
+    const msg = importiert === 1
+      ? '1 Fall erfolgreich importiert.'
+      : importiert + ' Fälle erfolgreich importiert.';
+    alert(fehler > 0
+      ? msg + '\n' + fehler + ' Zeile(n) übersprungen (fehlende Pflichtfelder).'
+      : msg);
+    input.value = '';
+  };
+  reader.onerror = () => {
+    alert('Datei konnte nicht gelesen werden.');
+    input.value = '';
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function _parseCSV(text) {
+  const lines = text.trim().split(/\r?\n/);
+  if (lines.length < 2) return [];
+  const headers = _csvSplitLine(lines[0]).map(h => h.trim().toLowerCase());
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    const values = _csvSplitLine(line);
+    const row = {};
+    headers.forEach((h, idx) => { row[h] = (values[idx] || '').trim(); });
+    rows.push(row);
+  }
+  return rows;
+}
+
+function _csvSplitLine(line) {
+  const values = [];
+  let cur = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQuotes && line[i + 1] === '"') { cur += '"'; i++; }
+      else { inQuotes = !inQuotes; }
+    } else if (ch === ',' && !inQuotes) {
+      values.push(cur);
+      cur = '';
+    } else {
+      cur += ch;
+    }
+  }
+  values.push(cur);
+  return values;
+}
+
+function _csvBetragsNormalisieren(raw) {
+  if (!raw) return '';
+  let s = raw.replace(/[€$£\s]/g, '');
+  if (s.includes('.') && s.includes(',')) {
+    if (s.lastIndexOf(',') > s.lastIndexOf('.')) {
+      s = s.replace(/\./g, '');
+    } else {
+      s = s.replace(/,/g, '').replace('.', ',');
+    }
+  } else if (s.includes('.') && !s.includes(',')) {
+    s = s.replace('.', ',');
+  }
+  return s;
+}
+
+function _csvZeileZuFall(row, baseTime, index) {
+  const gegner = (row.gegner || '').trim();
+  if (!gegner) return null;
+  const betrag = _csvBetragsNormalisieren(row.betrag || '');
+  if (!betrag) return null;
+
+  const mandant      = (row.mandant || '').trim();
+  const aktenzeichen = (row.aktenzeichen || '').trim();
+  const datum        = (row.faelligkeitsdatum || '').trim();
+  const aufschlagPP  = parseInt(row.aufschlag_pp, 10) || 9;
+  const id           = 'f' + baseTime + '_' + index;
+  const name         = mandant && gegner ? mandant + ' ./. ' + gegner : gegner;
+
+  return {
+    id,
+    name,
+    updatedAt: new Date().toISOString(),
+    naechsteId: 2,
+    fall: {
+      mandant, gegner, aktenzeichen, aufschlagPP,
+      insoDatum: null, forderungsgrundKat: '', titelArt: '', titelDatum: '',
+      titelRechtskraft: '', titelGericht: '', titelAz: '',
+      positionen: [{
+        typ: 'hauptforderung', id: 1, gruppeId: 'g1',
+        datum, betrag, bezeichnung: 'Hauptforderung'
+      }]
+    }
+  };
+}
