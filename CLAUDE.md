@@ -124,14 +124,14 @@ fordify-app/
 | 4 – Auth – Magic Link Login | ✅ | |
 | 5 – Cloud-Laden beim Login | ✅ | |
 | 6 – Feature-Gates | ✅ | |
-| 7 – Paddle-Webhook Edge Function | ✅ | Deployed + Secrets gesetzt; Webhook-URL in Paddle manuell eintragen |
+| 7 – Paddle-Webhook Edge Function | ✅ | Deployed + aktiv; Webhook-URL in Paddle eingetragen (verifiziert 2026-04-23) |
 | 8 – Pricing-Seite | ✅ | |
-| 9 – N8N-Workflows | ✅ | Onboarding-Mail (ID: elcsjZCxDmtCw2BI, inaktiv bis Supabase-Webhook) + Digest (ID: hJpXXeIuvGQY60iQ, aktiv, montags 08:00) |
+| 9 – N8N-Workflows | ✅ | Onboarding-Mail (ID: elcsjZCxDmtCw2BI, aktiv seit 2026-04-21) + Digest (ID: hJpXXeIuvGQY60iQ, aktiv, montags 08:00) |
 | 10 – Launch-Vorbereitung (AGB etc.) | ✅ | agb.html vorhanden |
 | 11 – Gestuftes PDF-Branding | ✅ | getFordifyBranding() in app.js: free=prominent, pro=dezent, business=keins |
 | 12 – Excel/CSV-Export | ✅ | fallExportierenAlsExcel() in app.js |
 
-**Blockierungen:** keine — alle Tasks abgeschlossen. Onboarding-Workflow wartet noch auf Supabase-Webhook-Aktivierung (manuell im Supabase Dashboard).
+**Blockierungen:** keine — alle Tasks abgeschlossen und verifiziert (2026-04-23).
 
 ---
 
