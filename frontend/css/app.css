@@ -1823,7 +1823,7 @@ body {
   color: #1e3a8a !important;
 }
 .nav-rechner-item.active-item {
-  background: #eff6ff;
+  background: #eff6ff !important;
 }
 .nav-rechner-icon {
   width: 2rem;
