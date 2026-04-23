@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="css/rechner.css">
 </head>
 <body>
+<a href="#main-content" class="skip-nav">Zum Hauptinhalt springen</a>
 
 <!-- Navbar (identisch mit Unterseiten) -->
 <nav class="navbar navbar-expand-md navbar-fa">
@@ -374,6 +375,18 @@
     </div><!-- /container -->
     </div><!-- /bg-f8fafc -->
   </div><!-- /konto-content -->
+
+  <!-- Confirm-Modal: generisch -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirm-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-body py-4 px-4 text-center">
+          <p id="confirm-modal-text" class="mb-4 fw-medium"></p>
+          <div class="d-flex gap-2 justify-content-center flex-wrap" id="confirm-modal-btns"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Upgrade-Modal -->
   <div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
