@@ -13,20 +13,33 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-nav">Zum Hauptinhalt springen</a>
+
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg fordify-navbar" style="background:var(--color-surface);border-bottom:1px solid var(--color-border);">
+<nav class="navbar navbar-expand-md navbar-fa">
   <div class="container">
-    <a class="navbar-brand fordify-brand" href="/">
-      <img src="/img/logo-wordmark.svg" alt="fordify" height="28">
-    </a>
-    <div class="d-flex gap-2 align-items-center ms-auto">
-      <a href="/forderungsaufstellung" class="btn btn-primary btn-sm">App öffnen →</a>
+    <a class="navbar-brand" href="/">ford<span class="logo-ify">ify</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenuChangelog" aria-controls="navMenuChangelog" aria-expanded="false" aria-label="Navigation öffnen">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenuChangelog">
+      <ul class="navbar-nav mx-auto gap-1">
+        <li class="nav-item"><a class="nav-link" href="/">Startseite</a></li>
+        <li class="nav-item"><a class="nav-link" href="/forderungsaufstellung">Forderungsaufstellung</a></li>
+        <li class="nav-item"><a class="nav-link" href="/zinsrechner">Zinsrechner</a></li>
+        <li class="nav-item"><a class="nav-link" href="/rvg-rechner">RVG-Rechner</a></li>
+        <li class="nav-item"><a class="nav-link" href="/preise">Preise</a></li>
+        <li class="nav-item"><a class="nav-link fw-semibold" href="/changelog" aria-current="page">Changelog</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-2">
+        <a href="/forderungsaufstellung" class="btn btn-sm btn-nav-solid">App öffnen →</a>
+      </div>
     </div>
   </div>
 </nav>
 
 <!-- Content -->
-<div class="container py-5" style="max-width:720px;">
+<div id="main-content" class="container py-5" style="max-width:720px;">
   <h1 class="h3 fw-bold mb-1">Changelog</h1>
   <p class="text-muted mb-5">Neue Funktionen, Verbesserungen und Korrekturen.</p>
 
@@ -123,5 +136,6 @@
   </div>
 </footer>
 
+<script src="/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
