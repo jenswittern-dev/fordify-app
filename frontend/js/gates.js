@@ -29,6 +29,7 @@ function _zeigeUpgradeModal(featureName, plan) {
     'schuldner-adressbuch': 'Schuldner-Adressbuch',
     'mandanten-adressbuch': 'Mandanten-Adressbuch',
     'csv-import':           'CSV-Import',
+    'csv-export':           'CSV-Export',
   };
   const label = featureLabels[featureName] || featureName;
   const isBusiness = plan === 'business';

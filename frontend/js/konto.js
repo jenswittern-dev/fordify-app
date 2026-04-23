@@ -285,6 +285,7 @@ function kontoFallExportieren(id) {
 }
 
 function kontoFaelleExportierenAlle() {
+  if (requiresPaid('json')) return;
   const reg = kontoLadeRegistry();
   const blob = new Blob([JSON.stringify({ fordify_cases: reg }, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -296,6 +297,7 @@ function kontoFaelleExportierenAlle() {
 }
 
 function kontoFallImportieren(input) {
+  if (requiresPaid('json-import')) return;
   const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
