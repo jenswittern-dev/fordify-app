@@ -73,12 +73,11 @@ serve(async (req) => {
     return _noSubscriptionResponse(req)
   }
 
-  // 2. Check for active subscription (Issue 3 fix: handle DB errors)
+  // 2. Check for active subscription OR active grace period
   const { data: sub, error: subError } = await supabase
     .from('subscriptions')
-    .select('status')
+    .select('status, grace_period_end')
     .eq('user_id', user.id)
-    .eq('status', 'active')
     .maybeSingle()
 
   if (subError) {
@@ -89,7 +88,12 @@ serve(async (req) => {
     )
   }
 
-  if (!sub) {
+  const isActive = sub?.status === 'active'
+  const isInGracePeriod = sub?.status === 'canceled' &&
+    sub?.grace_period_end != null &&
+    new Date(sub.grace_period_end) > new Date()
+
+  if (!isActive && !isInGracePeriod) {
     return _noSubscriptionResponse(req)
   }
 
