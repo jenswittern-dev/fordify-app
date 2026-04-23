@@ -103,6 +103,7 @@
         <div class="d-flex gap-0" id="konto-tabs" role="tablist">
           <button class="konto-tab active" data-tab="faelle" role="tab" aria-selected="true">Fälle</button>
           <button class="konto-tab" data-tab="firmendaten" role="tab" aria-selected="false">Firmendaten</button>
+          <button class="konto-tab" data-tab="adressen" role="tab" aria-selected="false">Adressen</button>
           <button class="konto-tab" data-tab="abo" role="tab" aria-selected="false">Abo</button>
         </div>
       </div>
@@ -213,6 +214,98 @@
         </div>
       </div>
 
+      <!-- Tab: Adressen -->
+      <div class="konto-tab-panel d-none" id="tab-adressen">
+
+        <!-- Schuldner-Adressbuch (Pro+) -->
+        <div class="content-card mb-4">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h3 class="h6 mb-0 fw-semibold">Schuldner-Adressbuch</h3>
+            <button class="btn btn-sm btn-primary" onclick="kontoAdressbuchFormToggle('schuldner')">+ Neu</button>
+          </div>
+
+          <div class="d-none mb-4 p-3 border rounded bg-light" id="schuldner-form-wrap">
+            <div class="row g-2">
+              <div class="col-12">
+                <input type="text" class="form-control form-control-sm" id="schuldner-inp-name" placeholder="Name *">
+              </div>
+              <div class="col-12">
+                <input type="text" class="form-control form-control-sm" id="schuldner-inp-strasse" placeholder="Straße">
+              </div>
+              <div class="col-4">
+                <input type="text" class="form-control form-control-sm" id="schuldner-inp-plz" placeholder="PLZ">
+              </div>
+              <div class="col-8">
+                <input type="text" class="form-control form-control-sm" id="schuldner-inp-ort" placeholder="Ort">
+              </div>
+              <div class="col-sm-6">
+                <input type="email" class="form-control form-control-sm" id="schuldner-inp-email" placeholder="E-Mail">
+              </div>
+              <div class="col-sm-6">
+                <input type="tel" class="form-control form-control-sm" id="schuldner-inp-telefon" placeholder="Telefon">
+              </div>
+            </div>
+            <div class="mt-2 d-flex gap-2">
+              <button class="btn btn-sm btn-primary" onclick="kontoKontaktSpeichern('schuldner')">Speichern</button>
+              <button class="btn btn-sm btn-outline-secondary" onclick="kontoAdressbuchFormToggle('schuldner')">Abbrechen</button>
+            </div>
+          </div>
+
+          <div id="schuldner-liste"></div>
+        </div>
+
+        <!-- Mandanten-Adressbuch (Business only) -->
+        <div class="content-card">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <div>
+              <h3 class="h6 mb-0 fw-semibold">Mandanten-Adressbuch</h3>
+              <p class="text-muted small mb-0">Gläubiger-Profile für verschiedene Mandanten speichern</p>
+            </div>
+            <button class="btn btn-sm btn-primary" id="mandant-neu-btn"
+                    onclick="kontoAdressbuchFormToggle('mandant')">+ Neu</button>
+          </div>
+
+          <!-- Business-Gate (sichtbar wenn NICHT Business) -->
+          <div class="d-none mt-3" id="mandanten-gate-hinweis">
+            <div class="alert alert-light border text-center py-4 mb-0">
+              <p class="mb-2 fw-semibold">Business-Funktion</p>
+              <p class="text-muted small mb-3">Das Mandanten-Adressbuch ist ab dem Business-Plan verfügbar.</p>
+              <a href="/preise" class="btn btn-sm btn-primary">Business abonnieren →</a>
+            </div>
+          </div>
+
+          <div class="d-none mb-4 mt-3 p-3 border rounded bg-light" id="mandant-form-wrap">
+            <div class="row g-2">
+              <div class="col-12">
+                <input type="text" class="form-control form-control-sm" id="mandant-inp-name" placeholder="Name *">
+              </div>
+              <div class="col-12">
+                <input type="text" class="form-control form-control-sm" id="mandant-inp-strasse" placeholder="Straße">
+              </div>
+              <div class="col-4">
+                <input type="text" class="form-control form-control-sm" id="mandant-inp-plz" placeholder="PLZ">
+              </div>
+              <div class="col-8">
+                <input type="text" class="form-control form-control-sm" id="mandant-inp-ort" placeholder="Ort">
+              </div>
+              <div class="col-sm-6">
+                <input type="email" class="form-control form-control-sm" id="mandant-inp-email" placeholder="E-Mail">
+              </div>
+              <div class="col-sm-6">
+                <input type="tel" class="form-control form-control-sm" id="mandant-inp-telefon" placeholder="Telefon">
+              </div>
+            </div>
+            <div class="mt-2 d-flex gap-2">
+              <button class="btn btn-sm btn-primary" onclick="kontoKontaktSpeichern('mandant')">Speichern</button>
+              <button class="btn btn-sm btn-outline-secondary" onclick="kontoAdressbuchFormToggle('mandant')">Abbrechen</button>
+            </div>
+          </div>
+
+          <div id="mandanten-liste"></div>
+        </div>
+
+      </div>
+
       <!-- Tab: Abo -->
       <div id="tab-abo" class="konto-tab-panel d-none">
         <div class="row">
@@ -272,6 +365,7 @@
 <script src="js/auth.js"></script>
 <script src="js/auth-ui.js"></script>
 <script src="js/gates.js"></script>
+<script src="js/contacts.js"></script>
 <script src="js/konto.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>
 </body>
