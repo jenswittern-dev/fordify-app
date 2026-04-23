@@ -225,7 +225,16 @@
         <div class="content-card mb-4">
           <div class="d-flex align-items-center justify-content-between mb-3">
             <h3 class="h6 mb-0 fw-semibold">Schuldner-Adressbuch</h3>
-            <button class="btn btn-sm btn-primary" onclick="kontoAdressbuchFormToggle('schuldner')">+ Neu</button>
+            <div class="d-flex gap-2">
+              <label class="btn btn-sm btn-outline-primary mb-0" role="button"
+                     onclick="kontoSchuldnerCSVImportOeffnen(); return false;">
+                Import CSV
+                <input type="file" accept=".csv" id="schuldner-csv-import-input" style="display:none"
+                       onchange="kontoSchuldnerCSVImportDatei(this)">
+              </label>
+              <a href="/data/beispiel-schuldner.csv" class="btn btn-sm btn-outline-secondary" download>Beispiel-CSV</a>
+              <button class="btn btn-sm btn-primary" onclick="kontoAdressbuchFormToggle('schuldner')">+ Neu</button>
+            </div>
           </div>
 
           <div class="d-none mb-4 p-3 border rounded bg-light" id="schuldner-form-wrap">

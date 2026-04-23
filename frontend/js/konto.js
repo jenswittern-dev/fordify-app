@@ -844,3 +844,53 @@ function _csvQuote(val) {
   }
   return s;
 }
+
+// ---- Schuldner-CSV-Import (6.3) ----
+
+function kontoSchuldnerCSVImportOeffnen() {
+  if (requiresPaid('schuldner-adressbuch')) return;
+  document.getElementById('schuldner-csv-import-input').click();
+}
+
+function kontoSchuldnerCSVImportDatei(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    const text = ev.target.result.replace(/^﻿/, ''); // BOM entfernen
+    const lines = text.split(/\r?\n/).filter(l => l.trim());
+    if (lines.length < 2) { alert('CSV leer oder kein Header gefunden.'); input.value = ''; return; }
+
+    const headers = lines[0].split(';').map(h => h.trim().toLowerCase());
+    const nameIdx    = headers.indexOf('name');
+    const strasseIdx = headers.indexOf('strasse');
+    const plzIdx     = headers.indexOf('plz');
+    const ortIdx     = headers.indexOf('ort');
+    const emailIdx   = headers.indexOf('email');
+    const telefonIdx = headers.indexOf('telefon');
+
+    if (nameIdx === -1) { alert('Spalte "name" fehlt in der CSV-Datei.'); input.value = ''; return; }
+
+    let ok = 0, skip = 0;
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(';');
+      const name = (cols[nameIdx] || '').trim();
+      if (!name) { skip++; continue; }
+      const kontakt = {
+        name,
+        strasse: strasseIdx >= 0 ? (cols[strasseIdx] || '').trim() || null : null,
+        plz:     plzIdx     >= 0 ? (cols[plzIdx]     || '').trim() || null : null,
+        ort:     ortIdx     >= 0 ? (cols[ortIdx]      || '').trim() || null : null,
+        email:   emailIdx   >= 0 ? (cols[emailIdx]    || '').trim() || null : null,
+        telefon: telefonIdx >= 0 ? (cols[telefonIdx]  || '').trim() || null : null,
+      };
+      const result = await speichereKontakt('schuldner', kontakt);
+      if (result) ok++; else skip++;
+    }
+    input.value = '';
+    alert(ok + (ok === 1 ? ' Eintrag importiert' : ' Einträge importiert') + (skip ? ', ' + skip + ' übersprungen.' : '.'));
+    kontoRendereAdressbuchTab();
+  };
+  reader.onerror = () => { alert('Datei konnte nicht gelesen werden.'); input.value = ''; };
+  reader.readAsText(file, 'UTF-8');
+}
