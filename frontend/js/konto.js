@@ -222,6 +222,7 @@ function kontoRendereFaelleTab() {
           <tr>
             <th class="ps-3">Fall</th>
             <th>Geändert</th>
+            <th class="text-end pe-2">Forderung</th>
             <th style="width:1%;white-space:nowrap;"></th>
           </tr>
         </thead>
@@ -229,15 +230,21 @@ function kontoRendereFaelleTab() {
           ${cases.map(c => {
             const datum = c.updatedAt ? new Date(c.updatedAt).toLocaleDateString('de-DE') : '';
             const positionen = (c.fall?.positionen || []).length;
+            const summe = _hfSumme(c.fall?.positionen);
+            const summeFormatiert = summe > 0
+              ? summe.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
+              : '—';
             return `<tr>
               <td class="ps-3">
                 <div class="fw-medium">${_escHtml(c.name || 'Unbenannter Fall')}</div>
                 <div class="text-muted" style="font-size:0.75rem;">${positionen} Position${positionen !== 1 ? 'en' : ''}</div>
               </td>
               <td class="text-muted small">${datum}</td>
+              <td class="text-end pe-2 small text-muted" style="white-space:nowrap;">${summeFormatiert}</td>
               <td>
                 <div class="d-flex gap-1 justify-content-end">
                   <button class="btn btn-sm" style="background:#eff6ff;color:#1e3a8a;border:none;" onclick="kontoFallLaden('${c.id}')">Laden</button>
+                  <button class="btn btn-sm" style="background:#f1f5f9;color:#475569;border:none;" onclick="kontoFallDuplizieren('${c.id}')">Kopieren</button>
                   <button class="btn btn-sm" style="background:#f1f5f9;color:#475569;border:none;" onclick="kontoFallExportieren('${c.id}')">Export</button>
                   <button class="btn btn-sm" style="background:#fef2f2;color:#ef4444;border:none;" onclick="kontoFallLoeschen('${c.id}')">Löschen</button>
                 </div>
@@ -266,6 +273,20 @@ function kontoFallLoeschen(id) {
   const reg = kontoLadeRegistry();
   delete reg.cases[id];
   if (reg.currentCaseId === id) reg.currentCaseId = null;
+  kontoSpeichereRegistry(reg);
+  kontoRendereFaelleTab();
+}
+
+function kontoFallDuplizieren(id) {
+  const reg = kontoLadeRegistry();
+  const original = reg.cases[id];
+  if (!original) return;
+  const neueId = 'f' + Date.now();
+  const kopie = JSON.parse(JSON.stringify(original)); // deep clone
+  kopie.id = neueId;
+  kopie.name = (kopie.name || 'Fall') + ' (Kopie)';
+  kopie.updatedAt = new Date().toISOString();
+  reg.cases[neueId] = kopie;
   kontoSpeichereRegistry(reg);
   kontoRendereFaelleTab();
 }
