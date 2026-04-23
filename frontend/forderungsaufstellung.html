@@ -126,11 +126,17 @@
           <div class="row g-3 mb-3">
             <div class="col-sm-6">
               <label class="form-label" for="inp-mandant">Gläubiger*in</label>
-              <input type="text" class="form-control" id="inp-mandant" placeholder="Name der Gläubigerin / des Gläubigers">
+              <input type="text" class="form-control" id="inp-mandant"
+                     placeholder="Name der Gläubigerin / des Gläubigers"
+                     list="mandanten-datalist" autocomplete="off">
+              <datalist id="mandanten-datalist"></datalist>
             </div>
             <div class="col-sm-6">
               <label class="form-label" for="inp-gegner">Schuldner*in</label>
-              <input type="text" class="form-control" id="inp-gegner" placeholder="Name der Schuldnerin / des Schuldners">
+              <input type="text" class="form-control" id="inp-gegner"
+                     placeholder="Name der Schuldnerin / des Schuldners"
+                     list="schuldner-datalist" autocomplete="off">
+              <datalist id="schuldner-datalist"></datalist>
             </div>
           </div>
 
@@ -710,6 +716,7 @@
 <script src="js/config.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/auth-ui.js"></script>
+<script src="js/contacts.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/gates.js"></script>
 <script src="js/decimal.min.js"></script>
