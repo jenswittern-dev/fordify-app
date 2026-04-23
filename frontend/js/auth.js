@@ -10,7 +10,8 @@ const fordifyAuth = {
   isAuthenticated: false,
   hasSubscription: false,
   user: null,
-  plan: 'free'
+  plan: 'free',
+  gracePeriodEnd: null
 };
 
 function _emailRedirectTo() {
@@ -26,16 +27,23 @@ async function ladeSubscriptionStatus() {
   if (!fordifyAuth.user) return;
   const { data } = await supabaseClient
     .from('subscriptions')
-    .select('status, plan, current_period_end')
+    .select('status, plan, current_period_end, grace_period_end')
     .eq('user_id', fordifyAuth.user.id)
     .maybeSingle();
 
   if (data && data.status === 'active') {
     fordifyAuth.hasSubscription = true;
     fordifyAuth.plan = data.plan; // 'pro' oder 'business'
+    fordifyAuth.gracePeriodEnd = null;
+  } else if (data && data.status === 'canceled' && data.grace_period_end &&
+             new Date(data.grace_period_end) > new Date()) {
+    fordifyAuth.hasSubscription = false;
+    fordifyAuth.plan = 'free';
+    fordifyAuth.gracePeriodEnd = new Date(data.grace_period_end);
   } else {
     fordifyAuth.hasSubscription = false;
     fordifyAuth.plan = 'free';
+    fordifyAuth.gracePeriodEnd = null;
   }
 }
 
