@@ -86,7 +86,6 @@
     const i_m = zins / 100 / 12;
     let rest = schuld;
     let rows = '';
-    let gesamtZinsen = 0;
     let gesamtZahlungen = 0;
     let monat = 0;
 
@@ -101,7 +100,6 @@
       }
       rest -= tilgung;
       if (rest < 0.005) rest = 0;
-      gesamtZinsen    += zinsen;
       gesamtZahlungen += aktRate;
 
       const fmtRest = rest < 0.005 ? '0,00 €' : formatEUR(rest);
@@ -115,6 +113,7 @@
       </tr>`;
     }
 
+    const gesamtZinsen = gesamtZahlungen - schuld;
     const laufzeitStr = monat >= MAX_MONATE
       ? `> ${MAX_MONATE} Monate`
       : monat === 1 ? '1 Monat' : monat + ' Monate';
@@ -128,7 +127,7 @@
          </div>`
       : '';
 
-    const statsColClass = berechneterWertLabel ? 'col-6 col-md-4' : 'col-6 col-md-4';
+    const statsColClass = berechneterWertLabel ? 'col-6 col-md-4' : 'col-6 col-md-6';
 
     return `
       <div class="rechner-result">
