@@ -70,3 +70,8 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION handle_new_user();
+
+-- Migration 2026-04-23: AVV-Akzeptanz in profiles
+-- Ausführen im Supabase Dashboard: SQL Editor → New Query → Run
+ALTER TABLE profiles
+  ADD COLUMN IF NOT EXISTS accepted_avv_at TIMESTAMPTZ DEFAULT NULL;
