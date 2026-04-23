@@ -29,6 +29,7 @@ const ASSETS = [
   "/js/auth-ui.js",
   "/js/auth.js",
   "/js/gates.js",
+  "/js/contacts.js",
   "/js/verrechnung.js",
   "/js/rechner-zins.js",
   "/js/rechner-rvg.js",
