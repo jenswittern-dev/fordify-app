@@ -43,8 +43,9 @@ serve(async (req) => {
 
     const plan = data.items?.[0]?.price?.custom_data?.plan || 'pro'
 
-    // Clear grace/retention fields if subscription is reactivated
-    const clearFields = (data.status === 'active') ? {
+    // Fix 5: express reactivation condition explicitly
+    const isReactivation = event_type === 'subscription.activated' || data.status === 'active'
+    const clearFields = isReactivation ? {
       grace_period_end: null,
       scheduled_cancel_at: null,
       retention_email_sent_at: null
@@ -73,9 +74,14 @@ serve(async (req) => {
         data.scheduled_change?.effective_at) {
       const scheduledCancelAt = data.scheduled_change.effective_at
 
-      await supabase.from('subscriptions')
+      // Fix 4: add error check for scheduled_cancel_at update
+      const { error: schedCancelError } = await supabase.from('subscriptions')
         .update({ scheduled_cancel_at: scheduledCancelAt })
         .eq('paddle_subscription_id', data.id)
+
+      if (schedCancelError) {
+        console.error('scheduled_cancel_at update failed:', schedCancelError)
+      }
 
       // Fetch email for retention webhook payload
       const { data: profile } = await supabase
@@ -97,9 +103,14 @@ serve(async (req) => {
 
   // ── Subscription canceled (billing period ended) ─────────────────────────
   if (event_type === 'subscription.canceled') {
-    const gracePeriodEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    // Fix 3: anchor grace period to billing period end, fall back to now
+    const periodEnd = data.current_billing_period?.ends_at
+      ? new Date(data.current_billing_period.ends_at)
+      : new Date()
+    const gracePeriodEnd = new Date(periodEnd.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString()
 
-    const { data: updatedSub } = await supabase.from('subscriptions')
+    // Fix 1: destructure error and log it
+    const { data: updatedSub, error: cancelError } = await supabase.from('subscriptions')
       .update({
         status:          'canceled',
         plan:            'free',
@@ -109,6 +120,10 @@ serve(async (req) => {
       .eq('paddle_subscription_id', data.id)
       .select('user_id, billing_cycle')
       .maybeSingle()
+
+    if (cancelError) {
+      console.error('subscription.canceled update failed:', cancelError)
+    }
 
     if (updatedSub?.user_id) {
       const { data: profile } = await supabase
@@ -129,12 +144,15 @@ serve(async (req) => {
 
   // ── Transaction completed (payment received) ─────────────────────────────
   if (event_type === 'transaction.completed') {
+    // Fix 7: log origin for observability
+    console.log('transaction.completed origin:', data.origin)
     const customerId = data.customer_id
     const email = await _getPaddleCustomerEmail(customerId)
     if (email) {
       const totals = data.details?.totals
       const amountRaw = totals?.total ? parseInt(totals.total, 10) : null
-      const currency  = totals?.currency_code || 'EUR'
+      // Fix 2: currency_code is a top-level field on the Paddle transaction object
+      const currency  = data.currency_code || 'EUR'
       const amount    = amountRaw !== null
         ? (amountRaw / 100).toLocaleString('de-DE', { style: 'currency', currency })
         : null
@@ -159,11 +177,16 @@ serve(async (req) => {
 
 async function _fireN8NWebhook(url: string, payload: Record<string, unknown>): Promise<void> {
   try {
-    await fetch(url, {
+    // Fix 6: check HTTP response status and log non-OK responses
+    const resp = await fetch(url, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify(payload)
     })
+    if (!resp.ok) {
+      const errBody = await resp.text()
+      console.error('N8N webhook returned non-OK:', resp.status, url, errBody)
+    }
   } catch (e) {
     console.error('N8N webhook call failed:', url, e)
   }
