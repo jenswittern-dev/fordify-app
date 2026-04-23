@@ -99,6 +99,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.location.href = '/preise';
       return;
     }
+    await ladeKontakte();
     StorageBackend.init(fordifyAuth);
     aktualisiereUIFuerAuth();
 

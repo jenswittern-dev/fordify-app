@@ -150,6 +150,7 @@ if (supabaseClient) supabaseClient.auth.onAuthStateChange(async (event, session)
     fordifyAuth.user = session.user;
     aktualisiereUIFuerAuth();
     await ladeSubscriptionStatus();
+    await ladeKontakte();
     StorageBackend.init(fordifyAuth);
     aktualisiereUIFuerAuth();
     checkAutoCheckout();
@@ -161,6 +162,7 @@ if (supabaseClient) supabaseClient.auth.onAuthStateChange(async (event, session)
     fordifyAuth.user = session.user;
     aktualisiereUIFuerAuth(); // Avatar sofort zeigen, Plan-Badge aktualisiert sich nach DB-Call
     await ladeSubscriptionStatus();
+    await ladeKontakte();
     await migrateSessionToCloud();
     StorageBackend.init(fordifyAuth);
     await ladeCloudDaten();
