@@ -75,3 +75,14 @@ CREATE TRIGGER on_auth_user_created
 -- Ausführen im Supabase Dashboard: SQL Editor → New Query → Run
 ALTER TABLE profiles
   ADD COLUMN IF NOT EXISTS accepted_avv_at TIMESTAMPTZ DEFAULT NULL;
+
+-- Migration 2026-04-23: Offboarding + Retention Felder in subscriptions
+-- Ausführen im Supabase Dashboard: SQL Editor → New Query → Run
+ALTER TABLE subscriptions
+  ADD COLUMN IF NOT EXISTS grace_period_end TIMESTAMPTZ DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS scheduled_cancel_at TIMESTAMPTZ DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS retention_email_sent_at TIMESTAMPTZ DEFAULT NULL;
+
+COMMENT ON COLUMN subscriptions.grace_period_end IS '30 days after subscription.canceled fires (end of billing period). Case data deleted when expired.';
+COMMENT ON COLUMN subscriptions.scheduled_cancel_at IS 'When scheduled_change.action=cancel: the effective_at date. Used by retention email cron.';
+COMMENT ON COLUMN subscriptions.retention_email_sent_at IS 'Set when retention email sent, prevents duplicate sends.';
