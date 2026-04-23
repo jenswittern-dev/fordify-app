@@ -79,6 +79,21 @@ async function _pruefeAbo(userId, accessToken) {
   }
 }
 
+// AVV-Banner ist deaktiviert bis Jens den AVV-Text von Andreas freigeben lässt
+const AVV_BANNER_AKTIV = false;
+
+async function _pruefeAVV(userId, accessToken) {
+  try {
+    const res = await fetch(
+      `${CONFIG.supabase.url}/rest/v1/profiles?id=eq.${userId}&select=accepted_avv_at`,
+      { headers: { 'apikey': CONFIG.supabase.anonKey, 'Authorization': `Bearer ${accessToken}` } }
+    );
+    if (!res.ok) return;
+    const rows = await res.json();
+    fordifyAuth.acceptedAvvAt = rows?.[0]?.accepted_avv_at || null;
+  } catch (e) { /* ignore */ }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   if (!supabaseClient) {
     window.location.href = '/forderungsaufstellung';
@@ -95,6 +110,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     fordifyAuth.isAuthenticated = true;
     fordifyAuth.user = session.user;
     await _pruefeAbo(session.user.id, session.access_token);
+    await _pruefeAVV(session.user.id, session.access_token);
     if (!fordifyAuth.hasSubscription) {
       window.location.href = '/preise';
       return;
@@ -109,6 +125,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('konto-loading').style.display = 'none';
     document.getElementById('konto-content').classList.remove('d-none');
+    _kontoZeigeAVVBanner();
   } catch (e) {
     console.error('Konto-Init fehlgeschlagen:', e);
     const loadingEl = document.getElementById('konto-loading');
@@ -593,6 +610,18 @@ function kontoRendereAboTab() {
       })
       .catch(e => console.warn('Abo-Laufzeit Netzwerkfehler:', e));
   }
+
+  const avvEl = document.getElementById('konto-abo-avv');
+  if (avvEl) {
+    if (fordifyAuth.acceptedAvvAt) {
+      const datum = new Date(fordifyAuth.acceptedAvvAt).toLocaleDateString('de-DE');
+      avvEl.innerHTML = `<span class="text-success">✓ Akzeptiert am ${datum}</span> &nbsp;
+        <a href="/avv" target="_blank" class="text-muted small">AVV lesen ↗</a>`;
+    } else {
+      avvEl.innerHTML = `<button class="btn btn-sm btn-warning" onclick="kontoAVVAkzeptieren()">AVV akzeptieren</button>
+        &nbsp;<a href="/avv" target="_blank" class="text-muted small">AVV lesen ↗</a>`;
+    }
+  }
 }
 
 // ---- Tab: Adressen ----
@@ -915,4 +944,39 @@ function kontoSchuldnerCSVImportDatei(input) {
   };
   reader.onerror = () => { alert('Datei konnte nicht gelesen werden.'); input.value = ''; };
   reader.readAsText(file, 'UTF-8');
+}
+
+// ---- AVV (DSGVO Art. 28) ----
+
+function _kontoZeigeAVVBanner() {
+  const banner = document.getElementById('avv-banner');
+  if (!banner) return;
+  const zeigen = AVV_BANNER_AKTIV && fordifyAuth.hasSubscription && !fordifyAuth.acceptedAvvAt;
+  banner.classList.toggle('d-none', !zeigen);
+}
+
+async function kontoAVVAkzeptieren() {
+  const session = _leseLocalSession();
+  if (!session) return;
+  try {
+    const res = await fetch(
+      `${CONFIG.supabase.url}/rest/v1/profiles?id=eq.${session.user.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'apikey': CONFIG.supabase.anonKey,
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ accepted_avv_at: new Date().toISOString() })
+      }
+    );
+    if (!res.ok) { alert('Fehler beim Speichern der AVV-Akzeptanz. Bitte erneut versuchen.'); return; }
+    fordifyAuth.acceptedAvvAt = new Date().toISOString();
+    _kontoZeigeAVVBanner();
+    kontoRendereAboTab();
+  } catch (e) {
+    alert('Netzwerkfehler beim Akzeptieren des AVV: ' + e.message);
+  }
 }
