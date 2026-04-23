@@ -113,14 +113,14 @@
 
 | # | Feature | Status | Datum |
 |---|---|---|---|
-| 5.1 | Haftungsausschluss im Footer der App | 📋 | — |
-| 5.2 | Datenschutz-Link im App-Footer | 📋 | — |
-| 5.3 | Changelog / Versionshistorie | 📋 | — |
+| 5.1 | Haftungsausschluss im Footer der App | ✅ | 2026-04-23 |
+| 5.2 | Datenschutz-Link im App-Footer | ✅ | 2026-04-23 |
+| 5.3 | Changelog / Versionshistorie | ✅ | 2026-04-23 |
 | 5.4 | ~~Matomo Analytics~~ – entfernt, GoatCounter wird genutzt | — | — |
 | 5.5 | Nutzerkonten / Cloud-Sync (Stufe 2) | 💡 | — |
 | 5.6 | URL-basierter Fall-Import (komprimiertes JSON im Hash) | 💡 | — |
 | 5.7 | ZV-Auftrag-Generierung (ZwVollstrFormV 2024) | 💡 | — |
-| 5.8 | **Free-Version: Export/Import vollständig sperren** – JSON-Import, JSON-Export und CSV-Export der Fälle aus der FA nur für eingeloggte Paid-Nutzer (Pro/Business). Menüpunkte für Gäste ausblenden oder deaktivieren (nicht nur Modal zeigen). | 📋 | — |
+| 5.8 | **Free-Version: Export/Import vollständig sperren** – JSON-Import, JSON-Export und CSV-Export der Fälle aus der FA nur für eingeloggte Paid-Nutzer (Pro/Business). Menüpunkte für Gäste ausblenden oder deaktivieren (nicht nur Modal zeigen). | ✅ | 2026-04-23 |
 
 ---
 

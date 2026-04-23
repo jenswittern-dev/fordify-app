@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Changelog – fordify</title>
+  <meta name="description" content="fordify Änderungshistorie – neue Features, Verbesserungen und Bugfixes.">
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/rechner.css">
+  <link rel="icon" href="/img/logo.svg" type="image/svg+xml">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg fordify-navbar" style="background:var(--color-surface);border-bottom:1px solid var(--color-border);">
+  <div class="container">
+    <a class="navbar-brand fordify-brand" href="/">
+      <img src="/img/logo-wordmark.svg" alt="fordify" height="28">
+    </a>
+    <div class="d-flex gap-2 align-items-center ms-auto">
+      <a href="/forderungsaufstellung" class="btn btn-primary btn-sm">App öffnen →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Content -->
+<div class="container py-5" style="max-width:720px;">
+  <h1 class="h3 fw-bold mb-1">Changelog</h1>
+  <p class="text-muted mb-5">Neue Funktionen, Verbesserungen und Korrekturen.</p>
+
+  <div class="mb-5">
+    <div class="d-flex align-items-baseline gap-3 mb-3">
+      <h2 class="h5 fw-semibold mb-0">April 2026</h2>
+    </div>
+    <ul class="list-unstyled" style="border-left:2px solid var(--color-border);padding-left:1.25rem;">
+      <li class="mb-3">
+        <span class="badge mb-1" style="background:#eff6ff;color:#1e40af;font-size:0.65rem;">Business</span>
+        <div class="fw-medium">Mandanten-Adressbuch</div>
+        <div class="text-muted small">Mandanten zentral verwalten, Autovervollständigung im Mandant-Feld der Forderungsaufstellung.</div>
+      </li>
+      <li class="mb-3">
+        <span class="badge mb-1" style="background:#f0fdf4;color:#166534;font-size:0.65rem;">Pro</span>
+        <div class="fw-medium">Schuldner-Adressbuch</div>
+        <div class="text-muted small">Schuldner-Adressen speichern und per Autovervollständigung in neue Fälle übernehmen.</div>
+      </li>
+      <li class="mb-3">
+        <span class="badge mb-1" style="background:#eff6ff;color:#1e40af;font-size:0.65rem;">Business</span>
+        <div class="fw-medium">CSV-Import für Fälle</div>
+        <div class="text-muted small">Mehrere Fälle auf einmal aus einer CSV-Datei importieren (Pflichtfelder: Gegner, Betrag).</div>
+      </li>
+      <li class="mb-3">
+        <span class="badge mb-1" style="background:#f8fafc;color:#475569;font-size:0.65rem;">Alle</span>
+        <div class="fw-medium">Gestuftes PDF-Branding</div>
+        <div class="text-muted small">Business-Nutzer erhalten PDFs ohne fordify-Branding, Pro-Nutzer dezentes Branding, Free-Nutzer prominentes Branding.</div>
+      </li>
+      <li class="mb-3">
+        <span class="badge mb-1" style="background:#f8fafc;color:#475569;font-size:0.65rem;">Alle</span>
+        <div class="fw-medium">Tilgungsbestimmung bei Zahlungen</div>
+        <div class="text-muted small">Zahlungen können spezifischen Hauptforderungen oder Zinsen zugeordnet werden (§ 366 BGB).</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="mb-5">
+    <div class="d-flex align-items-baseline gap-3 mb-3">
+      <h2 class="h5 fw-semibold mb-0">März 2026</h2>
+    </div>
+    <ul class="list-unstyled" style="border-left:2px solid var(--color-border);padding-left:1.25rem;">
+      <li class="mb-3">
+        <span class="badge mb-1" style="background:#f8fafc;color:#475569;font-size:0.65rem;">Alle</span>
+        <div class="fw-medium">Launch: fordify</div>
+        <div class="text-muted small">Forderungsaufstellung nach § 367 BGB, RVG-Rechner (BGBl. 2025), Verzugszinsrechner, GKG-Rechner. Mehrfall-Verwaltung, Undo-Stack, Print-to-PDF, PWA.</div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="fordify-footer">
+  <div class="container">
+    <div class="footer-cols">
+      <div>
+        <div class="fordify-footer__brand-name">fordify</div>
+        <div class="fordify-footer__brand-desc">Professionelle Forderungsberechnungen für Kanzleien, Inkassobüros und Unternehmen. Von Anwälten entwickelt und geprüft.</div>
+        <div class="fordify-footer__badges">
+          <span class="fordify-footer__badge">RVG 2025</span>
+          <span class="fordify-footer__badge">§ 367 BGB</span>
+          <span class="fordify-footer__badge">DSGVO</span>
+          <span class="fordify-footer__badge">Basiszins 07/2026</span>
+        </div>
+      </div>
+      <div>
+        <div class="fordify-footer__col-title">Tools</div>
+        <ul>
+          <li><a href="/forderungsaufstellung" class="footer-link--highlight">Forderungsaufstellung →</a></li>
+          <li><a href="/zinsrechner">Verzugszinsrechner</a></li>
+          <li><a href="/rvg-rechner">RVG-Rechner</a></li>
+          <li><a href="/gerichtskostenrechner">Gerichtskostenrechner</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="fordify-footer__col-title">Produkt</div>
+        <ul>
+          <li><a href="/preise" class="footer-link--highlight">Preise</a></li>
+          <li><a href="/changelog">Changelog</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="fordify-footer__col-title">Rechtliches</div>
+        <ul>
+          <li><a href="/impressum.html">Impressum</a></li>
+          <li><a href="/datenschutz.html">Datenschutz</a></li>
+          <li><a href="/agb">AGB</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fordify-footer__bottom">
+      <div class="fordify-footer__copy">© 2026 fordify · Alle Rechte vorbehalten</div>
+      <div class="fordify-footer__right">Von Anwälten entwickelt · DSGVO-konform</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
