@@ -20,7 +20,7 @@ async function ladeKontakte() {
 }
 
 async function speichereKontakt(type, kontakt) {
-  if (!supabaseClient || !fordifyAuth.user) return null;
+  if (!supabaseClient || !fordifyAuth.user || !fordifyAuth.hasSubscription) return null;
   const { data, error } = await supabaseClient
     .from('contacts')
     .insert({ type, user_id: fordifyAuth.user.id, ...kontakt })
