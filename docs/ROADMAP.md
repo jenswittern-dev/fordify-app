@@ -116,7 +116,7 @@
 | 5.1 | Haftungsausschluss im Footer der App | 📋 | — |
 | 5.2 | Datenschutz-Link im App-Footer | 📋 | — |
 | 5.3 | Changelog / Versionshistorie | 📋 | — |
-| 5.4 | Matomo self-hosted Analytics (datenschutzkonform) | 💡 | — |
+| 5.4 | ~~Matomo Analytics~~ – entfernt, GoatCounter wird genutzt | — | — |
 | 5.5 | Nutzerkonten / Cloud-Sync (Stufe 2) | 💡 | — |
 | 5.6 | URL-basierter Fall-Import (komprimiertes JSON im Hash) | 💡 | — |
 | 5.7 | ZV-Auftrag-Generierung (ZwVollstrFormV 2024) | 💡 | — |
