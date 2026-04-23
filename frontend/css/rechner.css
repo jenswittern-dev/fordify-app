@@ -902,6 +902,14 @@ a.rechner-cta-box .rechner-cta-box__title { color: #1e3a8a; }
   font-size: 0.65rem;
   color: rgba(255,255,255,0.25);
 }
+.fordify-footer__disclaimer {
+  width: 100%;
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  margin-top: 0.5rem;
+  opacity: 0.75;
+}
 
 /* ---- Nav-Links (Farben für SEO-Seiten ohne inline-style) ---- */
 .navbar-fa .nav-link { color: var(--color-nav-text-muted); }
