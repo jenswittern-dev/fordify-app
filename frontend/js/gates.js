@@ -9,7 +9,7 @@ function requiresPaid(featureName) {
 }
 
 function requiresBusiness(featureName) {
-  if (typeof fordifyAuth !== 'undefined' && fordifyAuth.plan === 'business') return false;
+  if (typeof fordifyAuth !== 'undefined' && fordifyAuth.hasSubscription && fordifyAuth.plan === 'business') return false;
   _zeigeUpgradeModal(featureName, 'business');
   trackEvent('upgrade-modal-business-' + featureName);
   return true;
@@ -50,6 +50,9 @@ function _zeigeUpgradeModal(featureName, plan) {
     ctaEl.href = '/preise';
   }
 
-  const modal = new bootstrap.Modal(document.getElementById('upgradeModal'));
-  modal.show();
+  const modalEl = document.getElementById('upgradeModal');
+  if (modalEl) {
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+  }
 }
