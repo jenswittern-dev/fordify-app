@@ -2,7 +2,7 @@
 const IS_STAGING_SW = self.location.hostname.includes('staging') ||
                       self.location.hostname === 'localhost' ||
                       self.location.hostname === '127.0.0.1';
-const CACHE = IS_STAGING_SW ? "fordify-staging-v71" : "fordify-v117";
+const CACHE = IS_STAGING_SW ? "fordify-staging-v72" : "fordify-v118";
 const ASSETS = [
   "/",
   "/index.html",
@@ -42,6 +42,7 @@ const ASSETS = [
   "/llms.txt",
   "/data/basiszinssaetze.json",
   "/data/rvg_tabelle.json",
+  "/data/beispiel-import.csv",
   "/fonts/inter-latin.woff2",
   "/fonts/inter-latin-ext.woff2",
   "/fonts/jetbrains-mono-latin.woff2",
