@@ -125,7 +125,7 @@
         '</div>' +
         '<div class="rechner-result__body" style="max-height:400px;overflow-y:auto;">' +
           '<table class="table table-sm table-striped mb-0">' +
-            '<thead class="sticky-top bg-white">' +
+            '<thead style="position:sticky;top:0;z-index:2;background:#fff">' +
               '<tr>' +
                 '<th class="text-end">Monat</th>' +
                 '<th class="text-end">Schuld</th>' +
@@ -142,12 +142,6 @@
           '<span class="rechner-result__footer-label">Gesamtzahlungen</span>' +
           '<span class="rechner-result__footer-val">' + formatEUR(gesamtZahlungen) + '</span>' +
         '</div>' +
-      '</div>' +
-      '<a href="/forderungsaufstellung" class="rechner-cta-box mt-3">' +
-        '<div>' +
-          '<div class="rechner-cta-box__title">Vollständige Forderungsaufstellung nach § 367 BGB →</div>' +
-          '<div class="rechner-cta-box__sub">Zinsen, RVG-Gebühren, Zahlungsverrechnung – alles in einem professionellen Dokument.</div>' +
-        '</div>' +
-      '</a>';
+      '</div>';
   }
 })();

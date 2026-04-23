@@ -103,13 +103,7 @@
           <span class="rechner-result__footer-label">Zinsen gesamt</span>
           <span class="rechner-result__footer-val">${gesamtStr} €</span>
         </div>
-      </div>
-      <a href="/forderungsaufstellung" class="rechner-cta-box mt-3">
-        <div>
-          <div class="rechner-cta-box__title">Vollständige Forderungsaufstellung nach § 367 BGB →</div>
-          <div class="rechner-cta-box__sub">Zinsen, RVG-Gebühren, Zahlungsverrechnung – alles in einem professionellen Dokument.</div>
-        </div>
-      </a>`;
+      </div>`;
   }
 
   document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {

@@ -99,13 +99,7 @@
           <span class="rechner-result__footer-label">Anwaltskosten gesamt</span>
           <span class="rechner-result__footer-val">${gesamtStr} €</span>
         </div>
-      </div>
-      <a href="/forderungsaufstellung" class="rechner-cta-box mt-3">
-        <div>
-          <div class="rechner-cta-box__title">RVG-Gebühren in die Forderungsaufstellung übernehmen →</div>
-          <div class="rechner-cta-box__sub">In der Forderungsaufstellung werden RVG-Positionen nach § 367 BGB verrechnet.</div>
-        </div>
-      </a>`;
+      </div>`;
   }
 
   document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {
