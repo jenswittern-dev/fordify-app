@@ -653,19 +653,110 @@ function _kontoRendereKontaktListe(type) {
   listeEl.innerHTML = `
     <div class="list-group list-group-flush mt-3">
       ${eintraege.map(k => {
+        const eid = _escHtml(k.id);
         const adresse = [k.strasse, k.plz && k.ort ? k.plz + ' ' + k.ort : (k.plz || k.ort)].filter(Boolean);
-        return `<div class="list-group-item px-0 d-flex align-items-start justify-content-between gap-2">
-          <div>
-            <div class="fw-medium">${_escHtml(k.name)}</div>
-            ${adresse.length ? `<div class="text-muted small">${adresse.map(_escHtml).join(', ')}</div>` : ''}
-            ${k.email ? `<div class="text-muted small">${_escHtml(k.email)}</div>` : ''}
-            ${k.telefon ? `<div class="text-muted small">${_escHtml(k.telefon)}</div>` : ''}
+        const neuFallBtn = type === 'schuldner'
+          ? `<button class="btn btn-sm" style="background:#eff6ff;color:#1e3a8a;border:none;white-space:nowrap;"
+                    onclick="kontoFallAusSchuldnerAnlegen('${eid}')">Neuer Fall</button>`
+          : '';
+        return `<div class="list-group-item px-0" id="kontakt-${eid}">
+          <div class="d-flex align-items-start justify-content-between gap-2">
+            <div>
+              <div class="fw-medium">${_escHtml(k.name)}</div>
+              ${adresse.length ? `<div class="text-muted small">${adresse.map(_escHtml).join(', ')}</div>` : ''}
+              ${k.email ? `<div class="text-muted small">${_escHtml(k.email)}</div>` : ''}
+              ${k.telefon ? `<div class="text-muted small">${_escHtml(k.telefon)}</div>` : ''}
+            </div>
+            <div class="d-flex gap-1 flex-shrink-0 flex-wrap justify-content-end">
+              ${neuFallBtn}
+              <button class="btn btn-sm" style="background:#f1f5f9;color:#475569;border:none;"
+                      onclick="kontoKontaktBearbeitenToggle('${eid}')">Bearbeiten</button>
+              <button class="btn btn-sm" style="background:#fef2f2;color:#ef4444;border:none;"
+                      onclick="kontoKontaktLoeschen('${eid}')">Löschen</button>
+            </div>
           </div>
-          <button class="btn btn-sm flex-shrink-0" style="background:#fef2f2;color:#ef4444;border:none;"
-                  onclick="kontoKontaktLoeschen('${_escHtml(k.id)}')">Löschen</button>
+          <div class="d-none mt-2" id="kontakt-edit-${eid}">
+            <div class="p-3 border rounded bg-light">
+              <div class="row g-2">
+                <div class="col-12">
+                  <input type="text" class="form-control form-control-sm" id="ke-name-${eid}"
+                         value="${_escHtml(k.name)}" placeholder="Name *">
+                </div>
+                <div class="col-12">
+                  <input type="text" class="form-control form-control-sm" id="ke-strasse-${eid}"
+                         value="${_escHtml(k.strasse || '')}" placeholder="Straße">
+                </div>
+                <div class="col-4">
+                  <input type="text" class="form-control form-control-sm" id="ke-plz-${eid}"
+                         value="${_escHtml(k.plz || '')}" placeholder="PLZ">
+                </div>
+                <div class="col-8">
+                  <input type="text" class="form-control form-control-sm" id="ke-ort-${eid}"
+                         value="${_escHtml(k.ort || '')}" placeholder="Ort">
+                </div>
+                <div class="col-sm-6">
+                  <input type="email" class="form-control form-control-sm" id="ke-email-${eid}"
+                         value="${_escHtml(k.email || '')}" placeholder="E-Mail">
+                </div>
+                <div class="col-sm-6">
+                  <input type="tel" class="form-control form-control-sm" id="ke-telefon-${eid}"
+                         value="${_escHtml(k.telefon || '')}" placeholder="Telefon">
+                </div>
+              </div>
+              <div class="mt-2 d-flex gap-2">
+                <button class="btn btn-sm btn-primary" onclick="kontoKontaktAktualisieren('${eid}')">Speichern</button>
+                <button class="btn btn-sm btn-outline-secondary"
+                        onclick="kontoKontaktBearbeitenToggle('${eid}')">Abbrechen</button>
+              </div>
+            </div>
+          </div>
         </div>`;
       }).join('')}
     </div>`;
+}
+
+function kontoKontaktBearbeitenToggle(id) {
+  const el = document.getElementById('kontakt-edit-' + id);
+  if (el) el.classList.toggle('d-none');
+}
+
+async function kontoKontaktAktualisieren(id) {
+  const name = (document.getElementById('ke-name-' + id)?.value || '').trim();
+  if (!name) { alert('Name ist erforderlich.'); return; }
+  const updates = {
+    name,
+    strasse: document.getElementById('ke-strasse-' + id)?.value.trim() || null,
+    plz:     document.getElementById('ke-plz-'     + id)?.value.trim() || null,
+    ort:     document.getElementById('ke-ort-'     + id)?.value.trim() || null,
+    email:   document.getElementById('ke-email-'   + id)?.value.trim() || null,
+    telefon: document.getElementById('ke-telefon-' + id)?.value.trim() || null,
+  };
+  const result = await aktualisiereKontakt(id, updates);
+  if (!result) { alert('Aktualisierung fehlgeschlagen. Bitte erneut versuchen.'); return; }
+  kontoRendereAdressbuchTab();
+}
+
+function kontoFallAusSchuldnerAnlegen(id) {
+  const kontakt = fordifyContacts.schuldner.find(c => String(c.id) === String(id));
+  if (!kontakt) return;
+  const reg = kontoLadeRegistry();
+  const newId = 'f' + Date.now();
+  reg.cases[newId] = {
+    id: newId,
+    name: kontakt.name,
+    updatedAt: new Date().toISOString(),
+    naechsteId: 1,
+    fall: {
+      mandant: '', gegner: kontakt.name, aktenzeichen: '',
+      aufschlagPP: 9, insoDatum: null,
+      forderungsgrundKat: '', titelArt: '', titelDatum: '',
+      titelRechtskraft: '', titelGericht: '', titelAz: '',
+      positionen: []
+    }
+  };
+  reg.currentCaseId = newId;
+  kontoSpeichereRegistry(reg);
+  window.location.href = '/forderungsaufstellung';
 }
 
 function kontoAdressbuchFormToggle(type) {
