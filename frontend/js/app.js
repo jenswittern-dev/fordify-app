@@ -319,6 +319,7 @@ function fallExportierenAlsExcel() {
 }
 
 function fallImportierenDatei(input) {
+  if (requiresPaid('json-import')) return;
   const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();

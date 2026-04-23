@@ -12,7 +12,8 @@ function zeigeUpgradeModal(featureName) {
   const featureLabels = {
     'excel':         'Excel / CSV-Export',
     'json':          'JSON-Export',
-    'einstellungen': 'Kanzlei-Profil dauerhaft speichern'
+    'json-import':   'JSON-Import',
+    'einstellungen': 'Profil dauerhaft speichern'
   };
   const label = featureLabels[featureName] || featureName;
   const el = document.getElementById('upgrade-modal-feature');
