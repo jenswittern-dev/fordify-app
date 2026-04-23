@@ -1,5 +1,25 @@
 'use strict';
 
+function fordifyConfirm(message, onOK, { okLabel = 'Löschen', cancelLabel = 'Abbrechen' } = {}) {
+  const textEl = document.getElementById('confirm-modal-text');
+  const btnsEl = document.getElementById('confirm-modal-btns');
+  if (!textEl || !btnsEl) { if (confirm(message)) onOK(); return; }
+  textEl.textContent = message;
+  const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('confirmModal'));
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'btn btn-secondary btn-sm';
+  cancelBtn.setAttribute('data-bs-dismiss', 'modal');
+  cancelBtn.textContent = cancelLabel;
+  const okBtn = document.createElement('button');
+  okBtn.className = 'btn btn-danger btn-sm';
+  okBtn.textContent = okLabel;
+  okBtn.addEventListener('click', () => { modal.hide(); onOK(); }, { once: true });
+  btnsEl.innerHTML = '';
+  btnsEl.appendChild(cancelBtn);
+  btnsEl.appendChild(okBtn);
+  modal.show();
+}
+
 const KONTO_STORAGE_KEY_CASES    = 'fordify_cases';
 const KONTO_STORAGE_KEY_SETTINGS = 'fordify_settings';
 const KONTO_STORAGE_KEY_THEME    = 'fordify_theme';
@@ -285,12 +305,13 @@ function kontoFallLaden(id) {
 }
 
 function kontoFallLoeschen(id) {
-  if (!confirm('Diesen Fall wirklich löschen?')) return;
-  const reg = kontoLadeRegistry();
-  delete reg.cases[id];
-  if (reg.currentCaseId === id) reg.currentCaseId = null;
-  kontoSpeichereRegistry(reg);
-  kontoRendereFaelleTab();
+  fordifyConfirm('Diesen Fall wirklich löschen?', () => {
+    const reg = kontoLadeRegistry();
+    delete reg.cases[id];
+    if (reg.currentCaseId === id) reg.currentCaseId = null;
+    kontoSpeichereRegistry(reg);
+    kontoRendereFaelleTab();
+  });
 }
 
 function kontoFallDuplizieren(id) {
@@ -794,9 +815,10 @@ function kontoKontaktSpeichern(type) {
 }
 
 async function kontoKontaktLoeschen(id) {
-  if (!confirm('Diesen Eintrag wirklich löschen?')) return;
-  await loescheKontakt(id);
-  kontoRendereAdressbuchTab();
+  fordifyConfirm('Diesen Eintrag wirklich löschen?', async () => {
+    await loescheKontakt(id);
+    kontoRendereAdressbuchTab();
+  });
 }
 
 // ---- CSV-Import (Business) ----

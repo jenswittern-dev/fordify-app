@@ -375,8 +375,41 @@ function zeigeFallModal() {
   bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-faelle")).show();
 }
 
+function fordifyConfirm(message, onOK, { okLabel = 'Löschen', cancelLabel = 'Abbrechen', extraLabel, onExtra } = {}) {
+  const textEl = document.getElementById('confirm-modal-text');
+  const btnsEl = document.getElementById('confirm-modal-btns');
+  if (!textEl || !btnsEl) { if (confirm(message)) onOK(); return; }
+
+  textEl.textContent = message;
+  const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('confirmModal'));
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'btn-secondary-app';
+  cancelBtn.setAttribute('data-bs-dismiss', 'modal');
+  cancelBtn.textContent = cancelLabel;
+
+  const okBtn = document.createElement('button');
+  okBtn.className = 'btn-primary-app';
+  okBtn.textContent = okLabel;
+  okBtn.addEventListener('click', () => { modal.hide(); onOK(); }, { once: true });
+
+  btnsEl.innerHTML = '';
+  btnsEl.appendChild(cancelBtn);
+
+  if (extraLabel && onExtra) {
+    const extraBtn = document.createElement('button');
+    extraBtn.className = 'btn-secondary-app';
+    extraBtn.textContent = extraLabel;
+    extraBtn.addEventListener('click', () => { modal.hide(); onExtra(); }, { once: true });
+    btnsEl.appendChild(extraBtn);
+  }
+
+  btnsEl.appendChild(okBtn);
+  modal.show();
+}
+
 function fallLoeschenBestaetigen(id) {
-  if (confirm("Diesen Fall wirklich löschen?")) fallLoeschen(id);
+  fordifyConfirm('Diesen Fall wirklich löschen?', () => fallLoeschen(id));
 }
 
 function fallModalSchliessen() {
@@ -611,35 +644,39 @@ function positionLoeschenBestaetigen(id) {
   const pos = state.fall.positionen.find(p => p.id === id);
   const idsToRemove = new Set([id]);
 
-  if (pos?.typ === "hauptforderung" && pos.gruppeId) {
-    const zugehoerig = state.fall.positionen.filter(
-      p => p.typ === "zinsperiode" && p.gruppeId === pos.gruppeId
-    );
-    if (zugehoerig.length > 0) {
-      if (confirm(`Diese Hauptforderung hat ${zugehoerig.length} zugeh\u00f6rige Zinsperiode(n).\nSollen diese ebenfalls gel\u00f6scht werden?`)) {
-        zugehoerig.forEach(p => idsToRemove.add(p.id));
-      }
-    }
-  }
-
   const commit = () => {
     state.fall.positionen = state.fall.positionen.filter(p => !idsToRemove.has(p.id));
     speichernMitFeedback();
     renderePositionsliste();
   };
 
-  const rows = [...idsToRemove]
-    .map(rid => document.querySelector(`tr[data-pos-id="${rid}"]`))
-    .filter(Boolean);
+  const doCommit = () => {
+    const rows = [...idsToRemove]
+      .map(rid => document.querySelector(`tr[data-pos-id="${rid}"]`))
+      .filter(Boolean);
+    if (rows.length > 0) {
+      rows.forEach(r => r.classList.add('pos-row--removing'));
+      rows[0].addEventListener('animationend', commit, { once: true });
+    } else {
+      commit();
+    }
+  };
 
-  if (rows.length > 0) {
-    rows.forEach(r => r.classList.add("pos-row--removing"));
-    rows[0].addEventListener("animationend", commit, { once: true });
-  } else {
-    commit();
+  if (pos?.typ === 'hauptforderung' && pos.gruppeId) {
+    const zugehoerig = state.fall.positionen.filter(
+      p => p.typ === 'zinsperiode' && p.gruppeId === pos.gruppeId
+    );
+    if (zugehoerig.length > 0) {
+      fordifyConfirm(
+        `Diese Hauptforderung hat ${zugehoerig.length} zugehörige Zinsperiode(n). Sollen diese ebenfalls gelöscht werden?`,
+        () => { zugehoerig.forEach(p => idsToRemove.add(p.id)); doCommit(); },
+        { okLabel: 'Auch Zinsperioden löschen', extraLabel: 'Nur Hauptforderung', onExtra: doCommit }
+      );
+      return;
+    }
   }
+  doCommit();
 }
-
 function positionNachOben(id) {
   const idx = state.fall.positionen.findIndex(p => p.id === id);
   if (idx > 0) {
