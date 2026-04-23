@@ -123,7 +123,7 @@
             '<div class="col-12 col-md-4"><div class="p-2 bg-light rounded text-center"><div class="fw-bold">' + laufzeitStr + '</div><div class="text-muted small">Laufzeit</div></div></div>' +
           '</div>' +
         '</div>' +
-        '<div class="rechner-result__body" style="max-height:400px;overflow-y:auto;">' +
+        '<div class="rechner-result__body" style="max-height:400px;overflow-y:auto;padding-top:0;">' +
           '<table class="table table-sm table-striped mb-0">' +
             '<thead style="position:sticky;top:0;z-index:2;background:#fff">' +
               '<tr>' +
