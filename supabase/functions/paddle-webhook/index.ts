@@ -81,22 +81,22 @@ serve(async (req) => {
 
       if (schedCancelError) {
         console.error('scheduled_cancel_at update failed:', schedCancelError)
-      }
+      } else {
+        // Fetch email for retention webhook payload
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('email')
+          .eq('id', userId)
+          .maybeSingle()
 
-      // Fetch email for retention webhook payload
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('id', userId)
-        .maybeSingle()
-
-      if (profile?.email) {
-        await _fireN8NWebhook(`${N8N_BASE}/fordify-retention`, {
-          email:              profile.email,
-          plan:               plan,
-          billing_cycle:      data.billing_cycle?.interval || 'month',
-          scheduled_cancel_at: scheduledCancelAt
-        })
+        if (profile?.email) {
+          await _fireN8NWebhook(`${N8N_BASE}/fordify-retention`, {
+            email:              profile.email,
+            plan:               plan,
+            billing_cycle:      data.billing_cycle?.interval || 'month',
+            scheduled_cancel_at: scheduledCancelAt
+          })
+        }
       }
     }
   }
@@ -107,6 +107,9 @@ serve(async (req) => {
     const periodEnd = data.current_billing_period?.ends_at
       ? new Date(data.current_billing_period.ends_at)
       : new Date()
+    if (!data.current_billing_period?.ends_at) {
+      console.warn('subscription.canceled: current_billing_period.ends_at missing, grace period anchored to now()')
+    }
     const gracePeriodEnd = new Date(periodEnd.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString()
 
     // Fix 1: destructure error and log it
