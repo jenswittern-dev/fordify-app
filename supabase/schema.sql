@@ -86,3 +86,14 @@ ALTER TABLE subscriptions
 COMMENT ON COLUMN subscriptions.grace_period_end IS '30 days after subscription.canceled fires (end of billing period). Case data deleted when expired.';
 COMMENT ON COLUMN subscriptions.scheduled_cancel_at IS 'When scheduled_change.action=cancel: the effective_at date. Used by retention email cron.';
 COMMENT ON COLUMN subscriptions.retention_email_sent_at IS 'Set when retention email sent, prevents duplicate sends.';
+
+-- Migration 2026-04-23: Partial indexes for retention email cron performance
+-- idx_subscriptions_scheduled_cancel_at: Only rows with pending cancellations + unsent retention email
+CREATE INDEX IF NOT EXISTS idx_subscriptions_scheduled_cancel_at
+  ON subscriptions (scheduled_cancel_at)
+  WHERE scheduled_cancel_at IS NOT NULL AND retention_email_sent_at IS NULL;
+
+-- idx_subscriptions_grace_period_end: Only canceled subscriptions with active grace period
+CREATE INDEX IF NOT EXISTS idx_subscriptions_grace_period_end
+  ON subscriptions (grace_period_end)
+  WHERE status = 'canceled' AND grace_period_end IS NOT NULL;

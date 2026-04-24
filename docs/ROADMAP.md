@@ -123,6 +123,7 @@
 | 5.7 | ZV-Auftrag-Generierung (ZwVollstrFormV 2024) | 💡 | — |
 | 5.8 | **Free-Version: Export/Import vollständig sperren** – JSON-Import, JSON-Export und CSV-Export der Fälle aus der FA nur für eingeloggte Paid-Nutzer (Pro/Business). Menüpunkte für Gäste ausblenden oder deaktivieren (nicht nur Modal zeigen). | ✅ | 2026-04-23 |
 | 5.9 | **AVV (Auftragsverarbeitungsvertrag)** – avv.html (ENTWURF), Supabase-Spalte `accepted_avv_at`, Akzeptieren-Flow in konto.html, persistenter Non-Blocking-Banner (`AVV_BANNER_AKTIV=false` bis Andreas freigibt) | ✅ | 2026-04-23 |
+| 5.10 | **N8N Retention Email Cron** – täglicher Cron (09:00), sendet Win-Back-Mail 7 Tage vor Kündigung (monthly) bzw. 30 Tage (yearly), Guard via `retention_email_sent_at IS NULL`, Workflow-ID `HDZV78j89uLYdPTB` | ✅ | 2026-04-23 |
 
 ---
 

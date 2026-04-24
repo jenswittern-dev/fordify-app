@@ -368,7 +368,35 @@ StorageBackend.removeItem(key)
 
 ---
 
-## 9. Bekannte Besonderheiten & Fallstricke
+## 9. N8N Workflows
+
+N8N-Instanz: `https://n8n.srv1063720.hstgr.cloud` (Hostinger VPS)
+
+| Workflow-ID | Name | Typ | Trigger | Status |
+|---|---|---|---|---|
+| `elcsjZCxDmtCw2BI` | Fordify – Onboarding-Mail | Webhook | Supabase `on_new_user`-Trigger → N8N-Webhook | Aktiv seit 2026-04-21 |
+| `hJpXXeIuvGQY60iQ` | Fordify – Weekly Digest | Cron | Montags 08:00 | Aktiv |
+| `HDZV78j89uLYdPTB` | Fordify – Retention Email Cron | Cron | Täglich 09:00 | Aktiv seit 2026-04-23 |
+
+### Retention Email Cron (`HDZV78j89uLYdPTB`)
+
+Sendet Win-Back-E-Mails an Nutzer mit bevorstehender Kündigung:
+- **Monthly:** 7 Tage vor `scheduled_cancel_at` (Fenster: 6–8 Tage)
+- **Yearly:** 30 Tage vor `scheduled_cancel_at` (Fenster: 29–31 Tage)
+- **Guard:** `retention_email_sent_at IS NULL` — verhindert Doppelsendungen
+- Nach dem Senden: `retention_email_sent_at` wird auf aktuellen Timestamp gesetzt
+
+**Nodes:** ScheduleTrigger → HTTP (Supabase PostgREST) → Code (Zeitfenster-Filter) → HTTP (Resend) → HTTP (PATCH `retention_email_sent_at`)
+
+**PostgREST-Join:** `profiles!subscriptions_user_id_fkey(email)` für E-Mail-Lookup.
+
+**Performance-Indexes** (in `supabase/schema.sql`):
+- `idx_subscriptions_scheduled_cancel_at` — partial index auf offene Kündigungen ohne gesendete Retention-Mail
+- `idx_subscriptions_grace_period_end` — partial index auf canceled + aktive Grace Period
+
+---
+
+## 10. Bekannte Besonderheiten & Fallstricke
 
 - **Typografische Anführungszeichen** (`„"`) in JS-Strings verursachen SyntaxError → immer `\u201e` / `\u201c` verwenden
 - `href="#"` in Navigationslinks schreibt `#` in die URL → immer `href="javascript:void(0)"` oder `onclick="return false;"`
