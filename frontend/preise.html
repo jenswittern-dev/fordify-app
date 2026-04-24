@@ -336,7 +336,7 @@
           <div class="form-check" style="margin:0">
             <input class="form-check-input" type="checkbox" id="agbConsentCheck" style="width:1.1em;height:1.1em;margin-top:0.15em;cursor:pointer">
             <label class="form-check-label" for="agbConsentCheck" style="font-size:0.875rem;line-height:1.55;color:#334155;cursor:pointer;padding-left:0.35rem">
-              Ich habe die <a href="/agb" target="_blank" rel="noopener" style="color:#2563eb;font-weight:500">AGB von fordify</a> gelesen und akzeptiere sie. Ich handle als Unternehmer im Sinne des § 14 BGB.
+              Ich habe die <a href="/agb" target="_blank" rel="noopener" style="color:#2563eb;font-weight:500">Allgemeinen Geschäftsbedingungen von fordify</a> gelesen und akzeptiere sie. Ich handle als Unternehmer im Sinne des § 14 BGB.
             </label>
           </div>
         </div>
@@ -345,7 +345,7 @@
           <div class="form-check" style="margin:0">
             <input class="form-check-input" type="checkbox" id="avvConsentCheck" style="width:1.1em;height:1.1em;margin-top:0.15em;cursor:pointer">
             <label class="form-check-label" for="avvConsentCheck" style="font-size:0.875rem;line-height:1.55;color:#334155;cursor:pointer;padding-left:0.35rem">
-              Ich schließe den <a href="/avv" target="_blank" rel="noopener" style="color:#2563eb;font-weight:500">Auftragsverarbeitungsvertrag (AVV)</a> gemäß Art. 28 DSGVO ab.
+              Ich schließe den <a href="/avv" target="_blank" rel="noopener" style="color:#2563eb;font-weight:500">Auftragsverarbeitungsvertrag (AVV)</a> mit fordify gemäß Art. 28 DSGVO ab.
             </label>
           </div>
         </div>
@@ -497,10 +497,15 @@
     if (!interval) return;
     const priceId = PRICE_MAP[interval]?.();
     if (!priceId) return;
+    const consentAt = new Date().toISOString();
     const userId = (typeof fordifyAuth !== 'undefined' && fordifyAuth.user?.id) || undefined;
     Paddle.Checkout.open({
       items: [{ priceId, quantity: 1 }],
-      customData: userId ? { user_id: userId } : undefined,
+      customData: {
+        ...(userId ? { user_id: userId } : {}),
+        agb_accepted_at: consentAt,
+        avv_accepted_at: consentAt
+      },
       locale: 'de'
     });
   }
