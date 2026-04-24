@@ -68,6 +68,15 @@ serve(async (req) => {
       return new Response('DB upsert failed', { status: 500 })
     }
 
+    // On new subscription: record AVV acceptance (from checkout checkbox) if not yet set
+    if (event_type === 'subscription.created' || event_type === 'subscription.activated') {
+      const { error: avvError } = await supabase.from('profiles')
+        .update({ accepted_avv_at: new Date().toISOString() })
+        .eq('id', userId)
+        .is('accepted_avv_at', null)
+      if (avvError) console.error('accepted_avv_at update failed:', avvError)
+    }
+
     // Detect cancellation scheduled → store scheduled_cancel_at + fire retention webhook
     if (event_type === 'subscription.updated' &&
         data.scheduled_change?.action === 'cancel' &&
