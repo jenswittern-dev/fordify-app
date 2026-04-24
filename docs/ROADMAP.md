@@ -144,6 +144,7 @@
 | 6.4 | **Kundenbereich: Fallübersicht + Direktbearbeitung** (Pro + Business) – alle Cloud-Fälle in einer Listenansicht (Kundenbereich/Dashboard); von dort direkt öffnen, duplizieren, löschen, exportieren (JSON/CSV). | ✅ | 2026-04-23 |
 | 6.5 | **Kundenbereich: Schuldner-Datenbank** (Pro + Business) – zentrale Verwaltung aller Schuldner-Adressen; Schuldner einem neuen Fall zuweisen; Import via CSV (→ 6.3). Hinweis: CRUD-Grundlage → 6.0b ✅. | ✅ | 2026-04-23 |
 | 6.6 | **Preisseite: Pro vs. Business klarer differenzieren** – Tilgungsrechner in Featureliste, JSON-Import bei Pro ergänzen, Mandanten-Adressbuch bei Business-Karte hinzufügen, Business-Beschreibung überarbeiten, Meta/OG-Tags auf Business ausweiten, Vergleichstabelle vervollständigen. | ✅ | 2026-04-23 |
+| 6.7 | **E-Mail-Workflows: Zahlungsbestätigung + Offboarding + Retention + Datenlöschung** – Branded payment confirmation (transaction.completed via N8N `PexOk66BNT8uDntc`), Cancellation offboarding mit 30-Tage Grace Period (N8N `mYQAOS7oacoKW5Rq`), Retention Mails (monatlich 7d / jährlich 30d vor Kündigung, N8N `HDZV78j89uLYdPTB`), Datenlöschungs-Cron (cases/contacts/settings nach Grace Period, N8N `fdfPAUVG4rvMoPcS`; profiles/subscriptions 10 Jahre gem. § 147 AO). Absender: `@mail.fordify.de`. | ✅ | 2026-04-23 |
 
 ---
 

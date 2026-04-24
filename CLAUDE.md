@@ -96,7 +96,8 @@ fordify-app/
 ├── supabase/
 │   ├── schema.sql              ← DB-Schema (profiles, subscriptions, cases, settings, contacts)
 │   └── functions/
-│       └── paddle-webhook/     ← Edge Function (Task 7 – in Umsetzung)
+│       ├── paddle-webhook/     ← Edge Function (transaction.completed, subscription.canceled/updated, grace period)
+│       └── verify-and-login/   ← Edge Function (Magic Link + Grace Period Login)
 ├── docs/
 │   ├── ROADMAP.md              ← Feature-Roadmap (Phase 0–6) mit Status + Datum
 │   ├── SYSTEM.md               ← Technisches Whitepaper
@@ -135,6 +136,20 @@ fordify-app/
 
 ---
 
+## E-Mail-Workflows (abgeschlossen 2026-04-23)
+
+| Workflow | N8N ID | Trigger | Status |
+|---|---|---|---|
+| Zahlungsbestätigung | `PexOk66BNT8uDntc` | Webhook `/fordify-payment-confirmed` (aus paddle-webhook bei transaction.completed) | ✅ aktiv |
+| Offboarding bei Kündigung | `mYQAOS7oacoKW5Rq` | Webhook `/fordify-offboarding` (aus paddle-webhook bei subscription.canceled) | ✅ aktiv |
+| Retention Email Cron | `HDZV78j89uLYdPTB` | Täglich 09:00, liest scheduled_cancel_at aus Supabase | ✅ aktiv |
+| Datenlöschungs-Cron | `fdfPAUVG4rvMoPcS` | Täglich 02:00, löscht cases/contacts/settings nach grace_period_end | ✅ aktiv |
+| Onboarding-Mail | `elcsjZCxDmtCw2BI` | Webhook (aus paddle-webhook bei subscription.created) | ✅ aktiv |
+
+**Absender-Domain:** `@mail.fordify.de` (verifiziert in Resend). **Aufbewahrung:** profiles + subscriptions 10 Jahre (§ 147 AO); cases/contacts/settings nach Grace Period gelöscht.
+
+---
+
 ## Kerndatenmodell
 
 Siehe `docs/SYSTEM.md` für vollständiges Schema. Kurzübersicht:
@@ -144,7 +159,7 @@ Siehe `docs/SYSTEM.md` für vollständiges Schema. Kurzübersicht:
 - `localStorage["fordify_theme"]` — aktives Theme (`"brand"` / `"dark"` / `"clean"`)
 - `state.fall.positionen[]` — Array von Positions-Objekten (typ, id, datum, betrag, ...)
 - `gruppeId` — verknüpft Hauptforderung mit zugehöriger Zinsperiode
-- `fordifyAuth` — globales Auth-Objekt: `isAuthenticated`, `hasSubscription`, `user`, `plan`
+- `fordifyAuth` — globales Auth-Objekt: `isAuthenticated`, `hasSubscription`, `user`, `plan`, `gracePeriodEnd`
 
 ---
 
