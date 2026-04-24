@@ -320,30 +320,43 @@
 
 <!-- AGB-Zustimmungs-Modal (erscheint vor Paddle-Checkout) -->
 <div class="modal fade" id="agbConsentModal" tabindex="-1" aria-labelledby="agbConsentLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-sm">
-    <div class="modal-content">
-      <div class="modal-header border-0 pb-1">
-        <h5 class="modal-title fw-bold" id="agbConsentLabel">Bestellung abschließen</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+  <div class="modal-dialog modal-dialog-centered" style="max-width:440px">
+    <div class="modal-content border-0 shadow-lg" style="border-radius:14px;overflow:hidden">
+      <div class="modal-header border-0" style="background:linear-gradient(135deg,#1e3a8a,#2563eb);padding:1.5rem 1.75rem 1.25rem">
+        <div>
+          <div style="color:#93c5fd;font-size:0.75rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.3rem">Schritt 1 von 2</div>
+          <h5 class="modal-title fw-bold mb-0" id="agbConsentLabel" style="color:#fff;font-size:1.15rem">Bestellung abschließen</h5>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Schließen" style="opacity:0.7"></button>
       </div>
-      <div class="modal-body pt-2">
-        <p class="small text-muted mb-3">Du abonnierst fordify. Mit dem Klick auf „Weiter zum Checkout" stimmst du folgendem zu:</p>
-        <div class="form-check mb-4">
-          <input class="form-check-input" type="checkbox" id="agbConsentCheck">
-          <label class="form-check-label small" for="agbConsentCheck">
-            Ich habe die <a href="/agb" target="_blank" rel="noopener">Allgemeinen Geschäftsbedingungen</a> von fordify gelesen und akzeptiere sie. Ich bestätige, dass ich als Unternehmer im Sinne des § 14 BGB handle.
-          </label>
+      <div class="modal-body" style="padding:1.75rem">
+        <p class="mb-4" style="color:#475569;font-size:0.9rem;line-height:1.6">Bitte bestätige vor dem Checkout, dass du unsere Geschäftsbedingungen akzeptierst:</p>
+
+        <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:1rem 1.25rem;margin-bottom:0.875rem">
+          <div class="form-check" style="margin:0">
+            <input class="form-check-input" type="checkbox" id="agbConsentCheck" style="width:1.1em;height:1.1em;margin-top:0.15em;cursor:pointer">
+            <label class="form-check-label" for="agbConsentCheck" style="font-size:0.875rem;line-height:1.55;color:#334155;cursor:pointer;padding-left:0.35rem">
+              Ich habe die <a href="/agb" target="_blank" rel="noopener" style="color:#2563eb;font-weight:500">AGB von fordify</a> gelesen und akzeptiere sie. Ich handle als Unternehmer im Sinne des § 14 BGB.
+            </label>
+          </div>
         </div>
-        <div class="form-check mb-4">
-          <input class="form-check-input" type="checkbox" id="avvConsentCheck">
-          <label class="form-check-label small" for="avvConsentCheck">
-            Ich schließe den <a href="/avv" target="_blank" rel="noopener">Auftragsverarbeitungsvertrag (AVV)</a> gemäß Art. 28 DSGVO ab.
-          </label>
+
+        <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.5rem">
+          <div class="form-check" style="margin:0">
+            <input class="form-check-input" type="checkbox" id="avvConsentCheck" style="width:1.1em;height:1.1em;margin-top:0.15em;cursor:pointer">
+            <label class="form-check-label" for="avvConsentCheck" style="font-size:0.875rem;line-height:1.55;color:#334155;cursor:pointer;padding-left:0.35rem">
+              Ich schließe den <a href="/avv" target="_blank" rel="noopener" style="color:#2563eb;font-weight:500">Auftragsverarbeitungsvertrag (AVV)</a> gemäß Art. 28 DSGVO ab.
+            </label>
+          </div>
         </div>
-        <button class="btn btn-primary w-100" id="agbConsentBtn" onclick="confirmCheckout()" disabled>
+
+        <button class="btn btn-primary w-100 fw-semibold" id="agbConsentBtn" onclick="confirmCheckout()" disabled
+                style="padding:0.75rem;font-size:1rem;border-radius:8px;letter-spacing:0.01em">
           Weiter zum Checkout →
         </button>
-        <p class="text-muted mt-2 mb-0" style="font-size:0.75rem">Die Zahlung erfolgt sicher über Paddle.</p>
+        <p class="text-center mb-0" style="margin-top:0.875rem;font-size:0.8rem;color:#94a3b8">
+          🔒 Die Zahlung erfolgt sicher über Paddle
+        </p>
       </div>
     </div>
   </div>

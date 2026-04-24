@@ -99,18 +99,17 @@ async function _pruefeAbo(userId, accessToken) {
   }
 }
 
-const AVV_BANNER_AKTIV = true;
-
-async function _pruefeAVV(userId, accessToken) {
+async function _pruefeKonsens(userId, accessToken) {
   try {
     const res = await fetch(
-      `${CONFIG.supabase.url}/rest/v1/profiles?id=eq.${userId}&select=accepted_avv_at`,
+      `${CONFIG.supabase.url}/rest/v1/profiles?id=eq.${userId}&select=accepted_agb_at,accepted_avv_at`,
       { headers: { 'apikey': CONFIG.supabase.anonKey, 'Authorization': `Bearer ${accessToken}` } }
     );
-    if (!res.ok) { fordifyAuth.acceptedAvvAt = null; return; }
+    if (!res.ok) { fordifyAuth.acceptedAgbAt = null; fordifyAuth.acceptedAvvAt = null; return; }
     const rows = await res.json();
+    fordifyAuth.acceptedAgbAt = rows?.[0]?.accepted_agb_at ?? null;
     fordifyAuth.acceptedAvvAt = rows?.[0]?.accepted_avv_at ?? null;
-  } catch (e) { fordifyAuth.acceptedAvvAt = null; }
+  } catch (e) { fordifyAuth.acceptedAgbAt = null; fordifyAuth.acceptedAvvAt = null; }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -129,7 +128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     fordifyAuth.isAuthenticated = true;
     fordifyAuth.user = session.user;
     await _pruefeAbo(session.user.id, session.access_token);
-    await _pruefeAVV(session.user.id, session.access_token);
+    await _pruefeKonsens(session.user.id, session.access_token);
     if (!fordifyAuth.hasSubscription) {
       window.location.href = '/preise';
       return;
@@ -144,7 +143,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('konto-loading').style.display = 'none';
     document.getElementById('konto-content').classList.remove('d-none');
-    _kontoZeigeAVVBanner();
   } catch (e) {
     console.error('Konto-Init fehlgeschlagen:', e);
     const loadingEl = document.getElementById('konto-loading');
@@ -633,14 +631,25 @@ function kontoRendereAboTab() {
 
   const avvEl = document.getElementById('konto-abo-avv');
   if (avvEl) {
-    if (fordifyAuth.acceptedAvvAt) {
-      const datum = new Date(fordifyAuth.acceptedAvvAt).toLocaleDateString('de-DE');
-      avvEl.innerHTML = `<span class="text-success">✓ Akzeptiert am ${datum}</span> &nbsp;
-        <a href="/avv" target="_blank" class="text-muted small">AVV lesen ↗</a>`;
-    } else {
-      avvEl.innerHTML = `<button class="btn btn-sm btn-warning" onclick="kontoAVVAkzeptieren()">AVV akzeptieren</button>
-        &nbsp;<a href="/avv" target="_blank" class="text-muted small">AVV lesen ↗</a>`;
-    }
+    const agbDatum = fordifyAuth.acceptedAgbAt
+      ? new Date(fordifyAuth.acceptedAgbAt).toLocaleDateString('de-DE') : null;
+    const avvDatum = fordifyAuth.acceptedAvvAt
+      ? new Date(fordifyAuth.acceptedAvvAt).toLocaleDateString('de-DE') : null;
+    avvEl.innerHTML = `
+      <div class="d-flex flex-column gap-1">
+        <div class="small">
+          ${agbDatum
+            ? `<span class="text-success">✓ AGB akzeptiert am ${agbDatum}</span>`
+            : `<span class="text-muted">AGB: nicht dokumentiert</span>`}
+          &nbsp;<a href="/agb" target="_blank" class="text-muted">lesen ↗</a>
+        </div>
+        <div class="small">
+          ${avvDatum
+            ? `<span class="text-success">✓ AVV geschlossen am ${avvDatum}</span>`
+            : `<span class="text-muted">AVV: nicht dokumentiert</span>`}
+          &nbsp;<a href="/avv" target="_blank" class="text-muted">lesen ↗</a>
+        </div>
+      </div>`;
   }
 }
 
@@ -1058,38 +1067,6 @@ function kontoSchuldnerCSVImportDatei(input) {
   reader.readAsText(file, 'UTF-8');
 }
 
-// ---- AVV (DSGVO Art. 28) ----
-
-function _kontoZeigeAVVBanner() {
-  const banner = document.getElementById('avv-banner');
-  if (!banner) return;
-  const zeigen = AVV_BANNER_AKTIV && fordifyAuth.hasSubscription && !fordifyAuth.acceptedAvvAt;
-  banner.classList.toggle('d-none', !zeigen);
-}
-
-async function kontoAVVAkzeptieren() {
-  const session = _leseLocalSession();
-  if (!session) return;
-  const now = new Date().toISOString();
-  try {
-    const res = await fetch(
-      `${CONFIG.supabase.url}/rest/v1/profiles?id=eq.${session.user.id}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'apikey': CONFIG.supabase.anonKey,
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({ accepted_avv_at: now })
-      }
-    );
-    if (!res.ok) { alert('Fehler beim Speichern der AVV-Akzeptanz. Bitte erneut versuchen.'); return; }
-    fordifyAuth.acceptedAvvAt = now;
-    _kontoZeigeAVVBanner();
-    kontoRendereAboTab();
-  } catch (e) {
-    alert('Netzwerkfehler beim Akzeptieren des AVV: ' + e.message);
-  }
-}
+// ---- AGB + AVV Konsens-Status ----
+// accepted_agb_at und accepted_avv_at werden beim Checkout gesetzt (Paddle-Webhook)
+// und in _pruefeKonsens() geladen. Darstellung in kontoRendereAboTab().

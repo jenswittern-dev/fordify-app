@@ -76,6 +76,14 @@ CREATE TRIGGER on_auth_user_created
 ALTER TABLE profiles
   ADD COLUMN IF NOT EXISTS accepted_avv_at TIMESTAMPTZ DEFAULT NULL;
 
+-- Migration 2026-04-24: AGB-Akzeptanz in profiles
+-- Ausführen im Supabase Dashboard: SQL Editor → New Query → Run
+ALTER TABLE profiles
+  ADD COLUMN IF NOT EXISTS accepted_agb_at TIMESTAMPTZ DEFAULT NULL;
+
+COMMENT ON COLUMN profiles.accepted_agb_at IS 'Zeitpunkt der AGB-Akzeptanz (via Checkbox im Checkout). Gesetzt durch paddle-webhook bei subscription.created/activated.';
+COMMENT ON COLUMN profiles.accepted_avv_at IS 'Zeitpunkt der AVV-Akzeptanz (via Checkbox im Checkout). Gesetzt durch paddle-webhook bei subscription.created/activated.';
+
 -- Migration 2026-04-23: Offboarding + Retention Felder in subscriptions
 -- Ausführen im Supabase Dashboard: SQL Editor → New Query → Run
 ALTER TABLE subscriptions
