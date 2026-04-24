@@ -123,7 +123,7 @@ serve(async (req) => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      from:    'fordify <hallo@fordify.de>',
+      from:    'fordify <hallo@mail.fordify.de>',
       to:      [email],
       subject: 'Dein Anmelde-Link für fordify',
       html: `
