@@ -318,6 +318,37 @@
   </div>
 </footer>
 
+<!-- AGB-Zustimmungs-Modal (erscheint vor Paddle-Checkout) -->
+<div class="modal fade" id="agbConsentModal" tabindex="-1" aria-labelledby="agbConsentLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-1">
+        <h5 class="modal-title fw-bold" id="agbConsentLabel">Bestellung abschließen</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+      </div>
+      <div class="modal-body pt-2">
+        <p class="small text-muted mb-3">Du abonnierst fordify. Mit dem Klick auf „Weiter zum Checkout" stimmst du folgendem zu:</p>
+        <div class="form-check mb-4">
+          <input class="form-check-input" type="checkbox" id="agbConsentCheck">
+          <label class="form-check-label small" for="agbConsentCheck">
+            Ich habe die <a href="/agb" target="_blank" rel="noopener">Allgemeinen Geschäftsbedingungen</a> von fordify gelesen und akzeptiere sie. Ich bestätige, dass ich als Unternehmer im Sinne des § 14 BGB handle.
+          </label>
+        </div>
+        <div class="form-check mb-4">
+          <input class="form-check-input" type="checkbox" id="avvConsentCheck">
+          <label class="form-check-label small" for="avvConsentCheck">
+            Ich schließe den <a href="/avv" target="_blank" rel="noopener">Auftragsverarbeitungsvertrag (AVV)</a> gemäß Art. 28 DSGVO ab.
+          </label>
+        </div>
+        <button class="btn btn-primary w-100" id="agbConsentBtn" onclick="confirmCheckout()" disabled>
+          Weiter zum Checkout →
+        </button>
+        <p class="text-muted mt-2 mb-0" style="font-size:0.75rem">Die Zahlung erfolgt sicher über Paddle.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Login-Modal -->
 <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" id="loginModalDialog">
@@ -371,7 +402,6 @@
           <ul class="list-unstyled small mb-0" style="color:#6b7280;line-height:1.7">
             <li>🔒 <strong>Paddle</strong> übernimmt den Bezahlvorgang – sicher &amp; verschlüsselt</li>
             <li>💳 Keine Kreditkartendaten werden bei fordify gespeichert</li>
-            <li>↩️ 14 Tage Widerrufrecht (EU)</li>
             <li>🔄 Monatlich kündbar (Jahresabo: zum Laufzeitende)</li>
             <li>✅ Zugang aktiv sofort nach erfolgreicher Zahlung</li>
           </ul>
@@ -421,15 +451,39 @@
     await loginMitEmail(email);
   }
 
+  let _pendingCheckoutInterval = null;
+
   function startCheckout(interval) {
     if (!VALID_CHECKOUT_PARAMS.includes(interval)) return;
     if (!paddleReady) {
       alert('Checkout ist auf dieser Umgebung nicht verfügbar (Staging/Test).');
       return;
     }
+    _pendingCheckoutInterval = interval;
+    document.getElementById('agbConsentCheck').checked = false;
+    document.getElementById('avvConsentCheck').checked = false;
+    document.getElementById('agbConsentBtn').disabled = true;
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('agbConsentModal')).show();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    function _updateConsentBtn() {
+      const ok = document.getElementById('agbConsentCheck').checked &&
+                 document.getElementById('avvConsentCheck').checked;
+      document.getElementById('agbConsentBtn').disabled = !ok;
+    }
+    document.getElementById('agbConsentCheck').addEventListener('change', _updateConsentBtn);
+    document.getElementById('avvConsentCheck').addEventListener('change', _updateConsentBtn);
+  });
+
+  function confirmCheckout() {
+    if (!document.getElementById('agbConsentCheck').checked ||
+        !document.getElementById('avvConsentCheck').checked) return;
+    bootstrap.Modal.getInstance(document.getElementById('agbConsentModal')).hide();
+    const interval = _pendingCheckoutInterval;
+    if (!interval) return;
     const priceId = PRICE_MAP[interval]?.();
     if (!priceId) return;
-    // Pass user_id if already logged in (webhook uses it as optimisation; still works without it)
     const userId = (typeof fordifyAuth !== 'undefined' && fordifyAuth.user?.id) || undefined;
     Paddle.Checkout.open({
       items: [{ priceId, quantity: 1 }],
