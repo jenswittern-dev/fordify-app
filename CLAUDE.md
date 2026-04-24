@@ -136,17 +136,32 @@ fordify-app/
 
 ---
 
-## E-Mail-Workflows (abgeschlossen 2026-04-23)
+## E-Mail-Architektur
 
-| Workflow | N8N ID | Trigger | Status |
+### Adressen
+
+| Adresse | Typ | Zweck | Ziel |
 |---|---|---|---|
-| Zahlungsbestätigung | `PexOk66BNT8uDntc` | Webhook `/fordify-payment-confirmed` (aus paddle-webhook bei transaction.completed) | ✅ aktiv |
-| Offboarding bei Kündigung | `mYQAOS7oacoKW5Rq` | Webhook `/fordify-offboarding` (aus paddle-webhook bei subscription.canceled) | ✅ aktiv |
-| Retention Email Cron | `HDZV78j89uLYdPTB` | Täglich 09:00, liest scheduled_cancel_at aus Supabase | ✅ aktiv |
-| Datenlöschungs-Cron | `fdfPAUVG4rvMoPcS` | Täglich 02:00, löscht cases/contacts/settings nach grace_period_end | ✅ aktiv |
-| Onboarding-Mail | `elcsjZCxDmtCw2BI` | Webhook (aus paddle-webhook bei subscription.created) | ✅ aktiv |
+| `hallo@fordify.de` | **Echtes Postfach** | Allgemeiner Eingang, alle Weiterleitungen landen hier | — |
+| `legal@fordify.de` | Weiterleitung | Impressum, AGB, Datenschutzerklärung, Kündigungen | → `hallo@fordify.de` |
+| `datenschutz@fordify.de` | Weiterleitung | AVV, DSGVO-Anfragen | → `hallo@fordify.de` |
+| `support@fordify.de` | Weiterleitung | Aktive Kunden (Reply-To aller ausgehenden Mails) | → `hallo@fordify.de` |
+| `hallo@mail.fordify.de` | Resend-Absender | Ausgehend: Onboarding, Magic Link | kein Postfach, Reply-To: support@ |
+| `noreply@mail.fordify.de` | Resend-Absender | Ausgehend: transaktional (Zahlungsbestätigung, Offboarding, Retention) | kein Postfach, Reply-To: support@ |
 
-**Absender-Domain:** `@mail.fordify.de` (verifiziert in Resend). **Aufbewahrung:** profiles + subscriptions 10 Jahre (§ 147 AO); cases/contacts/settings nach Grace Period gelöscht.
+**Sending-Domain:** `mail.fordify.de` (in Resend verifiziert, nur für ausgehende Mails — kein All-Inkl-Postfach).
+
+### Workflows (N8N)
+
+| Workflow | N8N ID | Trigger | Absender | Status |
+|---|---|---|---|---|
+| Onboarding-Mail | `elcsjZCxDmtCw2BI` | Webhook (paddle-webhook bei subscription.created) | `hallo@mail.fordify.de` | ✅ aktiv |
+| Zahlungsbestätigung | `PexOk66BNT8uDntc` | Webhook (paddle-webhook bei transaction.completed) | `noreply@mail.fordify.de` | ✅ aktiv |
+| Offboarding bei Kündigung | `mYQAOS7oacoKW5Rq` | Webhook (paddle-webhook bei subscription.canceled) | `noreply@mail.fordify.de` | ✅ aktiv |
+| Retention Email Cron | `HDZV78j89uLYdPTB` | Täglich 09:00, liest scheduled_cancel_at | `noreply@mail.fordify.de` | ✅ aktiv |
+| Datenlöschungs-Cron | `fdfPAUVG4rvMoPcS` | Täglich 02:00, löscht cases/contacts/settings nach grace_period_end | — | ✅ aktiv |
+
+**Aufbewahrung:** profiles + subscriptions 10 Jahre (§ 147 AO); cases/contacts/settings nach Grace Period gelöscht.
 
 ---
 
