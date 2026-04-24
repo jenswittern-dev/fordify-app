@@ -92,19 +92,31 @@
     <p>Verarbeitet werden Namen, Anschriften und Kontaktdaten von Schuldnern und Mandanten, die der Verantwortliche in fordify eingibt. Betroffene Personen sind natürliche und juristische Personen, gegen die Forderungen bestehen oder die als Mandanten hinterlegt sind.</p>
 
     <h2 class="h5 fw-bold mt-4 mb-2">§ 4 Pflichten des Auftragsverarbeiters</h2>
-    <p>fordify verarbeitet personenbezogene Daten ausschließlich auf dokumentierte Weisung des Verantwortlichen. fordify gewährleistet, dass die mit der Verarbeitung befassten Personen zur Vertraulichkeit verpflichtet sind.</p>
+    <p>fordify verarbeitet personenbezogene Daten ausschließlich auf dokumentierte Weisung des Verantwortlichen – einschließlich in Bezug auf die Übermittlung personenbezogener Daten in ein Drittland – es sei denn, fordify ist aufgrund des Unionsrechts oder des Rechts der Mitgliedstaaten zur Verarbeitung verpflichtet; in einem solchen Fall teilt fordify dem Verantwortlichen diese rechtlichen Anforderungen vor der Verarbeitung mit, sofern das betreffende Recht eine solche Mitteilung nicht aus wichtigen Gründen des öffentlichen Interesses verbietet.</p>
+    <p>Hält fordify eine Weisung des Verantwortlichen für einen Verstoß gegen die DSGVO oder sonstige Datenschutzvorschriften, informiert fordify den Verantwortlichen unverzüglich. fordify ist berechtigt, die Ausführung der betreffenden Weisung auszusetzen, bis der Verantwortliche diese bestätigt oder abändert.</p>
+    <p>fordify gewährleistet, dass die mit der Verarbeitung befassten Personen zur Vertraulichkeit verpflichtet sind oder einer angemessenen gesetzlichen Verschwiegenheitspflicht unterliegen.</p>
 
     <h2 class="h5 fw-bold mt-4 mb-2">§ 5 Unterauftragsverarbeiter</h2>
     <p>fordify setzt folgende Unterauftragsverarbeiter ein:</p>
     <ul>
-      <li><strong>Supabase Inc.</strong> (USA) – Datenbankhosting und Authentifizierung (Standard Contractual Clauses)</li>
-      <li><strong>Paddle.com Market Ltd.</strong> (Großbritannien) – Zahlungsabwicklung</li>
+      <li><strong>Supabase Inc.</strong> (Sitz: USA; Datenspeicherung: EU Frankfurt, Deutschland) – Datenbankhosting und Authentifizierung (Standard Contractual Clauses)</li>
       <li><strong>Resend Inc.</strong> (USA) – Transaktionale E-Mails (Standard Contractual Clauses)</li>
-      <li><strong>Hostinger International Ltd.</strong> – Hosting des GoatCounter-Servers (EU)</li>
+      <li><strong>Hostinger International Ltd.</strong> – Hosting des Analyse-Servers (EU)</li>
     </ul>
+    <p class="text-muted small">Hinweis: Paddle.com Market Ltd. ist als Merchant of Record eigenverantwortlicher Datenverantwortlicher für die Zahlungsabwicklung und kein Unterauftragsverarbeiter von fordify.</p>
+    <p>Änderungen bei Unterauftragsverarbeitern werden dem Verantwortlichen mindestens 30 Tage vorab per E-Mail mitgeteilt. Der Verantwortliche kann einer geplanten Änderung innerhalb dieser Frist widersprechen.</p>
 
     <h2 class="h5 fw-bold mt-4 mb-2">§ 6 Technische und organisatorische Maßnahmen</h2>
-    <p>fordify trifft angemessene technische und organisatorische Maßnahmen (TOMs) nach Art. 32 DSGVO, insbesondere verschlüsselte Datenübertragung (TLS), Zugriffskontrolle (Row Level Security in Supabase) und regelmäßige Backups.</p>
+    <p>fordify trifft angemessene technische und organisatorische Maßnahmen (TOMs) nach Art. 32 DSGVO, insbesondere:</p>
+    <ul>
+      <li><strong>Vertraulichkeit:</strong> Verschlüsselte Datenübertragung (TLS/HTTPS); Zugriffskontrolle über Row Level Security (RLS) in Supabase; Authentifizierung per Magic Link (passwortlos); Service Role Key wird ausschließlich serverseitig verwendet und nie an den Client übertragen.</li>
+      <li><strong>Integrität:</strong> Eingabevalidierung in Edge Functions; HMAC-Signaturprüfung für Paddle-Webhooks.</li>
+      <li><strong>Verfügbarkeit:</strong> Automatische Backups durch Supabase (täglich); georedundante Infrastruktur über den EU-Frankfurt-Datenbankcluster von Supabase.</li>
+      <li><strong>Belastbarkeit:</strong> Statische Auslieferung über CDN; Service-Worker-Caching für Offline-Betrieb.</li>
+      <li><strong>Datensparsamkeit:</strong> Es werden ausschließlich für den Betrieb erforderliche Daten gespeichert; keine Tracking-Cookies; datenschutzkonformes Analyse-Tool (GoatCounter, cookielos, selbst gehostet).</li>
+      <li><strong>Löschkonzept:</strong> Automatisierte Löschung von Fällen, Kontakten und Einstellungen nach Ablauf der Grace Period; Aufbewahrung von Profil- und Abrechnungsdaten für 10 Jahre (§ 147 AO).</li>
+    </ul>
+    <p>Bei datenschutzrelevanten Sicherheitsverletzungen informiert fordify den Verantwortlichen unverzüglich, spätestens jedoch innerhalb von 72 Stunden nach Bekanntwerden, um dem Verantwortlichen die Erfüllung seiner Meldepflicht nach Art. 33 DSGVO zu ermöglichen (Art. 28 Abs. 3 lit. f DSGVO).</p>
 
     <h2 class="h5 fw-bold mt-4 mb-2">§ 7 Rechte betroffener Personen</h2>
     <p>fordify unterstützt den Verantwortlichen bei der Erfüllung von Anfragen betroffener Personen (Auskunft, Löschung, Berichtigung) soweit technisch möglich.</p>
@@ -115,7 +127,12 @@
     <h2 class="h5 fw-bold mt-4 mb-2">§ 9 Kontroll- und Nachweisrechte</h2>
     <p>Der Verantwortliche hat das Recht, die Einhaltung dieses Vertrags zu überprüfen. fordify stellt auf Anfrage notwendige Informationen zur Verfügung und unterstützt Audits.</p>
 
-    <h2 class="h5 fw-bold mt-4 mb-2">§ 10 Kontakt</h2>
+    <h2 class="h5 fw-bold mt-4 mb-2">§ 10 Schlussbestimmungen</h2>
+    <p>Dieser Vertrag unterliegt dem Recht der Bundesrepublik Deutschland. Gerichtsstand für alle Streitigkeiten aus diesem Vertrag ist Hamburg, sofern der Verantwortliche Kaufmann, eine juristische Person des öffentlichen Rechts oder ein öffentlich-rechtliches Sondervermögen ist.</p>
+    <p>Dieser Vertrag gilt als abgeschlossen, wenn der Verantwortliche die fordify AGB akzeptiert und den Dienst im Rahmen eines kostenpflichtigen Abonnements nutzt. Die Nutzung des Dienstes nach Information über diesen AVV gilt als Zustimmung gemäß Art. 28 Abs. 9 DSGVO.</p>
+    <p>Sollte eine Bestimmung dieses Vertrags unwirksam sein, bleiben die übrigen Bestimmungen davon unberührt.</p>
+
+    <h2 class="h5 fw-bold mt-4 mb-2">§ 11 Kontakt</h2>
     <p>Bei Fragen zum AVV: <a href="mailto:datenschutz@fordify.de">datenschutz@fordify.de</a></p>
 
     <div class="mt-5 d-flex gap-3">
