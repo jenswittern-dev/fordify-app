@@ -68,11 +68,12 @@ serve(async (req) => {
       return new Response('DB upsert failed', { status: 500 })
     }
 
-    // On new subscription: record AGB + AVV acceptance (from checkout checkboxes) if not yet set
+    // On new subscription: record AGB + AVV acceptance timestamps (from checkout custom_data, else now)
     if (event_type === 'subscription.created' || event_type === 'subscription.activated') {
-      const acceptedAt = new Date().toISOString()
+      const agbAcceptedAt  = data.custom_data?.agb_accepted_at  || new Date().toISOString()
+      const avvAcceptedAt  = data.custom_data?.avv_accepted_at  || new Date().toISOString()
       const { error: consentError } = await supabase.from('profiles')
-        .update({ accepted_agb_at: acceptedAt, accepted_avv_at: acceptedAt })
+        .update({ accepted_agb_at: agbAcceptedAt, accepted_avv_at: avvAcceptedAt })
         .eq('id', userId)
         .or('accepted_agb_at.is.null,accepted_avv_at.is.null')
       if (consentError) console.error('accepted_agb_at/accepted_avv_at update failed:', consentError)
