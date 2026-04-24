@@ -242,9 +242,10 @@ async function _sendMagicLink(supabase: ReturnType<typeof createClient>, email: 
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      from:    'fordify <hallo@mail.fordify.de>',
-      to:      [email],
-      subject: 'Dein fordify-Zugang ist aktiv – hier anmelden',
+      from:     'fordify <hallo@mail.fordify.de>',
+      reply_to: ['hallo@fordify.de'],
+      to:       [email],
+      subject:  'Dein fordify-Zugang ist aktiv – hier anmelden',
       html: `
         <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:2rem">
           <h2 style="color:#1e3a8a;margin-bottom:0.5rem">Willkommen bei fordify!</h2>
