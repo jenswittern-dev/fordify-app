@@ -124,7 +124,7 @@ serve(async (req) => {
     },
     body: JSON.stringify({
       from:     'fordify <hallo@mail.fordify.de>',
-      reply_to: ['hallo@fordify.de'],
+      reply_to: ['support@fordify.de'],
       to:       [email],
       subject:  'Dein Anmelde-Link für fordify',
       html: `
