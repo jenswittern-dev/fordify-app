@@ -18,6 +18,10 @@
   <meta name="twitter:image" content="https://fordify.de/img/og-image.png">
   <link rel="icon" type="image/svg+xml" href="img/logo.svg">
   <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    .fi{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:#e2e8f0;color:#64748b;font-size:9px;font-style:italic;font-weight:700;border:none;padding:0;cursor:default;flex-shrink:0;vertical-align:middle;margin-left:4px;line-height:1;transition:background .15s,color .15s;}
+    .fi:hover,.fi:focus-visible{background:#cbd5e1;color:#1e293b;outline:none;}
+  </style>
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/app.css">
@@ -212,28 +216,28 @@
         </tr>
       </thead>
       <tbody>
-        <tr><td>Zinsrechner (§ 288 BGB)</td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
-        <tr><td>RVG-Rechner (2025)</td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
-        <tr><td>Gerichtskostenrechner (GKG)</td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
-        <tr><td>Tilgungsrechner</td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
-        <tr><td>PKH-Kalkulator (§ 49 RVG)</td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
-        <tr><td>Forderungsaufstellung erstellen</td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
-        <tr><td>PDF-Export (inkl. Logo)</td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
-        <tr><td>fordify-Hinweis im PDF</td><td style="color:#64748b;font-size:0.85rem;">Prominent</td><td class="col-pro" style="color:#64748b;font-size:0.85rem;">Dezent</td><td style="color:#64748b;font-size:0.85rem;">Keiner</td></tr>
-        <tr><td>Cloud-Speicherung</td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
-        <tr><td>CSV & JSON-Export</td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
-        <tr><td>JSON-Import (Fälle wiederherstellen)</td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
-        <tr><td>Absender-Profil dauerhaft speichern</td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
-        <tr><td>Schuldner-Adressbuch</td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
-        <tr><td>ZV-Auftrag-Generierung (§ 753 ZPO)</td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
-        <tr><td>Mandanten-Adressbuch</td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
-        <tr><td>CSV-Import (Massendaten)</td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
-        <tr><td>Fall-Status &amp; Workflow</td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
-        <tr><td>Fall-Notizen &amp; Favoriten</td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
-        <tr><td>Fallsuche &amp; Filter</td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
-        <tr><td>Kein fordify-Branding im PDF</td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
-        <tr><td>Prioritäts-Support</td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
-        <tr><td>Jährliche Abrechnung (2 Monate gratis)</td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>Zinsrechner (§ 288 BGB)<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Berechnet Verzugszinsen nach § 288 BGB inkl. Basiszinssatz-Tabelle (aktuell bis 07/2026)." aria-label="Info">i</button></td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>RVG-Rechner (2025)<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Anwaltsgebühren nach RVG – Streitwert eingeben, alle VV-Gebühren werden automatisch berechnet." aria-label="Info">i</button></td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>Gerichtskostenrechner (GKG)<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Gerichtskosten nach Streitwert gemäß GKG, für alle Instanzen und Verfahrensarten." aria-label="Info">i</button></td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>Tilgungsrechner<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Tilgungsplan und Annuitätenberechnung – monatliche Raten, Restschuld und Zinsanteil im Überblick." aria-label="Info">i</button></td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>PKH-Kalkulator (§ 49 RVG)<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Vergütung aus der Staatskasse für PKH/VKH-Mandate nach § 49 RVG, inkl. Vergleich zur Normalvergütung." aria-label="Info">i</button></td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>Forderungsaufstellung erstellen<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Vollständige Forderungsaufstellung nach § 367 BGB: Zinsen, RVG-Gebühren, automatische Tilgungsverrechnung, druckfertiges PDF." aria-label="Info">i</button></td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>PDF-Export (inkl. Logo)<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Erzeugt eine durchsuchbare, druckfertige PDF-Forderungsaufstellung mit Kanzleilogo und Impressum-Footer." aria-label="Info">i</button></td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>fordify-Hinweis im PDF<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Free: fordify-Logo prominent sichtbar. Pro: kleiner, dezenter Hinweis am Rand. Business: kein Hinweis." aria-label="Info">i</button></td><td style="color:#64748b;font-size:0.85rem;">Prominent</td><td class="col-pro" style="color:#64748b;font-size:0.85rem;">Dezent</td><td style="color:#64748b;font-size:0.85rem;">Keiner</td></tr>
+        <tr><td>Cloud-Speicherung<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Alle Fälle automatisch in der Cloud gespeichert – geräteübergreifend abrufbar, auch nach Tab-Schließen." aria-label="Info">i</button></td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>CSV &amp; JSON-Export<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Alle Fälle als CSV oder JSON exportieren – für Backup, Weiterverarbeitung oder externe Archivierung." aria-label="Info">i</button></td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>JSON-Import (Fälle wiederherstellen)<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Frühere JSON-Exporte wieder importieren und alle gespeicherten Fälle aus einer Datei wiederherstellen." aria-label="Info">i</button></td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>Absender-Profil dauerhaft speichern<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Kanzleiname, Adresse, Logo und Impressum einmalig hinterlegen – in jedem neuen Fall automatisch vorausgefüllt." aria-label="Info">i</button></td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>Schuldner-Adressbuch<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Schuldner-Adressen zentral speichern und per Autovervollständigung in neue Fälle übernehmen." aria-label="Info">i</button></td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>ZV-Auftrag-Generierung (§ 753 ZPO)<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Vollstreckungsauftrag an den GV direkt aus dem Fall: amtliches PDF (ZwVollstrFormV 2024), mit Falldaten vorausgefüllt." aria-label="Info">i</button></td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+        <tr><td>Mandanten-Adressbuch<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Mehrere Mandate mit eigenem Absenderprofil speichern – das passende Profil pro Fall auswählen." aria-label="Info">i</button></td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
+        <tr><td>CSV-Import (Massendaten)<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Viele Fälle auf einmal aus einer CSV-Datei anlegen – ideal bei großen Forderungsbeständen." aria-label="Info">i</button></td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
+        <tr><td>Fall-Status &amp; Workflow<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Jeden Fall mit Status versehen: Offen, In Vollstreckung, Erledigt oder Abgeschrieben." aria-label="Info">i</button></td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
+        <tr><td>Fall-Notizen &amp; Favoriten<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Freitextnotizen pro Fall und Pinnen wichtiger Fälle für schnellen Zugriff im Konto-Bereich." aria-label="Info">i</button></td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
+        <tr><td>Fallsuche &amp; Filter<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Fälle nach Name, Aktenzeichen oder Notiz durchsuchen und nach Status, Betrag oder Datum filtern." aria-label="Info">i</button></td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
+        <tr><td>Kein fordify-Branding im PDF<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Kein fordify-Hinweis im PDF – das Dokument erscheint ausschließlich unter Ihrem Kanzleinamen." aria-label="Info">i</button></td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
+        <tr><td>Prioritäts-Support<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Anfragen werden bevorzugt bearbeitet – direkter Kontakt für anspruchsvolle Nutzungsszenarien." aria-label="Info">i</button></td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
+        <tr><td>Jährliche Abrechnung (2 Monate gratis)<button class="fi" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Bei jährlicher Zahlung 2 Monate gratis: Pro 149 €/Jahr statt 228 €, Business 399 €/Jahr statt 588 €." aria-label="Info">i</button></td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
       </tbody>
     </table>
   </div>
@@ -259,15 +263,19 @@
   </details>
   <details>
     <summary>Ist fordify DSGVO-konform?</summary>
-    <p>Ja. Alle Daten werden in der EU (Frankfurt) gespeichert. Wir setzen keine Werbe-Tracker ein und benötigen keinen Cookie-Banner. Analytics laufen über GoatCounter (datenschutzkonform, cookielos). Für Kanzleien, die Mandantendaten eingeben, stellen wir auf Anfrage einen Auftragsverarbeitungsvertrag (AVV) bereit.</p>
+    <p>Ja. Alle Daten werden in der EU (Frankfurt) gespeichert. Wir setzen keine Werbe-Tracker ein und benötigen keinen Cookie-Banner. Analytics laufen über GoatCounter (datenschutzkonform, cookielos). Im Free-Tarif werden keine Daten auf unseren Servern gespeichert.</p>
+  </details>
+  <details>
+    <summary>Wie wird der Auftragsverarbeitungsvertrag (AVV) abgeschlossen?</summary>
+    <p>Der <a href="/avv" target="_blank" rel="noopener">AVV gemäß Art. 28 DSGVO</a> ist fester Bestandteil des Checkout-Prozesses. Beim Abschluss eines Pro- oder Business-Abonnements akzeptieren Sie den AVV zusammen mit den AGB direkt im Bezahlvorgang — kein separater Schriftverkehr notwendig. Im Free-Tarif ist kein AVV erforderlich, da keine Daten auf unseren Servern gespeichert werden.</p>
   </details>
   <details>
     <summary>Welche Zahlungsmethoden werden akzeptiert?</summary>
     <p>Kreditkarte und weitere gängige Methoden über unseren Zahlungsdienstleister Paddle. Paddle tritt als Merchant of Record auf und stellt die Rechnung aus.</p>
   </details>
   <details>
-    <summary>Stellen Sie einen Auftragsverarbeitungsvertrag (AVV) bereit?</summary>
-    <p>Ja. Für Kanzleien, die personenbezogene Mandantendaten eingeben, stellen wir auf Anfrage einen AVV gemäß Art. 28 DSGVO bereit. Bitte schreiben Sie uns an <a href="mailto:support@fordify.de">support@fordify.de</a>.</p>
+    <summary>Kann ich jederzeit upgraden oder kündigen?</summary>
+    <p>Ja. Sie können jederzeit zwischen den Tarifen wechseln oder kündigen. Ein Upgrade wird sofort wirksam. Bei einer Kündigung läuft Ihr Abonnement bis zum Ende der bezahlten Laufzeit weiter; Ihre Daten bleiben danach noch 30 Tage abrufbar.</p>
   </details>
 </div>
 
@@ -497,6 +505,7 @@
     }
     document.getElementById('agbConsentCheck').addEventListener('change', _updateConsentBtn);
     document.getElementById('avvConsentCheck').addEventListener('change', _updateConsentBtn);
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el, {container: 'body'}));
   });
 
   function confirmCheckout() {
