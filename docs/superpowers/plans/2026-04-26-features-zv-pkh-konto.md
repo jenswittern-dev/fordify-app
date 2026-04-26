@@ -113,6 +113,17 @@ Alle drei Plan-Karten und die Vergleichstabelle müssen die neuen Features auff�
 
 Nach Abschluss aller Features einen gebündelten Changelog-Eintrag anlegen. Inhalt: ZV-Auftrag-Generierung (Pro/Business), PKH-Kalkulator (Free), Konto-Verbesserungen für Business (Status, Notizen, Suche, Filter, Favoriten).
 
+### Q.4 – N8N Onboarding-Mail (Workflow `elcsjZCxDmtCw2BI`)
+
+Nach allen drei Features live: Onboarding-E-Mail aktualisieren, damit neue Abonnenten sofort auf neue Features hingewiesen werden.
+
+- **Pro-Onboarding**: ZV-Auftrag erwähnen – „Erstellen Sie mit einem Klick den offiziellen Vollstreckungsauftrag direkt aus Ihrer Forderungsaufstellung"
+- **Business-Onboarding**: Konto-Features erwähnen – „Verwalten Sie Ihre Fälle mit Status-Workflow, Notizen und Volltextsuche direkt im Konto-Bereich"
+
+Update via N8N API: `PUT https://n8n.srv1063720.hstgr.cloud/api/v1/workflows/elcsjZCxDmtCw2BI`
+
+Hinweis für andere Workflows: Die Datenlöschungs-Cron und Digest-Workflows greifen auf `cases`-Zeilen zu, nicht auf Spalten – `fall_status`, `notes`, `pinned` sind transparent für bestehende Workflows, kein Update nötig.
+
 ---
 
 ## Feature 5.7 – ZV-Auftrag-Generierung
