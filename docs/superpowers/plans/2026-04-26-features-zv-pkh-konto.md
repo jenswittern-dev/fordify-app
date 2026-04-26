@@ -14,13 +14,19 @@
 | 5.7.2 | ZV: Dateneingabe-UI + neue Pflichtfelder | 📋 |
 | 5.7.3 | ZV: PDF-Generierung (pdf-lib) | 📋 |
 | 5.7.4 | ZV: Gate + Integration + Rollout | 📋 |
+| 5.7.5 | ZV: AGB + Preise + Startseite + Changelog | 📋 |
 | 3.8.1 | PKH: §49-Tabelle recherchieren + in data.js | 📋 |
 | 3.8.2 | PKH: Berechnungslogik in rvg.js | 📋 |
 | 3.8.3 | PKH: UI-Toggle im RVG-Rechner | 📋 |
+| 3.8.4 | PKH: AGB + Preise + Changelog | 📋 |
 | 5.5.1 | Konto: DB-Schema (status, notes, pinned) | 📋 |
 | 5.5.2 | Konto: Storage-Sync für neue Felder | 📋 |
 | 5.5.3 | Konto: Fälle-Tab (Suche, Filter, Status-Badge, Pinned) | 📋 |
 | 5.5.4 | Konto: Fall-Detail (Status-Selektor + Notiz in app.js) | 📋 |
+| 5.5.5 | Konto: Datenschutz + AVV + Preise + Changelog | 📋 |
+| Q.1 | Querschnitt: Startseite (index.html) – ZV-Auftrag bewerben | 📋 |
+| Q.2 | Querschnitt: Preisseite (preise.html) – alle 3 Features | 📋 |
+| Q.3 | Querschnitt: Changelog – alle 3 Features | 📋 |
 
 ---
 
@@ -36,6 +42,70 @@
 - **5.7**: Button in `forderungsaufstellung.html` wird mit `data-auth-show="user"` und `requiresPaid()` in `gates.js` abgesichert. Free-Nutzer sehen den Button nicht; eingeloggter Free-Nutzer (ohne Abo) sieht Upgrade-Modal.
 - **3.8**: Kein Gate, kein `data-auth-show`. Identische Verfügbarkeit wie die bestehenden Rechner-Seiten.
 - **5.5**: Status-Dropdown und Notizfeld in `forderungsaufstellung.html` nur rendern wenn `fordifyAuth.isAuthenticated && fordifyAuth.hasSubscription`. Im Konto-Tab (`konto.html`) sowieso nur für eingeloggte Nutzer erreichbar.
+
+---
+
+## Querschnittsaufgaben
+
+### Navigation Header & Footer
+
+Alle HTML-Seiten enthalten **kopiertes (nicht komponentisiertes) Nav- und Footer-HTML**. Änderungen müssen deshalb in jeder betroffenen `.html`-Datei synchron erfolgen.
+
+Für die drei Features sind **keine neuen Navigationspunkte** erforderlich:
+
+| Feature | Begründung |
+|---|---|
+| 5.7 ZV-Auftrag | Kein eigener URL – Button erscheint innerhalb von `forderungsaufstellung.html` (Modal). Kein Navbar- oder Footer-Eintrag nötig. |
+| 3.8 PKH-Kalkulator | Toggle innerhalb von `rvg-rechner.html`. Die RVG-Rechner-Karte im Navbar-Dropdown bleibt unverändert (`Anwaltsgebühren nach RVG`). Optional könnte die Beschriftung erweitert werden – wenn gewünscht, **alle** HTML-Dateien in einem Commit. |
+| 5.5 Konto v2 | `konto.html` bereits im User-Dropdown erreichbar. Kein neuer Punkt. |
+
+Footer-Tools-Liste verlinkt auf `forderungsaufstellung` (wo ZV erreichbar ist) und auf `rvg-rechner` (wo PKH erreichbar ist) – **keine Footer-Änderungen nötig**.
+
+### Q.1 – Startseite (index.html)
+
+Die Forderungsaufstellung-Karte auf der Startseite beschreibt den aktuellen Funktionsumfang. Nach Fertigstellung von 5.7 muss sie den ZV-Auftrag als Pro-Feature erwähnen, damit der Mehrwert des Upgrades auf der Einstiegsseite sichtbar ist.
+
+**Betroffene Datei:** `frontend/index.html`
+
+Änderungen:
+- Beschreibungstext der primären Tool-Karte (`tool-card--primary`) um ZV-Hinweis ergänzen:  
+  *Aktuell:* „Vollständige Forderungsaufstellung mit Verzugszinsen, RVG-Gebühren und automatischer § 367-Verrechnung. Druckfertig als PDF exportierbar."  
+  *Neu:* „… Druckfertig als PDF exportierbar. Pro: ZV-Auftrag an den Gerichtsvollzieher (§ 753 ZPO) direkt aus dem Fall generieren."
+- Optional: Hero-Mockup-Footer um Badge „ZV ✓" ergänzen (low priority, nice-to-have)
+
+Layout-Hinweis: Kein strukturelles Eingriff – nur Text innerhalb des bestehenden `tool-card__desc` und `tool-card__footer`. Keine CSS-Änderungen nötig.
+
+### Q.2 – Preisseite (preise.html)
+
+Alle drei Plan-Karten und die Vergleichstabelle müssen die neuen Features aufführen, damit Nutzer vor dem Kauf wissen, was sie bekommen.
+
+**Betroffene Datei:** `frontend/preise.html`
+
+**Free-Plan** – ergänzen:
+```html
+<li>✓ PKH-Kalkulator (§ 49 RVG – Vergütung aus Staatskasse)</li>
+```
+
+**Pro-Plan** – ergänzen (nach „Schuldner-Adressbuch"):
+```html
+<li>✓ ZV-Auftrag-Generierung (§ 753 ZPO, amtliches Formular)</li>
+<li>✓ Fall-Status & Notizen (cloud-synchronisiert)</li>
+```
+
+**Business-Plan** – erbt über „Alles aus Pro" → keine Änderung in der Karte nötig, aber in der Vergleichstabelle explizit ausweisen.
+
+**Vergleichstabelle** – neue Zeilen ergänzen (nach bestehenden Rechner-Zeilen):
+```html
+<tr><td>PKH-Kalkulator (§ 49 RVG)</td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+<tr><td>ZV-Auftrag-Generierung (§ 753 ZPO)</td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+<tr><td>Fall-Status &amp; Notizen</td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+```
+
+**Meta-Description** aktualisieren: Pro- und Business-Kurzbeschreibung im `<head>` spiegelt neue Highlights wider.
+
+### Q.3 – Changelog (changelog.html)
+
+Nach Abschluss aller Features einen gebündelten Changelog-Eintrag anlegen. Inhalt: ZV-Auftrag-Generierung (Pro/Business), PKH-Kalkulator (Free), Konto-Verbesserungen (Status, Notizen, Suche, Filter).
 
 ---
 
@@ -101,6 +171,8 @@ Diese Felder werden **nicht persistent gespeichert** (sie gelten pro PDF-Erstell
   - **Neue Pflichtfelder** (Eingabe): Titel-Details, Maßnahmen, Hinweise
 - „PDF herunterladen"-Button löst Generierung aus
 
+**Layout-Hinweis:** Das Modal folgt dem Bootstrap-`modal`-Pattern der bestehenden Modals (Login-Modal, Upgrade-Modal in `gates.js`). Kein neues CSS nötig – `modal-dialog modal-lg modal-dialog-centered` mit zwei `row`-Spalten für vorausgefüllte vs. neue Felder. Icon-Stil und Button-Klassen aus `app.css` übernehmen.
+
 ### Phase 5.7.3 – PDF-Generierung
 **Neue Datei:** `frontend/js/zv.js`
 
@@ -134,6 +206,18 @@ async function erstelleZVAuftrag(fallDaten, kanzleiDaten, zvFelder) {
 - `app.js`: ZV-Modal-Logik einbinden, Fallzustand an `erstelleZVAuftrag()` übergeben
 - Roadmap-Eintrag 5.7 auf ✅ setzen
 
+### Phase 5.7.5 – Rechtsdoks + Marketing-Seiten + Changelog
+
+**AGB – §2 Leistungsumfang:**
+Neuer Spiegelstrich unter „kostenpflichtige Abonnements" (Pro/Business):
+> „Automatisiertes Ausfüllen des amtlichen Vollstreckungsauftrags an den Gerichtsvollzieher (§ 753 ZPO i.V.m. ZwVollstrFormV 2024) auf Basis der Forderungsaufstellungsdaten"
+
+Layout-Hinweis: Die AGB-Seite (`agb.html`) hat keinen eigenen Stylesheet-Override – Standardformatierung mit `<li>` im bestehenden Abschnitt §2.
+
+**Startseite + Preisseite:** Wie in Q.1 und Q.2 beschrieben (im selben Commit).
+
+**Changelog:** Eintrag vorbereiten (kann gebündelt mit 3.8 und 5.5 erfolgen, s. Q.3).
+
 ### Geänderte / neue Dateien
 | Datei | Änderung |
 |---|---|
@@ -142,6 +226,10 @@ async function erstelleZVAuftrag(fallDaten, kanzleiDaten, zvFelder) {
 | `frontend/forderungsaufstellung.html` | ZV-Button + Modal |
 | `frontend/js/app.js` | ZV-Modal-Aufruf + Datenweitergabe |
 | `frontend/sw.js` | ASSETS: pdf-lib, zv.js, zv_formular.pdf |
+| `frontend/agb.html` | §2: ZV-Auftrag in Leistungsumfang |
+| `frontend/index.html` | Tool-Karte: ZV-Hinweis ergänzen |
+| `frontend/preise.html` | Pro/Business: ZV-Auftrag; Tabelle; Meta |
+| `frontend/changelog.html` | Neuer Eintrag (gebündelt mit 3.8 + 5.5) |
 | `docs/ROADMAP.md` | 5.7 auf ✅ |
 
 ---
@@ -199,6 +287,18 @@ function berechneRVGPositionPKH(streitwert, vvNummer, pkh_tabelle, vvDef) {
   - Hinweistext: „Vergütung aus der Staatskasse nach § 49 RVG – kein Ersatz für anwaltliche Prüfung"
 - Kein Gate (Free-Nutzer können PKH-Rechner nutzen wie den normalen RVG-Rechner)
 
+**Layout-Hinweis:** `rvg-rechner.html` verwendet das bestehende Rechner-Layout aus `rechner.css` (`.rechner-card`, `.rechner-result-table`). Der Toggle kann als `btn-group` mit zwei `.btn-outline-primary`-Buttons oberhalb des Ergebnisblocks gesetzt werden – identisches Muster wie es andere Seitenfilter in der App nutzen. Keine neuen CSS-Regeln nötig.
+
+### Phase 3.8.4 – Rechtsdoks + Preise + Changelog
+
+**AGB – §2 Leistungsumfang:**
+PKH-Kalkulator gehört zu den kostenlosen Tools. Ergänzung unter §2 (Gratisleistungen):
+> „PKH-Kalkulator: Berechnung der Anwaltsvergütung aus der Staatskasse nach § 49 RVG (Prozesskostenhilfe) inkl. Vergleich zur Normalvergütung"
+
+**Preisseite:** Wie in Q.2 beschrieben – PKH-Kalkulator in Free-Plan und Vergleichstabelle ergänzen.
+
+**Changelog:** Gebündelt mit 5.7 und 5.5.
+
 ### Geänderte Dateien
 | Datei | Änderung |
 |---|---|
@@ -206,6 +306,9 @@ function berechneRVGPositionPKH(streitwert, vvNummer, pkh_tabelle, vvDef) {
 | `frontend/js/rvg.js` | `berechneRVGPositionPKH()` |
 | `frontend/js/rechner-rvg.js` | PKH-Modus-Logik |
 | `frontend/rvg-rechner.html` | Toggle + Ausgabe-Erweiterung |
+| `frontend/agb.html` | §2: PKH-Kalkulator ergänzen |
+| `frontend/preise.html` | Free-Plan + Tabelle: PKH-Zeile |
+| `frontend/changelog.html` | Neuer Eintrag (gebündelt) |
 | `docs/ROADMAP.md` | 3.8 auf ✅ |
 
 ---
@@ -269,6 +372,29 @@ Im Fall-Header (unterhalb von Aktenzeichen/Schuldner):
 - Notizfeld (Textarea, max 500 Zeichen, Placeholder: „Interne Notiz zu diesem Fall…") — nur für eingeloggte Nutzer
 - Auto-Save bei `blur` (kein extra Speichern-Button)
 
+**Layout-Hinweis:** Beide Elemente kommen unterhalb des Fall-Headers in einem `data-auth-show="user"` Container. Bootstrap-`form-select` für das Dropdown, `form-control form-control-sm` für die Textarea. Kein separater CSS-Block nötig – passt nahtlos in den bestehenden Header-Bereich. Farbkodierung für Status-Badges (`badge bg-...`) im Konto-Tab orientiert sich an Bootstrap-Standardfarben: `bg-primary` (offen), `bg-warning text-dark` (in Vollstreckung), `bg-success` (erledigt), `bg-secondary` (abgeschrieben).
+
+### Phase 5.5.5 – Rechtsdoks + Preise + Changelog
+
+**Datenschutzerklärung (`frontend/datenschutz.html`):**
+
+Im Abschnitt „Cloud-Synchronisierung (Pro/Business)" die Auflistung gespeicherter Daten um die neuen Felder ergänzen:
+> Neu: `fall_status` (Fallstatus: offen/in Vollstreckung/erledigt/abgeschrieben) und `notes` (optionale Freitext-Notiz zu einem Fall)
+
+Hinweis zu `notes`: Das Feld kann personenbezogene Daten über den Schuldner enthalten (z. B. Namen, Sachverhaltsbeschreibungen). Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung) – Nutzer speichern diese Daten zur Durchführung ihrer eigenen Forderungsverwaltung.
+
+**AVV (`frontend/avv.html`) – Anhang: Verarbeitungsgegenstand:**
+
+Tabelle der verarbeiteten Datenkategorien um zwei Zeilen ergänzen:
+| Datenkategorie | Beschreibung |
+|---|---|
+| Fallstatus | Bearbeitungsstatus eines Falls (Textkonstante, kein Personenbezug) |
+| Fallnotizen | Freitextnotizen des Nutzers zu einem Fall (kann personenbezogene Daten Dritter enthalten) |
+
+**Preisseite:** Wie in Q.2 beschrieben – Fall-Status & Notizen in Pro/Business ergänzen.
+
+**Changelog:** Gebündelt mit 5.7 und 3.8.
+
 ### Geänderte Dateien
 | Datei | Änderung |
 |---|---|
@@ -278,6 +404,10 @@ Im Fall-Header (unterhalb von Aktenzeichen/Schuldner):
 | `frontend/forderungsaufstellung.html` | Status/Notiz-UI im Fall-Header |
 | `frontend/konto.html` | Fälle-Tab: Suche, Filter, Sort, Badges |
 | `frontend/js/konto.js` | Neue Fälle-Tab-Logik |
+| `frontend/datenschutz.html` | Cloud-Daten: fall_status + notes ergänzen |
+| `frontend/avv.html` | Anhang: neue Datenkategorien |
+| `frontend/preise.html` | Pro/Business: Fall-Status & Notizen |
+| `frontend/changelog.html` | Neuer Eintrag (gebündelt) |
 | `docs/ROADMAP.md` | 5.5 auf ✅ |
 
 ---
