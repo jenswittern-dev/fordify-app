@@ -145,6 +145,27 @@
             <input type="text" class="form-control" id="inp-aktenzeichen" placeholder="z.B. Kunden-Nr. 1234/25">
           </div>
 
+          <div class="mb-3 d-none" data-auth-show="business">
+            <div class="row g-2">
+              <div class="col-sm-4">
+                <label class="form-label" for="inp-fall-status">Fall-Status</label>
+                <select class="form-select form-select-sm" id="inp-fall-status" onchange="fallStatusSpeichern()">
+                  <option value="offen">Offen</option>
+                  <option value="in_vollstreckung">In Vollstreckung</option>
+                  <option value="erledigt">Erledigt</option>
+                  <option value="abgeschrieben">Abgeschrieben</option>
+                </select>
+              </div>
+              <div class="col-sm-8">
+                <label class="form-label" for="inp-fall-notes">Interne Notiz <span class="text-muted fw-normal">(optional)</span></label>
+                <textarea class="form-control form-control-sm" id="inp-fall-notes" rows="2" maxlength="500" placeholder="Interne Notiz zu diesem Fall…" onblur="fallNotizenSpeichern()"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3 d-none" data-auth-show="paid-not-business">
+            <div class="alert alert-light border py-2 px-3 mb-0" style="font-size:var(--text-sm);color:var(--color-text-muted)"><strong>Fall-Status &amp; Notizen</strong> sind ab dem <a href="/preise" class="alert-link">Business-Plan</a> verfügbar.</div>
+          </div>
+
           <div class="mb-3">
             <label class="form-label" for="inp-aufschlag">Verzugszins-Aufschlag</label>
             <select class="form-select" id="inp-aufschlag" onchange="egbgbHinweisToggle(this.value)">

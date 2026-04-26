@@ -516,6 +516,10 @@ function stammdatenLaden() {
   document.getElementById("inp-aufschlag").value    = aufschlagVal;
   egbgbHinweisToggle(aufschlagVal);
   document.getElementById("inp-inso-datum").value   = state.fall.insoDatum || "";
+  const statusEl = document.getElementById("inp-fall-status");
+  if (statusEl) statusEl.value = state.fall.fall_status || "offen";
+  const notesEl = document.getElementById("inp-fall-notes");
+  if (notesEl) notesEl.value = state.fall.notes || "";
 
   // Forderungsgrund – Backward-Compat: altes titelArt ohne forderungsgrundKat → "Titel"
   const kat = state.fall.forderungsgrundKat || (state.fall.titelArt ? "Titel" : "");
@@ -2786,5 +2790,19 @@ async function erstelleZVAuftragJetzt() {
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = 'PDF erstellen & herunterladen'; }
   }
+}
+
+function fallStatusSpeichern() {
+  const el = document.getElementById('inp-fall-status');
+  if (!el) return;
+  state.fall.fall_status = el.value;
+  speichern();
+}
+
+function fallNotizenSpeichern() {
+  const el = document.getElementById('inp-fall-notes');
+  if (!el) return;
+  state.fall.notes = el.value;
+  speichern();
 }
 }

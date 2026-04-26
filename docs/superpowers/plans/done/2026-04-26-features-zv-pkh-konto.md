@@ -1,7 +1,7 @@
 # Implementierungsplan: ZV-Formulare (5.7) + PKH-Kalkulator (3.8) + Konto v2 (5.5)
 
 **Erstellt:** 2026-04-26  
-**Status:** 📋 In Planung  
+**Status:** ✅ Abgeschlossen (2026-04-26)  
 **Reihenfolge:** 5.7 → 3.8 → 5.5 (nach Impact, absteigend; jedes Feature unabhängig deploybar)
 
 ---
@@ -10,23 +10,23 @@
 
 | # | Feature | Status |
 |---|---|---|
-| 5.7.1 | ZV: PDF-Recherche + Feldmapping | 📋 |
-| 5.7.2 | ZV: Dateneingabe-UI + neue Pflichtfelder | 📋 |
-| 5.7.3 | ZV: PDF-Generierung (pdf-lib) | 📋 |
-| 5.7.4 | ZV: Gate + Integration + Rollout | 📋 |
-| 5.7.5 | ZV: AGB + Preise + Startseite + Changelog | 📋 |
-| 3.8.1 | PKH: §49-Tabelle recherchieren + in data.js | 📋 |
-| 3.8.2 | PKH: Berechnungslogik in rvg.js | 📋 |
-| 3.8.3 | PKH: UI-Toggle im RVG-Rechner | 📋 |
-| 3.8.4 | PKH: AGB + Preise + Changelog | 📋 |
-| 5.5.1 | Konto: DB-Schema (status, notes, pinned) | 📋 |
-| 5.5.2 | Konto: Storage-Sync für neue Felder | 📋 |
-| 5.5.3 | Konto: Fälle-Tab (Suche, Filter, Status-Badge, Pinned) | 📋 |
-| 5.5.4 | Konto: Fall-Detail (Status-Selektor + Notiz in app.js) | 📋 |
-| 5.5.5 | Konto: Datenschutz + AVV + Preise + Changelog | 📋 |
-| Q.1 | Querschnitt: Startseite (index.html) – ZV-Auftrag bewerben | 📋 |
-| Q.2 | Querschnitt: Preisseite (preise.html) – alle 3 Features | 📋 |
-| Q.3 | Querschnitt: Changelog – alle 3 Features | 📋 |
+| 5.7.1 | ZV: PDF-Recherche + Feldmapping | ✅ |
+| 5.7.2 | ZV: Dateneingabe-UI + neue Pflichtfelder | ✅ |
+| 5.7.3 | ZV: PDF-Generierung (pdf-lib) | ✅ |
+| 5.7.4 | ZV: Gate + Integration + Rollout | ✅ |
+| 5.7.5 | ZV: AGB + Preise + Startseite + Changelog | ✅ |
+| 3.8.1 | PKH: §49-Tabelle recherchieren + in data.js | ✅ |
+| 3.8.2 | PKH: Berechnungslogik in rvg.js | ✅ |
+| 3.8.3 | PKH: UI-Toggle im RVG-Rechner | ✅ |
+| 3.8.4 | PKH: AGB + Preise + Changelog | ✅ |
+| 5.5.1 | Konto: DB-Schema (status, notes, pinned) | ✅ |
+| 5.5.2 | Konto: Storage-Sync für neue Felder | ✅ |
+| 5.5.3 | Konto: Fälle-Tab (Suche, Filter, Status-Badge, Pinned) | ✅ |
+| 5.5.4 | Konto: Fall-Detail (Status-Selektor + Notiz in app.js) | ✅ |
+| 5.5.5 | Konto: Datenschutz + AVV + Preise + Changelog | ✅ |
+| Q.1 | Querschnitt: Startseite (index.html) – ZV-Auftrag bewerben | ✅ |
+| Q.2 | Querschnitt: Preisseite (preise.html) – alle 3 Features | ✅ |
+| Q.3 | Querschnitt: Changelog – alle 3 Features | ✅ |
 
 ---
 

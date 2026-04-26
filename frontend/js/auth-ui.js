@@ -22,6 +22,12 @@ function aktualisiereUIFuerAuth() {
   document.querySelectorAll('[data-auth-show="paid"]').forEach(el =>
     el.classList.toggle('d-none', !isPaid));
 
+  const isBusiness = fordifyAuth.plan === 'business';
+  document.querySelectorAll('[data-auth-show="business"]').forEach(el =>
+    el.classList.toggle('d-none', !isBusiness));
+  document.querySelectorAll('[data-auth-show="paid-not-business"]').forEach(el =>
+    el.classList.toggle('d-none', !(isPaid && !isBusiness)));
+
   if (isAuth && fordifyAuth.user) {
     const initials = _getInitials(fordifyAuth.user.email);
     document.querySelectorAll('.nav-avatar-initials').forEach(el => el.textContent = initials);
