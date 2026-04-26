@@ -329,6 +329,7 @@
   <div class="no-print mb-3 d-flex flex-wrap gap-2">
     <button class="btn btn-primary" onclick="drucken()">Drucken / PDF speichern</button>
     <button class="btn btn-outline-secondary" id="btn-teilen" onclick="falTeilen()">Teilen / Export</button>
+    <button class="btn btn-outline-secondary" onclick="zeigeZVModal()" title="Vollstreckungsauftrag an den Gerichtsvollzieher (§ 753 ZPO) als PDF erstellen">ZV-Auftrag →</button>
     <button class="btn btn-outline-secondary" onclick="zeigeAnsicht('eingabe')">← Zurück</button>
   </div>
   <div class="content-card" id="vorschau-inhalt">
@@ -678,6 +679,87 @@
   </div>
 </footer>
 
+<!-- ZV-Auftrag Modal -->
+<div class="modal fade" id="zvModal" tabindex="-1" aria-labelledby="zvModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content modal-content--app">
+      <div class="modal-header modal-header--app">
+        <h5 class="modal-title" id="zvModalLabel">ZV-Auftrag an den Gerichtsvollzieher</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body modal-body--app">
+        <p class="text-muted small mb-3">Erstellt ein vorausgefülltes amtliches Vollstreckungsformular (§ 753 ZPO i.V.m. ZwVollstrFormV) als PDF. Fehlende Felder (z.B. Schuldneranschrift, Gläubigerdaten) bitte anschließend im PDF-Programm ergänzen.</p>
+
+        <div class="border rounded p-3 mb-3" style="background:var(--color-bg-subtle,#f8f9fa)">
+          <p class="small fw-semibold mb-2 text-muted text-uppercase" style="font-size:0.7rem;letter-spacing:.05em">Aus aktuellem Fall übernommen</p>
+          <div class="row g-2">
+            <div class="col-sm-6">
+              <label class="form-label form-label-sm">Schuldner</label>
+              <input type="text" class="form-control form-control-sm" id="zv-prev-schuldner" readonly>
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label form-label-sm">Ihr Aktenzeichen</label>
+              <input type="text" class="form-control form-control-sm" id="zv-prev-az" readonly>
+            </div>
+            <div class="col-sm-4">
+              <label class="form-label form-label-sm">Titelart</label>
+              <input type="text" class="form-control form-control-sm" id="zv-prev-titel-art" readonly>
+            </div>
+            <div class="col-sm-4">
+              <label class="form-label form-label-sm">Gericht / Behörde</label>
+              <input type="text" class="form-control form-control-sm" id="zv-prev-titel-gericht" readonly>
+            </div>
+            <div class="col-sm-4">
+              <label class="form-label form-label-sm">Aktenzeichen des Titels</label>
+              <input type="text" class="form-control form-control-sm" id="zv-prev-titel-az" readonly>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-medium">Gerichtsvollzieher / Verteilerstelle des Amtsgerichts</label>
+          <input type="text" class="form-control mb-2" id="zv-gv-name"
+                 placeholder="Name des Gerichtsvollziehers oder Bezeichnung der Verteilerstelle">
+          <div class="row g-2">
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="zv-gv-strasse"
+                     placeholder="Straße und Hausnummer oder Postfach">
+            </div>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" id="zv-gv-plzort"
+                     placeholder="12345 Musterstadt">
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label fw-medium">Vollstreckungsmaßnahmen</label>
+          <div class="d-flex flex-wrap gap-3 mt-1">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="zv-ma-sachpfaendung">
+              <label class="form-check-label" for="zv-ma-sachpfaendung">Sachpfändung</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="zv-ma-vermoegen">
+              <label class="form-check-label" for="zv-ma-vermoegen">Vermögensauskunft (§ 802c ZPO)</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="zv-ma-forderung">
+              <label class="form-check-label" for="zv-ma-forderung">Forderungspfändung</label>
+            </div>
+          </div>
+        </div>
+
+        <div id="zv-fehler" class="alert alert-danger d-none py-2 small mt-3"></div>
+      </div>
+      <div class="modal-footer modal-footer--app">
+        <button type="button" class="btn-secondary-app" data-bs-dismiss="modal">Abbrechen</button>
+        <button type="button" class="btn-primary-app" id="btn-zv-erstellen" onclick="erstelleZVAuftragJetzt()">PDF erstellen &amp; herunterladen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Login-Modal -->
 <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm modal-dialog-centered">
@@ -776,6 +858,7 @@
 <script src="js/rvg.js"></script>
 <script src="js/verrechnung.js"></script>
 <script src="js/app.js"></script>
+<script src="js/zv.js"></script>
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});

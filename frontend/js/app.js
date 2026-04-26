@@ -2714,3 +2714,77 @@ async function falTeilen() {
   URL.revokeObjectURL(url);
   merkeExportZeitpunkt();
 }
+
+// ============================================================
+// ZV-Auftrag (§ 753 ZPO) – Feature 5.7
+// ============================================================
+
+async function zeigeZVModal() {
+  if (requiresPaid('zv-auftrag')) return;
+
+  // Vorschau mit aktuellen Fall-Daten befüllen
+  const f = state.fall;
+  _setVal('zv-prev-schuldner',     f.gegner        || '');
+  _setVal('zv-prev-az',            f.aktenzeichen  || '');
+  _setVal('zv-prev-titel-art',     f.titelArt      || '');
+  _setVal('zv-prev-titel-gericht', f.titelGericht  || '');
+  _setVal('zv-prev-titel-az',      f.titelAz       || '');
+
+  // Fehleranzeige zurücksetzen
+  const err = document.getElementById('zv-fehler');
+  if (err) { err.classList.add('d-none'); err.textContent = ''; }
+
+  // Lazy-load pdf-lib
+  if (!window.PDFLib) {
+    const btn = document.getElementById('btn-zv-erstellen');
+    if (btn) btn.textContent = 'Lade…';
+    try {
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = '/js/pdf-lib.min.js';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    } catch(_) {}
+    if (btn) btn.textContent = 'PDF erstellen & herunterladen';
+  }
+
+  const modal = new bootstrap.Modal(document.getElementById('zvModal'));
+  modal.show();
+}
+
+function _setVal(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.value = val;
+}
+
+async function erstelleZVAuftragJetzt() {
+  const btn = document.getElementById('btn-zv-erstellen');
+  const err = document.getElementById('zv-fehler');
+  if (err) { err.classList.add('d-none'); err.textContent = ''; }
+
+  const zvFelder = {
+    gvName:             (document.getElementById('zv-gv-name')?.value   || '').trim(),
+    gvStrasse:          (document.getElementById('zv-gv-strasse')?.value || '').trim(),
+    gvPlzOrt:           (document.getElementById('zv-gv-plzort')?.value  || '').trim(),
+    sachpfaendung:      document.getElementById('zv-ma-sachpfaendung')?.checked || false,
+    vermoegensauskunft: document.getElementById('zv-ma-vermoegen')?.checked    || false,
+    forderungspfaendung:document.getElementById('zv-ma-forderung')?.checked    || false,
+  };
+
+  const settingsRaw = StorageBackend.getItem(STORAGE_KEY_SETTINGS);
+  const einst = settingsRaw ? JSON.parse(settingsRaw) : {};
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Erstelle PDF…'; }
+  try {
+    await erstelleZVAuftrag(state.fall, einst, zvFelder);
+    const modal = bootstrap.Modal.getInstance(document.getElementById('zvModal'));
+    if (modal) modal.hide();
+    trackEvent('zv-auftrag-erstellt');
+  } catch(e) {
+    if (err) { err.textContent = 'Fehler: ' + (e.message || 'Unbekannter Fehler'); err.classList.remove('d-none'); }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'PDF erstellen & herunterladen'; }
+  }
+}
+}

@@ -30,6 +30,7 @@ function _zeigeUpgradeModal(featureName, plan) {
     'mandanten-adressbuch': 'Mandanten-Adressbuch',
     'csv-import':           'CSV-Import',
     'csv-export':           'CSV-Export',
+    'zv-auftrag':           'ZV-Auftrag-Generierung (§ 753 ZPO)',
   };
   const label = featureLabels[featureName] || featureName;
   const isBusiness = plan === 'business';
