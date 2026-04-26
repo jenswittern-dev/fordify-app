@@ -148,6 +148,14 @@
 
 ---
 
+## Phase 7 – SEO & Public Launch-Vorbereitung
+
+| # | Feature | Status | Datum |
+|---|---|---|---|
+| 7.1 | **robots / noindex entfernen** – Vor Public Launch noindex auf folgenden Seiten entfernen und auf `index, follow` setzen: `index.html`, `preise.html`, `zinsrechner.html`, `rvg-rechner.html`, `gerichtskostenrechner.html`, `tilgungsrechner.html`. Dauerhaft noindex bleiben: `forderungsaufstellung.html`, `konto.html`, `changelog.html`, `agb.html`, `avv.html`, `impressum.html`, `datenschutz.html`. | 📋 | — |
+
+---
+
 ## Bekannte offene Punkte aus Nutzerfeedback
 
 | Quelle | Beschreibung | Status |
