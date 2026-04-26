@@ -40,7 +40,7 @@
 | Auth | Supabase Magic Link (`frontend/js/auth.js`, `auth-ui.js`) |
 | Zahlungen | Paddle (Merchant of Record, `frontend/js/config.js` → `PRICE_MAP`) |
 | E-Mail | Resend (via Supabase SMTP / N8N) |
-| Analytics | GoatCounter (self-hosted, cookielos, DSGVO-konform) |
+| Analytics | GoatCounter SaaS (goatcounter.com, Martin Tournoij, Server bei Hetzner DE/FI, cookielos, DSGVO-konform) |
 | PWA | Service Worker (`frontend/sw.js`) + Manifest (`frontend/manifest.json`) |
 | Hosting | All-Inkl (fordify.de); Staging: staging.fordify.de |
 | Deployment | Push auf `main` → GitHub Actions → fordify.de; `staging`-Branch → staging.fordify.de |
