@@ -104,3 +104,64 @@ function berechneRVGGesamt(streitwert, vvNummern, tabelle, vvDefinitionen, fakto
   // Decimal-Objekte bleiben für die Vorschau-Berechnung (werden nicht gespeichert)
   return { positionen, netto, ust, gesamt };
 }
+
+/**
+ * Berechnet eine PKH-Position nach § 49 RVG (Vergütung aus der Staatskasse).
+ * Gegenstandswert ≤ 4.000 EUR: normale Tabellengebühr.
+ * Gegenstandswert > 4.000 EUR: Gebühr(4000) + 75 % × (Gebühr(actual) − Gebühr(4000)).
+ */
+function berechneRVGPositionPKH(streitwert, vvNummer, tabelle, vvDef, nettoGebuehrenSumme = null) {
+  streitwert = new Decimal(streitwert);
+  if (!vvDef) throw new Error(`Unbekannte VV-Nummer: ${vvNummer}`);
+
+  let gebuehrGesamt;
+  let gebuehrEinfach = null;
+  let faktor = null;
+
+  if (vvNummer === "7002") {
+    const basis = nettoGebuehrenSumme ? new Decimal(nettoGebuehrenSumme) : new Decimal(0);
+    const zwanzig = basis.times("0.20").toDecimalPlaces(2);
+    gebuehrGesamt = Decimal.min(zwanzig, new Decimal("20.00"));
+  } else {
+    faktor = new Decimal(vvDef.faktor);
+    const gebuehrNormal = gebuehrAusTabelle(streitwert, tabelle);
+
+    if (streitwert.lte(4000)) {
+      gebuehrEinfach = gebuehrNormal;
+    } else {
+      const g4000 = gebuehrAusTabelle(new Decimal(4000), tabelle);
+      gebuehrEinfach = g4000.plus(gebuehrNormal.minus(g4000).times("0.75"));
+    }
+    gebuehrGesamt = gebuehrEinfach.times(faktor).toDecimalPlaces(2);
+  }
+
+  return {
+    vvNummer,
+    beschreibung: vvDef.beschreibung,
+    faktor:        faktor        ? parseFloat(faktor.toFixed(4))        : null,
+    gebuehrEinfach:gebuehrEinfach? parseFloat(gebuehrEinfach.toFixed(2)): null,
+    gebuehrGesamt: parseFloat(gebuehrGesamt.toFixed(2)),
+  };
+}
+
+/**
+ * Berechnet alle PKH-Positionen nach § 49 RVG inkl. Netto, USt und Gesamt.
+ */
+function berechneRVGGesamtPKH(streitwert, vvNummern, tabelle, vvDefinitionen, faktoren = {}) {
+  streitwert = new Decimal(streitwert);
+  const positionen = [];
+  let netto = new Decimal(0);
+
+  for (const vv of vvNummern) {
+    const vvDef = vvDefinitionen[vv];
+    if (!vvDef) throw new Error(`Unbekannte VV-Nummer: ${vv}`);
+    const vvDefMitFaktor = faktoren[vv] ? { ...vvDef, faktor: String(faktoren[vv]) } : vvDef;
+    const pos = berechneRVGPositionPKH(streitwert, vv, tabelle, vvDefMitFaktor, vv === "7002" ? netto : null);
+    positionen.push(pos);
+    netto = netto.plus(pos.gebuehrGesamt);
+  }
+
+  const ust = netto.times("0.19").toDecimalPlaces(2);
+  const gesamt = netto.plus(ust);
+  return { positionen, netto, ust, gesamt };
+}
