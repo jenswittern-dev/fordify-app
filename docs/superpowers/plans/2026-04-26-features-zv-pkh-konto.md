@@ -36,12 +36,12 @@
 |---|:---:|:---:|:---:|---|
 | **5.7 ZV-Auftrag-Generierung** | — | ✅ | ✅ | Kernnutzen für professionelle Vollstreckungspraxis; erhöht Pro-Wert signifikant. Gate via `requiresPaid('ZV-Auftrag')`. |
 | **3.8 PKH-Kalkulator** | ✅ | ✅ | ✅ | Analog zum bestehenden RVG-Rechner: SEO-wirksamer Kalkulator ohne Datenspeicherung. Kein Gate. |
-| **5.5 Konto-Bereich v2** (Status, Notizen, Pinned) | — | ✅ | ✅ | Status/Notizen nur sinnvoll mit Cloud-Sync (Supabase). Free-Nutzer nutzen sessionStorage ohne persistente Fallverwaltung. |
+| **5.5 Konto-Bereich v2** (Status, Notizen, Pinned, Suche, Filter) | — | — | ✅ | Vollständige Fallverwaltung als Business-Differenziator. Stärkt das Business-Wertversprechen (+30€/Monat) und positioniert Business klar als „Kanzlei-Management"-Tier. |
 
 **Konsequenzen für die Implementierung:**
-- **5.7**: Button in `forderungsaufstellung.html` wird mit `data-auth-show="user"` und `requiresPaid()` in `gates.js` abgesichert. Free-Nutzer sehen den Button nicht; eingeloggter Free-Nutzer (ohne Abo) sieht Upgrade-Modal.
+- **5.7**: Button in `forderungsaufstellung.html` mit `data-auth-show="user"` und `requiresPaid()` absichern. Free-Nutzer sehen den Button nicht; eingeloggter Free/Pro-Nutzer ohne Business-Abo sieht Upgrade-Modal.
 - **3.8**: Kein Gate, kein `data-auth-show`. Identische Verfügbarkeit wie die bestehenden Rechner-Seiten.
-- **5.5**: Status-Dropdown und Notizfeld in `forderungsaufstellung.html` nur rendern wenn `fordifyAuth.isAuthenticated && fordifyAuth.hasSubscription`. Im Konto-Tab (`konto.html`) sowieso nur für eingeloggte Nutzer erreichbar.
+- **5.5**: Status-Dropdown und Notizfeld in `forderungsaufstellung.html` nur rendern wenn `fordifyAuth.plan === 'business'`. Im Konto-Tab (`konto.html`) Suche/Filter/Badges ebenfalls nur für Business. `gates.js` benötigt ggf. ein neues `requiresBusiness()`-Gate analog zu `requiresPaid()`, das explizit auf Business-Plan prüft.
 
 ---
 
@@ -89,23 +89,29 @@ Alle drei Plan-Karten und die Vergleichstabelle müssen die neuen Features auff�
 **Pro-Plan** – ergänzen (nach „Schuldner-Adressbuch"):
 ```html
 <li>✓ ZV-Auftrag-Generierung (§ 753 ZPO, amtliches Formular)</li>
-<li>✓ Fall-Status & Notizen (cloud-synchronisiert)</li>
 ```
 
-**Business-Plan** – erbt über „Alles aus Pro" → keine Änderung in der Karte nötig, aber in der Vergleichstabelle explizit ausweisen.
+**Business-Plan** – ergänzen (nach „CSV-Import"):
+```html
+<li>✓ Fall-Status & Workflow-Verwaltung</li>
+<li>✓ Fall-Notizen (Freitext, cloud-synchronisiert)</li>
+<li>✓ Favoritenmarkierung & Suche/Filter über alle Fälle</li>
+```
 
 **Vergleichstabelle** – neue Zeilen ergänzen (nach bestehenden Rechner-Zeilen):
 ```html
 <tr><td>PKH-Kalkulator (§ 49 RVG)</td><td class="check">✓</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
 <tr><td>ZV-Auftrag-Generierung (§ 753 ZPO)</td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
-<tr><td>Fall-Status &amp; Notizen</td><td class="cross">–</td><td class="check col-pro">✓</td><td class="check">✓</td></tr>
+<tr><td>Fall-Status &amp; Workflow</td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
+<tr><td>Fall-Notizen &amp; Favoriten</td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
+<tr><td>Fallsuche &amp; Filter</td><td class="cross">–</td><td class="cross col-pro">–</td><td class="check">✓</td></tr>
 ```
 
-**Meta-Description** aktualisieren: Pro- und Business-Kurzbeschreibung im `<head>` spiegelt neue Highlights wider.
+**Meta-Description** aktualisieren: Business-Kurzbeschreibung im `<head>` ergänzen um Fallverwaltung/Status/Notizen.
 
 ### Q.3 – Changelog (changelog.html)
 
-Nach Abschluss aller Features einen gebündelten Changelog-Eintrag anlegen. Inhalt: ZV-Auftrag-Generierung (Pro/Business), PKH-Kalkulator (Free), Konto-Verbesserungen (Status, Notizen, Suche, Filter).
+Nach Abschluss aller Features einen gebündelten Changelog-Eintrag anlegen. Inhalt: ZV-Auftrag-Generierung (Pro/Business), PKH-Kalkulator (Free), Konto-Verbesserungen für Business (Status, Notizen, Suche, Filter, Favoriten).
 
 ---
 
@@ -372,7 +378,7 @@ Im Fall-Header (unterhalb von Aktenzeichen/Schuldner):
 - Notizfeld (Textarea, max 500 Zeichen, Placeholder: „Interne Notiz zu diesem Fall…") — nur für eingeloggte Nutzer
 - Auto-Save bei `blur` (kein extra Speichern-Button)
 
-**Layout-Hinweis:** Beide Elemente kommen unterhalb des Fall-Headers in einem `data-auth-show="user"` Container. Bootstrap-`form-select` für das Dropdown, `form-control form-control-sm` für die Textarea. Kein separater CSS-Block nötig – passt nahtlos in den bestehenden Header-Bereich. Farbkodierung für Status-Badges (`badge bg-...`) im Konto-Tab orientiert sich an Bootstrap-Standardfarben: `bg-primary` (offen), `bg-warning text-dark` (in Vollstreckung), `bg-success` (erledigt), `bg-secondary` (abgeschrieben).
+**Layout-Hinweis:** Beide Elemente kommen unterhalb des Fall-Headers in einem Container, der nur gerendert wird wenn `fordifyAuth.plan === 'business'`. Bootstrap-`form-select` für das Dropdown, `form-control form-control-sm` für die Textarea. Kein separater CSS-Block nötig. Farbkodierung für Status-Badges (`badge bg-...`) im Konto-Tab: `bg-primary` (offen), `bg-warning text-dark` (in Vollstreckung), `bg-success` (erledigt), `bg-secondary` (abgeschrieben). Pro-Nutzer sehen an dieser Stelle einen Hinweis „Verfügbar ab Business" mit Upgrade-Link.
 
 ### Phase 5.5.5 – Rechtsdoks + Preise + Changelog
 
@@ -391,7 +397,7 @@ Tabelle der verarbeiteten Datenkategorien um zwei Zeilen ergänzen:
 | Fallstatus | Bearbeitungsstatus eines Falls (Textkonstante, kein Personenbezug) |
 | Fallnotizen | Freitextnotizen des Nutzers zu einem Fall (kann personenbezogene Daten Dritter enthalten) |
 
-**Preisseite:** Wie in Q.2 beschrieben – Fall-Status & Notizen in Pro/Business ergänzen.
+**Preisseite:** Wie in Q.2 beschrieben – Fall-Status, Notizen, Suche/Filter als Business-exklusive Features ergänzen.
 
 **Changelog:** Gebündelt mit 5.7 und 3.8.
 
