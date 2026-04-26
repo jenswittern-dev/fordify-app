@@ -80,6 +80,9 @@ const CloudSync = (() => {
         name: c.name,
         data: c.fall,
         naechste_id: c.naechsteId,
+        fall_status: c.fall_status || 'offen',
+        notes: c.notes || null,
+        pinned: c.pinned || false,
         updated_at: new Date().toISOString()
       });
     }

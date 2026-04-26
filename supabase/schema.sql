@@ -105,3 +105,15 @@ CREATE INDEX IF NOT EXISTS idx_subscriptions_scheduled_cancel_at
 CREATE INDEX IF NOT EXISTS idx_subscriptions_grace_period_end
   ON subscriptions (grace_period_end)
   WHERE status = 'canceled' AND grace_period_end IS NOT NULL;
+
+-- Migration 2026-04-26: Konto v2 – Fall-Status, Notizen, Favoriten (Business-Feature)
+-- Ausführen im Supabase Dashboard: SQL Editor → New Query → Run
+ALTER TABLE cases
+  ADD COLUMN IF NOT EXISTS fall_status TEXT DEFAULT 'offen'
+    CHECK (fall_status IN ('offen','in_vollstreckung','erledigt','abgeschrieben')),
+  ADD COLUMN IF NOT EXISTS notes TEXT DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS pinned BOOLEAN DEFAULT false;
+
+COMMENT ON COLUMN cases.fall_status IS 'Workflow-Status des Falls (Business-Feature). Werte: offen, in_vollstreckung, erledigt, abgeschrieben.';
+COMMENT ON COLUMN cases.notes IS 'Freitext-Notiz des Nutzers zum Fall (Business-Feature). Kann personenbezogene Daten enthalten.';
+COMMENT ON COLUMN cases.pinned IS 'Favorit-Markierung: gepinnte Fälle erscheinen oben in der Fallliste (Business-Feature).';

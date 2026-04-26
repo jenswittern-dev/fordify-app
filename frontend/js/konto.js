@@ -228,11 +228,93 @@ function _kontoRendererFuerTab(name) {
 
 // ---- Tab: Fälle ----
 
-function kontoRendereFaelleTab() {
+let _faelleSearch = '';
+let _faelleFilter = 'alle';
+let _faelleSort   = 'datum';
+
+const STATUS_CONFIG = {
+  offen:             { label: 'Offen',           bg: '#dbeafe', color: '#1e40af' },
+  in_vollstreckung:  { label: 'In Vollstreckung', bg: '#fef3c7', color: '#92400e' },
+  erledigt:          { label: 'Erledigt',         bg: '#dcfce7', color: '#166534' },
+  abgeschrieben:     { label: 'Abgeschrieben',    bg: '#f1f5f9', color: '#64748b' },
+};
+
+function kontoFaelleFilterAendern() {
+  _faelleSearch = (document.getElementById('faelle-suche')?.value || '').toLowerCase();
+  _faelleFilter = document.getElementById('faelle-filter')?.value || 'alle';
+  _faelleSort   = document.getElementById('faelle-sort')?.value || 'datum';
+  kontoRendereFaelleTab();
+}
+
+function kontoFallPinToggle(id) {
   const reg = kontoLadeRegistry();
-  const cases = Object.values(reg.cases).sort((a, b) =>
-    (b.updatedAt || '').localeCompare(a.updatedAt || '')
-  );
+  if (!reg.cases[id]) return;
+  reg.cases[id].pinned = !reg.cases[id].pinned;
+  reg.cases[id].updatedAt = new Date().toISOString();
+  kontoSpeichereRegistry(reg);
+  kontoRendereFaelleTab();
+}
+
+function kontoFallStatusAendern(id, status) {
+  const reg = kontoLadeRegistry();
+  if (!reg.cases[id]) return;
+  reg.cases[id].fall_status = status;
+  reg.cases[id].updatedAt = new Date().toISOString();
+  kontoSpeichereRegistry(reg);
+  kontoRendereFaelleTab();
+}
+
+function kontoRendereFaelleTab() {
+  const isBusiness = fordifyAuth?.plan === 'business';
+  const reg = kontoLadeRegistry();
+  let cases = Object.values(reg.cases);
+
+  // Business: Suche + Filter anwenden
+  if (isBusiness && _faelleSearch) {
+    cases = cases.filter(c =>
+      (c.name || '').toLowerCase().includes(_faelleSearch) ||
+      (c.fall?.aktenzeichen || '').toLowerCase().includes(_faelleSearch) ||
+      (c.fall?.gegner || '').toLowerCase().includes(_faelleSearch)
+    );
+  }
+  if (isBusiness && _faelleFilter !== 'alle') {
+    cases = cases.filter(c => (c.fall_status || 'offen') === _faelleFilter);
+  }
+
+  // Sortierung
+  cases.sort((a, b) => {
+    if (isBusiness) {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      if (_faelleSort === 'name') return (a.name || '').localeCompare(b.name || '', 'de');
+    }
+    return (b.updatedAt || '').localeCompare(a.updatedAt || '');
+  });
+
+  // Controls rendern (Business-only)
+  const controlsEl = document.getElementById('faelle-controls');
+  if (controlsEl) {
+    if (isBusiness) {
+      controlsEl.innerHTML = `
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+          <input type="search" id="faelle-suche" class="form-control form-control-sm" style="max-width:220px;"
+                 placeholder="Fall suchen…" value="${_escHtml(_faelleSearch)}" oninput="kontoFaelleFilterAendern()">
+          <select id="faelle-filter" class="form-select form-select-sm" style="max-width:180px;" onchange="kontoFaelleFilterAendern()">
+            <option value="alle"${_faelleFilter==='alle'?' selected':''}>Alle Status</option>
+            <option value="offen"${_faelleFilter==='offen'?' selected':''}>Offen</option>
+            <option value="in_vollstreckung"${_faelleFilter==='in_vollstreckung'?' selected':''}>In Vollstreckung</option>
+            <option value="erledigt"${_faelleFilter==='erledigt'?' selected':''}>Erledigt</option>
+            <option value="abgeschrieben"${_faelleFilter==='abgeschrieben'?' selected':''}>Abgeschrieben</option>
+          </select>
+          <select id="faelle-sort" class="form-select form-select-sm" style="max-width:160px;" onchange="kontoFaelleFilterAendern()">
+            <option value="datum"${_faelleSort==='datum'?' selected':''}>Zuletzt geändert</option>
+            <option value="name"${_faelleSort==='name'?' selected':''}>Name A–Z</option>
+          </select>
+        </div>`;
+    } else {
+      controlsEl.innerHTML = '';
+    }
+  }
 
   const anzahlEl = document.getElementById('faelle-anzahl');
   if (anzahlEl) anzahlEl.textContent = cases.length === 1 ? '1 gespeicherter Fall' : cases.length + ' gespeicherte Fälle';
@@ -243,8 +325,8 @@ function kontoRendereFaelleTab() {
   if (cases.length === 0) {
     listeEl.innerHTML = `
       <div class="text-center py-5 text-muted">
-        <p class="mb-3">Noch keine gespeicherten Fälle.</p>
-        <button class="btn btn-primary" onclick="kontoNeuenFallAnlegen()">Ersten Fall anlegen</button>
+        <p class="mb-3">${_faelleSearch || _faelleFilter !== 'alle' ? 'Keine Fälle gefunden.' : 'Noch keine gespeicherten Fälle.'}</p>
+        ${!_faelleSearch && _faelleFilter === 'alle' ? '<button class="btn btn-primary" onclick="kontoNeuenFallAnlegen()">Ersten Fall anlegen</button>' : ''}
       </div>`;
     return;
   }
@@ -268,15 +350,39 @@ function kontoRendereFaelleTab() {
             const summeFormatiert = summe > 0
               ? summe.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
               : '—';
+
+            const statusKey = c.fall_status || 'offen';
+            const sc = STATUS_CONFIG[statusKey] || STATUS_CONFIG.offen;
+            const statusBadge = isBusiness
+              ? `<span class="ms-2" style="font-size:0.7rem;padding:2px 7px;border-radius:10px;background:${sc.bg};color:${sc.color};font-weight:600;">${sc.label}</span>`
+              : '';
+            const pinIcon = isBusiness && c.pinned
+              ? `<span class="me-1" title="Favorit" aria-label="Favorit">📌</span>`
+              : '';
+            const notesIcon = isBusiness && c.notes
+              ? `<span class="ms-1 text-muted" title="${_escHtml(c.notes.slice(0,120))}" style="cursor:default;">💬</span>`
+              : '';
+
+            const statusSelect = isBusiness
+              ? `<select class="form-select form-select-sm" style="font-size:0.7rem;padding:2px 6px;min-width:130px;" onchange="kontoFallStatusAendern('${c.id}', this.value)">
+                  ${Object.entries(STATUS_CONFIG).map(([k,v]) => `<option value="${k}"${statusKey===k?' selected':''}>${v.label}</option>`).join('')}
+                </select>`
+              : '';
+            const pinBtn = isBusiness
+              ? `<button class="btn btn-sm" style="background:#f1f5f9;color:#475569;border:none;" title="${c.pinned?'Aus Favoriten entfernen':'Als Favorit markieren'}" onclick="kontoFallPinToggle('${c.id}')">${c.pinned ? '📌' : '☆'}</button>`
+              : '';
+
             return `<tr>
               <td class="ps-3">
-                <div class="fw-medium">${_escHtml(c.name || 'Unbenannter Fall')}</div>
+                <div class="fw-medium">${pinIcon}${_escHtml(c.name || 'Unbenannter Fall')}${statusBadge}${notesIcon}</div>
                 <div class="text-muted" style="font-size:0.75rem;">${positionen} Position${positionen !== 1 ? 'en' : ''}</div>
               </td>
               <td class="text-muted small">${datum}</td>
               <td class="text-end pe-2 small text-muted" style="white-space:nowrap;">${summeFormatiert}</td>
               <td>
-                <div class="d-flex gap-1 justify-content-end">
+                <div class="d-flex gap-1 justify-content-end flex-wrap">
+                  ${statusSelect}
+                  ${pinBtn}
                   <button class="btn btn-sm" style="background:#eff6ff;color:#1e3a8a;border:none;" onclick="kontoFallLaden('${c.id}')">Laden</button>
                   <button class="btn btn-sm" style="background:#f1f5f9;color:#475569;border:none;" onclick="kontoFallDuplizieren('${c.id}')">Kopieren</button>
                   <button class="btn btn-sm" style="background:#f1f5f9;color:#475569;border:none;" onclick="kontoFallExportieren('${c.id}')">Export</button>

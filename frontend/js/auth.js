@@ -130,7 +130,10 @@ async function ladeCloudDaten() {
       reg.cases[c.id] = {
         id: c.id, name: c.name,
         fall: c.data, naechsteId: c.naechste_id,
-        updatedAt: c.updated_at
+        updatedAt: c.updated_at,
+        fall_status: c.fall_status || 'offen',
+        notes: c.notes || null,
+        pinned: c.pinned || false,
       };
     });
     StorageBackend.setItem(STORAGE_KEY_CASES, JSON.stringify(reg));
