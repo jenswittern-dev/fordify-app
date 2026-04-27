@@ -514,7 +514,7 @@
   gap: 2rem;
 }
 @media (max-width: 767px) { .rechner-hero-inner { flex-direction: column; } }
-.rechner-hero-left { flex: 1; }
+.rechner-hero-left { flex: 1; min-width: 0; }
 .rechner-hero-tag {
   display: inline-flex;
   align-items: center;
