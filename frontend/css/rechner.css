@@ -640,6 +640,8 @@
   color: var(--color-primary);
   margin-bottom: 0.875rem;
   letter-spacing: -0.015em;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 .rechner-header .intro {
   font-size: var(--text-base);
@@ -850,8 +852,13 @@ a.rechner-cta-box .rechner-cta-box__title { color: #1e3a8a; }
   .rechner-hero-band .container {
     --bs-gutter-x: 2.5rem;
   }
+  /* Hero: Padding auf Mobile kompakter */
+  .fordify-hero { padding: 2.5rem 0 2rem; }
+  .fordify-hero h1 { overflow-wrap: break-word; hyphens: auto; }
+  /* Rechner Hero Band: kompakteres Padding auf Mobile */
+  .rechner-hero-band { padding: 1.25rem 0 1.5rem; }
   /* Trust-Badges: engerer Gap auf kleinen Screens */
-  .hero-trust { gap: 0.6rem; }
+  .hero-trust { gap: 0.5rem; }
   /* Rechner-Hero: Statistiken etwas kleiner */
   .rechner-hero-stat__val { font-size: 1rem; }
   /* Fact-Chips: Umbruch erlauben */

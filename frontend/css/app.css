@@ -1247,6 +1247,33 @@ body {
   .stepper-sep {
     min-width: 0.5rem;
   }
+
+  /* ---- Mobile Navbar: Collapsed-State ---- */
+  /* Desktop-Unterstrich (active/hover) macht im gestapelten Menü keinen Sinn */
+  .navbar-fa .navbar-nav .nav-link {
+    padding: 0.65rem 0.25rem;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .navbar-fa .navbar-nav .nav-link:hover {
+    border-bottom-color: rgba(255,255,255,0.07);
+  }
+  .navbar-fa .navbar-nav .nav-link[aria-current="page"],
+  .navbar-fa .navbar-nav .nav-link.active {
+    background: rgba(255,255,255,0.08);
+    border-bottom-color: rgba(255,255,255,0.07);
+    border-radius: 6px;
+    padding-left: 0.5rem;
+    color: #fff;
+  }
+  /* Letzter Nav-Item: kein unterer Trenner (CTA-Buttons haben eigenen border-top) */
+  .navbar-fa .navbar-nav .nav-item:last-child > .nav-link {
+    border-bottom: none;
+  }
+  /* Anmelden-Button: auf dunklem Hintergrund besser sichtbar machen */
+  .navbar-fa .btn-nav-ghost {
+    border-color: rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.06);
+  }
 }
 
 @media (max-width: 480px) {
@@ -1943,9 +1970,19 @@ body {
 @media (max-width: 575px) {
   /* Preise-Hero: mehr Atemraum vom Bildschirmrand */
   .preise-hero .container { --bs-gutter-x: 2.5rem; }
-  /* Vergleichstabelle: Schrift kleiner damit sie besser passt */
-  .comparison-table { font-size: 0.78rem; }
-  .comparison-table th, .comparison-table td { padding: 0.5rem 0.6rem; }
+  /* Vergleichstabelle: Fixed Layout – passt ohne horizontales Scrollen */
+  .comparison-table {
+    table-layout: fixed;
+    width: 100%;
+    font-size: 0.72rem;
+  }
+  .comparison-table th:first-child,
+  .comparison-table td:first-child { width: 54%; word-break: break-word; }
+  .comparison-table th:not(:first-child),
+  .comparison-table td:not(:first-child) { width: 15.33%; text-align: center; }
+  .comparison-table th, .comparison-table td { padding: 0.4rem 0.35rem; }
+  /* Comparison-Section: seitliches Padding entfernen (Container reicht) */
+  .comparison-section { padding-left: 0; padding-right: 0; padding-bottom: 2rem; }
   /* Billing-Toggle zentriert */
   .billing-toggle-wrap { flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
 }
