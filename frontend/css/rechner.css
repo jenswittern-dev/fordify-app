@@ -643,6 +643,11 @@
   overflow-wrap: break-word;
   hyphens: auto;
 }
+/* H1 direkt in rechner-hero-band (kein .rechner-header Wrapper) */
+.rechner-hero-left h1 {
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
 .rechner-header .intro {
   font-size: var(--text-base);
   line-height: 1.7;
