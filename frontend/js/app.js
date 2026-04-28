@@ -2805,4 +2805,3 @@ function fallNotizenSpeichern() {
   state.fall.notes = el.value;
   speichern();
 }
-}
