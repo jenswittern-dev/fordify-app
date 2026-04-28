@@ -125,3 +125,15 @@ COMMENT ON COLUMN cases.pinned IS 'Favorit-Markierung: gepinnte Fälle erscheine
 CREATE UNIQUE INDEX IF NOT EXISTS idx_subscriptions_paddle_subscription_id_unique
   ON subscriptions (paddle_subscription_id)
   WHERE paddle_subscription_id IS NOT NULL;
+
+-- Migration 2026-04-29b: Echter UNIQUE Constraint für paddle_subscription_id
+-- Ersetzt den partiellen Unique Index aus Migration 2026-04-29.
+-- PostgREST ON CONFLICT (col) braucht einen vollwertigen UNIQUE Constraint.
+-- PostgreSQL erlaubt mehrere NULL-Werte in UNIQUE Constraints (NULL ≠ NULL).
+-- Ausführen im Supabase Dashboard: SQL Editor → New Query → Run
+
+DROP INDEX IF EXISTS idx_subscriptions_paddle_subscription_id_unique;
+
+ALTER TABLE subscriptions
+  ADD CONSTRAINT subscriptions_paddle_subscription_id_key
+  UNIQUE (paddle_subscription_id);
