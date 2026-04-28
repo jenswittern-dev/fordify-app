@@ -5,6 +5,15 @@
 
 "use strict";
 
+function escHtml(s) {
+  return (s == null ? '' : String(s))
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // ---- State ----
 
 const STORAGE_KEY_CASES       = "fordify_cases";
@@ -1650,10 +1659,10 @@ function rendereVorschau() {
       <div class="pdf-section__label">Forderungsgrund</div>
       <div class="table-scroll">
       <table class="pdf-meta-table">
-        <tr><th>Grundlage:</th><td>${fgKat}</td></tr>
-        ${fall.titelArt ? `<tr><th>Art:</th><td>${fall.titelArt}</td></tr>` : ""}
-        ${hatTitel && fall.titelGericht ? `<tr><th>Gericht / Beh\u00f6rde:</th><td>${fall.titelGericht}</td></tr>` : ""}
-        ${hatTitel && fall.titelAz ? `<tr><th>Aktenzeichen:</th><td>${fall.titelAz}</td></tr>` : ""}
+        <tr><th>Grundlage:</th><td>${escHtml(fgKat)}</td></tr>
+        ${fall.titelArt ? `<tr><th>Art:</th><td>${escHtml(fall.titelArt)}</td></tr>` : ""}
+        ${hatTitel && fall.titelGericht ? `<tr><th>Gericht / Beh\u00f6rde:</th><td>${escHtml(fall.titelGericht)}</td></tr>` : ""}
+        ${hatTitel && fall.titelAz ? `<tr><th>Aktenzeichen:</th><td>${escHtml(fall.titelAz)}</td></tr>` : ""}
         ${hatTitel && fall.titelDatum ? `<tr><th>Datum:</th><td>${formatDate(parseDate(fall.titelDatum))}</td></tr>` : ""}
         ${hatTitel && fall.titelRechtskraft ? `<tr><th>Zustellungsdatum:</th><td>${formatDate(parseDate(fall.titelRechtskraft))}</td></tr>` : ""}
       </table>
@@ -1686,14 +1695,14 @@ function rendereVorschau() {
       <div class="pdf-parties">
         <div class="pdf-party">
           <span class="pdf-party__role">Gl\u00e4ubiger*in</span>
-          <span class="pdf-party__name">${fall.mandant || "\u2014"}</span>
+          <span class="pdf-party__name">${escHtml(fall.mandant) || "\u2014"}</span>
         </div>
         <div class="pdf-party__sep">./.</div>
         <div class="pdf-party">
           <span class="pdf-party__role">Schuldner*in</span>
-          <span class="pdf-party__name">${fall.gegner || "\u2014"}</span>
+          <span class="pdf-party__name">${escHtml(fall.gegner) || "\u2014"}</span>
         </div>
-        ${fall.aktenzeichen ? `<div class="pdf-party__az">GZ.: ${fall.aktenzeichen}</div>` : ""}
+        ${fall.aktenzeichen ? `<div class="pdf-party__az">GZ.: ${escHtml(fall.aktenzeichen)}</div>` : ""}
       </div>
     </div>
 
