@@ -8,7 +8,7 @@
 // Verrechnungsreihenfolge (kann per Position überschrieben werden)
 const VERRECHNUNG_REIHENFOLGE = [
   "unverzinsliche_kosten",   // § 367 Abs. 1 BGB: zunächst Kosten
-  "verzinsliche_kosten",
+  "verzinsliche_kosten",     // (ebenfalls Kosten)
   "zinsen_hauptsache",       // dann Zinsen
   "zinsen_kosten",
   "hauptforderung",          // zuletzt Hauptforderung
