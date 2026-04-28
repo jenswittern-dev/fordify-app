@@ -117,3 +117,11 @@ ALTER TABLE cases
 COMMENT ON COLUMN cases.fall_status IS 'Workflow-Status des Falls (Business-Feature). Werte: offen, in_vollstreckung, erledigt, abgeschrieben.';
 COMMENT ON COLUMN cases.notes IS 'Freitext-Notiz des Nutzers zum Fall (Business-Feature). Kann personenbezogene Daten enthalten.';
 COMMENT ON COLUMN cases.pinned IS 'Favorit-Markierung: gepinnte Fälle erscheinen oben in der Fallliste (Business-Feature).';
+
+-- Migration 2026-04-29: UNIQUE-Constraint für paddle_subscription_id
+-- Ausführen im Supabase Dashboard: SQL Editor → New Query → Run
+-- Partial unique index: erlaubt mehrere NULL-Werte (Nutzer ohne Paddle-Sub),
+-- erzwingt aber Eindeutigkeit bei vorhandenen IDs.
+CREATE UNIQUE INDEX IF NOT EXISTS idx_subscriptions_paddle_subscription_id_unique
+  ON subscriptions (paddle_subscription_id)
+  WHERE paddle_subscription_id IS NOT NULL;
