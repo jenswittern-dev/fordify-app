@@ -14,6 +14,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: JS Syntax Check
+        run: |
+          node --check frontend/js/app.js
+          node --check frontend/js/auth.js
+          node --check frontend/js/konto.js
+          node --check frontend/js/storage.js
+          node --check frontend/js/gates.js
+          node --check frontend/js/verrechnung.js
+          node --check frontend/js/zinsen.js
+          node --check frontend/js/rvg.js
+
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
