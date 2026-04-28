@@ -2305,7 +2305,15 @@ function generiereImpressumFooterHtml(imp) {
   }
   if (!imp.name) return "";
 
-  function e(s) { return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function e(s) {
+    return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+                  .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
+  function safeHref(url) {
+    const u = (url || "").trim();
+    if (!/^(https?:|mailto:)/i.test(u)) return "#";
+    return u.replace(/&/g,"&amp;").replace(/"/g,"&quot;");
+  }
   const DOT = " &nbsp;\u00b7&nbsp; ";
 
   // Zeile 1: Firmenname · Vertreten durch · Adresse · E-Mail · Website
@@ -2317,8 +2325,8 @@ function generiereImpressumFooterHtml(imp) {
     if (imp.plz || imp.ort) adr += `, ${[e(imp.plz), e(imp.ort)].filter(Boolean).join("\u00a0")}`;
     zeile1.push(adr);
   }
-  if (imp.email)   zeile1.push(`E-Mail: <a href="mailto:${e(imp.email)}" class="imp-link">${e(imp.email)}</a>`);
-  if (imp.website) zeile1.push(`<a href="${e(imp.website)}" target="_blank" rel="noopener noreferrer" class="imp-link">${e(imp.website.replace(/^https?:\/\//, ""))}</a>`);
+  if (imp.email)   zeile1.push(`E-Mail: <a href="${safeHref("mailto:" + imp.email)}" class="imp-link">${e(imp.email)}</a>`);
+  if (imp.website) zeile1.push(`<a href="${safeHref(imp.website)}" target="_blank" rel="noopener noreferrer" class="imp-link">${e(imp.website.replace(/^https?:\/\//, ""))}</a>`);
 
   // Zeile 2: Tel · Fax · Kammer · Reg.-Nr. · USt-ID · BHV
   const zeile2 = [];
@@ -2340,8 +2348,8 @@ function generiereImpressumFooterHtml(imp) {
 
   // Zeile 4: Impressum · Datenschutz (klickbar in Web-Vorschau und PDF)
   const zeile4 = [];
-  if (imp.impressumUrl)   zeile4.push(`<a href="${e(imp.impressumUrl)}" target="_blank" rel="noopener noreferrer" class="imp-link">Impressum</a>`);
-  if (imp.datenschutzUrl) zeile4.push(`<a href="${e(imp.datenschutzUrl)}" target="_blank" rel="noopener noreferrer" class="imp-link">Datenschutz</a>`);
+  if (imp.impressumUrl)   zeile4.push(`<a href="${safeHref(imp.impressumUrl)}" target="_blank" rel="noopener noreferrer" class="imp-link">Impressum</a>`);
+  if (imp.datenschutzUrl) zeile4.push(`<a href="${safeHref(imp.datenschutzUrl)}" target="_blank" rel="noopener noreferrer" class="imp-link">Datenschutz</a>`);
 
   if (!zeile1.length) return "";
 
