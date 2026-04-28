@@ -45,7 +45,7 @@ Browser
   └── agb.html
 ```
 
-**Service Worker** (`sw.js`, aktuell `fordify-v175` / Staging `fordify-staging-v130`) cached alle Assets für Offline-Nutzung. Bei Frontend-Änderungen: Cache-Name inkrementieren.
+**Service Worker** (`sw.js`, aktuell `fordify-v176` / Staging `fordify-staging-v131`) cached alle Assets für Offline-Nutzung. Bei Frontend-Änderungen: Cache-Name inkrementieren.
 
 **Externe Dienste:**
 - **Supabase** (EU Frankfurt): Auth, Datenbank, Edge Functions
@@ -357,7 +357,7 @@ StorageBackend.removeItem(key)
 
 ## 7. Service Worker & Caching
 
-- Cache-Name: `fordify-v175` (Prod) / `fordify-staging-v130` (Staging)
+- Cache-Name: `fordify-v176` (Prod) / `fordify-staging-v131` (Staging)
 - Erkennung: `self.location.hostname.includes('staging') || localhost`
 - Strategie: Cache-First, dann Network
 - **Regel:** Bei jedem Commit mit geänderten Frontend-Dateien → N um 1 erhöhen
