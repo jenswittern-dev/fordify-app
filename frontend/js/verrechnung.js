@@ -1,17 +1,17 @@
 // ============================================================
 // Zahlungsverrechnung §§ 366, 367 BGB (Port von core/verrechnung.py)
-// Reihenfolge: Zinsen → unverzinsliche Kosten → Hauptforderung
+// Reihenfolge nach § 367 Abs. 1 BGB: Kosten → Zinsen → Hauptforderung
 // ============================================================
 
 "use strict";
 
 // Verrechnungsreihenfolge (kann per Position überschrieben werden)
 const VERRECHNUNG_REIHENFOLGE = [
-  "zinsen_hauptsache",
-  "zinsen_kosten",
-  "unverzinsliche_kosten",
+  "unverzinsliche_kosten",   // § 367 Abs. 1 BGB: zunächst Kosten
   "verzinsliche_kosten",
-  "hauptforderung",
+  "zinsen_hauptsache",       // dann Zinsen
+  "zinsen_kosten",
+  "hauptforderung",          // zuletzt Hauptforderung
 ];
 
 /**

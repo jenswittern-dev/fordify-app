@@ -1930,13 +1930,13 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
       // Restbetrag wiederherstellen, dann Rest nach § 367
       const fuerZielVerwendet = tilgungsBudget.minus(restZahlung);
       restZahlung = restVorTilgung.minus(fuerZielVerwendet);
-      verrechneAufEntry(zinsenGeordnet, zahlLabel);
       verrechneAufEntry(kostenEntries, zahlLabel);
+      verrechneAufEntry(zinsenGeordnet, zahlLabel);
       verrechneAufEntry(hfEntries, zahlLabel);
     } else {
-      // Standard § 367 BGB: Zinsen → Kosten → HF (älteste zuerst)
-      verrechneAufEntry(zinsenGeordnet, zahlLabel);
+      // Standard § 367 BGB: Kosten → Zinsen → HF (älteste zuerst)
       verrechneAufEntry(kostenEntries, zahlLabel);
+      verrechneAufEntry(zinsenGeordnet, zahlLabel);
       verrechneAufEntry(hfEntries, zahlLabel);
     }
   }
