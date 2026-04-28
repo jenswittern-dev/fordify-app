@@ -87,7 +87,7 @@ function _leseLocalSession() {
 // Direct fetch instead of supabaseClient — avoids lock contention on konto.html.
 async function _pruefeAbo(userId, accessToken) {
   const res = await fetch(
-    `${CONFIG.supabase.url}/rest/v1/subscriptions?user_id=eq.${userId}&select=status,plan`,
+    `${CONFIG.supabase.url}/rest/v1/subscriptions?user_id=eq.${userId}&select=status,plan,grace_period_end`,
     { headers: { 'apikey': CONFIG.supabase.anonKey, 'Authorization': `Bearer ${accessToken}` } }
   );
   if (!res.ok) return;
@@ -96,6 +96,12 @@ async function _pruefeAbo(userId, accessToken) {
   if (row?.status === 'active') {
     fordifyAuth.hasSubscription = true;
     fordifyAuth.plan = row.plan;
+  } else if (row?.status === 'canceled' && row?.grace_period_end &&
+             new Date(row.grace_period_end) > new Date()) {
+    fordifyAuth.hasSubscription = true;
+    fordifyAuth.plan = row.plan;
+    fordifyAuth.isGracePeriod = true;
+    fordifyAuth.gracePeriodEnd = new Date(row.grace_period_end);
   }
 }
 
@@ -136,7 +142,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await ladeKontakte();
     StorageBackend.init(fordifyAuth);
     aktualisiereUIFuerAuth();
-
+    _zeigGracePeriodBanner();
     _kontoUpdateHero();
     _kontoInitTabs();
     _kontoActivateTabFromUrl();
@@ -153,6 +159,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (event === 'SIGNED_OUT') window.location.href = '/forderungsaufstellung';
   });
 });
+
+// ---- Grace-Period-Banner ----
+
+function _zeigGracePeriodBanner() {
+  if (!fordifyAuth.isGracePeriod || !fordifyAuth.gracePeriodEnd) return;
+  const bis = fordifyAuth.gracePeriodEnd.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const banner = document.createElement('div');
+  banner.className = 'alert alert-warning alert-dismissible fade show mx-3 mt-3';
+  banner.setAttribute('role', 'alert');
+  banner.innerHTML = `
+    <strong>Abo gekündigt.</strong> Du hast noch bis zum <strong>${bis}</strong> Zugriff auf deine Daten.
+    Jetzt <a href="/preise" class="alert-link">erneut abonnieren</a> oder Daten exportieren.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Schließen"></button>`;
+  const content = document.getElementById('konto-content');
+  if (content) content.prepend(banner);
+}
 
 // ---- Hero aktualisieren ----
 
