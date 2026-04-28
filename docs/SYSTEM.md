@@ -1,6 +1,6 @@
 # SYSTEM.md – Technisches Whitepaper Fordify
 
-> Stand: 2026-04-21
+> Stand: 2026-04-28
 > Zielgruppe: Entwickler, Claude Code (Kontext für neue Features)
 
 ---
@@ -26,20 +26,26 @@ Browser
         ├── js/auth-ui.js          (Auth-UI-Steuerung: data-auth-show, Avatar, Plan-Badge)
         ├── js/gates.js            (Feature-Gates: requiresPaid(), Upgrade-Modal)
         ├── js/zusammenfassung.js  (deprecated – nicht mehr direkt genutzt)
+        ├── js/contacts.js         (Kontaktverwaltung – konto.html)
+        ├── js/zv.js               (Zwangsvollstreckungsformular-Logik)
         └── js/app.js              (State, UI, Event-Handling – ~2100 Zeilen)
 
   Weitere Seiten (eigenständige HTML-Dateien):
   ├── index.html                   (Landing Page / Homepage)
+  ├── konto.html                   (Kundenbereich: Fälle, Firmendaten, Abo)
   ├── preise.html                  (Pricing-Seite mit Paddle-Checkout)
   ├── zinsrechner.html             (SEO-Zinsrechner, js/rechner-zins.js)
   ├── rvg-rechner.html             (SEO-RVG-Rechner, js/rechner-rvg.js)
   ├── gerichtskostenrechner.html   (SEO-GKG-Rechner, js/rechner-gkg.js)
+  ├── tilgungsrechner.html         (SEO-Tilgungsrechner, js/rechner-tilgung.js)
+  ├── changelog.html               (Changelog-Seite)
+  ├── avv.html                     (Auftragsverarbeitungsvertrag)
   ├── impressum.html
   ├── datenschutz.html
   └── agb.html
 ```
 
-**Service Worker** (`sw.js`, aktuell `fordify-v90` / Staging `fordify-staging-v44`) cached alle Assets für Offline-Nutzung. Bei Frontend-Änderungen: Cache-Name inkrementieren.
+**Service Worker** (`sw.js`, aktuell `fordify-v169` / Staging `fordify-staging-v124`) cached alle Assets für Offline-Nutzung. Bei Frontend-Änderungen: Cache-Name inkrementieren.
 
 **Externe Dienste:**
 - **Supabase** (EU Frankfurt): Auth, Datenbank, Edge Functions
@@ -334,7 +340,7 @@ Nicht gegated: PDF-Export (`drucken()`).
 `drucken()` öffnet `window.open()` mit vollständigem HTML (CSS inline injiziert),
 ruft `window.print()` nach 400ms auf. Kein html2canvas / jsPDF — native Druckengine.
 
-PDF-Branding aktuell: einheitlicher blauer Footer für alle Nutzer. Gestuftes Branding (Pro = dezent, Business = keins) ist in `docs/superpowers/plans/2026-04-20-freemium-implementation.md` Task 11 geplant aber noch nicht implementiert.
+PDF-Branding: gestuft via `getFordifyBranding()` in `app.js` — Free = prominenter Fordify-Footer, Pro = dezenter Footer, Business = kein Footer (implementiert 2026-04-23).
 
 ### 6.8 Storage-Abstraktion (`js/storage.js`)
 
@@ -351,7 +357,7 @@ StorageBackend.removeItem(key)
 
 ## 7. Service Worker & Caching
 
-- Cache-Name: `fordify-v90` (Prod) / `fordify-staging-v44` (Staging)
+- Cache-Name: `fordify-v169` (Prod) / `fordify-staging-v124` (Staging)
 - Erkennung: `self.location.hostname.includes('staging') || localhost`
 - Strategie: Cache-First, dann Network
 - **Regel:** Bei jedem Commit mit geänderten Frontend-Dateien → N um 1 erhöhen
@@ -375,8 +381,11 @@ N8N-Instanz: `https://n8n.srv1063720.hstgr.cloud` (Hostinger VPS)
 | Workflow-ID | Name | Typ | Trigger | Status |
 |---|---|---|---|---|
 | `elcsjZCxDmtCw2BI` | Fordify – Onboarding-Mail | Webhook | Supabase `on_new_user`-Trigger → N8N-Webhook | Aktiv seit 2026-04-21 |
+| `PexOk66BNT8uDntc` | Fordify – Zahlungsbestätigung | Webhook | paddle-webhook bei `transaction.completed` | Aktiv |
+| `mYQAOS7oacoKW5Rq` | Fordify – Offboarding bei Kündigung | Webhook | paddle-webhook bei `subscription.canceled` | Aktiv |
 | `hJpXXeIuvGQY60iQ` | Fordify – Weekly Digest | Cron | Montags 08:00 | Aktiv |
 | `HDZV78j89uLYdPTB` | Fordify – Retention Email Cron | Cron | Täglich 09:00 | Aktiv seit 2026-04-23 |
+| `fdfPAUVG4rvMoPcS` | Fordify – Datenlöschungs-Cron | Cron | Täglich 02:00, löscht cases/contacts/settings nach grace_period_end | Aktiv |
 
 ### Retention Email Cron (`HDZV78j89uLYdPTB`)
 
