@@ -108,7 +108,6 @@ fordify-app/
 │       │   └── done/           ← abgeschlossene Specs
 │       └── plans/              ← Implementierungspläne
 │           └── done/           ← abgeschlossene Pläne
-└── tests/                      ← Python-Tests für Berechnungslogik
 ```
 
 ---
