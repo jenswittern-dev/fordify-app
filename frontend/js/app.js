@@ -1742,7 +1742,7 @@ function rendereVorschau() {
  * – Initiale Zinsen + Kosten + HF als separate Abschnitte
  * – Jede Position mit eingerückten Zahlungs-Sub-Rows
  * – Neue Zinsen nach Zahlung direkt unter der zugehörigen HF
- * – §367 BGB Verrechnungsreihenfolge: Zinsen → Kosten → HF
+ * – §367 BGB Verrechnungsreihenfolge: Kosten → Zinsen → HF
  */
 function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   const insoDatum = fall.insoDatum ? parseDate(fall.insoDatum) : null;
