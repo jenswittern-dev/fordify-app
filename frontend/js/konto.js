@@ -1016,12 +1016,13 @@ function kontoCSVImportDatei(input) {
 function _parseCSV(text) {
   const lines = text.trim().split(/\r?\n/);
   if (lines.length < 2) return [];
-  const headers = _csvSplitLine(lines[0]).map(h => h.trim().toLowerCase());
+  const delimiter = _csvDetectDelimiter(lines[0]);
+  const headers = _csvSplitLine(lines[0], delimiter).map(h => h.trim().toLowerCase());
   const rows = [];
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i].trim();
     if (!line) continue;
-    const values = _csvSplitLine(line);
+    const values = _csvSplitLine(line, delimiter);
     const row = {};
     headers.forEach((h, idx) => { row[h] = (values[idx] || '').trim(); });
     rows.push(row);
@@ -1029,7 +1030,13 @@ function _parseCSV(text) {
   return rows;
 }
 
-function _csvSplitLine(line) {
+function _csvDetectDelimiter(firstLine) {
+  const semis  = (firstLine.match(/;/g)  || []).length;
+  const commas = (firstLine.match(/,/g) || []).length;
+  return semis > commas ? ';' : ',';
+}
+
+function _csvSplitLine(line, delimiter = ',') {
   const values = [];
   let cur = '';
   let inQuotes = false;
@@ -1038,7 +1045,7 @@ function _csvSplitLine(line) {
     if (ch === '"') {
       if (inQuotes && line[i + 1] === '"') { cur += '"'; i++; }
       else { inQuotes = !inQuotes; }
-    } else if (ch === ',' && !inQuotes) {
+    } else if (ch === delimiter && !inQuotes) {
       values.push(cur);
       cur = '';
     } else {
