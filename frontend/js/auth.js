@@ -11,7 +11,8 @@ const fordifyAuth = {
   hasSubscription: false,
   user: null,
   plan: 'free',
-  gracePeriodEnd: null
+  gracePeriodEnd: null,
+  isGracePeriod: false,
 };
 
 function _emailRedirectTo() {
@@ -37,9 +38,10 @@ async function ladeSubscriptionStatus() {
     fordifyAuth.gracePeriodEnd = null;
   } else if (data && data.status === 'canceled' && data.grace_period_end &&
              new Date(data.grace_period_end) > new Date()) {
-    fordifyAuth.hasSubscription = false;
-    fordifyAuth.plan = 'free';
+    fordifyAuth.hasSubscription = true;
+    fordifyAuth.plan = data.plan;
     fordifyAuth.gracePeriodEnd = new Date(data.grace_period_end);
+    fordifyAuth.isGracePeriod = true;
   } else {
     fordifyAuth.hasSubscription = false;
     fordifyAuth.plan = 'free';
