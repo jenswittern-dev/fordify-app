@@ -1860,7 +1860,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   });
 
   // ----------------------------------------------------------------
-  // Zahlungen verarbeiten (§367 BGB: Zinsen → Kosten → HF)
+  // Zahlungen verarbeiten (§367 BGB: Kosten → Zinsen → HF)
   // ----------------------------------------------------------------
   for (let zahlIdx = 0; zahlIdx < zahlungen.length; zahlIdx++) {
     const zahlung = zahlungen[zahlIdx];
