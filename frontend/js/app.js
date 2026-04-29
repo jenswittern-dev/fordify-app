@@ -1655,9 +1655,12 @@ function rendereVorschau() {
 
   // Einstellungen: Logo + Impressum
   const einst = ladeEinstellungen();
-  const logoPos = einst.logoPosition || "links";
-  const logoHtml = einst.logo
-    ? `<div class="pdf-logo-wrap pdf-logo-wrap--${logoPos}"><img class="pdf-logo" src="${einst.logo}" alt="Kanzlei-Logo"></div>`
+  const VALID_LOGO_POS = ["links", "mitte", "rechts"];
+  const logoPos = VALID_LOGO_POS.includes(einst.logoPosition) ? einst.logoPosition : "links";
+  const logoSafe = (typeof einst.logo === "string" && /^data:image\/[a-z+]+;base64,/.test(einst.logo))
+    ? einst.logo : null;
+  const logoHtml = logoSafe
+    ? `<div class="pdf-logo-wrap pdf-logo-wrap--${logoPos}"><img class="pdf-logo" src="${logoSafe}" alt="Kanzlei-Logo"></div>`
     : "";
 
   const imp = einst.imp || {};
@@ -2490,6 +2493,14 @@ function einstellungenImportieren(input) {
         return;
       }
       const einst = parsed.fordify_settings;
+      // Sicherheitsvalidierung: Logo nur als data:image/-URI erlaubt
+      if (einst.logo && !/^data:image\/[a-z+]+;base64,/.test(einst.logo)) {
+        einst.logo = null;
+      }
+      // Sicherheitsvalidierung: logoPosition auf Whitelist prüfen
+      if (einst.logoPosition && !["links", "mitte", "rechts"].includes(einst.logoPosition)) {
+        einst.logoPosition = "links";
+      }
       speichereEinstellungen(einst);
 
       // Felder direkt befüllen (Modal ist bereits offen – kein erneutes .show())
