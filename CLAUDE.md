@@ -67,7 +67,7 @@ fordify-app/
 │   ├── impressum.html
 │   ├── datenschutz.html
 │   ├── agb.html
-│   ├── sw.js                   ← Service Worker (aktuell fordify-v187 / staging-v142)
+│   ├── sw.js                   ← Service Worker (aktuell fordify-v189 / staging-v144)
 │   ├── manifest.json           ← PWA-Manifest
 │   ├── css/
 │   │   ├── app.css             ← Styling, Print-CSS, Preisseite, Feature-Gates
@@ -88,6 +88,7 @@ fordify-app/
 │   │   ├── rechner-zins.js     ← Zinsrechner-Logik (zinsrechner.html)
 │   │   ├── rechner-rvg.js      ← RVG-Rechner-Logik (rvg-rechner.html)
 │   │   ├── rechner-gkg.js      ← GKG-Rechner-Logik (gerichtskostenrechner.html)
+│   │   ├── utils.js            ← Zentrale Utilities (escHtml, escAttr, parseGermanDecimal) – als erstes JS geladen
 │   │   └── zusammenfassung.js  ← (deprecated, nicht mehr direkt genutzt)
 │   ├── data/
 │   │   ├── basiszinssaetze.json ← aktualisierbar (nächste Fälligkeit 01.07.2026)

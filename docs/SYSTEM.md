@@ -25,6 +25,7 @@ Browser
         ├── js/auth.js             (Supabase Magic Link Auth)
         ├── js/auth-ui.js          (Auth-UI-Steuerung: data-auth-show, Avatar, Plan-Badge)
         ├── js/gates.js            (Feature-Gates: requiresPaid(), Upgrade-Modal)
+        ├── js/utils.js            (globale Utilities: escHtml, escAttr, parseGermanDecimal – als erstes geladen)
         ├── js/zusammenfassung.js  (deprecated – nicht mehr direkt genutzt)
         ├── js/contacts.js         (Kontaktverwaltung – konto.html)
         ├── js/zv.js               (Zwangsvollstreckungsformular-Logik)
@@ -45,7 +46,7 @@ Browser
   └── agb.html
 ```
 
-**Service Worker** (`sw.js`, aktuell `fordify-v187` / Staging `fordify-staging-v142`) cached alle Assets für Offline-Nutzung. Bei Frontend-Änderungen: Cache-Name inkrementieren.
+**Service Worker** (`sw.js`, aktuell `fordify-v189` / Staging `fordify-staging-v144`) cached alle Assets für Offline-Nutzung. Bei Frontend-Änderungen: Cache-Name inkrementieren.
 
 **Externe Dienste:**
 - **Supabase** (EU Frankfurt): Auth, Datenbank, Edge Functions
@@ -357,7 +358,7 @@ StorageBackend.removeItem(key)
 
 ## 7. Service Worker & Caching
 
-- Cache-Name: `fordify-v187` (Prod) / `fordify-staging-v142` (Staging)
+- Cache-Name: `fordify-v189` (Prod) / `fordify-staging-v144` (Staging)
 - Erkennung: `self.location.hostname.includes('staging') || localhost`
 - Strategie: Cache-First, dann Network
 - **Regel:** Bei jedem Commit mit geänderten Frontend-Dateien → N um 1 erhöhen

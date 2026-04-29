@@ -157,6 +157,23 @@
 
 ---
 
+## Phase 8 – Holistic Audit Fixes (Security, Mobile, UX)
+
+> Audit-Grundlage: Codex-Audit + Antigravity-Audit (2026-04-29)
+
+| # | Feature | Status | Datum |
+|---|---|---|---|
+| 8.1 | **DOM-XSS vollständige Absicherung (N1)** – `escAttr()` hinzugefügt; alle user-kontrollierten Felder in app.js, konto.js, contacts.js, rechner-gkg.js, rechner-rvg.js abgesichert | ✅ | 2026-04-29 |
+| 8.2 | **Logo-Injection + Settings-JSON-Validierung (N2)** – `data:image/...` Whitelist bei Render + Import; logoPosition auf Whitelist validiert | ✅ | 2026-04-29 |
+| 8.3 | **Mobile Overflow-Fixes (F3 Erweiterung)** – Tilgungsrechner-Tabs wrappbar bei 360px; Navbar-Komprimierung bei 768–959px | ✅ | 2026-04-29 |
+| 8.4 | **PWA-Offline-Navigation extensionless Routes (N4)** – SW-Fetch-Handler mapped `/page` → `/page.html` aus Cache | ✅ | 2026-04-29 |
+| 8.5 | **Tausendertrennzeichen-Parsing systemweit (N5)** – `parseGermanDecimal` mit zweistufigem Replace in app.js, rechner-zins.js, rechner-rvg.js | ✅ | 2026-04-29 |
+| 8.6 | **CSV-Export Fälle erweitert (N6)** – Spalten FallID, Restforderung, Status (via STATUS_CONFIG) hinzugefügt | ✅ | 2026-04-29 |
+| 8.7 | **ZV-Formular Forderungssummen (N7)** – `_zvForderungsbetraege()` Hilfsfunktion; Beträge-Logging für AcroForm-Feldnamen-Ermittlung | ✅ | 2026-04-29 |
+| 8.8 | **utils.js – zentrale Utility-Funktionen** – `escHtml`, `escAttr`, `parseGermanDecimal` aus shared module; lokale Duplikate entfernt | ✅ | 2026-04-29 |
+
+---
+
 ## Bekannte offene Punkte aus Nutzerfeedback
 
 | Quelle | Beschreibung | Status |
