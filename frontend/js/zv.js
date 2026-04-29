@@ -10,6 +10,7 @@ async function erstelleZVAuftrag(fallDaten, einstellungen, zvFelder) {
   const pdfBytes = await pdfResp.arrayBuffer();
   const pdfDoc  = await PDFDocument.load(pdfBytes);
   const form    = pdfDoc.getForm();
+  if (typeof console !== 'undefined') console.log('[ZV] Formularfelder:', form.getFields().map(f => f.getName()));
 
   const set = (name, value) => {
     if (!value) return;
@@ -49,6 +50,12 @@ async function erstelleZVAuftrag(fallDaten, einstellungen, zvFelder) {
   if (zvFelder.vermoegensauskunft)  tick('Kontrollkästchen 447');
   if (zvFelder.forderungspfaendung) tick('Kontrollkästchen 460');
 
+  // Forderungsbeträge
+  const betraege = _zvForderungsbetraege(fallDaten.positionen || []);
+  // TODO: Feldnamen nach PDF-Inspektion eintragen (s. Browser-Konsole)
+  // set('FELD_HAUPTFORDERUNG', betraege.hf);
+  // set('FELD_KOSTEN', betraege.kosten);
+
   const ausgabe = await pdfDoc.save();
   const blob = new Blob([ausgabe], { type: 'application/pdf' });
   const url  = URL.createObjectURL(blob);
@@ -70,4 +77,16 @@ function _formatDatum(isoStr) {
   try {
     return new Date(isoStr).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
   } catch(_) { return isoStr; }
+}
+
+function _zvForderungsbetraege(positionen) {
+  const pos = positionen || [];
+  const hf = pos
+    .filter(p => p.typ === 'hauptforderung')
+    .reduce((s, p) => s + parseFloat((p.betrag || '0').replace(/\./g, '').replace(',', '.')), 0);
+  const kosten = pos
+    .filter(p => ['anwaltsverguetung', 'mahnkosten', 'gv_kosten', 'sonstige_kosten', 'gerichtskosten'].includes(p.typ))
+    .reduce((s, p) => s + parseFloat((p.betrag || '0').replace(/\./g, '').replace(',', '.')), 0);
+  const fmt = n => n.toFixed(2).replace('.', ',') + ' EUR';
+  return { hf: fmt(hf), kosten: fmt(kosten) };
 }
