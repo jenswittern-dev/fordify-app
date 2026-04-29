@@ -2166,7 +2166,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
 
   const tageszinsRow = tageszinsZeile ? `<tr class="summary-row--tageszins">
     <td></td>
-    <td>${tageszinsZeile.bezeichnung}</td>
+    <td>${escHtml(tageszinsZeile.bezeichnung)}</td>
     <td class="text-end"></td>
     <td class="text-end"></td>
     <td class="text-end"></td>
