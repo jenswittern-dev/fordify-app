@@ -1209,7 +1209,7 @@ function modalDynamischAktualisieren(typ) {
       : parseFloat(verfahrenSel || "0");
     const ergebnisEl = document.getElementById("gkg-ergebnis");
     if (streitwertRaw && !isNaN(parseFloat(streitwertRaw)) && faktor > 0) {
-      const sw = parseFloat(streitwertRaw.replace(",", "."));
+      const sw = parseFloat(streitwertRaw.replace(/\./g, '').replace(',', '.'));
       const basis = gkgGebuehr(sw);
       const gesamt = basis * faktor;
       const betragEl = document.getElementById("mf-betrag");
@@ -1530,7 +1530,7 @@ function tplEinfacheKosten(pos, label, standard) {
 function tplGerichtskosten(pos) {
   const streitwert = pos?.gkgStreitwert || "";
   const verfahren = pos?.gkgVerfahren || "3.0";
-  const gebuehr = streitwert ? gkgGebuehr(parseFloat(streitwert.replace(",", "."))) : 0;
+  const gebuehr = streitwert ? gkgGebuehr(parseFloat(streitwert.replace(/\./g, '').replace(',', '.'))) : 0;
   const betrag = streitwert ? (gebuehr * parseFloat(verfahren)).toFixed(2) : (pos?.betrag || "");
   return `
     ${datumFeld("mf-datum", pos?.datum)}

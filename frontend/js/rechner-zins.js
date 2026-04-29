@@ -12,7 +12,7 @@
   });
 
   function berechne() {
-    const betrag = document.getElementById('zins-betrag').value.replace(',', '.');
+    const betrag = document.getElementById('zins-betrag').value.replace(/\./g, '').replace(',', '.');
 
     const vonVal = document.getElementById('zins-von').value;
     const bisVal = document.getElementById('zins-bis').value;

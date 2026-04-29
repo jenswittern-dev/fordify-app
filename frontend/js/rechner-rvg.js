@@ -25,7 +25,7 @@
   };
 
   function berechne() {
-    const streitwert = document.getElementById('rvg-streitwert').value.replace(',', '.');
+    const streitwert = document.getElementById('rvg-streitwert').value.replace(/\./g, '').replace(',', '.');
     const verfahren  = document.getElementById('rvg-verfahren').value;
     const ustSatz    = parseFloat(document.getElementById('rvg-ust').value) / 100;
     const vvNummern  = VV_MAP[verfahren] || ['2300', '7002'];
