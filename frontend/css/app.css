@@ -226,6 +226,21 @@ body {
   }
 }
 
+/* Navbar-Overflow-Prävention: md-Breakpoint (768–959px) → kompaktere Nav-Links */
+@media (min-width: 768px) and (max-width: 959px) {
+  .navbar-fa .navbar-nav .nav-link {
+    font-size: 0.8rem;
+    padding-left: 0.35rem;
+    padding-right: 0.35rem;
+    letter-spacing: 0;
+  }
+  .navbar-fa .navbar-collapse .btn-sm {
+    font-size: 0.78rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
 /* Outline-Buttons in der Navbar – borderless, underline on hover */
 .navbar-fa .navbar-nav-buttons .btn-outline-light {
   border-color: transparent;

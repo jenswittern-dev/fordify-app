@@ -880,4 +880,12 @@ a.rechner-cta-box .rechner-cta-box__title { color: #1e3a8a; }
   .rechner-hero-stat__val { font-size: 1rem; }
   /* Fact-Chips: Umbruch erlauben */
   .rechner-fact-chip { white-space: normal; }
+  /* Tilgung-Tabs: Wrap auf kleinen Screens (3 Buttons sonst Overflow) */
+  .tilgung-tabs {
+    flex-wrap: wrap;
+  }
+  .tilgung-tab {
+    white-space: normal;
+    flex: 1 0 auto;
+  }
 }
