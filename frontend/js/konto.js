@@ -1168,7 +1168,8 @@ function kontoSchuldnerCSVImportDatei(input) {
     const lines = text.split(/\r?\n/).filter(l => l.trim());
     if (lines.length < 2) { alert('CSV leer oder kein Header gefunden.'); input.value = ''; return; }
 
-    const headers = _csvSplitLine(lines[0]).map(h => h.trim().toLowerCase());
+    const delimiter = _csvDetectDelimiter(lines[0]);
+    const headers = _csvSplitLine(lines[0], delimiter).map(h => h.trim().toLowerCase());
     const nameIdx    = headers.indexOf('name');
     const strasseIdx = headers.indexOf('strasse');
     const plzIdx     = headers.indexOf('plz');
@@ -1180,7 +1181,7 @@ function kontoSchuldnerCSVImportDatei(input) {
 
     let ok = 0, skip = 0;
     for (let i = 1; i < lines.length; i++) {
-      const cols = _csvSplitLine(lines[i]);
+      const cols = _csvSplitLine(lines[i], delimiter);
       const name = (cols[nameIdx] || '').trim();
       if (!name) { skip++; continue; }
       const kontakt = {

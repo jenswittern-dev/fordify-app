@@ -2532,7 +2532,6 @@ function drucken() {
   const cleanHtml = tmp.innerHTML;
 
   const origin = window.location.origin;
-  const escHtml = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   const parteien = [state.fall.mandant, state.fall.gegner].filter(Boolean).join(" ./. ");
   const druckTitel = escHtml("Forderungsaufstellung" + (parteien ? " – " + parteien : "") + " – " + new Date().toLocaleDateString("de-DE"));
   const fordifyBranding = getFordifyBranding();
