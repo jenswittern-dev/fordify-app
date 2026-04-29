@@ -25,6 +25,20 @@ Dieser Audit wurde nach den Claude-Code-Fixes auf Branch `staging` durchgeführt
 
 Hinweis: `konto.html` leitet unauthentifiziert nach `/forderungsaufstellung` weiter. Der lokale Python-Server kann diese extensionless Route nicht rewriten und zeigt dort 404. Produktion kann das über Hosting-Rewrites lösen; für lokale QA bleibt es aber ein Signal für die Route-/PWA-Thematik unten.
 
+## Zusatzprüfungen nach den Findings
+
+Aus den ersten Findings ergaben sich mehrere Folgeprüfungen, die im ursprünglichen Auditplan noch nicht explizit genug waren. Diese Nachprüfung zielte auf Beweisbarkeit und Regressionstauglichkeit, nicht nur auf Sichtprüfung.
+
+| Zusatzprüfung | Ergebnis |
+|---|---|
+| DOM-XSS-Sink-Trace für nutzernahe Daten in `app.js` | Weitere ungeescapte Interpolationen bestätigt: Positionstabelle, Edit-Modale, Summary, explizite Zahlungszeilen und Fehler-/Preview-Bereiche. |
+| Headless-Chrome-XSS-PoC mit manipulierten Positionsdaten und importierten Einstellungen | Bestätigt: Payloads in Positions-/Zahlungsbeschreibung feuerten im echten Browser (`xssCount=10`); Logo-Attribut-Payload feuerte ebenfalls (`logoCount=2`). |
+| Service-Worker-/Routing-Matrix | Alle 12 gefundenen extensionless Routes fehlen im statischen SW-Asset-Cache. Zusätzlich fehlen `/datenschutz.html` und `/impressum.html` im Cache, obwohl die Seiten existieren. |
+| Parser-Edge-Cases für deutsche Zahlenformate | `5.000,00`, `10.000,00` und `1.234.567,89` sind bei Zins/RVG invalid; GKG/Tilgung parsen dieselben Werte korrekt. |
+| Roadmap-vs-CSV-Matrix | Roadmap fordert `FallID`, `Name`, `Datum`, `Gesamtforderung`, `Restforderung`, `Status`; Implementierung liefert `Aktenzeichen`, `Name`, `Mandant`, `Geändert`, `Gesamtforderung_EUR`. |
+| Globaler Responsive-ScrollWidth-Test per Chrome DevTools | Messbarer Body-Overflow: `tilgungsrechner` bei 360px (+22px), `changelog` bei 768px (+77px), `index` bei 768px (+3px). Andere visuelle Clipping-Hinweise sind nicht immer Body-Overflow. |
+| Element-Level-Clipping-Heuristik | Keine generischen `overflow:hidden/clip`-Treffer gefunden; die betroffenen Layouts brauchen daher visuelle/perzeptive Checks und gezielte Komponentenregeln. |
+
 ## Regression der bisherigen Findings
 
 | Bereich | Ergebnis |
@@ -54,6 +68,8 @@ Claude hat Parteidaten und Forderungsgrund in der PDF-Vorschau escaped, aber nic
 
 Auswirkung: Ein per Eingabe oder JSON-Import gesetzter Wert wie eine manipulierte Beschreibung kann in der Haupt-App und in der Print-/PDF-Vorschau als HTML ausgeführt werden.
 
+Nachprüfung: Ein Headless-Chrome-PoC mit zwei manipulierten Positionen hat die Ausführung im echten Browser bestätigt. Die Payloads wurden in der Positionstabelle und in der Vorschau als `<img onerror=...>` gerendert; der Zähler `window.__fordifyXss` stieg auf `10`.
+
 Empfehlung: Nicht nur einzelne Felder patchen, sondern eine Rendering-Regel einführen: alle Nutzerdaten durch `escHtml()` für Textknoten und eine eigene `escAttr()` für Attribute; alternativ DOM-Nodes mit `textContent` bauen. Anschließend gezielt mit importierten Payloads testen.
 
 ### Finding 2 - P1: Importierte Einstellungen können Logo-HTML in der PDF-Vorschau injizieren
@@ -65,6 +81,8 @@ Empfehlung: Nicht nur einzelne Felder patchen, sondern eine Rendering-Regel einf
 ```
 
 Auch `logoPos` wird in eine CSS-Klasse interpoliert. Der reguläre Upload nutzt zwar `FileReader.readAsDataURL()`, aber der JSON-Import kann beliebige Strings setzen.
+
+Nachprüfung: Der gleiche Browser-PoC setzte `fordify_settings.logo` auf einen attributbrechenden String (`x" onerror="...`). Die PDF-Vorschau erzeugte daraus ein ausführbares `<img class="pdf-logo" ... onerror=...>`; `window.__fordifyLogoXss` wurde im echten Browser gesetzt.
 
 Empfehlung: Einstellungen beim Import validieren. `logo` nur als erwartete `data:image/...;base64,...`-URL akzeptieren, `logoPosition` auf `links|mitte|rechts` whitelisten und Attribute getrennt escapen.
 
@@ -85,7 +103,9 @@ Relevante CSS-Stellen:
 - `frontend/css/rechner.css:52-66`, `:554-562`, `:830-848`: Trust/Stats/Tabs mit `nowrap`.
 - `frontend/css/rechner.css:854-883`: Mobile-Regeln erlauben zwar Umbruch für Teile, aber nicht für alle betroffenen Komponenten.
 
-Empfehlung: Einen automatisierten Responsive-Test ergänzen, der pro Seite `scrollWidth <= clientWidth` verifiziert. CSS-seitig Tabs/Badges/Buttons/CTA-Boxen mit `min-width:0`, `max-width:100%`, `flex-wrap`, `overflow-wrap:anywhere` und horizontal scrollbaren Segmentcontrols entschärfen.
+Nachprüfung: Der zusätzliche DevTools-Test trennt messbaren Body-Overflow von rein visueller Trunkierung. Eindeutig messbar waren `tilgungsrechner` bei 360px (+22px), `changelog` bei 768px (+77px) und `index` bei 768px (+3px). Ein generischer Element-Scan auf `overflow:hidden/clip` fand keine Treffer; die übrigen Screenshot-Hinweise sollten daher mit visuellen Regressionen und komponentenspezifischen Checks abgesichert werden.
+
+Empfehlung: Einen automatisierten Responsive-Test ergänzen, der pro Seite `scrollWidth <= clientWidth` verifiziert und zusätzlich Screenshot-/Layout-Diffs für Hero, CTA-Boxen, Tabs, Badges und App-Formulare enthält. CSS-seitig Tabs/Badges/Buttons/CTA-Boxen mit `min-width:0`, `max-width:100%`, `flex-wrap`, `overflow-wrap:anywhere` und horizontal scrollbaren Segmentcontrols entschärfen.
 
 ### Finding 4 - P2: Service Worker cached `.html`-Seiten, Navigation nutzt aber überwiegend extensionless Routes
 
@@ -96,6 +116,8 @@ Empfehlung: Einen automatisierten Responsive-Test ergänzen, der pro Seite `scro
 - Viele HTML-Navigationslinks zeigen auf `/forderungsaufstellung`
 
 Auswirkung: Offline-/PWA-Verhalten und lokale QA sind abhängig davon, ob die extensionless Route vorher dynamisch gecached wurde und ob das Hosting Rewrite-Regeln ausführt. Das erklärt auch den lokalen 404 nach Konto-Redirect.
+
+Nachprüfung: Die Route-Matrix fand 12 extensionless Routes (`/preise`, `/konto`, `/forderungsaufstellung`, Rechner-, Legal- und Changelog-Routen), die nicht in `ASSETS` stehen. Zusätzlich sind `/datenschutz.html` und `/impressum.html` selbst als `.html`-Assets nicht im Service-Worker-Cache enthalten.
 
 Empfehlung: Entweder extensionless Routen zusätzlich in `ASSETS` aufnehmen oder im Service Worker Navigationsrequests konsistent auf die passenden `.html`-Assets mappen.
 
@@ -108,6 +130,8 @@ Die Haupt-App und der Tilgungsrechner entfernen Tausenderpunkte, aber zwei SEO-R
 - Positivbeispiel: `frontend/js/rechner-gkg.js:30-32` entfernt Punkte und ersetzt Komma; `frontend/js/rechner-tilgung.js:7-8` ebenfalls.
 
 Auswirkung: Eingaben wie `5.000,00` oder `10.000,00` werden abgelehnt bzw. falsch interpretiert, obwohl diese Schreibweise für deutsche Nutzer naheliegt.
+
+Nachprüfung: Die Parser-Emulation bestätigte die Inkonsistenz: `5.000,00`, `10.000,00` und `1.234.567,89` sind mit der Zins-/RVG-Logik invalid, während GKG/Tilgung dieselben Werte als `5000`, `10000` und `1234567.89` interpretieren.
 
 Empfehlung: Eine gemeinsame `parseGermanDecimal()`-Hilfsfunktion für Rechner und Haupt-App verwenden.
 
@@ -122,6 +146,8 @@ Empfehlung: Eine gemeinsame `parseGermanDecimal()`-Hilfsfunktion für Rechner un
 - `Gesamtforderung_EUR`
 
 Außerdem ist `Gesamtforderung_EUR` nur die Summe der Hauptforderungen (`_hfSumme`), nicht der fachliche Rest inklusive Kosten/Zinsen/Zahlungen.
+
+Nachprüfung: Die Roadmap-Matrix bestätigt die Lücke maschinell: `FallID`, `Restforderung` und `Status` kommen im aktuellen Export-Header nicht vor.
 
 Empfehlung: Entweder Roadmap/Produkttext korrigieren oder CSV-Export fachlich erweitern. Für Kanzlei-Workflows wäre `Restforderung`, `Status`, `FallID` und optional `Notizen/Favorit` sinnvoll.
 
@@ -182,4 +208,3 @@ Nach den Fixes sollte ein kleiner automatisierter Smoke-Test entstehen:
 - XSS-Regressionsfälle über JSON-Import und Positionsbeschreibungen
 - CSV-Import/-Export-Test mit Semikolon, Komma und Formelwerten
 - fachlicher §367-Beispielfall mit Kosten, Zinsen, Hauptforderung und Teilzahlung
-
