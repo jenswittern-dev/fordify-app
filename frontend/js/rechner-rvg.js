@@ -82,14 +82,6 @@
     }
   }
 
-  function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
   function renderErgebnis(positionen, netto, ust, gesamt, ustProzent, vergleichsPositionen, vergleichsGesamt) {
     const isPKH = vergleichsPositionen !== null;
     let rows = '';
@@ -97,8 +89,8 @@
       const p = positionen[i];
       const vgl = vergleichsPositionen ? vergleichsPositionen[i] : null;
       rows += `<tr>
-        <td>VV ${escapeHtml(p.vvNummer)}</td>
-        <td>${escapeHtml(p.beschreibung)}</td>
+        <td>VV ${escHtml(p.vvNummer)}</td>
+        <td>${escHtml(p.beschreibung)}</td>
         <td class="text-end">${p.faktor !== null ? p.faktor.toFixed(1) : '–'}</td>
         <td class="text-end font-mono">${p.gebuehrGesamt.toFixed(2)} €</td>
         ${vgl ? `<td class="text-end font-mono text-muted small">${vgl.gebuehrGesamt.toFixed(2)} €</td>` : ''}

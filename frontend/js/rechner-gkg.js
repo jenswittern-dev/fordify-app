@@ -6,14 +6,6 @@
     berechne();
   });
 
-  function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
   function gebuehrAusGKGTabelle(streitwert) {
     for (const zeile of GKG_TABELLE) {
       if (streitwert <= zeile.bis) return zeile.gebuehr;
@@ -79,7 +71,7 @@
           <table class="table table-sm table-striped mb-0">
             <tbody>
               <tr><td>Streitwert</td><td class="text-end font-mono">${fmt(streitwert)} €</td></tr>
-              <tr><td>Instanz</td><td class="text-end">${escapeHtml(INSTANZ_LABEL[instanz])}</td></tr>
+              <tr><td>Instanz</td><td class="text-end">${escHtml(INSTANZ_LABEL[instanz])}</td></tr>
               <tr><td>Einfache Gebühr (§ 34 GKG, Anlage 2)</td><td class="text-end font-mono">${fmt(einfach)} €</td></tr>
               <tr><td>Gebührenanzahl</td><td class="text-end">${mult.toFixed(1)}</td></tr>
             </tbody>

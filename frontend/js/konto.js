@@ -320,7 +320,7 @@ function kontoRendereFaelleTab() {
       controlsEl.innerHTML = `
         <div class="d-flex flex-wrap gap-2 align-items-center">
           <input type="search" id="faelle-suche" class="form-control form-control-sm" style="max-width:220px;"
-                 placeholder="Fall suchen…" value="${_escHtml(_faelleSearch)}" oninput="kontoFaelleFilterAendern()">
+                 placeholder="Fall suchen…" value="${escHtml(_faelleSearch)}" oninput="kontoFaelleFilterAendern()">
           <select id="faelle-filter" class="form-select form-select-sm" style="max-width:180px;" onchange="kontoFaelleFilterAendern()">
             <option value="alle"${_faelleFilter==='alle'?' selected':''}>Alle Status</option>
             <option value="offen"${_faelleFilter==='offen'?' selected':''}>Offen</option>
@@ -382,7 +382,7 @@ function kontoRendereFaelleTab() {
               ? `<span class="me-1" title="Favorit" aria-label="Favorit">📌</span>`
               : '';
             const notesIcon = isBusiness && c.notes
-              ? `<span class="ms-1 text-muted" title="${_escHtml(c.notes.slice(0,120))}" style="cursor:default;">💬</span>`
+              ? `<span class="ms-1 text-muted" title="${escHtml(c.notes.slice(0,120))}" style="cursor:default;">💬</span>`
               : '';
 
             const statusSelect = isBusiness
@@ -396,7 +396,7 @@ function kontoRendereFaelleTab() {
 
             return `<tr>
               <td class="ps-3">
-                <div class="fw-medium">${pinIcon}${_escHtml(c.name || 'Unbenannter Fall')}${statusBadge}${notesIcon}</div>
+                <div class="fw-medium">${pinIcon}${escHtml(c.name || 'Unbenannter Fall')}${statusBadge}${notesIcon}</div>
                 <div class="text-muted" style="font-size:0.75rem;">${positionen} Position${positionen !== 1 ? 'en' : ''}</div>
               </td>
               <td class="text-muted small">${datum}</td>
@@ -416,10 +416,6 @@ function kontoRendereFaelleTab() {
         </tbody>
       </table>
     </div>`;
-}
-
-function _escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 function kontoFallLaden(id) {
@@ -633,15 +629,15 @@ function _kontoLeseImpFelder() {
 function _kontoGeneriereImpressumFooterHtml(imp) {
   if (!imp) return '';
   const parts = [];
-  if (imp.name)     parts.push(`<strong>${_escHtml(imp.name)}</strong>`);
+  if (imp.name)     parts.push(`<strong>${escHtml(imp.name)}</strong>`);
   const adresse = [imp.strasse, (imp.plz && imp.ort ? imp.plz + ' ' + imp.ort : imp.plz || imp.ort)].filter(Boolean);
   if (adresse.length) parts.push(adresse.map(_escHtml).join(', '));
-  if (imp.tel)      parts.push('Tel: ' + _escHtml(imp.tel));
-  if (imp.fax)      parts.push('Fax: ' + _escHtml(imp.fax));
-  if (imp.email)    parts.push('E-Mail: ' + _escHtml(imp.email));
-  if (imp.website)  parts.push(_escHtml(imp.website));
-  if (imp.kammer)   parts.push(_escHtml(imp.kammer));
-  if (imp.ustid)    parts.push('USt-IdNr.: ' + _escHtml(imp.ustid));
+  if (imp.tel)      parts.push('Tel: ' + escHtml(imp.tel));
+  if (imp.fax)      parts.push('Fax: ' + escHtml(imp.fax));
+  if (imp.email)    parts.push('E-Mail: ' + escHtml(imp.email));
+  if (imp.website)  parts.push(escHtml(imp.website));
+  if (imp.kammer)   parts.push(escHtml(imp.kammer));
+  if (imp.ustid)    parts.push('USt-IdNr.: ' + escHtml(imp.ustid));
   return parts.join(' &middot; ');
 }
 
@@ -811,7 +807,7 @@ function _kontoRendereKontaktListe(type) {
   listeEl.innerHTML = `
     <div class="list-group list-group-flush mt-3">
       ${eintraege.map(k => {
-        const eid = _escHtml(k.id);
+        const eid = escHtml(k.id);
         const adresse = [k.strasse, k.plz && k.ort ? k.plz + ' ' + k.ort : (k.plz || k.ort)].filter(Boolean);
         const neuFallBtn = type === 'schuldner'
           ? `<button class="btn btn-sm" style="background:#eff6ff;color:#1e3a8a;border:none;white-space:nowrap;"
@@ -820,10 +816,10 @@ function _kontoRendereKontaktListe(type) {
         return `<div class="list-group-item px-0" id="kontakt-${eid}">
           <div class="d-flex align-items-start justify-content-between gap-2">
             <div>
-              <div class="fw-medium">${_escHtml(k.name)}</div>
+              <div class="fw-medium">${escHtml(k.name)}</div>
               ${adresse.length ? `<div class="text-muted small">${adresse.map(_escHtml).join(', ')}</div>` : ''}
-              ${k.email ? `<div class="text-muted small">${_escHtml(k.email)}</div>` : ''}
-              ${k.telefon ? `<div class="text-muted small">${_escHtml(k.telefon)}</div>` : ''}
+              ${k.email ? `<div class="text-muted small">${escHtml(k.email)}</div>` : ''}
+              ${k.telefon ? `<div class="text-muted small">${escHtml(k.telefon)}</div>` : ''}
             </div>
             <div class="d-flex gap-1 flex-shrink-0 flex-wrap justify-content-end">
               ${neuFallBtn}
@@ -838,27 +834,27 @@ function _kontoRendereKontaktListe(type) {
               <div class="row g-2">
                 <div class="col-12">
                   <input type="text" class="form-control form-control-sm" id="ke-name-${eid}"
-                         value="${_escHtml(k.name)}" placeholder="Name *">
+                         value="${escHtml(k.name)}" placeholder="Name *">
                 </div>
                 <div class="col-12">
                   <input type="text" class="form-control form-control-sm" id="ke-strasse-${eid}"
-                         value="${_escHtml(k.strasse || '')}" placeholder="Straße">
+                         value="${escHtml(k.strasse || '')}" placeholder="Straße">
                 </div>
                 <div class="col-4">
                   <input type="text" class="form-control form-control-sm" id="ke-plz-${eid}"
-                         value="${_escHtml(k.plz || '')}" placeholder="PLZ">
+                         value="${escHtml(k.plz || '')}" placeholder="PLZ">
                 </div>
                 <div class="col-8">
                   <input type="text" class="form-control form-control-sm" id="ke-ort-${eid}"
-                         value="${_escHtml(k.ort || '')}" placeholder="Ort">
+                         value="${escHtml(k.ort || '')}" placeholder="Ort">
                 </div>
                 <div class="col-sm-6">
                   <input type="email" class="form-control form-control-sm" id="ke-email-${eid}"
-                         value="${_escHtml(k.email || '')}" placeholder="E-Mail">
+                         value="${escHtml(k.email || '')}" placeholder="E-Mail">
                 </div>
                 <div class="col-sm-6">
                   <input type="tel" class="form-control form-control-sm" id="ke-telefon-${eid}"
-                         value="${_escHtml(k.telefon || '')}" placeholder="Telefon">
+                         value="${escHtml(k.telefon || '')}" placeholder="Telefon">
                 </div>
               </div>
               <div class="mt-2 d-flex gap-2">

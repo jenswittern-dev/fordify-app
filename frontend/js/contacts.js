@@ -60,23 +60,17 @@ function _aktualisiereKontaktAutocomplete() {
   const schuldnerList = document.getElementById('schuldner-datalist');
   if (schuldnerList) {
     schuldnerList.innerHTML = fordifyContacts.schuldner
-      .map(c => `<option value="${_escKontakt(c.name)}">`)
+      .map(c => `<option value="${escAttr(c.name)}">`)
       .join('');
   }
   if (fordifyAuth.plan === 'business') {
     const mandantenList = document.getElementById('mandanten-datalist');
     if (mandantenList) {
       mandantenList.innerHTML = fordifyContacts.mandanten
-        .map(c => `<option value="${_escKontakt(c.name)}">`)
+        .map(c => `<option value="${escAttr(c.name)}">`)
         .join('');
     }
   }
 }
 
-function _escKontakt(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
+
