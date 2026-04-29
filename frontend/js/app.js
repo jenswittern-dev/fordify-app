@@ -14,6 +14,15 @@ function escHtml(s) {
     .replace(/'/g, '&#39;');
 }
 
+function escAttr(s) {
+  return (s == null ? '' : String(s))
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/'/g, '&#39;');
+}
+
 // ---- State ----
 
 const STORAGE_KEY_CASES       = "fordify_cases";
@@ -777,7 +786,7 @@ function renderePositionsliste() {
       ? '<span style="color:var(--color-text-muted);font-size:var(--text-sm)">lfd.</span>'
       : pos.betrag ? formatEUR(pos.betrag) : "—";
     const datumStr = pos.datum ? formatDate(parseDate(pos.datum)) : "—";
-    const beschrStr = positionKurzbeschreibung(pos);
+    const beschrStr = escHtml(positionKurzbeschreibung(pos));
     const warnHtml = verjährungsWarnungHtml(pos);
     const last = idx === state.fall.positionen.length - 1;
 
@@ -1269,7 +1278,7 @@ function tplHauptforderung(pos) {
     ${datumFeld("mf-datum", pos?.datum, "Fälligkeitsdatum")}
     <div class="mb-3">
       <label class="form-label">Beschreibung</label>
-      <input type="text" class="form-control" id="mf-beschreibung" value="${pos?.beschreibung || ""}" placeholder="z.B. Rechnung Nr. 1234 vom …">
+      <input type="text" class="form-control" id="mf-beschreibung" value="${escAttr(pos?.beschreibung || '')}" placeholder="z.B. Rechnung Nr. 1234 vom …">
     </div>
     ${betragFeld("mf-betrag", pos?.betrag)}
     ${tituliertFeld(pos?.tituliert)}
@@ -1482,7 +1491,7 @@ function tplZahlung(pos) {
       <div>
         <label class="form-label mb-1">Wortlaut / Verwendungszweck <span class="text-muted fw-normal">(optional)</span></label>
         <textarea class="form-control form-control-sm" id="mf-verrechnungsanweisung" rows="2"
-          placeholder="z.B. genauen Wortlaut der Tilgungsbestimmung aus dem Verwendungszweck eintragen">${pos?.verrechnungsanweisung || ""}</textarea>
+          placeholder="z.B. genauen Wortlaut der Tilgungsbestimmung aus dem Verwendungszweck eintragen">${escHtml(pos?.verrechnungsanweisung || '')}</textarea>
         <div class="form-text">Wird als Vermerk im PDF angezeigt.</div>
       </div>
     </div>` : "";
@@ -1511,7 +1520,7 @@ function tplEinfacheKosten(pos, label, standard) {
     ${datumFeld("mf-datum", pos?.datum)}
     <div class="mb-3">
       <label class="form-label">Beschreibung</label>
-      <input type="text" class="form-control" id="mf-beschreibung" value="${pos?.beschreibung || label}" placeholder="${label}">
+      <input type="text" class="form-control" id="mf-beschreibung" value="${escAttr(pos?.beschreibung || label)}" placeholder="${label}">
     </div>
     ${betragFeld("mf-betrag", pos?.betrag || standard)}
     ${tituliertFeld(pos?.tituliert)}
@@ -1557,7 +1566,7 @@ function tplGerichtskosten(pos) {
     <div class="mb-3">
       <label class="form-label" for="mf-beschreibung">Beschreibung</label>
       <input type="text" class="form-control" id="mf-beschreibung"
-             value="${pos?.beschreibung || "Gerichtskosten"}" placeholder="Gerichtskosten">
+             value="${escAttr(pos?.beschreibung || 'Gerichtskosten')}" placeholder="Gerichtskosten">
     </div>
     ${betragFeld("mf-betrag", betrag)}
     ${tituliertFeld(pos?.tituliert)}
@@ -1583,7 +1592,7 @@ function tplWiederkehrend(pos) {
     <div class="mb-3">
       <label class="form-label" for="mf-beschreibung">Beschreibung</label>
       <input type="text" class="form-control" id="mf-beschreibung"
-             value="${pos?.beschreibung || ""}" placeholder="z.\u00a0B. Monatliche Mahnkosten">
+             value="${escAttr(pos?.beschreibung || '')}" placeholder="z.\u00a0B. Monatliche Mahnkosten">
     </div>
     ${datumFeld("mf-datum", pos?.datum, "Startdatum (1. Position)")}
     <div class="row g-2 mb-3">
@@ -1614,7 +1623,7 @@ function tplInkassopauschale(pos) {
     <div class="mb-3">
       <label class="form-label" for="mf-beschreibung">Beschreibung</label>
       <input type="text" class="form-control" id="mf-beschreibung"
-             value="${pos?.beschreibung || "Inkassopauschale (§ 288 Abs. 5 BGB)"}"
+             value="${escAttr(pos?.beschreibung || 'Inkassopauschale (§ 288 Abs. 5 BGB)')}"
              placeholder="Inkassopauschale (§ 288 Abs. 5 BGB)">
     </div>
     ${betragFeld("mf-betrag", pos?.betrag || STANDARDKOSTEN.inkassopauschale, "Pauschalbetrag (€)")}
@@ -2030,7 +2039,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
   // isLast=true: letzte Sub-Row einer Position → Abgrenzungslinie zur nächsten Position
   function payAllocRow(alloc, isLast = false) {
     const base = alloc.beschreibung
-      ? `\u2514\u00a0${formatDate(parseDate(alloc.datum))}\u00a0${alloc.beschreibung}`
+      ? `\u2514\u00a0${formatDate(parseDate(alloc.datum))}\u00a0${escHtml(alloc.beschreibung)}`
       : `\u2514\u00a0${formatDate(parseDate(alloc.datum))}\u00a0Zahlung`;
     const badge = alloc.hasTilgung
       ? `\u00a0<span class="badge-tilgung">Tilgungsbestimmung</span>`
@@ -2057,7 +2066,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     const restCell = hasAllocs ? `<td class="text-end"></td>` : amtCell(e.rest);
     return `<tr class="summary-row--zinsen-neu${hasAllocs ? " summary-row--has-allocs" : ""}">
       ${datumRangeCell(e.vonStr, e.bisDate)}
-      <td>${e.bezeichnung}</td>
+      <td>${escHtml(e.bezeichnung)}</td>
       ${amtCell(e.betrag)}
       <td class="text-end"></td>
       <td class="text-end"></td>
@@ -2080,7 +2089,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
     const restCell = hasAllocs ? `<td class="text-end"></td>` : amtCell(rest);
     return `<tr${hasAllocs ? ' class="summary-row--has-allocs"' : ''}>
       ${datumSpalte}
-      <td>${bezeichnung}</td>
+      <td>${escHtml(bezeichnung)}</td>
       ${amtCell(betrag)}
       <td class="text-end"></td>
       <td class="text-end"></td>
@@ -2138,7 +2147,7 @@ function baueSummaryTabelle(fall, basiszinssaetze, aufschlagPP) {
       : "";
     rowsHtml.push(`<tr class="summary-row--zahlung-explicit">
       ${datumCell(z.datum)}
-      <td>${z.beschreibung || "Zahlung"}${tilgBadge}</td>
+      <td>${escHtml(z.beschreibung || "Zahlung")}${tilgBadge}</td>
       <td class="text-end"></td>
       ${amtCell(zBetrag)}
       <td class="text-end"></td>
