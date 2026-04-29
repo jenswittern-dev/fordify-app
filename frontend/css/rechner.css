@@ -862,6 +862,18 @@ a.rechner-cta-box .rechner-cta-box__title { color: #1e3a8a; }
   .fordify-hero h1 { overflow-wrap: break-word; hyphens: auto; }
   /* Rechner Hero Band: kompakteres Padding auf Mobile */
   .rechner-hero-band { padding: 1.25rem 0 1.5rem; }
+  /* Rechner-Hero-Left: Breite auf Container beschränken (align-items:flex-start verhindert sonst stretch) */
+  .rechner-hero-left {
+    width: 100%;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  .rechner-hero-left h1 {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+  }
   /* Trust-Badges: engerer Gap auf kleinen Screens */
   .hero-trust { gap: 0.5rem; }
   /* Rechner-Hero: Statistiken etwas kleiner */

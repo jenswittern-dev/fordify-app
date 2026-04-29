@@ -67,7 +67,7 @@ fordify-app/
 │   ├── impressum.html
 │   ├── datenschutz.html
 │   ├── agb.html
-│   ├── sw.js                   ← Service Worker (aktuell fordify-v176 / staging-v131)
+│   ├── sw.js                   ← Service Worker (aktuell fordify-v180 / staging-v135)
 │   ├── manifest.json           ← PWA-Manifest
 │   ├── css/
 │   │   ├── app.css             ← Styling, Print-CSS, Preisseite, Feature-Gates
