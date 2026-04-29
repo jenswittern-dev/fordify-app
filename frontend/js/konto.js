@@ -769,13 +769,13 @@ function kontoRendereAboTab() {
           ${agbDatum
             ? `<span class="text-success">✓ AGB akzeptiert am ${agbDatum}</span>`
             : `<span class="text-muted">AGB: nicht dokumentiert</span>`}
-          &nbsp;<a href="/agb" target="_blank" class="text-muted">lesen ↗</a>
+          &nbsp;<a href="/agb" target="_blank" rel="noopener noreferrer" class="text-muted">lesen ↗</a>
         </div>
         <div class="small">
           ${avvDatum
             ? `<span class="text-success">✓ AVV geschlossen am ${avvDatum}</span>`
             : `<span class="text-muted">AVV: nicht dokumentiert</span>`}
-          &nbsp;<a href="/avv" target="_blank" class="text-muted">lesen ↗</a>
+          &nbsp;<a href="/avv" target="_blank" rel="noopener noreferrer" class="text-muted">lesen ↗</a>
         </div>
       </div>`;
   }
