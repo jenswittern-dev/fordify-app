@@ -2,7 +2,7 @@
 const IS_STAGING_SW = self.location.hostname.includes('staging') ||
                       self.location.hostname === 'localhost' ||
                       self.location.hostname === '127.0.0.1';
-const CACHE = IS_STAGING_SW ? "fordify-staging-v138" : "fordify-v183";
+const CACHE = IS_STAGING_SW ? "fordify-staging-v139" : "fordify-v184";
 const ASSETS = [
   "/",
   "/index.html",
@@ -77,11 +77,21 @@ self.addEventListener("fetch", e => {
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
-      return fetch(e.request).then(res => {
-        if (res.ok) {
-          const clone = res.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
+      // Extensionless navigation requests → cached .html-Version versuchen
+      if (e.request.mode === "navigate") {
+        const url = new URL(e.request.url);
+        if (!url.pathname.includes(".")) {
+          return caches.match(url.pathname + ".html").then(htmlCached => {
+            if (htmlCached) return htmlCached;
+            return fetch(e.request).then(res => {
+              if (res.ok) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
+              return res;
+            });
+          });
         }
+      }
+      return fetch(e.request).then(res => {
+        if (res.ok) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
         return res;
       });
     })
