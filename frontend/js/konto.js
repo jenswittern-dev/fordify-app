@@ -1112,14 +1112,24 @@ function kontoFaelleExportierenAlsCSV() {
     (a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')
   );
 
-  const header = ['Aktenzeichen', 'Name', 'Mandant', 'Geändert', 'Gesamtforderung_EUR'];
+  const header = ['FallID', 'Aktenzeichen', 'Name', 'Mandant', 'Geändert', 'Gesamtforderung_EUR', 'Restforderung_EUR', 'Status'];
   const rows = cases.map(c => {
+    const fallId = c.id || '';
     const az = c.fall?.aktenzeichen || '';
     const gegner = c.fall?.gegner || '';
     const mandant = c.fall?.mandant || '';
     const datum = c.updatedAt ? new Date(c.updatedAt).toLocaleDateString('de-DE') : '';
-    const summe = _hfSumme(c.fall?.positionen).toFixed(2).replace('.', ',');
-    return [az, gegner, mandant, datum, summe].map(_csvQuote).join(';');
+    const gesamtHF = _hfSumme(c.fall?.positionen);
+    const gezahlt = _zahlungenSumme(c.fall?.positionen);
+    const rest = Math.max(0, gesamtHF - gezahlt);
+    const statusKey = c.fall_status || 'offen';
+    const statusLabel = STATUS_CONFIG[statusKey]?.label || 'Offen';
+    return [
+      fallId, az, gegner, mandant, datum,
+      gesamtHF.toFixed(2).replace('.', ','),
+      rest.toFixed(2).replace('.', ','),
+      statusLabel
+    ].map(_csvQuote).join(';');
   });
 
   const bom = '﻿';
@@ -1138,6 +1148,15 @@ function kontoFaelleExportierenAlsCSV() {
 function _hfSumme(positionen) {
   return (positionen || [])
     .filter(p => p.typ === 'hauptforderung')
+    .reduce((s, p) => {
+      const val = parseFloat((p.betrag || '0').replace(/\./g, '').replace(',', '.'));
+      return s + (isNaN(val) ? 0 : val);
+    }, 0);
+}
+
+function _zahlungenSumme(positionen) {
+  return (positionen || [])
+    .filter(p => p.typ === 'zahlung')
     .reduce((s, p) => {
       const val = parseFloat((p.betrag || '0').replace(/\./g, '').replace(',', '.'));
       return s + (isNaN(val) ? 0 : val);
