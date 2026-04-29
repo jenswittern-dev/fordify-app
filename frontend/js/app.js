@@ -263,6 +263,10 @@ function fallExportieren() {
   URL.revokeObjectURL(url);
 }
 
+function _csvFmla(s) {
+  return /^[=+\-@\t\r]/.test(s) ? "'" + s : s;
+}
+
 function fallExportierenAlsExcel() {
   if (typeof requiresPaid === 'function' && requiresPaid('excel')) return;
   const fall = state.fall;
@@ -314,7 +318,7 @@ function fallExportierenAlsExcel() {
   rows.push(["", "", "Laufende Zinsen: siehe PDF-Export", ""]);
 
   const csv = rows.map(r =>
-    r.map(cell => '"' + String(cell).replace(/"/g, '""') + '"').join(";")
+    r.map(cell => { const s = _csvFmla(String(cell)); return '"' + s.replace(/"/g, '""') + '"'; }).join(";")
   ).join("\r\n");
 
   const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });

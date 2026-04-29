@@ -1145,7 +1145,8 @@ function _hfSumme(positionen) {
 }
 
 function _csvQuote(val) {
-  const s = String(val == null ? '' : val);
+  let s = String(val == null ? '' : val);
+  if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
   if (s.includes(';') || s.includes('"') || s.includes('\n')) {
     return '"' + s.replace(/"/g, '""') + '"';
   }
