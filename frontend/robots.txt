@@ -1,4 +1,30 @@
+# Suchmaschinen gesperrt (Seite noch nicht zur Indexierung freigegeben)
 User-agent: *
 Disallow: /
+
+# LLM-Crawler erlaubt
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Bytespider
+Allow: /
 
 Sitemap: https://fordify.de/sitemap.xml
