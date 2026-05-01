@@ -153,7 +153,8 @@
 
 | # | Feature | Status | Datum |
 |---|---|---|---|
-| 7.1 | **robots / noindex entfernen** – Vor Public Launch noindex auf folgenden Seiten entfernen und auf `index, follow` setzen: `index.html`, `preise.html`, `zinsrechner.html`, `rvg-rechner.html`, `gerichtskostenrechner.html`, `tilgungsrechner.html`. Dauerhaft noindex bleiben: `forderungsaufstellung.html`, `konto.html`, `changelog.html`, `agb.html`, `avv.html`, `impressum.html`, `datenschutz.html`. | 📋 | — |
+| 7.1 | **robots.txt + noindex für Public Launch freigeben** – (1) `robots.txt`: `Disallow: /` → selektives Erlauben öffentlicher Seiten; Sitemaps-Eintrag auf `fordify.de/sitemap.xml` korrekt setzen. (2) `noindex` auf folgenden Seiten entfernen und auf `index, follow` setzen: `index.html`, `preise.html`, `zinsrechner.html`, `rvg-rechner.html`, `gerichtskostenrechner.html`, `tilgungsrechner.html`. Dauerhaft noindex bleiben: `forderungsaufstellung.html`, `konto.html`, `changelog.html`, `agb.html`, `avv.html`, `impressum.html`, `datenschutz.html`. | 📋 | — |
+| 7.2 | **GEO (Generative Engine Optimization)** – LLM-Crawler explizit erlauben (GPTBot, ClaudeBot, PerplexityBot, Googlebot-Extended in `robots.txt`). Structured Data (JSON-LD: `SoftwareApplication` auf index.html, `FAQPage` auf Rechner-Seiten). Ziel: Auffindbarkeit durch KI-gestützte Suchsysteme (ChatGPT, Perplexity, Google AI) sicherstellen. | 📋 | — |
 
 ---
 
