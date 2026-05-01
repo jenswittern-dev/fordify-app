@@ -22,7 +22,7 @@ fordify verarbeitet personenbezogene Daten ausschließlich auf dokumentierte Wei
 
 Hält fordify eine Weisung des Verantwortlichen für einen Verstoß gegen die DSGVO oder sonstige Datenschutzvorschriften, informiert fordify den Verantwortlichen unverzüglich. fordify ist berechtigt, die Ausführung der betreffenden Weisung auszusetzen, bis der Verantwortliche diese bestätigt oder abändert.
 
-fordify gewährleistet, dass die mit der Verarbeitung befassten Personen zur Vertraulichkeit verpflichtet sind oder einer angemessenen gesetzlichen Verschwiegenheitspflicht unterliegen.
+fordify gewährleistet, dass die mit der Verarbeitung befassten Personen zur Vertraulichkeit verpflichtet sind oder einer angemessenen gesetzlichen Verschwiegenheitspflicht unterliegen. Soweit der Verantwortliche Berufsgeheimnisträger im Sinne des § 203 StGB ist (insbesondere Rechtsanwältinnen und Rechtsanwälte), werden die mit der Verarbeitung der betreffenden personenbezogenen Daten befassten Personen darüber hinaus gemäß § 203 Abs. 4 S. 2 Nr. 1 StGB i.V.m. § 43e Abs. 4 BRAO auf die Verschwiegenheit verpflichtet und über die Strafbarkeit unbefugter Offenbarung nach § 203 StGB belehrt.
 
 Weisungen des Verantwortlichen bedürfen der Textform (E-Mail genügt). Konkludente Weisungen ergeben sich aus der bestimmungsgemäßen Nutzung der Anwendung gemäß den vereinbarten Nutzungsbedingungen.
 
@@ -32,7 +32,7 @@ fordify setzt folgende Unterauftragsverarbeiter ein:
 
 - Supabase Inc. (Sitz: USA; Datenspeicherung: EU Frankfurt, Deutschland) – Datenbankhosting und Authentifizierung (Standard Contractual Clauses)
 
-- Resend Inc. (USA) – Transaktionale E-Mails (Standard Contractual Clauses)
+- Resend Inc. (USA) – Transaktionale E-Mails (angemessenes Datenschutzniveau gem. Art. 45 DSGVO auf Grundlage des EU-U.S. Data Privacy Framework, Angemessenheitsbeschluss (EU) 2023/1795)
 
 - Hostinger International Ltd. (EU) – Betrieb der E-Mail-Automatisierungsinfrastruktur (N8N)
 
@@ -40,13 +40,13 @@ Hinweis: Paddle.com Market Ltd. ist als Merchant of Record eigenverantwortlicher
 
 Änderungen bei Unterauftragsverarbeitern werden dem Verantwortlichen mindestens 30 Tage vorab per E-Mail mitgeteilt. Der Verantwortliche kann einer geplanten Änderung innerhalb dieser Frist widersprechen.
 
-fordify verpflichtet alle Unterauftragsverarbeiter vertraglich zur Einhaltung derselben Datenschutzpflichten, wie sie in diesem AVV geregelt sind, insbesondere hinsichtlich hinreichender Garantien für die Umsetzung geeigneter technischer und organisatorischer Maßnahmen (Art. 28 Abs. 4 DSGVO). Die Übermittlung personenbezogener Daten in Drittländer (USA) erfolgt auf Grundlage der Standardvertragsklauseln der EU-Kommission (Beschluss 2021/914/EU, Modul 2 – Controller to Processor). Auf Anfrage werden die einschlägigen SCC-Dokumente der jeweiligen Unterauftragsverarbeiter bereitgestellt.
+fordify verpflichtet alle Unterauftragsverarbeiter vertraglich zur Einhaltung derselben Datenschutzpflichten, wie sie in diesem AVV geregelt sind, insbesondere hinsichtlich hinreichender Garantien für die Umsetzung geeigneter technischer und organisatorischer Maßnahmen (Art. 28 Abs. 4 DSGVO). Die Übermittlung personenbezogener Daten an Supabase Inc. (USA) erfolgt auf Grundlage der Standardvertragsklauseln der EU-Kommission (Beschluss 2021/914/EU, Modul 3 – Processor to Processor). Die Übermittlung an Resend Inc. erfolgt auf Grundlage des Angemessenheitsbeschlusses (EU) 2023/1795 (EU-U.S. Data Privacy Framework, Art. 45 DSGVO), da Resend seit März 2025 unter dem DPF zertifiziert ist. Auf Anfrage werden die einschlägigen SCC-Dokumente bereitgestellt.
 
 ## § 6 Technische und organisatorische Maßnahmen
 
 fordify trifft angemessene technische und organisatorische Maßnahmen (TOMs) nach Art. 32 DSGVO, insbesondere:
 
-- Vertraulichkeit: Verschlüsselte Datenübertragung (TLS/HTTPS); Zugriffskontrolle über Row Level Security (RLS) in Supabase; Authentifizierung per Magic Link (passwortlos); Service Role Key wird ausschließlich serverseitig verwendet und nie an den Client übertragen.
+- Vertraulichkeit: Verschlüsselte Datenübertragung (TLS/HTTPS); Verschlüsselung ruhender Daten (AES-256, Encryption at Rest durch Supabase); Zugriffskontrolle über Row Level Security (RLS) in Supabase; Authentifizierung per Magic Link (passwortlos); Service Role Key wird ausschließlich serverseitig verwendet und nie an den Client übertragen.
 
 - Integrität: Eingabevalidierung in Edge Functions; HMAC-Signaturprüfung für Paddle-Webhooks.
 
@@ -60,7 +60,7 @@ fordify trifft angemessene technische und organisatorische Maßnahmen (TOMs) nac
 
 fordify berücksichtigt bei der Entwicklung und dem Betrieb des Dienstes die Grundsätze des Datenschutzes durch Technikgestaltung und datenschutzfreundliche Voreinstellungen gemäß Art. 25 DSGVO.
 
-Bei datenschutzrelevanten Sicherheitsverletzungen informiert fordify den Verantwortlichen unverzüglich, spätestens jedoch innerhalb von 72 Stunden nach Bekanntwerden, um dem Verantwortlichen die Erfüllung seiner Meldepflicht nach Art. 33 DSGVO zu ermöglichen (Art. 28 Abs. 3 lit. f DSGVO). Die Erstmeldung kann mit den zum Zeitpunkt verfügbaren Informationen erfolgen und wird vervollständigt, sobald weitere Erkenntnisse vorliegen (Art. 33 Abs. 4 DSGVO). fordify dokumentiert alle Verletzungen des Schutzes personenbezogener Daten gemäß Art. 33 Abs. 5 DSGVO und stellt diese Dokumentation dem Verantwortlichen auf Anfrage zur Verfügung.
+Bei datenschutzrelevanten Sicherheitsverletzungen informiert fordify den Verantwortlichen unverzüglich, spätestens jedoch innerhalb von 24 Stunden nach Bekanntwerden, um dem Verantwortlichen die Erfüllung seiner Meldepflicht nach Art. 33 DSGVO zu ermöglichen (Art. 28 Abs. 3 lit. f DSGVO). Die Erstmeldung kann mit den zum Zeitpunkt verfügbaren Informationen erfolgen und wird vervollständigt, sobald weitere Erkenntnisse vorliegen (Art. 33 Abs. 4 DSGVO). fordify dokumentiert alle Verletzungen des Schutzes personenbezogener Daten gemäß Art. 33 Abs. 5 DSGVO und stellt diese Dokumentation dem Verantwortlichen auf Anfrage zur Verfügung.
 
 ## § 7 Rechte betroffener Personen
 

@@ -76,7 +76,7 @@ Telefon: +49 (0) 40 235 466 75
 
 4.3 Bei Zahlungsverzug ist der Anbieter berechtigt, den Zugang zum kostenpflichtigen Tarif bis zur vollständigen Zahlung zu sperren.
 
-4.4 Preisänderungen werden dem Kunden mindestens 30 Tage vor Inkrafttreten per E-Mail mitgeteilt. Die Mitteilung enthält einen ausdrücklichen Hinweis darauf, dass das Ausbleiben eines Widerspruchs innerhalb von 14 Tagen als Zustimmung zur Preisänderung gilt. Widerspricht der Kunde nicht innerhalb dieser Frist, gilt die Änderung als genehmigt.
+4.4 Preisänderungen werden dem Kunden mindestens 30 Tage vor Inkrafttreten per E-Mail mitgeteilt. Preisanpassungen sind auf den Umfang gestiegener Betriebs-, Hosting- oder Lizenzkosten beschränkt. Die Mitteilung enthält einen ausdrücklichen Hinweis darauf, dass das Ausbleiben eines Widerspruchs innerhalb von 30 Tagen als Zustimmung zur Preisänderung gilt. Widerspricht der Kunde nicht innerhalb dieser Frist, gilt die Änderung als genehmigt.
 
 4.5 Stimmt der Kunde einer Preiserhöhung nicht zu, kann er den Vertrag zum Zeitpunkt des Inkrafttretens der Preiserhöhung außerordentlich kündigen. In diesem Fall wird kein anteiliger Betrag für den bereits bezahlten Zeitraum zurückerstattet, sofern dieser zum Zeitpunkt der Kündigung bereits vollständig erbracht wurde.
 
@@ -136,11 +136,11 @@ Rückerstattungen bei berechtigten Sonderfällen (z. B. technischem Versagen des
 
 8.3 **Haftungsbeschränkung.** Soweit nicht zwingendes Recht etwas anderes vorschreibt, haftet der Anbieter nur für Schäden, die auf Vorsatz oder grober Fahrlässigkeit beruhen. Die Haftung für leichte Fahrlässigkeit ist – außer bei Verletzung wesentlicher Vertragspflichten, bei Schäden aus Verletzung des Lebens, des Körpers oder der Gesundheit sowie bei Ansprüchen nach dem Produkthaftungsgesetz – ausgeschlossen.
 
-8.4 **Haftungsdeckel.** Soweit der Anbieter nach § 8.3 dem Grunde nach haftet, ist die Haftung der Höhe nach auf den Betrag begrenzt, den der Kunde im betreffenden Kalenderjahr an den Anbieter gezahlt hat, mindestens jedoch 500 Euro. Diese Begrenzung gilt nicht für Ansprüche wegen Verletzung von Leben, Körper oder Gesundheit sowie für Ansprüche nach dem Produkthaftungsgesetz.
+8.4 **Haftungsdeckel.** Soweit der Anbieter nach § 8.3 dem Grunde nach haftet, ist die Haftung der Höhe nach auf den Betrag begrenzt, den der Kunde im betreffenden Kalenderjahr an den Anbieter gezahlt hat, mindestens jedoch 500 Euro. Diese Begrenzung gilt nicht für Ansprüche wegen Verletzung von Leben, Körper oder Gesundheit, für Ansprüche nach dem Produkthaftungsgesetz sowie für Ansprüche aus Vorsatz.
 
 8.5 Für den Verlust von Daten haftet der Anbieter nur in dem Umfang, in dem der Schaden auch bei ordnungsgemäßem, regelmäßigem Datensicherungsverhalten des Kunden eingetreten wäre.
 
-8.6 **Verfügbarkeit.** Der Anbieter ist bestrebt, den Dienst möglichst unterbrechungsfrei bereitzustellen. Ein Anspruch auf eine bestimmte Verfügbarkeit besteht nicht. Geplante Wartungsarbeiten werden, soweit möglich, in nachfrageschwachen Zeiten durchgeführt. Vorübergehende Einschränkungen aufgrund technischer Notwendigkeiten begründen keinen Anspruch auf Mietminderung oder Schadensersatz.
+8.6 **Verfügbarkeit und mietrechtliche Einschränkungen.** Für den Free-Tarif besteht kein Anspruch auf eine bestimmte Verfügbarkeit des Dienstes. Für kostenpflichtige Tarife (Pro und Business) ist der Anbieter bestrebt, den Dienst in hoher Verfügbarkeit bereitzustellen; eine bestimmte Mindestverfügbarkeit wird jedoch nicht verbindlich zugesagt. Geplante Wartungsarbeiten werden möglichst in nachfrageschwachen Zeiten durchgeführt und, soweit möglich, im Voraus angekündigt. Da fordify als SaaS-Plattform als Mietvertrag im Sinne des § 535 BGB einzustufen ist, schließen die Parteien für das vorliegende B2B-Verhältnis das Recht auf Minderung nach § 536 BGB für vorübergehende technisch bedingte Einschränkungen sowie Ansprüche nach § 536a Abs. 1 BGB wegen anfänglich vorhandener Mängel ausdrücklich aus; weitergehende Schadensersatzansprüche richten sich ausschließlich nach §§ 8.3 und 8.4.
 
 ## 9. Datenschutz
 
@@ -150,9 +150,9 @@ Rückerstattungen bei berechtigten Sonderfällen (z. B. technischem Versagen des
 
 9.3 Die technische Infrastruktur wird über Supabase betrieben; die Datenspeicherung erfolgt innerhalb der Europäischen Union (Frankfurt, Deutschland).
 
-9.4 **Berufsrechtlicher Geheimnisschutz.** Soweit der Kunde zur Nutzung des Dienstes Daten eingibt, die berufsrechtlichem Geheimnisschutz unterliegen – insbesondere Mandantendaten im Sinne des § 43a BRAO –, liegt die Verantwortung für die berufsrechtliche Zulässigkeit der Übermittlung und Verarbeitung dieser Daten ausschließlich beim Kunden. Der Kunde ist insbesondere selbst dafür verantwortlich zu prüfen, ob die Weitergabe von Mandantendaten an einen externen Auftragsverarbeiter einer Einwilligung der Mandanten bedarf, und diese gegebenenfalls einzuholen.
+9.4 **Berufsrechtlicher Geheimnisschutz.** Soweit der Kunde zur Nutzung des Dienstes Daten eingibt, die berufsrechtlichem Geheimnisschutz unterliegen – insbesondere Mandantendaten im Sinne des § 43a BRAO –, liegt die Verantwortung für die berufsrechtliche Zulässigkeit der Übermittlung und Verarbeitung dieser Daten ausschließlich beim Kunden. Der Kunde ist insbesondere selbst dafür verantwortlich zu prüfen, ob die Weitergabe von Mandantendaten an einen externen Auftragsverarbeiter einer Einwilligung der Mandanten bedarf, und diese gegebenenfalls einzuholen. Der Anbieter verpflichtet sich seinerseits, die Anforderungen des § 43e BRAO zu erfüllen und sicherzustellen, dass die mit der Verarbeitung von Mandantendaten befassten Personen gemäß § 203 Abs. 4 S. 2 Nr. 1 StGB i.V.m. § 43e Abs. 4 BRAO auf die Verschwiegenheit verpflichtet und über die Strafbarkeit unbefugter Offenbarung nach § 203 StGB belehrt werden; Einzelheiten sind im AVV geregelt.
 
-9.5 **Datenzugriff.** Mitarbeiter des Anbieters greifen auf im System gespeicherte Inhaltsdaten des Kunden nur zu, wenn (a) der Kunde eine ausdrückliche Supportfreigabe erteilt hat, (b) eine gesetzliche Verpflichtung besteht (z. B. behördliche Auskunftsanordnung) oder (c) konkrete Anhaltspunkte für einen Straftatverdacht vorliegen.
+9.5 **Datenzugriff.** Mitarbeiter des Anbieters greifen auf im System gespeicherte Inhaltsdaten des Kunden nur zu, wenn (a) der Kunde eine ausdrückliche Supportfreigabe erteilt hat, (b) eine gesetzliche Verpflichtung besteht (z. B. behördliche Auskunftsanordnung).
 
 ## 10. Schlussbestimmungen
 
@@ -164,6 +164,6 @@ Rückerstattungen bei berechtigten Sonderfällen (z. B. technischem Versagen des
 
 10.4 **Salvatorische Klausel.** Sollte eine Bestimmung dieser AGB unwirksam sein, bleiben die übrigen Bestimmungen davon unberührt.
 
-10.5 **Streitbeilegung.** Die EU-Kommission stellt eine Plattform zur Online-Streitbeilegung bereit: [https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr). Der Anbieter ist nicht verpflichtet, an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
+10.5 **Streitbeilegung.** Der Anbieter ist nicht verpflichtet und auch nicht bereit, an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
 
 10.6 **Höhere Gewalt.** Der Anbieter haftet nicht für die Verzögerung oder Nichterfüllung von Leistungen, soweit diese auf Umstände zurückzuführen sind, die außerhalb seines zumutbaren Einflussbereichs liegen, insbesondere auf Naturkatastrophen, behördliche Anordnungen, Netzwerkausfälle Dritter, Pandemien oder schwere Erkrankung des Betreibers als Einzelunternehmer. Der Anbieter wird den Kunden über solche Ereignisse unverzüglich informieren und sich um eine schnellstmögliche Wiederherstellung des Dienstbetriebs bemühen.

@@ -66,7 +66,7 @@ Soweit innerhalb dieser Datenschutzerklärung keine speziellere Speicherdauer ge
 
 ### Allgemeine Hinweise zu den Rechtsgrundlagen der Datenverarbeitung auf dieser Website
 
-Sind Ihre Daten zur Vertragserfüllung oder zur Durchführung vorvertraglicher Maßnahmen erforderlich, verarbeiten wir Ihre Daten auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO. Soweit die Verarbeitung zur Erfüllung einer rechtlichen Verpflichtung erforderlich ist, gilt Art. 6 Abs. 1 lit. c DSGVO. Die Datenverarbeitung kann ferner auf Grundlage unseres berechtigten Interesses nach Art. 6 Abs. 1 lit. f DSGVO erfolgen. Für Datenübermittlungen in Länder außerhalb der EU stützen wir uns auf Standardvertragsklauseln gemäß Art. 46 Abs. 2 lit. c DSGVO. Über die jeweils im Einzelfall einschlägigen Rechtsgrundlagen wird in den folgenden Absätzen dieser Datenschutzerklärung informiert.
+Sind Ihre Daten zur Vertragserfüllung oder zur Durchführung vorvertraglicher Maßnahmen erforderlich, verarbeiten wir Ihre Daten auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO. Soweit die Verarbeitung zur Erfüllung einer rechtlichen Verpflichtung erforderlich ist, gilt Art. 6 Abs. 1 lit. c DSGVO. Die Datenverarbeitung kann ferner auf Grundlage unseres berechtigten Interesses nach Art. 6 Abs. 1 lit. f DSGVO erfolgen. Für Datenübermittlungen in Länder außerhalb der EU stützen wir uns je nach Anbieter auf einen Angemessenheitsbeschluss gemäß Art. 45 DSGVO oder auf Standardvertragsklauseln gemäß Art. 46 Abs. 2 lit. c DSGVO. Über die jeweils im Einzelfall einschlägigen Rechtsgrundlagen wird in den folgenden Absätzen dieser Datenschutzerklärung informiert.
 
 ### Empfänger von personenbezogenen Daten
 
@@ -138,7 +138,7 @@ Der Provider der Seiten erhebt und speichert automatisch Informationen in so gen
 
 Eine Zusammenführung dieser Daten mit anderen Datenquellen wird nicht vorgenommen.
 
-Die Erfassung dieser Daten erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Der Websitebetreiber hat ein berechtigtes Interesse an der technisch fehlerfreien Darstellung und der Optimierung seiner Website – hierzu müssen die Server-Log-Files erfasst werden.
+Die Erfassung dieser Daten erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Der Websitebetreiber hat ein berechtigtes Interesse an der technisch fehlerfreien Darstellung und der Optimierung seiner Website – hierzu müssen die Server-Log-Files erfasst werden. Die Server-Log-Dateien werden spätestens nach 30 Tagen automatisch gelöscht.
 
 ### Anfrage per E-Mail, Telefon oder Telefax
 
@@ -168,13 +168,13 @@ Da Supabase Inc. seinen Firmensitz außerhalb der EU hat, wurden für den mögli
 
 Für den Versand transaktionaler E-Mails (insbesondere Magic-Link-Login-E-Mails und Buchungsbestätigungen) nutzen wir den Dienst Resend. Anbieter ist Resend Inc., 2261 Market Street #5643, San Francisco, CA 94114, USA. E-Mails werden über die Subdomain *mail.fordify.de* versandt; die Server-Infrastruktur befindet sich innerhalb der Europäischen Union.
 
-An Resend wird zu diesem Zweck Ihre E-Mail-Adresse übermittelt. Wir haben mit Resend einen Vertrag über Auftragsverarbeitung (AVV) gemäß Art. 28 DSGVO geschlossen. Für die Übermittlung in die USA stützen wir uns auf Standardvertragsklauseln (Standard Contractual Clauses, Art. 46 Abs. 2 lit. c DSGVO), die zwischen uns und Resend vereinbart wurden.
+An Resend wird zu diesem Zweck Ihre E-Mail-Adresse übermittelt. Wir haben mit Resend einen Vertrag über Auftragsverarbeitung (AVV) gemäß Art. 28 DSGVO geschlossen. Da Resend Inc. seit März 2025 unter dem EU-U.S. Data Privacy Framework (DPF) zertifiziert ist, stützen wir uns für die Übermittlung in die USA auf den Angemessenheitsbeschluss der EU-Kommission (EU) 2023/1795 gemäß Art. 45 DSGVO.
 
 Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Erfüllung des Nutzungsvertrags, insbesondere Versand des Login-Links). Die Datenschutzerklärung von Resend ist unter [https://resend.com/legal/privacy-policy](https://resend.com/legal/privacy-policy) abrufbar.
 
 ### E-Mail-Automatisierung (eigene Infrastruktur)
 
-Für die automatisierte Auslösung transaktionaler E-Mails (z. B. Willkommens-Mail nach Registrierung, Zahlungsbestätigung, Kündigungsbestätigung, Erinnerungsmail vor Ablauf des Abonnements) betreiben wir eine eigene Automatisierungslösung (N8N) auf einem Server innerhalb der Europäischen Union (Hostinger VPS). Im Rahmen dieser Workflows wird Ihre E-Mail-Adresse verarbeitet, um den Versand über Resend (siehe oben) auszulösen. Da die Infrastruktur vollständig im eigenen Betrieb liegt, erfolgt keine Datenübertragung an Dritte. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung).
+Für die automatisierte Auslösung transaktionaler E-Mails (z. B. Willkommens-Mail nach Registrierung, Zahlungsbestätigung, Kündigungsbestätigung, Erinnerungsmail vor Ablauf des Abonnements) betreiben wir eine eigene Automatisierungslösung (N8N) auf einem dedizierten Server der Hostinger International Ltd., UAB (Litauen) innerhalb der Europäischen Union. Im Rahmen dieser Workflows wird Ihre E-Mail-Adresse verarbeitet, um den Versand über Resend (siehe oben) auszulösen. Da die Infrastruktur vollständig im eigenen Betrieb liegt, erfolgt keine Datenübertragung an Dritte. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung).
 
 ### GoatCounter (Webanalyse)
 
@@ -190,7 +190,7 @@ Die Zahlungsabwicklung für kostenpflichtige Tarife erfolgt über Paddle (Paddle
 
 Paddle ist für die im Rahmen des Bezahlvorgangs verarbeiteten Zahlungs- und Rechnungsdaten (Name, Rechnungsadresse, Zahlungsmittelinformationen) **eigenständig Verantwortlicher** im Sinne des Art. 4 Nr. 7 DSGVO. Wir erhalten von Paddle lediglich die für die Vertragsdurchführung erforderlichen Informationen (z. B. gewählter Tarif, Abrechnungszeitraum, Zahlungsstatus) und haben keinen Zugriff auf vollständige Zahlungsmitteldaten.
 
-Rechtsgrundlage für die Datenverarbeitung durch Paddle ist Art. 6 Abs. 1 lit. b DSGVO (Vertragsabwicklung). Die Datenschutzerklärung von Paddle ist unter [https://www.paddle.com/legal/privacy](https://www.paddle.com/legal/privacy) abrufbar.
+Paddle hat seinen Sitz im Vereinigten Königreich; für die Datenübermittlung in das Vereinigte Königreich stützen wir uns auf den Angemessenheitsbeschluss der EU-Kommission (EU) 2021/1772, zuletzt verlängert durch Beschluss (EU) 2025/1226. Rechtsgrundlage für die Datenverarbeitung durch Paddle ist Art. 6 Abs. 1 lit. b DSGVO (Vertragsabwicklung). Die Datenschutzerklärung von Paddle ist unter [https://www.paddle.com/legal/privacy](https://www.paddle.com/legal/privacy) abrufbar.
 
 ## 5. Plugins und Tools
 
