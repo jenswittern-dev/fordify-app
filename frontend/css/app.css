@@ -2065,7 +2065,7 @@ body {
   .comparison-table td:first-child { width: 54%; word-break: break-word; }
   .comparison-table th:not(:first-child),
   .comparison-table td:not(:first-child) { width: 15.33%; text-align: center; }
-  .comparison-table th, .comparison-table td { padding: 0.55rem 0.35rem; min-height: 44px; }
+  .comparison-table th, .comparison-table td { padding: 0.55rem 0.35rem; height: 44px; }
   /* Comparison-Section: seitliches Padding entfernen (Container reicht) */
   .comparison-section { padding-left: 0; padding-right: 0; padding-bottom: 2rem; }
   /* Billing-Toggle zentriert */
