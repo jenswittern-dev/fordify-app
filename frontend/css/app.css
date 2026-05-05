@@ -1966,6 +1966,26 @@ body {
 .preise-hero p { color: rgba(255,255,255,0.75); font-size: 1.0625rem; max-width: 540px; margin: 0 auto 1.5rem; }
 .billing-toggle-wrap { display: flex; align-items: center; justify-content: center; gap: 0.75rem; font-size: 0.9375rem; color: rgba(255,255,255,0.85); }
 .billing-toggle-wrap .save-badge { background: rgba(52,211,153,0.2); color: #34d399; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px; }
+.preise-hero__free-link { display: inline-block; margin-top: 1rem; color: rgba(255,255,255,.65); font-size: 0.875rem; text-decoration: none; }
+.preise-hero__free-link:hover { color: #fff; text-decoration: underline; }
+
+/* AGB-Consent-Modal */
+.modal-consent .modal-dialog { max-width: 440px; }
+.modal-consent .modal-content { border-radius: 14px; overflow: hidden; }
+.modal-consent .modal-header { background: linear-gradient(135deg,#1e3a8a,#2563eb); padding: 1.5rem 1.75rem 1.25rem; }
+.modal-consent__step { color: #93c5fd; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.3rem; }
+.modal-consent .modal-title { color: #fff; font-size: 1.15rem; }
+.modal-consent .btn-close { opacity: 0.7; }
+.modal-consent .modal-body { padding: 1.75rem; }
+.modal-consent__intro { color: #475569; font-size: 0.9rem; line-height: 1.6; }
+.modal-consent__box { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 0.875rem; }
+.modal-consent__box--last { margin-bottom: 1.5rem; }
+.modal-consent__box .form-check { margin: 0; }
+.modal-consent__box .form-check-input { width: 1.1em; height: 1.1em; margin-top: 0.15em; cursor: pointer; }
+.modal-consent__box .form-check-label { font-size: 0.875rem; line-height: 1.55; color: #334155; cursor: pointer; padding-left: 0.35rem; }
+.modal-consent__box a { color: #2563eb; font-weight: 500; }
+.modal-consent__submit { padding: 0.75rem; font-size: 1rem; border-radius: 8px; letter-spacing: 0.01em; }
+.modal-consent__security { margin-top: 0.875rem; font-size: 0.8rem; color: #94a3b8; }
 
 .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; max-width: 900px; margin: 0 auto; padding: 2.5rem 1rem 3rem; }
 .pricing-card { background: var(--color-surface); border: 1.5px solid var(--color-border); border-radius: 14px; padding: 2rem 1.75rem; position: relative; transition: box-shadow 0.2s; display: flex; flex-direction: column; }
@@ -1976,7 +1996,7 @@ body {
 .plan-price { font-size: 2.25rem; font-weight: 800; color: var(--color-primary); line-height: 1; margin-bottom: 0.25rem; }
 .plan-price span { font-size: 1rem; font-weight: 400; color: var(--color-text-muted); }
 .plan-price-alt { font-size: 0.8125rem; color: var(--color-text-muted); margin-bottom: 1.25rem; min-height: 1.2rem; }
-.plan-desc { font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1.5rem; line-height: 1.5; min-height: 4.5rem; }
+.plan-desc { font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1.5rem; line-height: 1.5; }
 .feature-list { list-style: none; padding: 0; margin: 0 0 1.75rem; flex: 1; }
 .feature-list li { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.9rem; color: var(--color-text); margin-bottom: 0.6rem; line-height: 1.4; }
 .feature-list li .icon-check { color: #16a34a; flex-shrink: 0; margin-top: 1px; }

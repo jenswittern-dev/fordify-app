@@ -371,7 +371,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ede9fe;
+  background: rgba(30,58,138,.1);
   border-radius: 7px;
   flex-shrink: 0;
   margin-bottom: 0.75rem;
@@ -379,7 +379,7 @@
 .tool-card__icon svg {
   width: 1rem;
   height: 1rem;
-  fill: #6d28d9;
+  fill: var(--color-primary);
 }
 .tool-card__title {
   font-weight: 700;
@@ -397,7 +397,7 @@
 .tool-card__cta {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #6d28d9;
+  color: var(--color-primary);
   display: inline-block;
   transition: transform 0.15s ease;
 }
@@ -482,6 +482,7 @@
   margin: 0 auto;
 }
 @media (max-width: 767px) { .seo-text-block .seo-cols { grid-template-columns: 1fr; } }
+.seo-cols__wide { grid-column: 1 / -1; }
 .seo-text-block h2 {
   font-size: 0.88rem;
   font-weight: 700;
