@@ -5,17 +5,17 @@ const IS_STAGING = ['staging.fordify.de', 'localhost', '127.0.0.1'].some(
 const CONFIG = Object.freeze({
   env: IS_STAGING ? 'staging' : 'production',
   supabase: {
-    url:     IS_STAGING ? '' : 'https://dswhllvtewtqpiqnpbsu.supabase.co',
-    anonKey: IS_STAGING ? '' : 'sb_publishable_oDmF5OVPExc5PxMp21rb7g_5VLqtPvE',
+    url:     'https://dswhllvtewtqpiqnpbsu.supabase.co',
+    anonKey: 'sb_publishable_oDmF5OVPExc5PxMp21rb7g_5VLqtPvE',
   },
   paddle: {
-    token:       IS_STAGING ? '' : 'live_f5be54feee652705c46e99ab45f',
+    token:       IS_STAGING ? 'test_243893f974e0363340c01e3b09f' : 'live_f5be54feee652705c46e99ab45f',
     environment: IS_STAGING ? 'sandbox' : 'production',
     prices: {
-      proMonthly:       IS_STAGING ? '' : 'pri_01kpp1zs2b487axchzx5tc8kxx',
-      proYearly:        IS_STAGING ? '' : 'pri_01kpp21sceph74f9bshqfsjy42',
-      businessMonthly:  IS_STAGING ? '' : 'pri_01kpp23ycxcekkexfh1hd5vzht',
-      businessYearly:   IS_STAGING ? '' : 'pri_01kpp257vybj8k2y6jan6pq1tw',
+      proMonthly:       IS_STAGING ? 'pri_01kqvp00f01zz8ycxnnnqj4068' : 'pri_01kpp1zs2b487axchzx5tc8kxx',
+      proYearly:        IS_STAGING ? 'pri_01kqvnz16xn6t38dn61v4w9t4a' : 'pri_01kpp21sceph74f9bshqfsjy42',
+      businessMonthly:  IS_STAGING ? 'pri_01kqvnxd2z9bbtkw3e6rqqpe81' : 'pri_01kpp23ycxcekkexfh1hd5vzht',
+      businessYearly:   IS_STAGING ? 'pri_01kqvnw8k82t0d1jhbszjzk9v6' : 'pri_01kpp257vybj8k2y6jan6pq1tw',
     },
   },
 });

@@ -1,22 +1,31 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const PADDLE_WEBHOOK_SECRET = Deno.env.get('PADDLE_WEBHOOK_SECRET')!
-const PADDLE_API_KEY        = Deno.env.get('PADDLE_API_KEY')!
-const SUPABASE_URL          = Deno.env.get('SUPABASE_URL')!
-const SUPABASE_SERVICE_KEY  = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-const RESEND_API_KEY        = Deno.env.get('RESEND_API_KEY')!
-const PADDLE_API_BASE       = 'https://api.paddle.com'
-const N8N_BASE              = 'https://n8n.srv1063720.hstgr.cloud/webhook'
+const PADDLE_WEBHOOK_SECRET         = Deno.env.get('PADDLE_WEBHOOK_SECRET')!
+const PADDLE_WEBHOOK_SECRET_SANDBOX = Deno.env.get('PADDLE_WEBHOOK_SECRET_SANDBOX') || ''
+const PADDLE_API_KEY                = Deno.env.get('PADDLE_API_KEY')!
+const PADDLE_API_KEY_SANDBOX        = Deno.env.get('PADDLE_API_KEY_SANDBOX') || ''
+const SUPABASE_URL                  = Deno.env.get('SUPABASE_URL')!
+const SUPABASE_SERVICE_KEY          = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+const RESEND_API_KEY                = Deno.env.get('RESEND_API_KEY')!
+const N8N_BASE                      = 'https://n8n.srv1063720.hstgr.cloud/webhook'
 
 serve(async (req) => {
   const body      = await req.text()
   const signature = req.headers.get('paddle-signature') || ''
 
-  const isValid = await verifyPaddleSignature(body, signature, PADDLE_WEBHOOK_SECRET)
+  let isSandbox = false
+  let isValid   = await verifyPaddleSignature(body, signature, PADDLE_WEBHOOK_SECRET)
+  if (!isValid && PADDLE_WEBHOOK_SECRET_SANDBOX) {
+    isValid   = await verifyPaddleSignature(body, signature, PADDLE_WEBHOOK_SECRET_SANDBOX)
+    isSandbox = isValid
+  }
   if (!isValid) return new Response('Unauthorized', { status: 401 })
 
-  const event   = JSON.parse(body)
+  const paddleApiBase = isSandbox ? 'https://sandbox-api.paddle.com' : 'https://api.paddle.com'
+  const paddleApiKey  = isSandbox ? PADDLE_API_KEY_SANDBOX : PADDLE_API_KEY
+
+  const event    = JSON.parse(body)
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
   const { event_type, data } = event
 
@@ -25,7 +34,7 @@ serve(async (req) => {
     let userId = data.custom_data?.user_id || null
 
     if (!userId) {
-      const email = await _getPaddleCustomerEmail(data.customer_id)
+      const email = await _getPaddleCustomerEmail(data.customer_id, paddleApiBase, paddleApiKey)
       if (!email) {
         console.error('Could not resolve customer email for customer_id:', data.customer_id)
         return new Response('Could not resolve customer email', { status: 500 })
@@ -37,13 +46,12 @@ serve(async (req) => {
         return new Response('User resolution failed', { status: 500 })
       }
       if (event_type === 'subscription.created' || event_type === 'subscription.activated') {
-        await _sendMagicLink(supabase, email)
+        await _sendMagicLink(supabase, email, isSandbox)
       }
     }
 
     const plan = data.items?.[0]?.price?.custom_data?.plan || 'pro'
 
-    // Fix 5: express reactivation condition explicitly
     const isReactivation = event_type === 'subscription.activated' || data.status === 'active'
     const clearFields = isReactivation ? {
       grace_period_end: null,
@@ -68,7 +76,6 @@ serve(async (req) => {
       return new Response('DB upsert failed', { status: 500 })
     }
 
-    // On new subscription: record AGB + AVV acceptance timestamps (from checkout custom_data, else now)
     if (event_type === 'subscription.created' || event_type === 'subscription.activated') {
       const agbAcceptedAt  = data.custom_data?.agb_accepted_at  || new Date().toISOString()
       const avvAcceptedAt  = data.custom_data?.avv_accepted_at  || new Date().toISOString()
@@ -79,21 +86,18 @@ serve(async (req) => {
       if (consentError) console.error('accepted_agb_at/accepted_avv_at update failed:', consentError)
     }
 
-    // Detect cancellation scheduled → store scheduled_cancel_at + fire retention webhook
     if (event_type === 'subscription.updated' &&
         data.scheduled_change?.action === 'cancel' &&
         data.scheduled_change?.effective_at) {
       const scheduledCancelAt = data.scheduled_change.effective_at
 
-      // Fix 4: add error check for scheduled_cancel_at update
       const { error: schedCancelError } = await supabase.from('subscriptions')
         .update({ scheduled_cancel_at: scheduledCancelAt })
         .eq('paddle_subscription_id', data.id)
 
       if (schedCancelError) {
         console.error('scheduled_cancel_at update failed:', schedCancelError)
-      } else {
-        // Fetch email for retention webhook payload
+      } else if (!isSandbox) {
         const { data: profile } = await supabase
           .from('profiles')
           .select('email')
@@ -102,9 +106,9 @@ serve(async (req) => {
 
         if (profile?.email) {
           await _fireN8NWebhook(`${N8N_BASE}/fordify-retention`, {
-            email:              profile.email,
-            plan:               plan,
-            billing_cycle:      data.billing_cycle?.interval || 'month',
+            email:               profile.email,
+            plan,
+            billing_cycle:       data.billing_cycle?.interval || 'month',
             scheduled_cancel_at: scheduledCancelAt
           })
         }
@@ -114,7 +118,6 @@ serve(async (req) => {
 
   // ── Subscription canceled (billing period ended) ─────────────────────────
   if (event_type === 'subscription.canceled') {
-    // Fix 3: anchor grace period to billing period end, fall back to now
     const periodEnd = data.current_billing_period?.ends_at
       ? new Date(data.current_billing_period.ends_at)
       : new Date()
@@ -123,13 +126,12 @@ serve(async (req) => {
     }
     const gracePeriodEnd = new Date(periodEnd.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString()
 
-    // Fix 1: destructure error and log it
     const { data: updatedSub, error: cancelError } = await supabase.from('subscriptions')
       .update({
-        status:          'canceled',
-        plan:            'free',
+        status:           'canceled',
+        plan:             'free',
         grace_period_end: gracePeriodEnd,
-        updated_at:      new Date().toISOString()
+        updated_at:       new Date().toISOString()
       })
       .eq('paddle_subscription_id', data.id)
       .select('user_id, billing_cycle')
@@ -139,7 +141,7 @@ serve(async (req) => {
       console.error('subscription.canceled update failed:', cancelError)
     }
 
-    if (updatedSub?.user_id) {
+    if (!isSandbox && updatedSub?.user_id) {
       const { data: profile } = await supabase
         .from('profiles')
         .select('email')
@@ -158,31 +160,30 @@ serve(async (req) => {
 
   // ── Transaction completed (payment received) ─────────────────────────────
   if (event_type === 'transaction.completed') {
-    // Fix 7: log origin for observability
-    console.log('transaction.completed origin:', data.origin)
-    const customerId = data.customer_id
-    const email = await _getPaddleCustomerEmail(customerId)
-    if (email) {
-      const totals = data.details?.totals
-      const amountRaw = totals?.total ? parseInt(totals.total, 10) : null
-      // Fix 2: currency_code is a top-level field on the Paddle transaction object
-      const currency  = data.currency_code || 'EUR'
-      const amount    = amountRaw !== null
-        ? (amountRaw / 100).toLocaleString('de-DE', { style: 'currency', currency })
-        : null
+    console.log('transaction.completed origin:', data.origin, isSandbox ? '(sandbox)' : '(live)')
+    if (!isSandbox) {
+      const customerId = data.customer_id
+      const email = await _getPaddleCustomerEmail(customerId, paddleApiBase, paddleApiKey)
+      if (email) {
+        const totals    = data.details?.totals
+        const amountRaw = totals?.total ? parseInt(totals.total, 10) : null
+        const currency  = data.currency_code || 'EUR'
+        const amount    = amountRaw !== null
+          ? (amountRaw / 100).toLocaleString('de-DE', { style: 'currency', currency })
+          : null
+        const plan = data.items?.[0]?.price?.custom_data?.plan || null
 
-      const plan = data.items?.[0]?.price?.custom_data?.plan || null
-
-      await _fireN8NWebhook(`${N8N_BASE}/fordify-payment-confirmed`, {
-        email,
-        plan,
-        amount,
-        currency,
-        transaction_id:   data.id,
-        transaction_date: data.created_at
-          ? new Date(data.created_at).toLocaleDateString('de-DE')
-          : new Date().toLocaleDateString('de-DE')
-      })
+        await _fireN8NWebhook(`${N8N_BASE}/fordify-payment-confirmed`, {
+          email,
+          plan,
+          amount,
+          currency,
+          transaction_id:   data.id,
+          transaction_date: data.created_at
+            ? new Date(data.created_at).toLocaleDateString('de-DE')
+            : new Date().toLocaleDateString('de-DE')
+        })
+      }
     }
   }
 
@@ -191,7 +192,6 @@ serve(async (req) => {
 
 async function _fireN8NWebhook(url: string, payload: Record<string, unknown>): Promise<void> {
   try {
-    // Fix 6: check HTTP response status and log non-OK responses
     const resp = await fetch(url, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -206,9 +206,9 @@ async function _fireN8NWebhook(url: string, payload: Record<string, unknown>): P
   }
 }
 
-async function _getPaddleCustomerEmail(customerId: string): Promise<string | null> {
-  const resp = await fetch(`${PADDLE_API_BASE}/customers/${customerId}`, {
-    headers: { 'Authorization': `Bearer ${PADDLE_API_KEY}` }
+async function _getPaddleCustomerEmail(customerId: string, apiBase: string, apiKey: string): Promise<string | null> {
+  const resp = await fetch(`${apiBase}/customers/${customerId}`, {
+    headers: { 'Authorization': `Bearer ${apiKey}` }
   })
   if (!resp.ok) return null
   const json = await resp.json()
@@ -234,11 +234,12 @@ async function _findOrCreateUser(supabase: ReturnType<typeof createClient>, emai
   return data.user.id
 }
 
-async function _sendMagicLink(supabase: ReturnType<typeof createClient>, email: string): Promise<void> {
+async function _sendMagicLink(supabase: ReturnType<typeof createClient>, email: string, isSandbox: boolean): Promise<void> {
+  const redirectTo = isSandbox ? 'https://staging.fordify.de/konto' : 'https://fordify.de/konto'
   const { data, error } = await supabase.auth.admin.generateLink({
     type: 'magiclink',
     email,
-    options: { redirectTo: 'https://fordify.de/konto' }
+    options: { redirectTo }
   })
   if (error || !data?.properties?.action_link) {
     console.error('generateLink failed:', error)
