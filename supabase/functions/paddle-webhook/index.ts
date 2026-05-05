@@ -227,22 +227,29 @@ async function _getPaddleCustomerEmail(customerId: string, apiBase: string, apiK
 }
 
 async function _findOrCreateUser(supabase: ReturnType<typeof createClient>, email: string): Promise<string> {
-  const searchResp = await fetch(
-    `${SUPABASE_URL}/auth/v1/admin/users?email=${encodeURIComponent(email)}&page=1&per_page=1`,
-    { headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}` } }
-  )
-  const searchData = await searchResp.json()
-  const existing = searchData?.users?.find(
-    (u: { email: string; id: string }) => u.email === email
-  )
-  if (existing?.id) return existing.id
+  // Use profiles table for lookup (works with any key format, email is indexed)
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('email', email)
+    .maybeSingle()
+  if (profile?.id) return profile.id
 
   const { data, error } = await supabase.auth.admin.createUser({
     email,
     email_confirm: true
   })
-  if (error || !data.user?.id) throw new Error(`createUser failed: ${error?.message}`)
-  return data.user.id
+  if (!error && data?.user?.id) return data.user.id
+
+  // Race condition: another concurrent event may have just created the user
+  const { data: retryProfile } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('email', email)
+    .maybeSingle()
+  if (retryProfile?.id) return retryProfile.id
+
+  throw new Error(`findOrCreateUser failed: ${error?.message}`)
 }
 
 async function _sendMagicLink(supabase: ReturnType<typeof createClient>, email: string, isSandbox: boolean): Promise<void> {
