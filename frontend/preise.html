@@ -125,6 +125,7 @@
       </div>
       <span>Jährlich <span class="save-badge">2 Monate gratis</span></span>
     </div>
+    <a href="/forderungsaufstellung" class="preise-hero__free-link">Oder jetzt kostenlos starten &#8211; ohne Anmeldung &#8594;</a>
   </div>
 </div>
 
@@ -182,7 +183,7 @@
     <div class="plan-price price-yearly d-none">33,25 €<span>/Monat</span></div>
     <div class="plan-price-alt price-monthly">Für Teams und Unternehmen</div>
     <div class="plan-price-alt price-yearly d-none">399 € pro Jahr – 2 Monate gratis</div>
-    <div class="plan-desc">Für anspruchsvolle Kanzleien: Mandanten-Adressbuch, CSV-Import für Massendaten, kein fordify-Branding und Prioritäts-Support.</div>
+    <div class="plan-desc">Für Teams und größere Kanzleien: Mandanten-Adressbuch, CSV-Import für Massendaten und kein fordify-Branding im PDF.</div>
     <ul class="feature-list">
       <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Alles aus Pro</li>
       <li><svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Mandanten-Adressbuch (mehrere Mandate speichern &amp; in Fällen abrufen)</li>
@@ -284,7 +285,7 @@
 <div class="prefooter-cta">
   <div class="container">
     <div class="prefooter-cta__tag">Kostenlos · Kein Login</div>
-    <div class="prefooter-cta__title">Jetzt fordify nutzen</div>
+    <div class="prefooter-cta__title">Kostenlos loslegen – kein Abo nötig</div>
     <div class="prefooter-cta__sub">Forderungsaufstellung, Zinsen, RVG — alles an einem Ort.</div>
     <a href="/forderungsaufstellung" class="prefooter-cta__btn">Forderungsaufstellung erstellen →</a>
   </div>
@@ -295,7 +296,7 @@
     <div class="footer-cols">
       <div>
         <div class="fordify-footer__brand-name">fordify</div>
-        <div class="fordify-footer__brand-desc">Professionelle Forderungsberechnungen für Anwaltskanzleien und Kanzleiteams. Von Anwälten entwickelt und geprüft.</div>
+        <div class="fordify-footer__brand-desc">Professionelle Forderungsberechnungen für Anwaltskanzleien und Kanzleiteams.</div>
         <div class="fordify-footer__badges">
           <span class="fordify-footer__badge">RVG 2025</span>
           <span class="fordify-footer__badge">§ 367 BGB</span>
@@ -337,43 +338,42 @@
 </footer>
 
 <!-- AGB-Zustimmungs-Modal (erscheint vor Paddle-Checkout) -->
-<div class="modal fade" id="agbConsentModal" tabindex="-1" aria-labelledby="agbConsentLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" style="max-width:440px">
-    <div class="modal-content border-0 shadow-lg" style="border-radius:14px;overflow:hidden">
-      <div class="modal-header border-0" style="background:linear-gradient(135deg,#1e3a8a,#2563eb);padding:1.5rem 1.75rem 1.25rem">
+<div class="modal fade modal-consent" id="agbConsentModal" tabindex="-1" aria-labelledby="agbConsentLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header border-0">
         <div>
-          <div style="color:#93c5fd;font-size:0.75rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.3rem">Schritt 1 von 2</div>
-          <h5 class="modal-title fw-bold mb-0" id="agbConsentLabel" style="color:#fff;font-size:1.15rem">Bestellung abschließen</h5>
+          <div class="modal-consent__step">Schritt 1 von 2</div>
+          <h5 class="modal-title fw-bold mb-0" id="agbConsentLabel">Bestellung abschlie&#223;en</h5>
         </div>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Schließen" style="opacity:0.7"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Schlie&#223;en"></button>
       </div>
-      <div class="modal-body" style="padding:1.75rem">
-        <p class="mb-4" style="color:#475569;font-size:0.9rem;line-height:1.6">Bitte bestätige vor dem Checkout, dass du unsere Geschäftsbedingungen akzeptierst:</p>
+      <div class="modal-body">
+        <p class="modal-consent__intro mb-4">Bitte best&#228;tige vor dem Checkout, dass du unsere Gesch&#228;ftsbedingungen akzeptierst:</p>
 
-        <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:1rem 1.25rem;margin-bottom:0.875rem">
-          <div class="form-check" style="margin:0">
-            <input class="form-check-input" type="checkbox" id="agbConsentCheck" style="width:1.1em;height:1.1em;margin-top:0.15em;cursor:pointer">
-            <label class="form-check-label" for="agbConsentCheck" style="font-size:0.875rem;line-height:1.55;color:#334155;cursor:pointer;padding-left:0.35rem">
-              Ich habe die <a href="/agb" target="_blank" rel="noopener" style="color:#2563eb;font-weight:500">Allgemeinen Geschäftsbedingungen von fordify</a> gelesen und akzeptiere sie. Ich handle als Unternehmer im Sinne des § 14 BGB.
+        <div class="modal-consent__box">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="agbConsentCheck">
+            <label class="form-check-label" for="agbConsentCheck">
+              Ich habe die <a href="/agb" target="_blank" rel="noopener">Allgemeinen Gesch&#228;ftsbedingungen von fordify</a> gelesen und akzeptiere sie. Ich handle als Unternehmer im Sinne des &#167; 14 BGB.
             </label>
           </div>
         </div>
 
-        <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.5rem">
-          <div class="form-check" style="margin:0">
-            <input class="form-check-input" type="checkbox" id="avvConsentCheck" style="width:1.1em;height:1.1em;margin-top:0.15em;cursor:pointer">
-            <label class="form-check-label" for="avvConsentCheck" style="font-size:0.875rem;line-height:1.55;color:#334155;cursor:pointer;padding-left:0.35rem">
-              Ich schließe den <a href="/avv" target="_blank" rel="noopener" style="color:#2563eb;font-weight:500">Auftragsverarbeitungsvertrag (AVV)</a> mit fordify gemäß Art. 28 DSGVO ab.
+        <div class="modal-consent__box modal-consent__box--last">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="avvConsentCheck">
+            <label class="form-check-label" for="avvConsentCheck">
+              Ich schlie&#223;e den <a href="/avv" target="_blank" rel="noopener">Auftragsverarbeitungsvertrag (AVV)</a> mit fordify gem&#228;&#223; Art. 28 DSGVO ab.
             </label>
           </div>
         </div>
 
-        <button class="btn btn-primary w-100 fw-semibold" id="agbConsentBtn" onclick="confirmCheckout()" disabled
-                style="padding:0.75rem;font-size:1rem;border-radius:8px;letter-spacing:0.01em">
-          Weiter zum Checkout →
+        <button class="btn btn-primary w-100 fw-semibold modal-consent__submit" id="agbConsentBtn" onclick="confirmCheckout()" disabled>
+          Weiter zum Checkout &#8594;
         </button>
-        <p class="text-center mb-0" style="margin-top:0.875rem;font-size:0.8rem;color:#94a3b8">
-          🔒 Die Zahlung erfolgt sicher über Paddle
+        <p class="text-center mb-0 modal-consent__security">
+          &#128274; Die Zahlung erfolgt sicher &#252;ber Paddle
         </p>
       </div>
     </div>
