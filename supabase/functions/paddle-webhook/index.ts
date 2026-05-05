@@ -29,6 +29,11 @@ serve(async (req) => {
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
   const { event_type, data } = event
 
+  const n8nOnboarding      = isSandbox ? 'fordify-staging-subscription'       : null // fired directly below
+  const n8nPayment         = isSandbox ? 'fordify-staging-payment-confirmed'   : 'fordify-payment-confirmed'
+  const n8nOffboarding     = isSandbox ? 'fordify-staging-offboarding'         : 'fordify-offboarding'
+  const n8nRetention       = isSandbox ? null                                  : 'fordify-retention' // no staging clone
+
   // ── Subscription created / updated / activated ──────────────────────────
   if (['subscription.created', 'subscription.updated', 'subscription.activated'].includes(event_type)) {
     let userId = data.custom_data?.user_id || null
@@ -84,6 +89,14 @@ serve(async (req) => {
         .eq('id', userId)
         .or('accepted_agb_at.is.null,accepted_avv_at.is.null')
       if (consentError) console.error('accepted_agb_at/accepted_avv_at update failed:', consentError)
+
+      // Trigger onboarding email: production via Supabase DB-webhook; staging called directly
+      if (isSandbox && n8nOnboarding) {
+        await _fireN8NWebhook(`${N8N_BASE}/${n8nOnboarding}`, {
+          type: 'INSERT',
+          record: { user_id: userId, status: 'active', plan }
+        })
+      }
     }
 
     if (event_type === 'subscription.updated' &&
@@ -97,7 +110,7 @@ serve(async (req) => {
 
       if (schedCancelError) {
         console.error('scheduled_cancel_at update failed:', schedCancelError)
-      } else if (!isSandbox) {
+      } else if (n8nRetention) {
         const { data: profile } = await supabase
           .from('profiles')
           .select('email')
@@ -105,7 +118,7 @@ serve(async (req) => {
           .maybeSingle()
 
         if (profile?.email) {
-          await _fireN8NWebhook(`${N8N_BASE}/fordify-retention`, {
+          await _fireN8NWebhook(`${N8N_BASE}/${n8nRetention}`, {
             email:               profile.email,
             plan,
             billing_cycle:       data.billing_cycle?.interval || 'month',
@@ -141,7 +154,7 @@ serve(async (req) => {
       console.error('subscription.canceled update failed:', cancelError)
     }
 
-    if (!isSandbox && updatedSub?.user_id) {
+    if (updatedSub?.user_id) {
       const { data: profile } = await supabase
         .from('profiles')
         .select('email')
@@ -149,7 +162,7 @@ serve(async (req) => {
         .maybeSingle()
 
       if (profile?.email) {
-        await _fireN8NWebhook(`${N8N_BASE}/fordify-offboarding`, {
+        await _fireN8NWebhook(`${N8N_BASE}/${n8nOffboarding}`, {
           email:            profile.email,
           grace_period_end: gracePeriodEnd,
           billing_cycle:    updatedSub.billing_cycle
@@ -161,29 +174,27 @@ serve(async (req) => {
   // ── Transaction completed (payment received) ─────────────────────────────
   if (event_type === 'transaction.completed') {
     console.log('transaction.completed origin:', data.origin, isSandbox ? '(sandbox)' : '(live)')
-    if (!isSandbox) {
-      const customerId = data.customer_id
-      const email = await _getPaddleCustomerEmail(customerId, paddleApiBase, paddleApiKey)
-      if (email) {
-        const totals    = data.details?.totals
-        const amountRaw = totals?.total ? parseInt(totals.total, 10) : null
-        const currency  = data.currency_code || 'EUR'
-        const amount    = amountRaw !== null
-          ? (amountRaw / 100).toLocaleString('de-DE', { style: 'currency', currency })
-          : null
-        const plan = data.items?.[0]?.price?.custom_data?.plan || null
+    const customerId = data.customer_id
+    const email = await _getPaddleCustomerEmail(customerId, paddleApiBase, paddleApiKey)
+    if (email) {
+      const totals    = data.details?.totals
+      const amountRaw = totals?.total ? parseInt(totals.total, 10) : null
+      const currency  = data.currency_code || 'EUR'
+      const amount    = amountRaw !== null
+        ? (amountRaw / 100).toLocaleString('de-DE', { style: 'currency', currency })
+        : null
+      const plan = data.items?.[0]?.price?.custom_data?.plan || null
 
-        await _fireN8NWebhook(`${N8N_BASE}/fordify-payment-confirmed`, {
-          email,
-          plan,
-          amount,
-          currency,
-          transaction_id:   data.id,
-          transaction_date: data.created_at
-            ? new Date(data.created_at).toLocaleDateString('de-DE')
-            : new Date().toLocaleDateString('de-DE')
-        })
-      }
+      await _fireN8NWebhook(`${N8N_BASE}/${n8nPayment}`, {
+        email,
+        plan,
+        amount,
+        currency,
+        transaction_id:   data.id,
+        transaction_date: data.created_at
+          ? new Date(data.created_at).toLocaleDateString('de-DE')
+          : new Date().toLocaleDateString('de-DE')
+      })
     }
   }
 
