@@ -6,7 +6,7 @@
 /* ---- Hero ---- */
 .fordify-hero {
   padding: 5rem 0 3.5rem;
-  background: linear-gradient(135deg, #0f1d5c 0%, #1e3a8a 60%, #1c439a 100%);
+  background: linear-gradient(135deg, #1a3480 0%, #1e3a8a 60%, #1c439a 100%);
   color: #fff;
   text-align: center;
 }
@@ -24,6 +24,25 @@
   line-height: 1.65;
   margin-left: auto;
   margin-right: auto;
+}
+
+.btn-hero-cta {
+  background: #fff;
+  color: var(--color-primary);
+  font-weight: 700;
+  padding: 0.65rem 1.75rem;
+  border-radius: 10px;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.btn-hero-cta:hover,
+.btn-hero-cta:focus-visible {
+  background: #f0f4ff;
+  color: var(--color-primary);
+  box-shadow: 0 4px 16px rgba(15,29,92,0.18);
+  outline: 2px solid var(--color-primary);
 }
 
 /* Hero – Text links, Mockup rechts */
@@ -59,9 +78,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.8);
   letter-spacing: 0.03em;
   white-space: nowrap;
 }
@@ -141,7 +160,7 @@
 }
 .hero-mockup__verrechnung {
   font-size: 0.6rem;
-  color: rgba(255,255,255,0.38);
+  color: #34d399;
   padding: 0.1rem 0 0.3rem 0.25rem;
 }
 .hero-mockup__divider {
