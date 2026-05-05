@@ -87,8 +87,8 @@
             </thead>
             <tbody>${rows}</tbody>
             <tfoot>
-              <tr class="rechner-result__subtotal-row"><td colspan="4">Netto</td><td class="text-end font-mono">${netto.toFixed(2)} &#8364;</td></tr>
-              <tr class="rechner-result__subtotal-row"><td colspan="4">Umsatzsteuer (${ustProzent} %)</td><td class="text-end font-mono">${ust.toFixed(2)} &#8364;</td></tr>
+              <tr class="rechner-result__subtotal-row"><td colspan="3">Netto</td><td class="text-end font-mono">${netto.toFixed(2)} &#8364;</td><td></td></tr>
+              <tr class="rechner-result__subtotal-row"><td colspan="3">Umsatzsteuer (${ustProzent} %)</td><td class="text-end font-mono">${ust.toFixed(2)} &#8364;</td><td></td></tr>
             </tfoot>
           </table>
         </div>
