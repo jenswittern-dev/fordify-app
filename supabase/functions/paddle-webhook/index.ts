@@ -55,7 +55,7 @@ serve(async (req) => {
       }
     }
 
-    const plan = data.items?.[0]?.price?.custom_data?.plan || 'pro'
+    const plan = _detectPlan(data.items?.[0]?.price)
 
     const isReactivation = event_type === 'subscription.activated' || data.status === 'active'
     const clearFields = isReactivation ? {
@@ -183,7 +183,7 @@ serve(async (req) => {
       const amount    = amountRaw !== null
         ? (amountRaw / 100).toLocaleString('de-DE', { style: 'currency', currency })
         : null
-      const plan = data.items?.[0]?.price?.custom_data?.plan || null
+      const plan = _detectPlan(data.items?.[0]?.price)
 
       await _fireN8NWebhook(`${N8N_BASE}/${n8nPayment}`, {
         email,
@@ -200,6 +200,18 @@ serve(async (req) => {
 
   return new Response('OK', { status: 200 })
 })
+
+function _detectPlan(priceData: any): string {
+  if (priceData?.custom_data?.plan) return priceData.custom_data.plan
+  const name = (priceData?.name || '').toLowerCase()
+  if (name.includes('business')) return 'business'
+  const businessIds = [
+    'pri_01kqvnxd2z9bbtkw3e6rqqpe81', 'pri_01kqvnw8k82t0d1jhbszjzk9v6',
+    'pri_01kpp23ycxcekkexfh1hd5vzht',  'pri_01kpp257vybj8k2y6jan6pq1tw',
+  ]
+  if (priceData?.id && businessIds.includes(priceData.id)) return 'business'
+  return 'pro'
+}
 
 async function _fireN8NWebhook(url: string, payload: Record<string, unknown>): Promise<void> {
   try {
@@ -277,22 +289,30 @@ async function _sendMagicLink(supabase: ReturnType<typeof createClient>, email: 
       to:       [email],
       subject:  'Dein fordify-Zugang ist aktiv – hier anmelden',
       html: `
-        <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:2rem">
-          <h2 style="color:#1e3a8a;margin-bottom:0.5rem">Willkommen bei fordify!</h2>
-          <p style="color:#374151">Dein Abo ist aktiv. Klicke auf den Button, um dich anzumelden und deinen Kundenbereich zu öffnen.</p>
-          <a href="${magicLink}"
-             style="display:inline-block;margin:1.5rem 0;padding:0.75rem 1.5rem;background:#2563eb;color:white;border-radius:6px;text-decoration:none;font-weight:600">
-            Bei fordify anmelden →
-          </a>
-          <p style="color:#6b7280;font-size:0.85rem">
-            Der Link ist 24 Stunden gültig und kann nur einmal verwendet werden.<br>
-            Bitte öffne ihn in dem Browser, in dem du fordify nutzen möchtest.
-          </p>
-          <hr style="border:none;border-top:1px solid #e5e7eb;margin:1.5rem 0">
-          <p style="color:#9ca3af;font-size:0.8rem">
-            fordify · <a href="https://fordify.de/impressum" style="color:#9ca3af">Impressum</a> ·
-            <a href="https://fordify.de/datenschutz" style="color:#9ca3af">Datenschutz</a>
-          </p>
+        <div style="font-family:sans-serif;max-width:520px;margin:0 auto">
+          <div style="background:#1e3a8a;padding:1.25rem 2rem;border-radius:8px 8px 0 0">
+            <span style="font-size:1.4rem;font-weight:700;letter-spacing:-0.5px;color:white">ford</span><span style="font-size:1.4rem;font-weight:700;letter-spacing:-0.5px;color:#60a5fa">ify</span>
+          </div>
+          <div style="padding:2rem;background:#ffffff;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px">
+            <h2 style="color:#1e3a8a;margin-top:0;margin-bottom:0.5rem">Willkommen bei fordify!</h2>
+            <p style="color:#374151">Dein Abo ist aktiv. Klicke auf den Button, um dich anzumelden und deinen Kundenbereich zu öffnen.</p>
+            <a href="${magicLink}"
+               style="display:inline-block;margin:1.5rem 0;padding:0.75rem 1.5rem;background:#2563eb;color:white;border-radius:6px;text-decoration:none;font-weight:600">
+              Bei fordify anmelden →
+            </a>
+            <p style="color:#6b7280;font-size:0.85rem">
+              Der Link ist 24 Stunden gültig und kann nur einmal verwendet werden.<br>
+              Bitte öffne ihn in dem Browser, in dem du fordify nutzen möchtest.
+            </p>
+            <hr style="border:none;border-top:1px solid #e5e7eb;margin:1.5rem 0">
+            <p style="color:#6b7280;font-size:0.85rem">
+              Fragen? <a href="mailto:support@fordify.de" style="color:#2563eb">support@fordify.de</a>
+            </p>
+            <p style="color:#9ca3af;font-size:0.8rem;margin-bottom:0">
+              fordify · <a href="https://fordify.de/impressum" style="color:#9ca3af">Impressum</a> ·
+              <a href="https://fordify.de/datenschutz" style="color:#9ca3af">Datenschutz</a>
+            </p>
+          </div>
         </div>
       `
     })
