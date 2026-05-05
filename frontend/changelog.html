@@ -110,8 +110,28 @@
     </div>
     <ul class="list-unstyled" style="border-left:2px solid var(--color-border);padding-left:1.25rem;">
       <li class="mb-3">
+        <span class="badge mb-1" style="background:#f8fafc;color:#475569;font-size:0.65rem;">Alle</span>
+        <div class="fw-medium">PKH-Kalkulator: eigenständige Unterseite</div>
+        <div class="text-muted small">Der PKH-Kalkulator (§ 49 RVG) ist jetzt eine eigene Seite unter <code>/pkh-rechner</code> – mit Vergleich zwischen PKH-Vergütung und Normalvergütung, direkt aus der Navigation erreichbar.</div>
+      </li>
+      <li class="mb-3">
+        <span class="badge mb-1" style="background:#f8fafc;color:#475569;font-size:0.65rem;">Alle</span>
+        <div class="fw-medium">Startseite &amp; Preisseite überarbeitet</div>
+        <div class="text-muted small">Startseite mit überarbeitetem Hero-Bereich, klareren Texten und verbesserter SEO-Struktur. Preisseite mit Free-CTA im Hero, präziseren Plan-Beschreibungen und Prefooter.</div>
+      </li>
+      <li class="mb-3">
+        <span class="badge mb-1" style="background:#f8fafc;color:#475569;font-size:0.65rem;">Alle</span>
+        <div class="fw-medium">E-Mail-Transaktionen: Branding &amp; Plan-Erkennung verbessert</div>
+        <div class="text-muted small">Onboarding- und Zahlungsbestätigungs-Mails zeigen jetzt den korrekten Plan (Pro/Business), fordify-Branding mit Logo, Support-Kontakt und Links zu Impressum &amp; Datenschutz.</div>
+      </li>
+      <li class="mb-3">
+        <span class="badge mb-1" style="background:#f8fafc;color:#475569;font-size:0.65rem;">Alle</span>
+        <div class="fw-medium">Rechtstexte nach Legal-Audit aktualisiert</div>
+        <div class="text-muted small">AGB, Datenschutzerklärung und AVV auf Basis eines vertieften rechtlichen Audits überarbeitet – u.a. Datenverarbeiter-Compliance (Resend, Supabase), Incident-Response-Fristen und Standardvertragsklauseln.</div>
+      </li>
+      <li class="mb-3">
         <span class="badge mb-1" style="background:#f8fafc;color:#475569;font-size:0.65rem;">Design</span>
-        <div class="fw-medium">Überarbeitete Preisseite: Buttons &amp; visuelle Hierarchie</div>
+        <div class="fw-medium">Preisseite: Business-Button &amp; visuelle Hierarchie</div>
         <div class="text-muted small">Business-Button in Dunkelblau für klare Plan-Hierarchie (Free = Outline, Pro = Blau, Business = Dunkelblau). Einheitliche Button-Höhe über alle Karten.</div>
       </li>
     </ul>
@@ -161,6 +181,36 @@
         <span class="badge mb-1" style="background:#f8fafc;color:#475569;font-size:0.65rem;">Alle</span>
         <div class="fw-medium">Tilgungsbestimmung bei Zahlungen</div>
         <div class="text-muted small">Zahlungen können spezifischen Hauptforderungen oder Zinsen zugeordnet werden (§ 366 BGB).</div>
+      </li>
+      <li class="mb-3">
+        <span class="badge mb-1" style="background:#f8fafc;color:#475569;font-size:0.65rem;">Alle</span>
+        <div class="fw-medium">Bugfix: § 367 BGB Verrechnungsreihenfolge korrigiert</div>
+        <div class="text-muted small">Kosten werden jetzt korrekt vor Zinsen verrechnet (§ 367 Abs. 2 BGB). Bisheriges Verhalten (Zinsen vor Kosten) war falsch; bestehende Fälle sollten neu berechnet werden.</div>
+      </li>
+      <li class="mb-3">
+        <span class="badge mb-1" style="background:#f0fdf4;color:#166534;font-size:0.65rem;">Pro</span>
+        <div class="fw-medium">Grace-Period: Cloud-Zugriff nach Kündigung</div>
+        <div class="text-muted small">Nach einer Kündigung bleibt der Konto-Bereich für 30 Tage vollständig nutzbar – alle Fälle abrufbar und exportierbar, bis die Frist abläuft.</div>
+      </li>
+      <li class="mb-3">
+        <span class="badge mb-1" style="background:#f8fafc;color:#475569;font-size:0.65rem;">Alle</span>
+        <div class="fw-medium">CSV-Import: Semikolon &amp; Komma automatisch erkannt</div>
+        <div class="text-muted small">Beim Fälle-Import werden Semikolon- und Komma-getrennte CSV-Dateien automatisch unterschieden – kein manuelles Anpassen des Trennzeichens mehr nötig.</div>
+      </li>
+      <li class="mb-3">
+        <span class="badge mb-1" style="background:#eff6ff;color:#1e40af;font-size:0.65rem;">Business</span>
+        <div class="fw-medium">CSV-Export: FallID, Restforderung &amp; Status</div>
+        <div class="text-muted small">Der CSV-Export enthält jetzt zusätzlich die interne Fall-ID, die aktuelle Restforderung und den Fall-Status – für bessere Weiterverarbeitung in externen Systemen.</div>
+      </li>
+      <li class="mb-3">
+        <span class="badge mb-1" style="background:#f8fafc;color:#475569;font-size:0.65rem;">Alle</span>
+        <div class="fw-medium">Sicherheitsverbesserungen</div>
+        <div class="text-muted small">XSS-Absicherung in PDF/Print-Vorschau, Schutz gegen CSV-Formula-Injection (Excel/Sheets), gehärtete URL-Schema-Validierung und Absicherung aller nutzergenerierten Felder in HTML-Ausgaben.</div>
+      </li>
+      <li class="mb-3">
+        <span class="badge mb-1" style="background:#f8fafc;color:#475569;font-size:0.65rem;">Alle</span>
+        <div class="fw-medium">Mobile &amp; PWA-Verbesserungen</div>
+        <div class="text-muted small">Rechner-Layouts auf kleinen Bildschirmen überarbeitet, Navbar-Overflow bei 768 px behoben. PWA-Offline-Caching: erweiterungslose URLs (z.B. /preise, /konto) werden jetzt korrekt gecacht.</div>
       </li>
     </ul>
   </div>
