@@ -50,7 +50,7 @@ serve(async (req) => {
         console.error('_findOrCreateUser failed:', e)
         return new Response('User resolution failed', { status: 500 })
       }
-      if (event_type === 'subscription.created' || event_type === 'subscription.activated') {
+      if (event_type === 'subscription.created') {
         await _sendMagicLink(supabase, email, isSandbox)
       }
     }
@@ -72,6 +72,7 @@ serve(async (req) => {
       plan,
       billing_cycle:          data.billing_cycle?.interval || 'month',
       current_period_end:     data.current_billing_period?.ends_at || null,
+      is_sandbox:             isSandbox,
       updated_at:             new Date().toISOString(),
       ...clearFields
     }, { onConflict: 'paddle_subscription_id' })
@@ -81,7 +82,7 @@ serve(async (req) => {
       return new Response('DB upsert failed', { status: 500 })
     }
 
-    if (event_type === 'subscription.created' || event_type === 'subscription.activated') {
+    if (event_type === 'subscription.created') {
       const agbAcceptedAt  = data.custom_data?.agb_accepted_at  || new Date().toISOString()
       const avvAcceptedAt  = data.custom_data?.avv_accepted_at  || new Date().toISOString()
       const { error: consentError } = await supabase.from('profiles')
@@ -90,7 +91,7 @@ serve(async (req) => {
         .or('accepted_agb_at.is.null,accepted_avv_at.is.null')
       if (consentError) console.error('accepted_agb_at/accepted_avv_at update failed:', consentError)
 
-      // Trigger onboarding email: production via Supabase DB-webhook; staging called directly
+      // Staging: fire N8N onboarding directly (production handled by Supabase DB trigger)
       if (isSandbox && n8nOnboarding) {
         await _fireN8NWebhook(`${N8N_BASE}/${n8nOnboarding}`, {
           type: 'INSERT',
@@ -309,8 +310,8 @@ async function _sendMagicLink(supabase: ReturnType<typeof createClient>, email: 
               Fragen? <a href="mailto:support@fordify.de" style="color:#2563eb">support@fordify.de</a>
             </p>
             <p style="color:#9ca3af;font-size:0.8rem;margin-bottom:0">
-              fordify · <a href="https://fordify.de/impressum" style="color:#9ca3af">Impressum</a> ·
-              <a href="https://fordify.de/datenschutz" style="color:#9ca3af">Datenschutz</a>
+              fordify · <a href="https://${isSandbox ? 'staging.' : ''}fordify.de/impressum" style="color:#9ca3af">Impressum</a> ·
+              <a href="https://${isSandbox ? 'staging.' : ''}fordify.de/datenschutz" style="color:#9ca3af">Datenschutz</a>
             </p>
           </div>
         </div>
