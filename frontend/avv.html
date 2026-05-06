@@ -12,8 +12,59 @@
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="css/rechner.css">
+  <style>
+@media print {
+  /* Seitenränder für Print */
+  @page { margin: 2cm; }
+
+  /* Navigation, Footer, Skip-Link, Breadcrumb verstecken */
+  .navbar,
+  .fordify-footer,
+  .prefooter-cta,
+  .fordify-breadcrumb,
+  .skip-nav,
+  [href="#main-content"],
+  #skip-to-content,
+  .skip-link { display: none !important; }
+
+  /* Print-Header anzeigen */
+  .avv-print-header { display: flex !important; }
+
+  /* Links nicht unterstrichen im Print */
+  a { text-decoration: none; color: inherit; }
+
+  /* Seitenumbrüche verhindern innerhalb von Abschnitten */
+  h2, h3 { page-break-after: avoid; }
+  p, li { orphans: 3; widows: 3; }
+}
+
+/* Print-Header: normalerweise versteckt */
+.avv-print-header {
+  display: none;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #1e3a8a;
+}
+.avv-print-header__logo {
+  height: 40px;
+  width: auto;
+}
+.avv-print-header__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+  </style>
 </head>
 <body>
+
+<!-- Print-Header: nur im Ausdruck sichtbar -->
+<div class="avv-print-header">
+  <img src="/img/logo-clean.svg" alt="fordify" class="avv-print-header__logo">
+  <span class="avv-print-header__title">Auftragsverarbeitungsvertrag (AVV)</span>
+</div>
 
 <a href="#main-content" class="skip-nav">Zum Inhalt springen</a>
 
