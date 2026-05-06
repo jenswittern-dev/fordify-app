@@ -2089,10 +2089,12 @@ body {
 }
 
 /* ---- Kontakt-Callout ---- */
-.kontakt-callout { padding: 2.5rem 1rem; text-align: center; background: var(--color-surface); border-top: 1px solid var(--color-border); }
-.kontakt-callout__text { margin: 0 auto 0.4rem; max-width: 500px; color: var(--color-text-muted); font-size: 0.9375rem; }
-.kontakt-callout__email { font-size: 1.125rem; font-weight: 700; color: var(--color-primary); letter-spacing: 0.01em; margin: 0 auto 0.35rem; user-select: all; }
-.kontakt-callout__hint { margin: 0; color: var(--color-text-muted); font-size: 0.8125rem; }
+.kontakt-callout { padding: 3.5rem 1rem; text-align: center; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 60%, #bfdbfe 100%); }
+.kontakt-callout__inner { max-width: 520px; margin: 0 auto; }
+.kontakt-callout__headline { font-size: 1.5rem; font-weight: 800; color: #1e3a8a; margin: 0 0 0.6rem; letter-spacing: -0.02em; }
+.kontakt-callout__text { margin: 0 0 1.25rem; color: #475569; font-size: 0.9375rem; line-height: 1.6; }
+.kontakt-callout__email { display: inline-block; font-size: 1.25rem; font-weight: 700; color: #1e3a8a; letter-spacing: 0.01em; background: rgba(255,255,255,0.7); border: 1.5px solid #bfdbfe; border-radius: 8px; padding: 0.45rem 1rem; user-select: all; margin-bottom: 0.75rem; }
+.kontakt-callout__hint { margin: 0; color: #64748b; font-size: 0.8125rem; }
 
 /* ---- Pre-Footer CTA Band ---- */
 .prefooter-cta {
@@ -2147,11 +2149,12 @@ body {
 }
 .fordify-footer .footer-cols {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
   gap: 2rem;
   padding-bottom: 2rem;
 }
-@media (max-width: 767px) { .fordify-footer .footer-cols { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 991px) { .fordify-footer .footer-cols { grid-template-columns: 2fr 1fr 1fr; } }
+@media (max-width: 767px) { .fordify-footer .footer-cols { grid-template-columns: 1fr 1fr; } .fordify-footer .footer-cols > div:first-child { grid-column: 1 / -1; } }
 @media (max-width: 479px) { .fordify-footer .footer-cols { grid-template-columns: 1fr; } }
 .fordify-footer__brand-name {
   font-size: 1.05rem;
