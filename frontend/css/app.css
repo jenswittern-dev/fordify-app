@@ -2210,6 +2210,17 @@ body {
   font-size: 0.65rem;
   color: rgba(255,255,255,0.25);
 }
+.fordify-footer--slim {
+  background: #0f172a;
+  margin-top: auto;
+}
+.footer-link-muted {
+  color: rgba(255,255,255,0.30);
+  text-decoration: none;
+}
+.footer-link-muted:hover {
+  color: rgba(255,255,255,0.60);
+}
 .fordify-footer__disclaimer {
   width: 100%;
   text-align: center;
