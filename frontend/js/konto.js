@@ -225,7 +225,7 @@ function _kontoInitTabs() {
 function _kontoActivateTabFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const tab = params.get('tab');
-  if (tab && ['faelle', 'firmendaten', 'abo', 'adressen'].includes(tab)) {
+  if (tab && ['faelle', 'firmendaten', 'abo', 'adressen', 'support'].includes(tab)) {
     _kontoZeigeTab(tab);
   }
 }
