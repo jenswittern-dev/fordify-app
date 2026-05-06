@@ -315,6 +315,7 @@ Drei Themes, umschaltbar via `themeWechseln(name)`:
 - `css/themes.css` wird nach `css/app.css` geladen
 - Persistenz: `localStorage["fordify_theme"]`
 - Logo-SVGs: `img/logo.svg` (Standard), `img/logo-dark.svg`, `img/logo-clean.svg` — gestapelte Balken-Grafik, kein einzelnes F mehr
+- **Druckkonvention:** Auf weißem Hintergrund (Ausdrucke, PDF) wird `img/logo-clean.svg` verwendet — das SVG nutzt `fill="#1e3a8a"` (fordify-Blau) statt des weißen "ford"-Schriftzugs des Standard-Logos. Dadurch ist kein "Hintergrundgrafiken"-Schalter im Druckdialog nötig.
 
 ### 6.5 Auth-UI (`js/auth-ui.js`)
 
@@ -343,6 +344,8 @@ ruft `window.print()` nach 400ms auf. Kein html2canvas / jsPDF — native Drucke
 
 PDF-Branding: gestuft via `getFordifyBranding()` in `app.js` — Free = prominenter Fordify-Footer, Pro = dezenter Footer, Business = kein Footer (implementiert 2026-04-23).
 
+**AVV Print-CSS** (`avv.html`): `@media print` blendet Navbar, Footer, Skip-Link und Prefooter aus. Zeigt stattdessen `.avv-print-header` mit `logo-clean.svg` und Dokumententitel — keine Abhängigkeit von "Hintergrundgrafiken" im Druckdialog.
+
 ### 6.8 Storage-Abstraktion (`js/storage.js`)
 
 ```javascript
@@ -358,7 +361,7 @@ StorageBackend.removeItem(key)
 
 ## 7. Service Worker & Caching
 
-- Cache-Name: `fordify-v189` (Prod) / `fordify-staging-v144` (Staging)
+- Cache-Name: `fordify-v199` (Prod) / `fordify-staging-v167` (Staging)
 - Erkennung: `self.location.hostname.includes('staging') || localhost`
 - Strategie: Cache-First, dann Network
 - **Regel:** Bei jedem Commit mit geänderten Frontend-Dateien → N um 1 erhöhen
