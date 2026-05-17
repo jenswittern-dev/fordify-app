@@ -51,3 +51,11 @@ supabase/.temp/
 
 # MCP-Konfiguration (enthält API-Keys)
 .mcp.json
+
+# Graphify – Cache (SHA-256-Shards, reproduzierbar via /graphify --update)
+graphify-out/cache/
+
+# Graphify – Working-Files vom Code-Review (auf Repo-Root falls Agent erneut anlegt)
+.graphify_*
+.review_*.md
+.graphify_python

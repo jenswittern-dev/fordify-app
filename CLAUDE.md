@@ -1,15 +1,14 @@
 # CLAUDE.md – fordify-app (Fordify)
 
-> Diese Datei wird bei jedem Gesprächsstart automatisch geladen.
-> Sie ist die einzige Quelle der Wahrheit für Kontext, Verhalten und Architektur.
+> Bei jedem Gesprächsstart automatisch geladen.
+> Schlanker Hub für Verhalten, Architektur-Invarianten, Code-Graph-Zugang und Pointer zur Detail-Doku.
+> Detail-Inhalte (Tech-Stack, Datenmodell, E-Mail-Setup, Credentials) leben in `docs/SYSTEM.md`.
 
 ---
 
 ## Projekt
 
-**Name:** Fordify
-**URL:** https://fordify.de
-**Repo:** https://github.com/jenswittern-dev/fordify-app
+**Name:** Fordify | **URL:** https://fordify.de | **Repo:** https://github.com/jenswittern-dev/fordify-app
 **Typ:** Pure Static SPA (HTML/CSS/Vanilla JS) – kein Backend, kein Build-Schritt
 **Zweck:** Professionelle Forderungsaufstellungen nach § 367 BGB für Anwaltskanzleien
 
@@ -19,168 +18,64 @@
 
 - **Nach jeder Änderung sofort committen und pushen** – ohne zu fragen
 - Commit-Message auf Deutsch, präzise (feat/fix/style/docs/refactor)
-- SW-Version (`fordify-vN` in `frontend/sw.js`) bei jedem Commit mit geänderten Frontend-Dateien um 1 erhöhen
+- **SW-Version** (`fordify-vN` in `frontend/sw.js`) bei jedem Commit mit geänderten Frontend-Dateien um 1 erhöhen
 - Keine Rückfragen zu offensichtlichen Standardoperationen
-- **Dokumentation immer aktuell halten** – nach jeder Entscheidung und nach jeder Umsetzung:
-  - `docs/ROADMAP.md` — Status auf ✅ setzen + Datum eintragen
-  - `docs/SYSTEM.md` — neue/geänderte Datenstrukturen, Funktionen, Architekturentscheidungen eintragen
-  - `CLAUDE.md` — SW-Version, Kerndatenmodell, Architekturentscheidungen aktuell halten
-  - Diese Aktualisierungen im gleichen Commit wie die Implementierung mitliefern
+- **Doku-Pflege im gleichen Commit:**
+  - `docs/ROADMAP.md` — Feature-Status ✅ + Datum setzen
+  - `docs/SYSTEM.md` — neue Datenstrukturen, Funktionen, Architekturentscheidungen ergänzen
+  - `CLAUDE.md` — nur wenn sich Verhalten/Invarianten/Governance ändern
 
 ---
 
-## Tech Stack
+## Wo finde ich was?
 
-| Komponente | Detail |
+| Suche | Quelle |
 |---|---|
-| UI | Bootstrap 5.3.3 |
-| Arithmetik | decimal.js (exakte Dezimalrechnung) |
-| Schriften | Inter (UI), JetBrains Mono (Beträge) – selbst gehostet |
-| Datenpersistenz | `sessionStorage` (Free/Gast) + `localStorage` + Supabase Cloud-Sync (Pro/Business) |
-| Auth | Supabase Magic Link (`frontend/js/auth.js`, `auth-ui.js`) |
-| Zahlungen | Paddle (Merchant of Record, `frontend/js/config.js` → `PRICE_MAP`) |
-| E-Mail | Resend (via Supabase SMTP / N8N) |
-| Analytics | GoatCounter SaaS (goatcounter.com, Martin Tournoij, Server bei Hetzner DE/FI, cookielos, DSGVO-konform) |
-| PWA | Service Worker (`frontend/sw.js`) + Manifest (`frontend/manifest.json`) |
-| Hosting | All-Inkl (fordify.de); Staging: staging.fordify.de |
-| Deployment | Push auf `main` → GitHub Actions → fordify.de; `staging`-Branch → staging.fordify.de |
+| Code-Architektur, Datenmodell, Tech-Stack, DB-Schema, E-Mail-Setup, Credentials | `docs/SYSTEM.md` |
+| Feature-Roadmap mit Status + Datum | `docs/ROADMAP.md` |
+| Manuelle Schritte für Jens (Accounts, Rechtliches, Public Launch) | `docs/freemium-launch-organisationsplan.md` |
+| Aktive Pläne (max. 5 erlaubt) | `docs/superpowers/plans/` |
+| Specs in Brainstorming-Phase | `docs/superpowers/specs/` |
+| Interaktiver Code-Knowledge-Graph | `graphify-out/graph.html` |
 
 ---
 
-## Dateistruktur
+## Code-Graph (Graphify)
+
+Persistenter Knowledge-Graph des Projekts in `graphify-out/`:
+- `graph.html` — interaktive Browser-Visualisierung (51 Communities, 1000+ Nodes)
+- `GRAPH_REPORT.md` — God-Nodes, Communities, Surprising Connections
+- `graph.json` — strukturierte Nodes + Edges für Queries
+
+### Wann nutzen?
+
+- **Bei Architektur-Fragen** („wie hängt X mit Y zusammen?")
+- **Bei großen Cross-Cutting-Reviews** (statt File-by-File)
+- **Bei Onboarding neuer Sessions** — Big Picture schneller als Dateibaum-Exploration
+- **Bei Orphan-Detection** (ungenutzte Module, Dead Code)
+- **Bei Tech-Debt-Cluster-Analyse** (Code-Duplikation, schwache Cohesion)
+
+### Wie nutzen?
 
 ```
-fordify-app/
-├── CLAUDE.md                   ← diese Datei
-├── LIESMICH.txt                ← Nutzerdoku (offline)
-├── .github/workflows/
-│   ├── deploy.yml              ← main → fordify.de
-│   └── deploy-staging.yml      ← staging → staging.fordify.de
-├── frontend/
-│   ├── index.html              ← Landing Page / Homepage
-│   ├── forderungsaufstellung.html ← Haupt-App (SPA)
-│   ├── konto.html                 ← Kundenbereich (eingeloggte Nutzer: Fälle, Firmendaten, Abo)
-│   ├── preise.html             ← Pricing-Seite (Paddle-Checkout)
-│   ├── zinsrechner.html        ← SEO-Unterseite
-│   ├── rvg-rechner.html        ← SEO-Unterseite
-│   ├── gerichtskostenrechner.html ← SEO-Unterseite
-│   ├── impressum.html
-│   ├── datenschutz.html
-│   ├── agb.html
-│   ├── sw.js                   ← Service Worker (aktuell fordify-v199 / staging-v167)
-│   ├── manifest.json           ← PWA-Manifest
-│   ├── css/
-│   │   ├── app.css             ← Styling, Print-CSS, Preisseite, Feature-Gates
-│   │   ├── rechner.css         ← Rechner-Seiten, Footer, Prefooter
-│   │   └── themes.css          ← Theme-Overrides (brand/dark/clean via [data-theme])
-│   ├── js/
-│   │   ├── app.js              ← Haupt-App (~1400 Zeilen, modularisiert 2026-05-17)
-│   │   ├── konto.js               ← Kundenbereich-Logik (konto.html)
-│   │   ├── config.js           ← Supabase-URL/Key, Paddle-Token, PRICE_MAP, trackEvent()
-│   │   ├── auth.js             ← Supabase Auth (Magic Link, Session, Cloud-Laden)
-│   │   ├── auth-ui.js          ← Auth-UI-Steuerung (data-auth-show, Avatar, Plan-Badge)
-│   │   ├── gates.js            ← Feature-Gates (requiresPaid, Upgrade-Modal)
-│   │   ├── storage.js          ← Storage-Abstraktion (sessionStorage ↔ localStorage ↔ Supabase)
-│   │   ├── data.js             ← Datentabellen (BASISZINSSAETZE, RVG_TABELLE, GKG_TABELLE)
-│   │   ├── zinsen.js           ← Verzugszinsberechnung
-│   │   ├── rvg.js              ← RVG-Berechnung
-│   │   ├── verrechnung.js      ← § 367 BGB Verrechnungslogik
-│   │   ├── rechner-zins.js     ← Zinsrechner-Logik (zinsrechner.html)
-│   │   ├── rechner-rvg.js      ← RVG-Rechner-Logik (rvg-rechner.html)
-│   │   ├── rechner-gkg.js      ← GKG-Rechner-Logik (gerichtskostenrechner.html)
-│   │   ├── theme.js            ← Theme-System: themeWechseln, themeLaden, STORAGE_KEY_THEME
-│   │   ├── gkg.js              ← gkgGebuehr (Streitwert → GKG-Pauschalkosten)
-│   │   ├── fordify-confirm.js  ← fordifyConfirm-Modal (Bootstrap statt window.confirm)
-│   │   ├── einstellungen.js    ← Kanzlei-Einstellungen + Impressum (Cluster K, 12 Funktionen)
-│   │   ├── print.js            ← Druck/PDF via Popup-Window (drucken, getFordifyBranding)
-│   │   ├── modal-templates.js  ← HTML-Strings für Positionstyp-Modals (tpl*-Funktionen)
-│   │   ├── summary.js          ← Vorschau + baueSummaryTabelle + renderZinsdetail + positionDetailBeschreibung
-│   │   └── utils.js            ← Zentrale Utilities (escHtml, escAttr, parseGermanDecimal, parseDate, formatDate, formatEUR) – als erstes JS geladen
-│   ├── data/
-│   │   ├── basiszinssaetze.json ← aktualisierbar (nächste Fälligkeit 01.07.2026)
-│   │   └── rvg_tabelle.json    ← BGBl. 2025 I Nr. 109
-│   └── fonts/                  ← selbst gehostete Schriftarten
-├── supabase/
-│   ├── schema.sql              ← DB-Schema (profiles, subscriptions, cases, settings, contacts)
-│   └── functions/
-│       ├── paddle-webhook/     ← Edge Function (transaction.completed, subscription.canceled/updated, grace period)
-│       └── verify-and-login/   ← Edge Function (Magic Link + Grace Period Login)
-├── docs/
-│   ├── ROADMAP.md              ← Feature-Roadmap (Phase 0–6) mit Status + Datum
-│   ├── SYSTEM.md               ← Technisches Whitepaper
-│   ├── freemium-launch-organisationsplan.md ← Manuelle Schritte für Jens (Accounts, Rechtliches)
-│   ├── archive/                ← historische Dokumente (nicht löschen, nicht bearbeiten)
-│   └── superpowers/
-│       ├── specs/              ← Design-Specs (Brainstorming-Ergebnisse)
-│       │   └── done/           ← abgeschlossene Specs
-│       └── plans/              ← Implementierungspläne
-│           └── done/           ← abgeschlossene Pläne
+/graphify query "wie hängt der Modal-Dispatcher mit der RVG-Berechnung zusammen?"
+/graphify explain "baueSummaryTabelle"
+/graphify path "auth.js" "konto.js"
 ```
 
----
+Diese Commands greifen auf den existierenden Graph zu — reine BFS/DFS-Traversierung, **keine LLM-Tokens**.
 
-## Aktiver Implementierungsplan: Freemium
+### Aktualisierungs-Routine
 
-`docs/superpowers/plans/2026-04-20-freemium-implementation.md`
+Der Graph muss aktuell gehalten werden, sonst nimmt sein Wert ab.
+**Aktualisieren via `/graphify . --update`** (incremental, nur geänderte Files):
 
-| Task | Status | Notiz |
-|---|---|---|
-| 1 – Supabase Schema + RLS | ✅ | |
-| 2 – GoatCounter Analytics | ✅ | |
-| 3 – Storage-Abstraktionsschicht | ✅ | |
-| 4 – Auth – Magic Link Login | ✅ | |
-| 5 – Cloud-Laden beim Login | ✅ | |
-| 6 – Feature-Gates | ✅ | |
-| 7 – Paddle-Webhook Edge Function | ✅ | Deployed + aktiv; Webhook-URL in Paddle eingetragen (verifiziert 2026-04-23) |
-| 8 – Pricing-Seite | ✅ | |
-| 9 – N8N-Workflows | ✅ | Onboarding-Mail (ID: elcsjZCxDmtCw2BI, aktiv seit 2026-04-21) + Digest (ID: hJpXXeIuvGQY60iQ, aktiv, montags 08:00) |
-| 10 – Launch-Vorbereitung (AGB etc.) | ✅ | agb.html vorhanden |
-| 11 – Gestuftes PDF-Branding | ✅ | getFordifyBranding() in app.js: free=prominent, pro=dezent, business=keins |
-| 12 – Excel/CSV-Export | ✅ | fallExportierenAlsExcel() in app.js |
+- **Pflicht:** Nach jedem abgeschlossenen Feature-Sprint (vor dem nächsten Plan/Discovery)
+- **Pflicht:** Vor jedem Graph-basierten Final-Code-Review
+- **Empfohlen:** Mindestens monatlich bei aktiver Entwicklung
+- **Full re-run (`/graphify .`):** Nach größeren Architektur-Umbauten (z.B. neue Top-Level-Verzeichnisse, große Refactorings)
 
-**Blockierungen:** keine — alle Tasks abgeschlossen und verifiziert (2026-04-23).
-
----
-
-## E-Mail-Architektur
-
-### Adressen
-
-| Adresse | Typ | Zweck | Ziel |
-|---|---|---|---|
-| `hallo@fordify.de` | **Echtes Postfach** | Allgemeiner Eingang, alle Weiterleitungen landen hier | — |
-| `legal@fordify.de` | Weiterleitung | Impressum, AGB, Datenschutzerklärung, Kündigungen | → `hallo@fordify.de` |
-| `datenschutz@fordify.de` | Weiterleitung | AVV, DSGVO-Anfragen | → `hallo@fordify.de` |
-| `support@fordify.de` | Weiterleitung | Aktive Kunden (Reply-To aller ausgehenden Mails) | → `hallo@fordify.de` |
-| `hallo@mail.fordify.de` | Resend-Absender | Ausgehend: Onboarding, Magic Link | kein Postfach, Reply-To: support@ |
-| `noreply@mail.fordify.de` | Resend-Absender | Ausgehend: transaktional (Zahlungsbestätigung, Offboarding, Retention) | kein Postfach, Reply-To: support@ |
-
-**Sending-Domain:** `mail.fordify.de` (in Resend verifiziert, nur für ausgehende Mails — kein All-Inkl-Postfach).
-
-### Workflows (N8N)
-
-| Workflow | N8N ID | Trigger | Absender | Status |
-|---|---|---|---|---|
-| Onboarding-Mail | `elcsjZCxDmtCw2BI` | Webhook (paddle-webhook bei subscription.created) | `hallo@mail.fordify.de` | ✅ aktiv |
-| Zahlungsbestätigung | `PexOk66BNT8uDntc` | Webhook (paddle-webhook bei transaction.completed) | `noreply@mail.fordify.de` | ✅ aktiv |
-| Offboarding bei Kündigung | `mYQAOS7oacoKW5Rq` | Webhook (paddle-webhook bei subscription.canceled) | `noreply@mail.fordify.de` | ✅ aktiv |
-| Retention Email Cron | `HDZV78j89uLYdPTB` | Täglich 09:00, liest scheduled_cancel_at | `noreply@mail.fordify.de` | ✅ aktiv |
-| Datenlöschungs-Cron | `fdfPAUVG4rvMoPcS` | Täglich 02:00, löscht cases/contacts/settings nach grace_period_end | — | ✅ aktiv |
-
-**Aufbewahrung:** profiles + subscriptions 10 Jahre (§ 147 AO); cases/contacts/settings nach Grace Period gelöscht.
-
----
-
-## Kerndatenmodell
-
-Siehe `docs/SYSTEM.md` für vollständiges Schema. Kurzübersicht:
-
-- `sessionStorage` / `localStorage["fordify_cases"]` — Registry aller Fälle (je nach Plan)
-- `localStorage["fordify_settings"]` — Kanzlei-Einstellungen + Impressum
-- `localStorage["fordify_theme"]` — aktives Theme (`"brand"` / `"dark"` / `"clean"`)
-- `state.fall.positionen[]` — Array von Positions-Objekten (typ, id, datum, betrag, ...)
-- `gruppeId` — verknüpft Hauptforderung mit zugehöriger Zinsperiode
-- `fordifyAuth` — globales Auth-Objekt: `isAuthenticated`, `hasSubscription`, `user`, `plan`, `gracePeriodEnd`
+Nach jedem Update: `graph.json` + `GRAPH_REPORT.md` committen, damit nachfolgende Sessions den aktuellen Stand sehen. Der `graphify-out/cache/`-Ordner ist gitignored — nur die nutzbaren Artefakte werden versioniert.
 
 ---
 
@@ -188,57 +83,14 @@ Siehe `docs/SYSTEM.md` für vollständiges Schema. Kurzübersicht:
 
 - **Kein Build-Schritt** — direkt aus Quellcode auslieferbar
 - **Externe API-Calls** — Supabase (Auth + DB), Paddle (Checkout), GoatCounter (Analytics) — alle DSGVO-konform
-- **Print via Popup-Window** (`drucken()`) — kein html2canvas/jsPDF (wäre Bitmap-PDF, nicht durchsuchbar)
+- **Print via Popup-Window** (`drucken()` in `print.js`) — kein html2canvas/jsPDF (wäre Bitmap-PDF, nicht durchsuchbar)
 - **GKG_TABELLE in data.js** (nicht als JSON) — kein zusätzlicher Netzwerkaufruf nötig
-- **`baueSummaryTabelle()`** ist die aktive Zusammenfassungs-Funktion (in app.js)
+- **`baueSummaryTabelle()`** ist die aktive Zusammenfassungs-Funktion (in `summary.js`)
 - **`migratePositionen()`** — lazy Migration: alte Positionen ohne `gruppeId` erhalten "g0"
 - **Theme-System** — `[data-theme]` auf `<html>`, CSS Custom Properties in `themes.css`, drei Themes: `brand` (default, kein Attribut), `dark`, `clean`
 - **Free-Nutzer = sessionStorage** — Daten weg beim Tab-Schließen ist Absicht (kein Bug)
 - **StorageBackend** (`storage.js`) — Abstraktion über sessionStorage/localStorage/Supabase-Sync
-
----
-
-## Credentials & Secrets
-
-Alle API-Keys und Credentials stehen in `.env` (nicht im Repo — gitignored):
-
-| Variable | Zweck |
-|---|---|
-| `SUPABASE_URL` | Supabase Projekt-URL (Project-Ref: `dswhllvtewtqpiqnpbsu`) |
-| `SUPABASE_ANON_KEY` | Supabase anon/public Key (für Frontend) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase Service Role Key (nur Edge Functions, nie Frontend!) |
-| `SUPABASE_ACCESS_TOKEN` | Supabase CLI Login-Token |
-| `PADDLE_API_KEY` | Paddle Backend API Key |
-| `PADDLE_CLIENT_TOKEN` | Paddle Frontend Token (live) |
-| `PADDLE_WEBHOOK_SECRET` | Paddle Webhook-Signatur-Secret |
-| `PADDLE_PRICE_ID_PRO_MONTHLY` | Paddle Price-ID für Pro monatlich |
-| `PADDLE_PRICE_ID_PRO_YEARLY` | Paddle Price-ID für Pro jährlich |
-| `PADDLE_PRICE_ID_BUSINESS_MONTHLY` | Paddle Price-ID für Business monatlich |
-| `PADDLE_PRICE_ID_BUSINESS_YEARLY` | Paddle Price-ID für Business jährlich |
-| `RESEND_API_KEY` | Resend E-Mail API Key |
-| `GOATCOUNTER_URL` | GoatCounter Analytics URL (`https://fordify.goatcounter.com/`) |
-| `GOATCOUNTER_API_KEY` | GoatCounter API Token (für N8N Digest-Abfragen) |
-| `HOSTINGER_API_KEY` | Hostinger API Token (MCP-Server in `.mcp.json`) |
-| `N8N_API_KEY` | N8N REST API Key (`https://n8n.srv1063720.hstgr.cloud/api/v1/`) |
-
-Bei CLI-Befehlen (z.B. `supabase functions deploy`) `.env` sourcen oder Werte direkt übergeben.
-
----
-
-## Dokumentation lesen + pflegen
-
-**Vor neuen Features immer prüfen:**
-1. `docs/ROADMAP.md` — ist das Feature schon geplant/erledigt?
-2. `docs/SYSTEM.md` — welche Datenstrukturen und Funktionen sind betroffen?
-3. Aktive Implementierungspläne in `docs/superpowers/plans/` (Statusübersicht oben)
-4. `docs/freemium-launch-organisationsplan.md` — manuelle Schritte + offene Punkte für Jens
-5. Aktuelle SW-Cache-Version in `frontend/sw.js` prüfen und nach Änderungen erhöhen
-
-**Nach jeder Entscheidung und Umsetzung zwingend aktualisieren:**
-- `docs/ROADMAP.md` — Status ✅ + Datum setzen
-- `docs/SYSTEM.md` — neue Strukturen, Funktionen, Architekturdetails ergänzen
-- `CLAUDE.md` (diese Datei) — SW-Version, Statusübersicht Freemium-Plan, Architekturentscheidungen
-- Immer im gleichen Commit wie die eigentlichen Änderungen
+- **app.js-Modularisierung 2026-05-17** — Cluster theme/gkg/fordify-confirm/print/einstellungen/modal-templates/summary in eigene Files extrahiert; app.js enthält nur noch State, Fallverwaltung, Positionen-Rendering, Modal-Dispatcher, Init
 
 ---
 
@@ -270,6 +122,13 @@ docs/
 ### Nach Implementierung eines Plans (Pflicht)
 
 1. Statusübersicht im Plan auf ✅ aktualisieren
-2. Statusübersicht in CLAUDE.md aktualisieren
+2. `docs/ROADMAP.md` mit ✅ + Datum aktualisieren
 3. Plan nach `docs/superpowers/plans/done/` verschieben
-4. `docs/ROADMAP.md` mit ✅ + Datum aktualisieren
+4. Wenn Architektur betroffen: `docs/SYSTEM.md` ergänzen
+
+---
+
+## Dokumentation lesen + pflegen
+
+**Vor neuen Features prüfen:** ROADMAP (geplant/erledigt?), SYSTEM.md (betroffene Strukturen?), aktive Pläne, SW-Cache-Version.
+**Nach Umsetzung aktualisieren:** ROADMAP-Status, SYSTEM.md-Details, Plan nach done/ — alles im gleichen Commit wie die Implementierung.

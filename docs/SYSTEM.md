@@ -1,7 +1,25 @@
 # SYSTEM.md – Technisches Whitepaper Fordify
 
-> Stand: 2026-04-28
+> Stand: 2026-05-17
 > Zielgruppe: Entwickler, Claude Code (Kontext für neue Features)
+
+---
+
+## 0. Tech Stack (Quick Reference)
+
+| Komponente | Detail |
+|---|---|
+| UI | Bootstrap 5.3.3 |
+| Arithmetik | decimal.js (exakte Dezimalrechnung) |
+| Schriften | Inter (UI), JetBrains Mono (Beträge) – selbst gehostet |
+| Datenpersistenz | `sessionStorage` (Free/Gast) + `localStorage` + Supabase Cloud-Sync (Pro/Business) |
+| Auth | Supabase Magic Link (`frontend/js/auth.js`, `auth-ui.js`) |
+| Zahlungen | Paddle (Merchant of Record, `frontend/js/config.js` → `PRICE_MAP`) |
+| E-Mail | Resend (via Supabase SMTP / N8N) |
+| Analytics | GoatCounter SaaS (cookielos, DSGVO-konform, Server bei Hetzner DE/FI) |
+| PWA | Service Worker (`frontend/sw.js`) + Manifest (`frontend/manifest.json`) |
+| Hosting | All-Inkl (fordify.de); Staging: staging.fordify.de |
+| Deployment | Push auf `main` → GitHub Actions → fordify.de; `staging`-Branch → staging.fordify.de |
 
 ---
 
@@ -52,7 +70,7 @@ Browser
   └── agb.html
 ```
 
-**Service Worker** (`sw.js`, aktuell `fordify-v189` / Staging `fordify-staging-v144`) cached alle Assets für Offline-Nutzung. Bei Frontend-Änderungen: Cache-Name inkrementieren.
+**Service Worker** (`sw.js`, aktuell `fordify-v206` / Staging `fordify-staging-v174`) cached alle Assets für Offline-Nutzung. Bei Frontend-Änderungen: Cache-Name inkrementieren.
 
 **Externe Dienste:**
 - **Supabase** (EU Frankfurt): Auth, Datenbank, Edge Functions
@@ -367,7 +385,7 @@ StorageBackend.removeItem(key)
 
 ## 7. Service Worker & Caching
 
-- Cache-Name: `fordify-v199` (Prod) / `fordify-staging-v167` (Staging)
+- Cache-Name: `fordify-v206` (Prod) / `fordify-staging-v174` (Staging) — Stand 2026-05-17
 - Erkennung: `self.location.hostname.includes('staging') || localhost`
 - Strategie: Cache-First, dann Network
 - **Regel:** Bei jedem Commit mit geänderten Frontend-Dateien → N um 1 erhöhen
@@ -384,7 +402,22 @@ StorageBackend.removeItem(key)
 
 ---
 
-## 9. N8N Workflows
+## 9. E-Mail-Architektur & N8N Workflows
+
+### 9.1 Adressen
+
+| Adresse | Typ | Zweck | Ziel |
+|---|---|---|---|
+| `hallo@fordify.de` | **Echtes Postfach** | Allgemeiner Eingang, alle Weiterleitungen landen hier | — |
+| `legal@fordify.de` | Weiterleitung | Impressum, AGB, Datenschutzerklärung, Kündigungen | → `hallo@fordify.de` |
+| `datenschutz@fordify.de` | Weiterleitung | AVV, DSGVO-Anfragen | → `hallo@fordify.de` |
+| `support@fordify.de` | Weiterleitung | Aktive Kunden (Reply-To aller ausgehenden Mails) | → `hallo@fordify.de` |
+| `hallo@mail.fordify.de` | Resend-Absender | Ausgehend: Onboarding, Magic Link | kein Postfach, Reply-To: support@ |
+| `noreply@mail.fordify.de` | Resend-Absender | Ausgehend: transaktional (Zahlungsbestätigung, Offboarding, Retention) | kein Postfach, Reply-To: support@ |
+
+**Sending-Domain:** `mail.fordify.de` (in Resend verifiziert, nur für ausgehende Mails — kein All-Inkl-Postfach).
+
+### 9.2 N8N Workflows
 
 N8N-Instanz: `https://n8n.srv1063720.hstgr.cloud` (Hostinger VPS)
 
@@ -423,3 +456,30 @@ Sendet Win-Back-E-Mails an Nutzer mit bevorstehender Kündigung:
 - `localStorage` ist domain-scoped: Entwicklung auf `localhost` vs. Produktion `fordify.de` haben getrennte Stores
 - **Free-Nutzer** verwenden `sessionStorage` — alle Daten weg beim Tab-Schließen, das ist Absicht (kein Bug)
 - **`supabase.auth.onAuthStateChange`** feuert auch beim Seitenneuladen wenn Session noch aktiv ist → kein separater Init-Call nötig
+
+---
+
+## 11. Credentials & Environment Variables
+
+Alle API-Keys und Credentials stehen in `.env` (nicht im Repo — gitignored). Diese Tabelle listet **welche Variablen existieren**, nicht ihre Werte.
+
+| Variable | Zweck |
+|---|---|
+| `SUPABASE_URL` | Supabase Projekt-URL (Project-Ref: `dswhllvtewtqpiqnpbsu`) |
+| `SUPABASE_ANON_KEY` | Supabase anon/public Key (für Frontend) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase Service Role Key (nur Edge Functions, **nie Frontend!**) |
+| `SUPABASE_ACCESS_TOKEN` | Supabase CLI Login-Token |
+| `PADDLE_API_KEY` | Paddle Backend API Key |
+| `PADDLE_CLIENT_TOKEN` | Paddle Frontend Token (live) |
+| `PADDLE_WEBHOOK_SECRET` | Paddle Webhook-Signatur-Secret |
+| `PADDLE_PRICE_ID_PRO_MONTHLY` | Paddle Price-ID für Pro monatlich |
+| `PADDLE_PRICE_ID_PRO_YEARLY` | Paddle Price-ID für Pro jährlich |
+| `PADDLE_PRICE_ID_BUSINESS_MONTHLY` | Paddle Price-ID für Business monatlich |
+| `PADDLE_PRICE_ID_BUSINESS_YEARLY` | Paddle Price-ID für Business jährlich |
+| `RESEND_API_KEY` | Resend E-Mail API Key |
+| `GOATCOUNTER_URL` | GoatCounter Analytics URL (`https://fordify.goatcounter.com/`) |
+| `GOATCOUNTER_API_KEY` | GoatCounter API Token (für N8N Digest-Abfragen) |
+| `HOSTINGER_API_KEY` | Hostinger API Token (MCP-Server in `.mcp.json`) |
+| `N8N_API_KEY` | N8N REST API Key (`https://n8n.srv1063720.hstgr.cloud/api/v1/`) |
+
+Bei CLI-Befehlen (z.B. `supabase functions deploy`) `.env` sourcen oder Werte direkt übergeben.
