@@ -59,8 +59,8 @@ function verrechneZahlung(zahlung, offen, reihenfolge = null) {
 function berechneVerrechnung(positionen, basiszinssaetze) {
   // Sortierung nach Buchungsdatum (aufsteigend)
   const sortiert = [...positionen].sort((a, b) => {
-    const da = a.datum ? parseDate(a.datum) : new Date(0);
-    const db = b.datum ? parseDate(b.datum) : new Date(0);
+    const da = parseDate(a.datum) || new Date(0);
+    const db = parseDate(b.datum) || new Date(0);
     return da - db;
   });
 
@@ -122,14 +122,7 @@ function berechneVerrechnung(positionen, basiszinssaetze) {
   return { buchungen, saldoFinal: saldo };
 }
 
-/**
- * Parst "YYYY-MM-DD" zu Date.
- */
-function parseDate(str) {
-  if (!str) return new Date(0);
-  const [y, m, d] = str.split("-").map(Number);
-  return new Date(y, m - 1, d);
-}
+// parseDate in utils.js zentralisiert (liefert null bei leerem Input)
 
 /**
  * Summiert alle Werte eines Salden-Objekts.

@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch (e) {
     console.error('Konto-Init fehlgeschlagen:', e);
     const loadingEl = document.getElementById('konto-loading');
-    if (loadingEl) loadingEl.innerHTML = `<p class="text-danger">Fehler: ${e?.message || String(e)}</p><p class="small text-muted">Bitte diesen Fehler melden.</p>`;
+    if (loadingEl) loadingEl.innerHTML = `<p class="text-danger">Fehler: ${escHtml(e?.message || String(e))}</p><p class="small text-muted">Bitte diesen Fehler melden.</p>`;
   }
 
   supabaseClient.auth.onAuthStateChange((event) => {
@@ -1145,7 +1145,7 @@ function _hfSumme(positionen) {
   return (positionen || [])
     .filter(p => p.typ === 'hauptforderung')
     .reduce((s, p) => {
-      const val = parseFloat((p.betrag || '0').replace(/\./g, '').replace(',', '.'));
+      const val = parseGermanDecimal(p.betrag);
       return s + (isNaN(val) ? 0 : val);
     }, 0);
 }
@@ -1154,7 +1154,7 @@ function _zahlungenSumme(positionen) {
   return (positionen || [])
     .filter(p => p.typ === 'zahlung')
     .reduce((s, p) => {
-      const val = parseFloat((p.betrag || '0').replace(/\./g, '').replace(',', '.'));
+      const val = parseGermanDecimal(p.betrag);
       return s + (isNaN(val) ? 0 : val);
     }, 0);
 }

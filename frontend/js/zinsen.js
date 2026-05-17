@@ -123,22 +123,7 @@ function tageszins(betrag, aufschlagPP, stichtag, basiszinssaetze) {
 
 // ---- Hilfsfunktionen ----
 
-/**
- * Parst "YYYY-MM-DD" zu Date (UTC-Mitternacht, verhindert Zeitzonen-Offset).
- */
-function parseDate(str) {
-  const [y, m, d] = str.split("-").map(Number);
-  return new Date(y, m - 1, d);
-}
-
-/**
- * Formatiert Date zu "DD.MM.YYYY".
- */
-function formatDate(d) {
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  return `${dd}.${mm}.${d.getFullYear()}`;
-}
+// parseDate, formatDate in utils.js zentralisiert
 
 /**
  * Anzahl Tage von bis inklusiv beider Grenzen.

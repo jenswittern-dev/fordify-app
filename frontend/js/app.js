@@ -38,26 +38,7 @@ function neuGruppeId() {
   return "g" + neuId();
 }
 
-function parseDate(str) {
-  if (!str) return null;
-  const [y, m, d] = str.split("-").map(Number);
-  return new Date(y, m - 1, d);
-}
-
-function formatDate(d) {
-  if (!d) return "";
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  return `${dd}.${mm}.${d.getFullYear()}`;
-}
-
-function formatEUR(val) {
-  if (val === null || val === undefined) return "";
-  const d = new Decimal(val);
-  const parts = d.toFixed(2).split(".");
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  return parts.join(",") + "\u00a0€";
-}
+// parseDate, formatDate, formatEUR in utils.js zentralisiert
 
 /**
  * Erzeugt den Basisdateinamen für Fall-Exporte.
@@ -1176,7 +1157,7 @@ function modalDynamischAktualisieren(typ) {
         </div>
       </div>`;
     } catch (e) {
-      container.innerHTML = `<div class="modal-preview-area"><p class="text-danger small mb-0">${e.message}</p></div>`;
+      container.innerHTML = `<div class="modal-preview-area"><p class="text-danger small mb-0">${escHtml(e?.message || '')}</p></div>`;
     }
   }
 
@@ -1191,7 +1172,7 @@ function modalDynamischAktualisieren(typ) {
       : parseFloat(verfahrenSel || "0");
     const ergebnisEl = document.getElementById("gkg-ergebnis");
     if (streitwertRaw && !isNaN(parseFloat(streitwertRaw)) && faktor > 0) {
-      const sw = parseFloat(streitwertRaw.replace(/\./g, '').replace(',', '.'));
+      const sw = parseGermanDecimal(streitwertRaw);
       const basis = gkgGebuehr(sw);
       const gesamt = basis * faktor;
       const betragEl = document.getElementById("mf-betrag");
@@ -1226,7 +1207,7 @@ function modalDynamischAktualisieren(typ) {
       );
       container.innerHTML = "";  // Berechnungsergebnis wird im Hintergrund berechnet, nicht angezeigt
     } catch (e) {
-      container.innerHTML = `<div class="modal-preview-area"><p class="text-danger small mb-0">${e.message}</p></div>`;
+      container.innerHTML = `<div class="modal-preview-area"><p class="text-danger small mb-0">${escHtml(e?.message || '')}</p></div>`;
     }
   }
 }
@@ -1512,7 +1493,7 @@ function tplEinfacheKosten(pos, label, standard) {
 function tplGerichtskosten(pos) {
   const streitwert = pos?.gkgStreitwert || "";
   const verfahren = pos?.gkgVerfahren || "3.0";
-  const gebuehr = streitwert ? gkgGebuehr(parseFloat(streitwert.replace(/\./g, '').replace(',', '.'))) : 0;
+  const gebuehr = streitwert ? gkgGebuehr(parseGermanDecimal(streitwert)) : 0;
   const betrag = streitwert ? (gebuehr * parseFloat(verfahren)).toFixed(2) : (pos?.betrag || "");
   return `
     ${datumFeld("mf-datum", pos?.datum)}
@@ -1729,7 +1710,7 @@ function rendereVorschau() {
     row.style.setProperty("--row-idx", i);
   });
   } catch (err) {
-    el.innerHTML = `<div class="alert alert-danger m-3"><strong>Fehler beim Rendern der Vorschau:</strong><br><code>${err.message}</code></div>`;
+    el.innerHTML = `<div class="alert alert-danger m-3"><strong>Fehler beim Rendern der Vorschau:</strong><br><code>${escHtml(err?.message || '')}</code></div>`;
     console.error("rendereVorschau el.innerHTML:", err);
   }
 }

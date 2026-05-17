@@ -83,10 +83,10 @@ function _zvForderungsbetraege(positionen) {
   const pos = positionen || [];
   const hf = pos
     .filter(p => p.typ === 'hauptforderung')
-    .reduce((s, p) => s + parseFloat((p.betrag || '0').replace(/\./g, '').replace(',', '.')), 0);
+    .reduce((s, p) => s + parseGermanDecimal(p.betrag), 0);
   const kosten = pos
     .filter(p => ['anwaltsverguetung', 'mahnkosten', 'gv_kosten', 'sonstige_kosten', 'gerichtskosten'].includes(p.typ))
-    .reduce((s, p) => s + parseFloat((p.betrag || '0').replace(/\./g, '').replace(',', '.')), 0);
+    .reduce((s, p) => s + parseGermanDecimal(p.betrag), 0);
   const fmt = n => n.toFixed(2).replace('.', ',') + ' EUR';
   return { hf: fmt(hf), kosten: fmt(kosten) };
 }
