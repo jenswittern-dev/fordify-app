@@ -367,4 +367,41 @@ E-Mail-Alarm an jenswittern@gmail.com
 - **Kundenbereich: Fallübersicht** – alle Cloud-Fälle auflisten, öffnen, bearbeiten, exportieren → Roadmap 6.4
 - **Kundenbereich: Schuldner-Datenbank** – zentrale Adressverwaltung, Zuweisung zu Fällen → Roadmap 6.5
 
+---
+
+## 11. Public-SEO-Launch (auf Marketing wartend)
+
+> **Status:** Bereitgestellt am 2026-05-17, ausgeführt sobald Marketing-Vorbereitung steht.
+> **Aufwand:** ~1h 15min (technische Umsetzung) + manuelle Verifikation.
+> **Quelle:** `docs/superpowers/specs/2026-05-17-holistic-code-review.md` → Pfad A.
+
+Aktuell blockiert der globale `User-agent: * / Disallow: /` in `frontend/robots.txt` jede Indexierung. Vor öffentlichem Launch muss dieser Schalter umgelegt werden — siehe untenstehende Checkliste.
+
+### A) Vor Launch zwingend (Blocker, ~50 Min)
+
+- [ ] `frontend/robots.txt`: `User-agent: * / Disallow: /` → `User-agent: * / Allow: /` (5 Min)
+- [ ] Meta-Robots auf 7 öffentlichen Seiten von `noindex,nofollow` → `index, follow` (10 Min):
+  - `index.html`, `preise.html`, `zinsrechner.html`, `rvg-rechner.html`, `gerichtskostenrechner.html`, `tilgungsrechner.html`, `pkh-rechner.html`
+- [ ] `frontend/sitemap.xml`: `/tilgungsrechner` + `/pkh-rechner` ergänzen, `/forderungsaufstellung` entfernen, `<lastmod>` aktualisieren (5 Min)
+- [ ] Search Console (search.google.com) + Bing Webmaster Tools: Property anlegen + Sitemap einreichen + Rich Results Test für 1 Rechner (30 Min)
+
+### B) Vor Launch empfohlen (~25 Min)
+
+- [ ] `Google-Extended: Allow: /` in robots.txt (Gemini/Bard-Crawling, 1 Min)
+- [ ] Weitere LLM-Bots: `OAI-SearchBot`, `Claude-Web`, `Perplexity-User`, `Applebot-Extended`, `Meta-ExternalAgent`, `DuckAssistBot` (5 Min)
+- [ ] `SoftwareApplication`-JSON-LD auf `index.html` ergänzen (15 Min)
+- [ ] `impressum.html` + `datenschutz.html` auf `index, follow` (E-E-A-T-Signal, 2 Min)
+
+### C) Nach Launch (nice-to-have)
+
+- [ ] `Product`/`Offer`-JSON-LD auf `preise.html` (Pro + Business, 30 Min)
+- [ ] Phase 7.3 (SEO-Landingpages) Recherche: dedizierte Landingpages für „Forderungsaufstellung §367 BGB" etc.?
+
+### Voraussetzungen Marketing (Jens entscheidet)
+
+- [ ] Outreach-Plan steht (LinkedIn-Posts, RA-Foren, evtl. Slack-Communities)
+- [ ] Erste 5–10 Beta-Kanzleien identifiziert / angesprochen
+- [ ] OG-Image für Social-Sharing visuell final
+- [ ] Pricing-Page-Copy final geprüft (Andreas?)
+
 *Stand: 2026-04-21 | Technischer Plan: `docs/superpowers/plans/2026-04-20-freemium-implementation.md`*
