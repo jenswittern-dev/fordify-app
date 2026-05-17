@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const base = 'C:/Users/Jens/Documents/GitHub/fordify-app';
-const outDir = path.join(base, 'docs/legal-review');
+const base = 'C:/Users/Jens/Documents/Claude/fordify-app';
+const outDir = path.join(base, 'docs/archive/legal-review');
 
 function decode(h) {
   return h

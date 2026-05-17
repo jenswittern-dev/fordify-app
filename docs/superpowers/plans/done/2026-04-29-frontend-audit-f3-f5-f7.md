@@ -294,7 +294,7 @@ git push origin staging && git push origin staging:main
 Starte einen lokalen HTTP-Server (Python oder Node) für `frontend/` und verwende den Playwright-MCP-Browser:
 
 ```bash
-cd C:\Users\Jens\Documents\GitHub\fordify-app
+cd C:\Users\Jens\Documents\Claude\fordify-app
 python -m http.server 8080 --directory frontend
 ```
 

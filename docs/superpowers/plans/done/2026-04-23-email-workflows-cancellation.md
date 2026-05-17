@@ -559,7 +559,7 @@ The workflow is triggered by the Edge Function posting to `/webhook/fordify-paym
 Source `.env` first, then run:
 
 ```bash
-source /c/Users/Jens/Documents/GitHub/fordify-app/.env
+source /c/Users/Jens/Documents/Claude/fordify-app/.env
 
 # Get the credentials from the existing onboarding workflow
 SUPABASE_ANON=$(curl -s -H "X-N8N-API-KEY: $N8N_API_KEY" \
@@ -641,7 +641,7 @@ Expected response: JSON with `id` field (the new workflow ID). Save this ID.
 - [ ] **Step 2: Activate the workflow**
 
 ```bash
-source /c/Users/Jens/Documents/GitHub/fordify-app/.env
+source /c/Users/Jens/Documents/Claude/fordify-app/.env
 WORKFLOW_ID="<id from step 1>"
 curl -s -X PATCH \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
@@ -681,7 +681,7 @@ Triggered by Edge Function when `subscription.canceled` fires (billing period en
 - [ ] **Step 1: Create the workflow via N8N API**
 
 ```bash
-source /c/Users/Jens/Documents/GitHub/fordify-app/.env
+source /c/Users/Jens/Documents/Claude/fordify-app/.env
 
 # Get RESEND_KEY from existing onboarding workflow (same as Task 5)
 RESEND_KEY=$(curl -s -H "X-N8N-API-KEY: $N8N_API_KEY" \
@@ -751,7 +751,7 @@ console.log(JSON.stringify(workflow));
 - [ ] **Step 2: Activate the workflow**
 
 ```bash
-source /c/Users/Jens/Documents/GitHub/fordify-app/.env
+source /c/Users/Jens/Documents/Claude/fordify-app/.env
 WORKFLOW_ID="<id from step 1>"
 curl -s -X PATCH \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
@@ -790,7 +790,7 @@ This is triggered by the Edge Function's `subscription.updated` handler (which s
 - [ ] **Step 1: Create the workflow via N8N API**
 
 ```bash
-source /c/Users/Jens/Documents/GitHub/fordify-app/.env
+source /c/Users/Jens/Documents/Claude/fordify-app/.env
 
 RESEND_KEY=$(curl -s -H "X-N8N-API-KEY: $N8N_API_KEY" \
   "https://n8n.srv1063720.hstgr.cloud/api/v1/workflows/elcsjZCxDmtCw2BI" | \
@@ -981,7 +981,7 @@ AND status = 'canceled';
 - [ ] **Step 1: Deploy both Edge Functions**
 
 ```bash
-source /c/Users/Jens/Documents/GitHub/fordify-app/.env
+source /c/Users/Jens/Documents/Claude/fordify-app/.env
 
 # Deploy paddle-webhook
 supabase functions deploy paddle-webhook \

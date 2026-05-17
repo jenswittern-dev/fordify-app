@@ -1,6 +1,6 @@
 # Freemium-Implementierung – Technischer Umsetzungsplan
 
-## Aktueller Stand (2026-04-21)
+## Aktueller Stand (2026-04-23, verifiziert 2026-05-17)
 | Task | Status | Notiz |
 |---|---|---|
 | 1 – Supabase Schema + RLS | ✅ | `supabase/schema.sql` mit profiles, subscriptions, cases, settings, contacts + RLS |
@@ -9,14 +9,14 @@
 | 4 – Auth – Magic Link Login | ✅ | `frontend/js/auth.js` komplett implementiert |
 | 5 – Cloud-Laden beim Login | ✅ | `ladeCloudDaten()`, `migrateSessionToCloud()` in auth.js |
 | 6 – Feature-Gates | ✅ | `frontend/js/gates.js` mit `requiresPaid()` und Upgrade-Modal |
-| 7 – Paddle-Webhook Edge Function | ✅ | Deployed, Secrets gesetzt – Webhook-URL in Paddle manuell eintragen |
+| 7 – Paddle-Webhook Edge Function | ✅ | Deployed, Secrets gesetzt, Webhook-URL in Paddle eingetragen (verifiziert 2026-04-23) |
 | 8 – Pricing-Seite | ✅ | `frontend/preise.html` mit Paddle-Checkout + 3-Schritt-Modal |
-| 9 – N8N-Workflows | ⏳ | Wartet auf N8N-Server-Setup |
-| 10 – Launch-Vorbereitung (AGB etc.) | ✅ | `agb.html`, `impressum.html`, `datenschutz.html` vorhanden |
+| 9 – N8N-Workflows | ✅ | Onboarding `elcsjZCxDmtCw2BI` + Digest `hJpXXeIuvGQY60iQ` + Zahlung/Offboarding/Retention/Datenlöschung (5 Workflows aktiv, siehe CLAUDE.md) |
+| 10 – Launch-Vorbereitung (AGB etc.) | ✅ | `agb.html`, `impressum.html`, `datenschutz.html`, `avv.html` vorhanden |
 | 11 – Gestuftes PDF-Branding | ✅ | `getFordifyBranding()` in app.js implementiert |
 | 12 – Excel/CSV-Export | ✅ | `fallExportierenAlsExcel()` in app.js implementiert |
 
-**Blockierungen:** Task 7 (klären ob Paddle-Webhook deploybar), Task 9 (N8N fehlt), Task 11 (Code-Änderung nötig).
+**Blockierungen:** keine — alle Tasks abgeschlossen und verifiziert (2026-04-23).
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
