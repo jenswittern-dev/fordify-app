@@ -1,0 +1,134 @@
+#!/bin/sh
+# Fordify Smart-Merge-Hook für Graphify (Source-of-Truth).
+# Installiere mit: bash scripts/setup-graphify-hook.sh
+#
+# Refresht AST-Teil des Knowledge-Graphs nach jedem Code-Commit,
+# bewahrt aber die semantische Schicht (Doc-Nodes, Cross-Document-
+# Edges, Hyperedges) aus dem letzten manuellen /graphify --update.
+
+CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff --name-only HEAD 2>/dev/null)
+if [ -z "$CHANGED" ]; then
+    exit 0
+fi
+
+# Python-Detection: Windows-specific Pfad zuerst (umgeht Microsoft-Store-
+# App-Execution-Alias der python/python3 in PATH blockt), dann übliche
+# Linux/Mac-Fallbacks.
+GRAPHIFY_PYTHON=""
+for candidate in "/c/Python314/python.exe" "/c/Python313/python.exe" "/c/Python312/python.exe"; do
+    if [ -x "$candidate" ] && "$candidate" -c "import graphify" 2>/dev/null; then
+        GRAPHIFY_PYTHON="$candidate"
+        break
+    fi
+done
+if [ -z "$GRAPHIFY_PYTHON" ] && command -v python3 >/dev/null 2>&1 && python3 -c "import graphify" 2>/dev/null; then
+    GRAPHIFY_PYTHON="python3"
+fi
+if [ -z "$GRAPHIFY_PYTHON" ] && command -v python >/dev/null 2>&1 && python -c "import graphify" 2>/dev/null; then
+    GRAPHIFY_PYTHON="python"
+fi
+if [ -z "$GRAPHIFY_PYTHON" ]; then
+    echo "[graphify hook] No Python interpreter with graphify found - skip"
+    exit 0
+fi
+
+export GRAPHIFY_CHANGED="$CHANGED"
+# UTF-8 erzwingen (graphify.watch nutzt write_text() ohne encoding-Argument,
+# Windows-Default CP1252 kann → und andere Unicode-Zeichen nicht encoden)
+export PYTHONUTF8=1
+export PYTHONIOENCODING="utf-8"
+
+$GRAPHIFY_PYTHON -c "
+import os, sys, json, io, contextlib
+from pathlib import Path
+
+CODE_EXTS = {
+    '.py', '.ts', '.js', '.go', '.rs', '.java', '.cpp', '.c', '.rb', '.swift',
+    '.kt', '.cs', '.scala', '.php', '.cc', '.cxx', '.hpp', '.h', '.kts',
+}
+
+changed_raw = os.environ.get('GRAPHIFY_CHANGED', '')
+changed_paths = [Path(f.strip()) for f in changed_raw.strip().splitlines() if f.strip()]
+all_changed_code = [f for f in changed_paths if f.suffix.lower() in CODE_EXTS]
+code_to_extract = [f for f in all_changed_code if f.exists()]
+
+if not all_changed_code:
+    sys.exit(0)
+
+print(f'[graphify hook] {len(all_changed_code)} code file(s) in commit ({len(code_to_extract)} exist, {len(all_changed_code) - len(code_to_extract)} deleted)')
+
+graph_path = Path('graphify-out/graph.json')
+if not graph_path.exists():
+    print('[graphify hook] No existing graph - skip (run /graphify . first)')
+    sys.exit(0)
+
+try:
+    from networkx.readwrite import json_graph
+    from graphify.extract import extract
+    from graphify.cluster import cluster, score_all
+    from graphify.analyze import god_nodes, surprising_connections, suggest_questions
+    from graphify.report import generate
+    from graphify.export import to_json, to_html
+    from graphify.detect import detect
+
+    existing = json.loads(graph_path.read_text(encoding='utf-8'))
+    G = json_graph.node_link_graph(existing, edges='links')
+    before_n = G.number_of_nodes()
+    before_e = G.number_of_edges()
+
+    changed_set = {str(f).replace(chr(92), '/').lower() for f in all_changed_code}
+
+    to_drop = []
+    for nid, ndata in G.nodes(data=True):
+        src = ndata.get('source_file', '')
+        if src and src.replace(chr(92), '/').lower() in changed_set:
+            to_drop.append(nid)
+    for nid in to_drop:
+        G.remove_node(nid)
+
+    new_n = 0
+    new_e = 0
+    if code_to_extract:
+        result = extract(code_to_extract)
+        for n in result['nodes']:
+            nid = n['id']
+            if nid not in G:
+                attrs = {k: v for k, v in n.items() if k != 'id'}
+                G.add_node(nid, **attrs)
+                new_n += 1
+        for e in result['edges']:
+            src, tgt = e['source'], e['target']
+            if src in G and tgt in G:
+                attrs = {k: v for k, v in e.items() if k not in ('source', 'target')}
+                G.add_edge(src, tgt, **attrs)
+                new_e += 1
+
+    communities = cluster(G)
+    cohesion = score_all(G, communities)
+
+    to_json(G, communities, str(graph_path))
+
+    if G.number_of_nodes() < 5000:
+        labels = {cid: 'Community ' + str(cid) for cid in communities}
+        to_html(G, communities, 'graphify-out/graph.html', community_labels=labels)
+
+    buf = io.StringIO()
+    with contextlib.redirect_stderr(buf):
+        detection = detect(Path('.'))
+    gods = god_nodes(G)
+    surprises = surprising_connections(G, communities)
+    labels = {cid: 'Community ' + str(cid) for cid in communities}
+    questions = suggest_questions(G, communities, labels)
+    report = generate(G, communities, cohesion, labels, gods, surprises, detection,
+                      {'input': 0, 'output': 0}, '.', suggested_questions=questions)
+    Path('graphify-out/GRAPH_REPORT.md').write_text(report, encoding='utf-8')
+
+    print(f'[graphify hook] Smart-merge: -{len(to_drop)} alte Nodes, +{new_n} neue AST-Nodes, +{new_e} Edges')
+    print(f'[graphify hook] Graph: {before_n} -> {G.number_of_nodes()} Nodes, {before_e} -> {G.number_of_edges()} Edges, {len(communities)} Communities')
+
+except Exception as exc:
+    print(f'[graphify hook] Smart-merge failed: {exc}')
+    import traceback
+    traceback.print_exc()
+    sys.exit(1)
+"

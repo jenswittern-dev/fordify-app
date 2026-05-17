@@ -68,32 +68,38 @@ Nach jedem Update: `graph.json` + `GRAPH_REPORT.md` committen. `graphify-out/cac
 
 ### Smart-Merge-Hook (Fordify-Anpassung)
 
-Es ist ein `post-commit` Hook installiert (`.git/hooks/post-commit`), der nach jedem Code-Commit den AST-Teil refresht **und dabei die semantische Schicht (Doc-Nodes, Cross-Document-Edges, Hyperedges) erhält**. Damit bleibt der reiche Graph dauerhaft erhalten — keine manuellen Restore-Runs nötig.
+Nach jedem Code-Commit refresht ein `post-commit` Hook den AST-Teil des Graphen **und bewahrt die semantische Schicht** (Doc-Nodes, Cross-Document-Edges, Hyperedges aus dem letzten manuellen `/graphify --update`). Source-of-Truth: `scripts/git-hooks/post-commit` (versioniert).
 
-**Wie der Smart-Merge funktioniert:**
+**Installation auf neuer Maschine:**
 
-1. Lädt `graphify-out/graph.json` (aktueller reicher Graph)
-2. Liest geänderte Code-Files aus `git diff HEAD~1 HEAD`
-3. Entfernt **nur** die Nodes/Edges, die aus diesen geänderten Files stammen (Match via `source_file`)
-4. Führt AST-Extraktion auf den geänderten Code-Files aus
-5. Fügt neue Nodes/Edges hinzu
-6. Re-clustert + schreibt `graph.json`, `graph.html`, `GRAPH_REPORT.md`
+```bash
+bash scripts/setup-graphify-hook.sh
+```
 
-→ Doc-Nodes (CLAUDE.md, AGENTS.md, SYSTEM.md, Specs, Review-Archive) bleiben **unangetastet** zwischen den manuellen `/graphify --update`-Runs.
+Idempotent. Erkennt Python automatisch (Windows: `/c/PythonXXX/python.exe`, sonst `python3`/`python` aus PATH). Ersetzt den vom Default-`graphify hook install` erzeugten destruktiven Hook.
 
-**Wann trotzdem `/graphify . --update` manuell laufen lassen?**
+**Was der Hook macht (Algorithmus):**
+
+1. Lädt bestehenden `graphify-out/graph.json`
+2. Identifiziert geänderte Code-Files aus `git diff HEAD~1 HEAD`
+3. Entfernt nur Nodes/Edges, deren `source_file` zu einem geänderten File gehört
+4. Führt AST-Extraktion auf den geänderten Code-Files aus, fügt neue Nodes/Edges hinzu
+5. Re-clustert + schreibt `graph.json`, `graph.html`, `GRAPH_REPORT.md`
+
+**Wann trotzdem `/graphify . --update` manuell?**
 
 - Doc-Änderungen sollen im Graph reflektiert werden (Hook ignoriert `.md`-Diffs)
-- Größere Sprint-Abschlüsse (frischer semantischer Layer ggf. mit neuen Cross-Refs)
-- Wenn semantische Schicht stale wird (>30 Tage / nach großem Doc-Refactor)
+- Größere Sprint-Abschlüsse für frische Cross-Refs zwischen Code und Docs
+- Semantische Schicht stale (>30 Tage / nach großem Doc-Refactor)
 
-**Windows-Fixes im Hook (manuell nachzuziehen für andere Setups):**
+**Hintergrund — warum eigener Hook statt graphify-Default:**
 
-1. **`python3`-Fallback funktioniert auf Windows nicht** (Microsoft-Store-App-Execution-Alias blockt) → Hook nutzt explizit `/c/Python314/python.exe`
-2. **CP1252-charmap-Fehler bei Unicode** (`→` in GRAPH_REPORT.md) → Hook setzt `PYTHONUTF8=1` und `PYTHONIOENCODING="utf-8"`
-3. **Standard-`graphify.watch._rebuild_code` überschreibt semantische Schicht** → Hook nutzt eigene Smart-Merge-Logik statt der graphify-Standard-Funktion
+Der Default-Hook (`python -m graphify hook install`) hat drei Probleme auf Windows + ein konzeptuelles:
+1. `python3`-Fallback wird durch Microsoft-Store-App-Execution-Alias blockiert
+2. `graphify.watch.write_text()` ohne `encoding="utf-8"` → CP1252-charmap-Fehler bei Unicode-Zeichen wie `→`
+3. `graphify.watch._rebuild_code()` ist **destruktiv** — schreibt Graph komplett neu mit AST-Only-Daten und löscht damit jeden Doc-Layer aus vorigem `--update`
 
-Diese Fixes sind in `.git/hooks/post-commit` dieses Repos lokal. `.git/hooks/*` wird nicht versioniert — bei Klon auf neuer Maschine muss der Hook manuell nachinstalliert werden (siehe `docs/SYSTEM.md` falls dokumentiert, oder Inhalt aus diesem File ableiten).
+Der Fordify-Hook löst alle drei Punkte. `.git/hooks/*` ist nicht versioniert; daher wird der Hook bei Klon neu installiert via `setup-graphify-hook.sh`.
 
 ---
 
