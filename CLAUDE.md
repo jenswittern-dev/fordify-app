@@ -20,6 +20,7 @@
 - Commit-Message auf Deutsch, präzise (feat/fix/style/docs/refactor)
 - **SW-Version** (`fordify-vN` in `frontend/sw.js`) bei jedem Commit mit geänderten Frontend-Dateien um 1 erhöhen
 - Keine Rückfragen zu offensichtlichen Standardoperationen
+- **Tool-Auswahl-Pflicht:** Vor jeder nicht-trivialen Aufgabe (Reviews, Audits, neue Features, Refactors, Domain-Spezial-Themen wie Auth/DSGVO/Supabase/SEO/Accessibility/Security) **`AGENTS.md` → §Agents & Skills konsultieren** und prüfen, ob ein spezialisierter Agent oder Skill für die Aufgabe existiert. Wenn ja: diesen statt `general-purpose` nutzen. Quick-Picks unten reichen für 80 % der Standardfälle.
 - **Doku-Pflege im gleichen Commit:**
   - `docs/ROADMAP.md` — Feature-Status ✅ + Datum setzen
   - `docs/SYSTEM.md` — neue Datenstrukturen, Funktionen, Architekturentscheidungen ergänzen
