@@ -1,24 +1,6 @@
 'use strict';
 
-function fordifyConfirm(message, onOK, { okLabel = 'Löschen', cancelLabel = 'Abbrechen' } = {}) {
-  const textEl = document.getElementById('confirm-modal-text');
-  const btnsEl = document.getElementById('confirm-modal-btns');
-  if (!textEl || !btnsEl) { if (confirm(message)) onOK(); return; }
-  textEl.textContent = message;
-  const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('confirmModal'));
-  const cancelBtn = document.createElement('button');
-  cancelBtn.className = 'btn btn-secondary btn-sm';
-  cancelBtn.setAttribute('data-bs-dismiss', 'modal');
-  cancelBtn.textContent = cancelLabel;
-  const okBtn = document.createElement('button');
-  okBtn.className = 'btn btn-danger btn-sm';
-  okBtn.textContent = okLabel;
-  okBtn.addEventListener('click', () => { modal.hide(); onOK(); }, { once: true });
-  btnsEl.innerHTML = '';
-  btnsEl.appendChild(cancelBtn);
-  btnsEl.appendChild(okBtn);
-  modal.show();
-}
+// fordifyConfirm in fordify-confirm.js zentralisiert (vor konto.js geladen)
 
 const KONTO_STORAGE_KEY_CASES    = 'fordify_cases';
 const KONTO_STORAGE_KEY_SETTINGS = 'fordify_settings';

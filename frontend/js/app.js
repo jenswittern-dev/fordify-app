@@ -11,7 +11,7 @@ const STORAGE_KEY_CASES       = "fordify_cases";
 const STORAGE_KEY_LEGACY      = "forderungsaufstellung_state";
 const STORAGE_KEY_SETTINGS    = "fordify_settings";
 const STORAGE_KEY_LAST_EXPORT = "fordify_last_export";
-const STORAGE_KEY_THEME       = "fordify_theme";
+// STORAGE_KEY_THEME in theme.js zentralisiert
 
 function leerFall() {
   return {
@@ -360,38 +360,7 @@ function zeigeFallModal() {
   bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-faelle")).show();
 }
 
-function fordifyConfirm(message, onOK, { okLabel = 'Löschen', cancelLabel = 'Abbrechen', extraLabel, onExtra } = {}) {
-  const textEl = document.getElementById('confirm-modal-text');
-  const btnsEl = document.getElementById('confirm-modal-btns');
-  if (!textEl || !btnsEl) { if (confirm(message)) onOK(); return; }
-
-  textEl.textContent = message;
-  const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('confirmModal'));
-
-  const cancelBtn = document.createElement('button');
-  cancelBtn.className = 'btn-secondary-app';
-  cancelBtn.setAttribute('data-bs-dismiss', 'modal');
-  cancelBtn.textContent = cancelLabel;
-
-  const okBtn = document.createElement('button');
-  okBtn.className = 'btn-primary-app';
-  okBtn.textContent = okLabel;
-  okBtn.addEventListener('click', () => { modal.hide(); onOK(); }, { once: true });
-
-  btnsEl.innerHTML = '';
-  btnsEl.appendChild(cancelBtn);
-
-  if (extraLabel && onExtra) {
-    const extraBtn = document.createElement('button');
-    extraBtn.className = 'btn-secondary-app';
-    extraBtn.textContent = extraLabel;
-    extraBtn.addEventListener('click', () => { modal.hide(); onExtra(); }, { once: true });
-    btnsEl.appendChild(extraBtn);
-  }
-
-  btnsEl.appendChild(okBtn);
-  modal.show();
-}
+// fordifyConfirm in fordify-confirm.js zentralisiert
 
 function fallLoeschenBestaetigen(id) {
   fordifyConfirm('Diesen Fall wirklich löschen?', () => fallLoeschen(id));
@@ -2621,27 +2590,7 @@ function egbgbHinweisToggle(val) {
 
 // ---- Theme ----
 
-function themeWechseln(name) {
-  const valid = ["brand", "dark", "clean"];
-  if (!valid.includes(name)) name = "brand";
-  if (name === "brand") {
-    document.documentElement.removeAttribute("data-theme");
-  } else {
-    document.documentElement.setAttribute("data-theme", name);
-  }
-  // Logo je Theme tauschen
-  const logoImg = document.querySelector(".navbar-brand img");
-  if (logoImg) {
-    const logoMap = { brand: "img/logo.svg", dark: "img/logo-dark.svg", clean: "img/logo-clean.svg" };
-    logoImg.src = logoMap[name] || "img/logo.svg";
-  }
-  localStorage.setItem(STORAGE_KEY_THEME, name);
-}
-
-function themeLaden() {
-  const saved = localStorage.getItem(STORAGE_KEY_THEME) || "brand";
-  themeWechseln(saved);
-}
+// themeWechseln, themeLaden in theme.js zentralisiert
 
 // ---- Export-Reminder ----
 
@@ -2664,22 +2613,7 @@ function exportReminderDismiss() {
   merkeExportZeitpunkt();
 }
 
-// ---- GKG-Streitwertrechner ----
-
-/**
- * Ermittelt die 1,0-Gebühr nach GKG Anlage 2 für einen gegebenen Streitwert.
- * @param {number} streitwert
- * @returns {number} Gebühr in Euro
- */
-function gkgGebuehr(streitwert) {
-  if (!streitwert || streitwert <= 0) return 0;
-  for (const zeile of GKG_TABELLE) {
-    if (streitwert <= zeile.bis) return zeile.gebuehr;
-  }
-  // Über 500.000 €: 2.201 € + 108 € je angefangene weitere 30.000 €
-  const ueber = streitwert - 500000;
-  return 2201 + Math.ceil(ueber / 30000) * 108;
-}
+// gkgGebuehr in gkg.js zentralisiert
 
 /**
  * Teilt den aktuellen Fall als JSON-Datei über die Web Share API (mobile)
