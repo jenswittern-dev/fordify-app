@@ -66,6 +66,31 @@ Persistenter Knowledge-Graph des Projekts in `graphify-out/` (siehe **Graphify-P
 
 Nach jedem Update: `graph.json` + `GRAPH_REPORT.md` committen. `graphify-out/cache/` ist gitignored.
 
+### Hook-Trade-off (Windows)
+
+Es ist ein `post-commit` Hook installiert (`.git/hooks/post-commit`), der nach jedem Code-Commit automatisch AST-Extraktion ausführt — **aber überschreibt dabei die semantische Schicht** (Doc-Nodes, Cross-Document-Edges) mit AST-Only-Daten. Das ist graphify-Design-Intent.
+
+**Praktische Konsequenz:**
+- Nach Code-Commits: Graph reflektiert Code-Struktur, ABER ohne Doc-Verbindungen
+- Doc-Änderungen werden vom Hook **nicht** verarbeitet (kein LLM im Hook)
+- Reicher Graph (Code + Docs + Cross-Cutting) entsteht erst nach manueller `/graphify . --update`
+
+**Empfohlener Rhythmus:**
+- Sprint-Ende → `/graphify . --update` für vollen semantischen Graph (committen)
+- Während Sprint → Hook hält AST-Teil aktuell, semantische Schicht bleibt aus letztem Sprint
+- Bei großen Architektur-Fragen die Doc-Cross-Refs brauchen: ggf. ad-hoc `--update` vorab
+
+**Windows-Hook-Fix:**
+Der von `graphify hook install` erzeugte Hook hat zwei Bugs auf Windows:
+1. `python3`-Fallback funktioniert nicht (Microsoft-Store-App-Execution-Alias)
+2. `write_text` ohne `encoding="utf-8"` → CP1252-charmap-Fehler bei Unicode (→)
+
+Fix in `.git/hooks/post-commit`:
+- Explizit `/c/Python314/python.exe` statt PATH-`python3`
+- `export PYTHONUTF8=1` und `export PYTHONIOENCODING="utf-8"` setzen
+
+Beide Fixes sind in diesem Repo lokal angewandt; für andere Entwickler-Setups manuell nachziehen.
+
 ---
 
 ## Wichtige Architekturentscheidungen
