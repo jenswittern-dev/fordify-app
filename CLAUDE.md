@@ -37,6 +37,7 @@
 | Aktive Pläne (max. 5 erlaubt) | `docs/superpowers/plans/` |
 | Specs in Brainstorming-Phase | `docs/superpowers/specs/` |
 | Interaktiver Code-Knowledge-Graph | `graphify-out/graph.html` |
+| **Agent/Skill-Auswahl pro Aufgabe (vollständig)** | `AGENTS.md` → §Agents & Skills |
 
 ---
 
@@ -132,3 +133,29 @@ docs/
 
 **Vor neuen Features prüfen:** ROADMAP (geplant/erledigt?), SYSTEM.md (betroffene Strukturen?), aktive Pläne, SW-Cache-Version.
 **Nach Umsetzung aktualisieren:** ROADMAP-Status, SYSTEM.md-Details, Plan nach done/ — alles im gleichen Commit wie die Implementierung.
+
+---
+
+## Agents & Skills — Quick Picks
+
+Fordify hat `superpowers` und `everything-claude-code` Plugins. **Vollständige Auswahltabelle inkl. Anti-Patterns: `AGENTS.md` → §Agents & Skills.**
+
+Top-Picks für häufige Aufgaben:
+
+| Aufgabe | Tool | Typ |
+|---|---|---|
+| **Vor** kreativer Arbeit / Features brainstormen | `superpowers:brainstorming` | Skill |
+| Multi-Step-Plan schreiben | `superpowers:writing-plans` | Skill |
+| Plan ausführen (mehrere parallele Tasks) | `superpowers:subagent-driven-development` | Skill |
+| Code-Review nach Änderung | `everything-claude-code:code-reviewer` | Agent |
+| Security-Audit (Auth, Forms, Input) | `everything-claude-code:security-reviewer` | Agent |
+| Supabase-Schema-/Query-Review | `everything-claude-code:database-reviewer` + `supabase:supabase-postgres-best-practices` | Agent + Skill |
+| Accessibility-Check nach UI-Änderung | `accessibility-auditor` | Agent |
+| SEO-Check vor Public-Launch (Pfad A) | `seo-auditor` | Agent |
+| Dead-Code / Duplikate finden | `everything-claude-code:refactor-cleaner` | Agent |
+| DSGVO-/Rechts-Beratung | `legal-advisor` | Agent |
+| Fakten/§/Beträge prüfen (vor Veröffentlichung) | `fact-checker` | Agent |
+| Multi-Step-Recherche / offene Frage | `general-purpose` | Agent |
+| Vor "fertig"-Erklärung | `superpowers:verification-before-completion` | Skill |
+
+**Anti-Patterns** (NICHT nutzen): `frontend-design:frontend-design` (React-Konvention), `python-/go-/kotlin-/django-/springboot-Tools` (Stack-Mismatch), `pr-manager` (politische PMs).
