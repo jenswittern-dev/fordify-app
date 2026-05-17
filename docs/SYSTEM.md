@@ -25,10 +25,15 @@ Browser
         ├── js/auth.js             (Supabase Magic Link Auth)
         ├── js/auth-ui.js          (Auth-UI-Steuerung: data-auth-show, Avatar, Plan-Badge)
         ├── js/gates.js            (Feature-Gates: requiresPaid(), Upgrade-Modal)
-        ├── js/utils.js            (globale Utilities: escHtml, escAttr, parseGermanDecimal – als erstes geladen)
+        ├── js/utils.js            (globale Utilities: escHtml, escAttr, parseGermanDecimal, parseDate, formatDate, formatEUR – als erstes geladen)
         ├── js/contacts.js         (Kontaktverwaltung – konto.html)
+        ├── js/theme.js            (Theme-System brand/dark/clean – themeLaden, themeWechseln)
+        ├── js/gkg.js              (gkgGebuehr für GKG-Streitwert-Pauschale)
+        ├── js/fordify-confirm.js  (fordifyConfirm-Modal statt window.confirm)
+        ├── js/einstellungen.js    (Kanzlei-Einstellungen + Impressum, 12 Funktionen Cluster K)
+        ├── js/print.js            (Druck via Popup-Window: drucken, getFordifyBranding)
         ├── js/zv.js               (Zwangsvollstreckungsformular-Logik)
-        └── js/app.js              (State, UI, Event-Handling – ~2100 Zeilen)
+        └── js/app.js              (State, Modal-Dispatcher, Vorschau, Init – ~2400 Zeilen, modularisiert 2026-05-17)
 
   Weitere Seiten (eigenständige HTML-Dateien):
   ├── index.html                   (Landing Page / Homepage)

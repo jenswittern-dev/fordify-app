@@ -74,7 +74,7 @@ fordify-app/
 │   │   ├── rechner.css         ← Rechner-Seiten, Footer, Prefooter
 │   │   └── themes.css          ← Theme-Overrides (brand/dark/clean via [data-theme])
 │   ├── js/
-│   │   ├── app.js              ← Haupt-App (~2100 Zeilen)
+│   │   ├── app.js              ← Haupt-App (~2400 Zeilen, modularisiert seit 2026-05-17)
 │   │   ├── konto.js               ← Kundenbereich-Logik (konto.html)
 │   │   ├── config.js           ← Supabase-URL/Key, Paddle-Token, PRICE_MAP, trackEvent()
 │   │   ├── auth.js             ← Supabase Auth (Magic Link, Session, Cloud-Laden)
@@ -88,7 +88,12 @@ fordify-app/
 │   │   ├── rechner-zins.js     ← Zinsrechner-Logik (zinsrechner.html)
 │   │   ├── rechner-rvg.js      ← RVG-Rechner-Logik (rvg-rechner.html)
 │   │   ├── rechner-gkg.js      ← GKG-Rechner-Logik (gerichtskostenrechner.html)
-│   │   └── utils.js            ← Zentrale Utilities (escHtml, escAttr, parseGermanDecimal) – als erstes JS geladen
+│   │   ├── theme.js            ← Theme-System: themeWechseln, themeLaden, STORAGE_KEY_THEME
+│   │   ├── gkg.js              ← gkgGebuehr (Streitwert → GKG-Pauschalkosten)
+│   │   ├── fordify-confirm.js  ← fordifyConfirm-Modal (Bootstrap statt window.confirm)
+│   │   ├── einstellungen.js    ← Kanzlei-Einstellungen + Impressum (Cluster K, 12 Funktionen)
+│   │   ├── print.js            ← Druck/PDF via Popup-Window (drucken, getFordifyBranding)
+│   │   └── utils.js            ← Zentrale Utilities (escHtml, escAttr, parseGermanDecimal, parseDate, formatDate, formatEUR) – als erstes JS geladen
 │   ├── data/
 │   │   ├── basiszinssaetze.json ← aktualisierbar (nächste Fälligkeit 01.07.2026)
 │   │   └── rvg_tabelle.json    ← BGBl. 2025 I Nr. 109
