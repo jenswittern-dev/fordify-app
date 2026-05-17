@@ -88,8 +88,7 @@ fordify-app/
 │   │   ├── rechner-zins.js     ← Zinsrechner-Logik (zinsrechner.html)
 │   │   ├── rechner-rvg.js      ← RVG-Rechner-Logik (rvg-rechner.html)
 │   │   ├── rechner-gkg.js      ← GKG-Rechner-Logik (gerichtskostenrechner.html)
-│   │   ├── utils.js            ← Zentrale Utilities (escHtml, escAttr, parseGermanDecimal) – als erstes JS geladen
-│   │   └── zusammenfassung.js  ← (deprecated, nicht mehr direkt genutzt)
+│   │   └── utils.js            ← Zentrale Utilities (escHtml, escAttr, parseGermanDecimal) – als erstes JS geladen
 │   ├── data/
 │   │   ├── basiszinssaetze.json ← aktualisierbar (nächste Fälligkeit 01.07.2026)
 │   │   └── rvg_tabelle.json    ← BGBl. 2025 I Nr. 109
@@ -184,7 +183,7 @@ Siehe `docs/SYSTEM.md` für vollständiges Schema. Kurzübersicht:
 - **Externe API-Calls** — Supabase (Auth + DB), Paddle (Checkout), GoatCounter (Analytics) — alle DSGVO-konform
 - **Print via Popup-Window** (`drucken()`) — kein html2canvas/jsPDF (wäre Bitmap-PDF, nicht durchsuchbar)
 - **GKG_TABELLE in data.js** (nicht als JSON) — kein zusätzlicher Netzwerkaufruf nötig
-- **`baueSummaryTabelle()`** ist die aktive Zusammenfassungs-Funktion (in app.js, NICHT `erstelleZusammenfassung()` in zusammenfassung.js — deprecated)
+- **`baueSummaryTabelle()`** ist die aktive Zusammenfassungs-Funktion (in app.js)
 - **`migratePositionen()`** — lazy Migration: alte Positionen ohne `gruppeId` erhalten "g0"
 - **Theme-System** — `[data-theme]` auf `<html>`, CSS Custom Properties in `themes.css`, drei Themes: `brand` (default, kein Attribut), `dark`, `clean`
 - **Free-Nutzer = sessionStorage** — Daten weg beim Tab-Schließen ist Absicht (kein Bug)

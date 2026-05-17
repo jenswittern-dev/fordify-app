@@ -26,7 +26,6 @@ Browser
         ├── js/auth-ui.js          (Auth-UI-Steuerung: data-auth-show, Avatar, Plan-Badge)
         ├── js/gates.js            (Feature-Gates: requiresPaid(), Upgrade-Modal)
         ├── js/utils.js            (globale Utilities: escHtml, escAttr, parseGermanDecimal – als erstes geladen)
-        ├── js/zusammenfassung.js  (deprecated – nicht mehr direkt genutzt)
         ├── js/contacts.js         (Kontaktverwaltung – konto.html)
         ├── js/zv.js               (Zwangsvollstreckungsformular-Logik)
         └── js/app.js              (State, UI, Event-Handling – ~2100 Zeilen)
@@ -250,7 +249,7 @@ Funktion: `berechneVerrechnung(positionen, stichtag, basiszinssaetze, aufschlagP
 
 ### 4.5 Zusammenfassung (`js/app.js: baueSummaryTabelle()`)
 
-- Aktive Funktion: `baueSummaryTabelle()` in `app.js` (NICHT `erstelleZusammenfassung()` in `zusammenfassung.js` — deprecated)
+- Aktive Funktion: `baueSummaryTabelle()` in `app.js`
 - Spalten: Datum / Bezeichnung / Forderung / Teilzahlung / Anrechnung / Restforderung
 - Ordnet Zinsperioden per `gruppeId` der jeweiligen Hauptforderung zu
 
@@ -413,7 +412,6 @@ Sendet Win-Back-E-Mails an Nutzer mit bevorstehender Kündigung:
 
 - **Typografische Anführungszeichen** (`„"`) in JS-Strings verursachen SyntaxError → immer `\u201e` / `\u201c` verwenden
 - `href="#"` in Navigationslinks schreibt `#` in die URL → immer `href="javascript:void(0)"` oder `onclick="return false;"`
-- `zusammenfassung.js: erstelleZusammenfassung()` ist deprecated — nicht wieder aktivieren
 - `berechneVerrechnung()` sortiert intern nach Datum — Positionsreihenfolge im Array ist für Verrechnung irrelevant
 - `localStorage` ist domain-scoped: Entwicklung auf `localhost` vs. Produktion `fordify.de` haben getrennte Stores
 - **Free-Nutzer** verwenden `sessionStorage` — alle Daten weg beim Tab-Schließen, das ist Absicht (kein Bug)
