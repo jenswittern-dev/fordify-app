@@ -11,7 +11,7 @@
 | # | Frage | Entscheidung | Konsequenz |
 |---|---|---|---|
 | 1 | **Pfad A – Public Launch (1.25 h)** | **Geparkt** — wartet auf Marketing-Vorbereitung | Eintrag in `docs/freemium-launch-organisationsplan.md` als „Public-SEO-Launch (auf Marketing wartend)". Wird ausgeführt, sobald Jens grünes Licht gibt. |
-| 2 | **Pfad B – Aufräum-Halbtag (4 h)** | **Ja, in eigener Sitzung** | Wird als nächste Refactor-Session terminiert. Inhalt: 16 Pläne nach `done/`, 1 Spec nach `done/`, Code-Cleanup. |
+| 2 | **Pfad B – Aufräum-Halbtag (4 h)** | **✅ Erledigt 2026-05-17** | C1 (`614333b`): 17 Pläne + 2 Specs nach done/, legal-review → archive/. C2 (`9917064`): zusammenfassung.js gelöscht, Doku-Refs entfernt, SW v202. C3 (`fc23268`): parseDate/formatDate/formatEUR in utils.js zentralisiert (latentes Bug-Risiko weg), 4 e.message-XSS-Stellen gehärtet, 6 parseGermanDecimal-Inline-Patterns ersetzt, SW v203. |
 | 3 | **Mailbox-Automation (Telegram)** | **Lief produktiv** | In Pfad B mit erledigen: Plan `2026-04-24-mailbox-automation.md` + Spec `2026-04-24-mailbox-automation-design.md` nach `done/`. |
 | 4 | **app.js-Split (Pfad C + D)** | **Empfehlung angenommen: Pfad C als Folge-Session, Pfad D als geplante Folge innerhalb 4 Wochen** | C = Etappe 1+2, 4 h, app.js −340 LoC. D = Etappe 3, 5 h, app.js −990 LoC, Endzustand ~1300 LoC. Optional in einer Sitzung zusammenziehen, wenn C smooth lief. |
 
