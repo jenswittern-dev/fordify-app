@@ -74,7 +74,7 @@ fordify-app/
 │   │   ├── rechner.css         ← Rechner-Seiten, Footer, Prefooter
 │   │   └── themes.css          ← Theme-Overrides (brand/dark/clean via [data-theme])
 │   ├── js/
-│   │   ├── app.js              ← Haupt-App (~2400 Zeilen, modularisiert seit 2026-05-17)
+│   │   ├── app.js              ← Haupt-App (~1400 Zeilen, modularisiert 2026-05-17)
 │   │   ├── konto.js               ← Kundenbereich-Logik (konto.html)
 │   │   ├── config.js           ← Supabase-URL/Key, Paddle-Token, PRICE_MAP, trackEvent()
 │   │   ├── auth.js             ← Supabase Auth (Magic Link, Session, Cloud-Laden)
@@ -93,6 +93,8 @@ fordify-app/
 │   │   ├── fordify-confirm.js  ← fordifyConfirm-Modal (Bootstrap statt window.confirm)
 │   │   ├── einstellungen.js    ← Kanzlei-Einstellungen + Impressum (Cluster K, 12 Funktionen)
 │   │   ├── print.js            ← Druck/PDF via Popup-Window (drucken, getFordifyBranding)
+│   │   ├── modal-templates.js  ← HTML-Strings für Positionstyp-Modals (tpl*-Funktionen)
+│   │   ├── summary.js          ← Vorschau + baueSummaryTabelle + renderZinsdetail + positionDetailBeschreibung
 │   │   └── utils.js            ← Zentrale Utilities (escHtml, escAttr, parseGermanDecimal, parseDate, formatDate, formatEUR) – als erstes JS geladen
 │   ├── data/
 │   │   ├── basiszinssaetze.json ← aktualisierbar (nächste Fälligkeit 01.07.2026)

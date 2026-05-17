@@ -13,7 +13,7 @@
 | 1 | **Pfad A – Public Launch (1.25 h)** | **Geparkt** — wartet auf Marketing-Vorbereitung | Eintrag in `docs/freemium-launch-organisationsplan.md` als „Public-SEO-Launch (auf Marketing wartend)". Wird ausgeführt, sobald Jens grünes Licht gibt. |
 | 2 | **Pfad B – Aufräum-Halbtag (4 h)** | **✅ Erledigt 2026-05-17** | C1 (`614333b`): 17 Pläne + 2 Specs nach done/, legal-review → archive/. C2 (`9917064`): zusammenfassung.js gelöscht, Doku-Refs entfernt, SW v202. C3 (`fc23268`): parseDate/formatDate/formatEUR in utils.js zentralisiert (latentes Bug-Risiko weg), 4 e.message-XSS-Stellen gehärtet, 6 parseGermanDecimal-Inline-Patterns ersetzt, SW v203. |
 | 3 | **Mailbox-Automation (Telegram)** | **Lief produktiv** | In Pfad B mit erledigen: Plan `2026-04-24-mailbox-automation.md` + Spec `2026-04-24-mailbox-automation-design.md` nach `done/`. |
-| 4 | **app.js-Split (Pfad C + D)** | **Pfad C ✅ erledigt 2026-05-17 / Pfad D offen** | Pfad C: Etappe 1 (`719bf67` theme/gkg/fordify-confirm) + Etappe 2 (`22362dd` print/einstellungen). app.js: 2810 → 2407 LoC (−403). 5 neue Module à 18-286 LoC. Pfad D (modal-templates.js + summary.js → app.js auf ~1300 LoC) als Folge-Sprint geplant. |
+| 4 | **app.js-Split (Pfad C + D)** | **✅ Erledigt 2026-05-17 (komplett)** | Pfad C `719bf67`+`22362dd` (theme/gkg/fordify-confirm/print/einstellungen). Pfad D: modal-templates.js (392 LoC) + summary.js (619 LoC). app.js: **2810 → 1414 LoC (−1396, −50 %)**. 7 neue Module gesamt 1436 LoC. Ziel "~1300 LoC Kernfile" knapp übertroffen. |
 
 **Reihenfolge:** Pfad B → Pfad C → Pfad D → (irgendwann später, wenn Marketing bereit) Pfad A.
 

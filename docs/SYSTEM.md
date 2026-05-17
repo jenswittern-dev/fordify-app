@@ -32,8 +32,10 @@ Browser
         ├── js/fordify-confirm.js  (fordifyConfirm-Modal statt window.confirm)
         ├── js/einstellungen.js    (Kanzlei-Einstellungen + Impressum, 12 Funktionen Cluster K)
         ├── js/print.js            (Druck via Popup-Window: drucken, getFordifyBranding)
+        ├── js/modal-templates.js  (HTML-Strings für Positionstyp-Modals: alle tpl*-Funktionen + datumFeld/betragFeld/tituliertFeld)
+        ├── js/summary.js          (Vorschau: rendereVorschau, baueSummaryTabelle, renderZinsdetail, positionDetailBeschreibung)
         ├── js/zv.js               (Zwangsvollstreckungsformular-Logik)
-        └── js/app.js              (State, Modal-Dispatcher, Vorschau, Init – ~2400 Zeilen, modularisiert 2026-05-17)
+        └── js/app.js              (State, Modal-Dispatcher, Positionen, Init – ~1400 Zeilen, modularisiert 2026-05-17)
 
   Weitere Seiten (eigenständige HTML-Dateien):
   ├── index.html                   (Landing Page / Homepage)
