@@ -20,6 +20,7 @@
 - **SW-Version** (`fordify-vN` in `frontend/sw.js`) bei jedem Commit mit geänderten Frontend-Dateien um 1 erhöhen
 - Keine Rückfragen zu offensichtlichen Standardoperationen
 - **Tool-Auswahl-Pflicht:** Vor jeder nicht-trivialen Aufgabe (Reviews, Audits, neue Features, Refactors, Domain-Spezial-Themen wie Auth/DSGVO/Supabase/SEO/Accessibility/Security) die Sektion **§Agents & Skills** (unten in dieser Datei) konsultieren und prüfen, ob ein spezialisierter Agent oder Skill für die Aufgabe existiert. Wenn ja: diesen statt `general-purpose` nutzen.
+- **Graphify-Pflicht bei Architektur-/Cross-Cutting-Aufgaben:** Bei Aufgaben die **Architektur**, **Cross-Cutting-Reviews**, **Code-Qualität**, **Dead-Code/Orphan-Detection** oder **Onboarding/Big-Picture-Verständnis** betreffen, **zuerst den Knowledge-Graph konsultieren** (`graphify-out/graph.html` visuell, `GRAPH_REPORT.md` für God-Nodes/Surprises, `/graphify query "..."` für gezielte Fragen). Wenn Sub-Agents für solche Aufgaben dispatcht werden: **Pointer auf den Graph in deren Prompt aufnehmen** (Sub-Agents auto-laden diese Datei NICHT). Bei stale Graph (>30 Tage oder nach größerem Refactor): erst `/graphify . --update`, dann Aufgabe.
 - **Doku-Pflege im gleichen Commit:**
   - `docs/ROADMAP.md` — Feature-Status ✅ + Datum setzen
   - `docs/SYSTEM.md` — neue Datenstrukturen, Funktionen, Architekturentscheidungen ergänzen
@@ -42,8 +43,8 @@
 
 ## Code-Graph (Graphify)
 
-Persistenter Knowledge-Graph des Projekts in `graphify-out/`:
-- `graph.html` — interaktive Browser-Visualisierung
+Persistenter Knowledge-Graph des Projekts in `graphify-out/` (siehe **Graphify-Pflicht** in §Verhalten oben):
+- `graph.html` — interaktive Browser-Visualisierung (Stand 2026-05-17: 590 Nodes, 92 Communities)
 - `GRAPH_REPORT.md` — God-Nodes, Communities, Surprising Connections
 - `graph.json` — strukturierte Nodes + Edges für Queries
 
