@@ -1,7 +1,7 @@
 # Graph Report - .  (2026-05-17)
 
 ## Corpus Check
-- 138 files · ~320,735 words
+- 138 files · ~321,438 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -68,8 +68,8 @@ Cohesion: 0.46
 Nodes (12): betragFeld(), datumFeld(), tituliertFeld(), tplAnwalt(), tplEinfacheKosten(), tplGerichtskosten(), tplHauptforderung(), tplInkassopauschale() (+4 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.18
-Nodes (11): _e(), Et(), Gr(), jt(), Kr(), qt(), r(), Ut() (+3 more)
+Cohesion: 0.2
+Nodes (12): ae(), Et(), he(), jt(), le(), ne(), qe(), re() (+4 more)
 
 ### Community 7 - "Community 7"
 Cohesion: 0.22
@@ -85,11 +85,11 @@ Nodes (11): robots.txt Blocker Schalter, Marketing-Voraussetzungen vor Launch, �
 
 ### Community 10 - "Community 10"
 Cohesion: 0.24
-Nodes (10): ae(), he(), le(), ne(), qe(), re(), se(), ue() (+2 more)
+Nodes (10): ci(), di(), fi(), gi(), hi(), i(), li(), Ni() (+2 more)
 
 ### Community 11 - "Community 11"
-Cohesion: 0.24
-Nodes (10): ci(), di(), fi(), gi(), hi(), i(), li(), Ni() (+2 more)
+Cohesion: 0.22
+Nodes (9): _e(), Gr(), Kr(), qt(), r(), Ut(), Vr(), Vt() (+1 more)
 
 ### Community 12 - "Community 12"
 Cohesion: 0.33
@@ -157,23 +157,23 @@ Nodes (0):
 
 ### Community 28 - "Community 28"
 Cohesion: 1.0
-Nodes (2): § Agents & Skills, Tool-Auswahl-Pflicht
+Nodes (2): Wichtige Architekturentscheidungen, SW-Version fordify-v206 / staging-v174
 
 ### Community 29 - "Community 29"
 Cohesion: 1.0
-Nodes (2): AGENTS.md Verhalten, Verhalten (Pflicht)
+Nodes (2): Häufige Aufgaben Tabelle, Agents & Skills Quick-Picks
 
 ### Community 30 - "Community 30"
 Cohesion: 1.0
-Nodes (2): Häufige Aufgaben Tabelle, Agents & Skills Quick-Picks
+Nodes (2): AGENTS.md Verhalten, Verhalten (Pflicht)
 
 ### Community 31 - "Community 31"
 Cohesion: 1.0
-Nodes (2): Fordify-Spezialisten Tabelle, Freemium-Architektur (§2)
+Nodes (2): § Agents & Skills, Tool-Auswahl-Pflicht
 
 ### Community 32 - "Community 32"
 Cohesion: 1.0
-Nodes (2): Wichtige Architekturentscheidungen, SW-Version fordify-v206 / staging-v174
+Nodes (2): Fordify-Spezialisten Tabelle, Freemium-Architektur (§2)
 
 ### Community 33 - "Community 33"
 Cohesion: 1.0
@@ -294,15 +294,15 @@ Nodes (1): Entscheidungen am 2026-05-17
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 27`** (2 nodes): `gkg.js`, `gkgGebuehr()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 28`** (2 nodes): `§ Agents & Skills`, `Tool-Auswahl-Pflicht`
+- **Thin community `Community 28`** (2 nodes): `Wichtige Architekturentscheidungen`, `SW-Version fordify-v206 / staging-v174`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 29`** (2 nodes): `AGENTS.md Verhalten`, `Verhalten (Pflicht)`
+- **Thin community `Community 29`** (2 nodes): `Häufige Aufgaben Tabelle`, `Agents & Skills Quick-Picks`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 30`** (2 nodes): `Häufige Aufgaben Tabelle`, `Agents & Skills Quick-Picks`
+- **Thin community `Community 30`** (2 nodes): `AGENTS.md Verhalten`, `Verhalten (Pflicht)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 31`** (2 nodes): `Fordify-Spezialisten Tabelle`, `Freemium-Architektur (§2)`
+- **Thin community `Community 31`** (2 nodes): `§ Agents & Skills`, `Tool-Auswahl-Pflicht`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 32`** (2 nodes): `Wichtige Architekturentscheidungen`, `SW-Version fordify-v206 / staging-v174`
+- **Thin community `Community 32`** (2 nodes): `Fordify-Spezialisten Tabelle`, `Freemium-Architektur (§2)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 33`** (1 nodes): `sw.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.

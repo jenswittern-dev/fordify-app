@@ -66,30 +66,34 @@ Persistenter Knowledge-Graph des Projekts in `graphify-out/` (siehe **Graphify-P
 
 Nach jedem Update: `graph.json` + `GRAPH_REPORT.md` committen. `graphify-out/cache/` ist gitignored.
 
-### Hook-Trade-off (Windows)
+### Smart-Merge-Hook (Fordify-Anpassung)
 
-Es ist ein `post-commit` Hook installiert (`.git/hooks/post-commit`), der nach jedem Code-Commit automatisch AST-Extraktion ausführt — **aber überschreibt dabei die semantische Schicht** (Doc-Nodes, Cross-Document-Edges) mit AST-Only-Daten. Das ist graphify-Design-Intent.
+Es ist ein `post-commit` Hook installiert (`.git/hooks/post-commit`), der nach jedem Code-Commit den AST-Teil refresht **und dabei die semantische Schicht (Doc-Nodes, Cross-Document-Edges, Hyperedges) erhält**. Damit bleibt der reiche Graph dauerhaft erhalten — keine manuellen Restore-Runs nötig.
 
-**Praktische Konsequenz:**
-- Nach Code-Commits: Graph reflektiert Code-Struktur, ABER ohne Doc-Verbindungen
-- Doc-Änderungen werden vom Hook **nicht** verarbeitet (kein LLM im Hook)
-- Reicher Graph (Code + Docs + Cross-Cutting) entsteht erst nach manueller `/graphify . --update`
+**Wie der Smart-Merge funktioniert:**
 
-**Empfohlener Rhythmus:**
-- Sprint-Ende → `/graphify . --update` für vollen semantischen Graph (committen)
-- Während Sprint → Hook hält AST-Teil aktuell, semantische Schicht bleibt aus letztem Sprint
-- Bei großen Architektur-Fragen die Doc-Cross-Refs brauchen: ggf. ad-hoc `--update` vorab
+1. Lädt `graphify-out/graph.json` (aktueller reicher Graph)
+2. Liest geänderte Code-Files aus `git diff HEAD~1 HEAD`
+3. Entfernt **nur** die Nodes/Edges, die aus diesen geänderten Files stammen (Match via `source_file`)
+4. Führt AST-Extraktion auf den geänderten Code-Files aus
+5. Fügt neue Nodes/Edges hinzu
+6. Re-clustert + schreibt `graph.json`, `graph.html`, `GRAPH_REPORT.md`
 
-**Windows-Hook-Fix:**
-Der von `graphify hook install` erzeugte Hook hat zwei Bugs auf Windows:
-1. `python3`-Fallback funktioniert nicht (Microsoft-Store-App-Execution-Alias)
-2. `write_text` ohne `encoding="utf-8"` → CP1252-charmap-Fehler bei Unicode (→)
+→ Doc-Nodes (CLAUDE.md, AGENTS.md, SYSTEM.md, Specs, Review-Archive) bleiben **unangetastet** zwischen den manuellen `/graphify --update`-Runs.
 
-Fix in `.git/hooks/post-commit`:
-- Explizit `/c/Python314/python.exe` statt PATH-`python3`
-- `export PYTHONUTF8=1` und `export PYTHONIOENCODING="utf-8"` setzen
+**Wann trotzdem `/graphify . --update` manuell laufen lassen?**
 
-Beide Fixes sind in diesem Repo lokal angewandt; für andere Entwickler-Setups manuell nachziehen.
+- Doc-Änderungen sollen im Graph reflektiert werden (Hook ignoriert `.md`-Diffs)
+- Größere Sprint-Abschlüsse (frischer semantischer Layer ggf. mit neuen Cross-Refs)
+- Wenn semantische Schicht stale wird (>30 Tage / nach großem Doc-Refactor)
+
+**Windows-Fixes im Hook (manuell nachzuziehen für andere Setups):**
+
+1. **`python3`-Fallback funktioniert auf Windows nicht** (Microsoft-Store-App-Execution-Alias blockt) → Hook nutzt explizit `/c/Python314/python.exe`
+2. **CP1252-charmap-Fehler bei Unicode** (`→` in GRAPH_REPORT.md) → Hook setzt `PYTHONUTF8=1` und `PYTHONIOENCODING="utf-8"`
+3. **Standard-`graphify.watch._rebuild_code` überschreibt semantische Schicht** → Hook nutzt eigene Smart-Merge-Logik statt der graphify-Standard-Funktion
+
+Diese Fixes sind in `.git/hooks/post-commit` dieses Repos lokal. `.git/hooks/*` wird nicht versioniert — bei Klon auf neuer Maschine muss der Hook manuell nachinstalliert werden (siehe `docs/SYSTEM.md` falls dokumentiert, oder Inhalt aus diesem File ableiten).
 
 ---
 
